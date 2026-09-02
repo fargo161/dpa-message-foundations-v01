@@ -748,13 +748,18 @@
                 "status": "BLOCKED",
                 "blockers": [
                   {
-                    "code": "MISSING_HAS_LEVERAGE_OVER",
-                    "message": "An authored leverage basis is not authored for this direction.",
+                    "code": "MISSING_PRESSURE_LEVERAGE",
+                    "message": "No actual, asserted, active leverage basis is authored for this actor and target.",
                     "matchedFacts": []
                   },
                   {
-                    "code": "MISSING_FEARS_TARGET",
-                    "message": "A target-relevant vulnerability is not authored for the target.",
+                    "code": "MISSING_PRESSURE_DEMAND",
+                    "message": "No active authored obligation or promise connects the target to the actor's leverage basis.",
+                    "matchedFacts": []
+                  },
+                  {
+                    "code": "MISSING_PRESSURE_FEARED_CONSEQUENCE",
+                    "message": "No target fear is authored for an identity in the consequence map.",
                     "matchedFacts": []
                   }
                 ]
@@ -784,7 +789,9 @@
               "MISSING_PERMITTED",
               "MISSING_DEPENDS_ON",
               "MISSING_HAS_LEVERAGE_OVER",
-              "MISSING_FEARS_TARGET",
+              "MISSING_PRESSURE_LEVERAGE",
+              "MISSING_PRESSURE_DEMAND",
+              "MISSING_PRESSURE_FEARED_CONSEQUENCE",
               "MISSING_BELIEVES"
             ]
           },
@@ -1142,13 +1149,18 @@
                 "status": "BLOCKED",
                 "blockers": [
                   {
-                    "code": "MISSING_HAS_LEVERAGE_OVER",
-                    "message": "An authored leverage basis is not authored for this direction.",
+                    "code": "MISSING_PRESSURE_LEVERAGE",
+                    "message": "No actual, asserted, active leverage basis is authored for this actor and target.",
                     "matchedFacts": []
                   },
                   {
-                    "code": "MISSING_FEARS_TARGET",
-                    "message": "A target-relevant vulnerability is not authored for the target.",
+                    "code": "MISSING_PRESSURE_DEMAND",
+                    "message": "No active authored obligation or promise connects the target to the actor's leverage basis.",
+                    "matchedFacts": []
+                  },
+                  {
+                    "code": "MISSING_PRESSURE_FEARED_CONSEQUENCE",
+                    "message": "No target fear is authored for an identity in the consequence map.",
                     "matchedFacts": []
                   },
                   {
@@ -1246,7 +1258,9 @@
               "MISSING_DEPENDS_ON",
               "MISSING_KNOWS_SECRET_ABOUT",
               "MISSING_HAS_LEVERAGE_OVER",
-              "MISSING_FEARS_TARGET",
+              "MISSING_PRESSURE_LEVERAGE",
+              "MISSING_PRESSURE_DEMAND",
+              "MISSING_PRESSURE_FEARED_CONSEQUENCE",
               "MISSING_BELIEVES",
               "MISSING_TRUSTS"
             ]
@@ -1394,13 +1408,18 @@
                 "status": "BLOCKED",
                 "blockers": [
                   {
-                    "code": "MISSING_HAS_LEVERAGE_OVER",
-                    "message": "An authored leverage basis is not authored for this direction.",
+                    "code": "MISSING_PRESSURE_LEVERAGE",
+                    "message": "No actual, asserted, active leverage basis is authored for this actor and target.",
                     "matchedFacts": []
                   },
                   {
-                    "code": "MISSING_FEARS_TARGET",
-                    "message": "A target-relevant vulnerability is not authored for the target.",
+                    "code": "MISSING_PRESSURE_DEMAND",
+                    "message": "No active authored obligation or promise connects the target to the actor's leverage basis.",
+                    "matchedFacts": []
+                  },
+                  {
+                    "code": "MISSING_PRESSURE_FEARED_CONSEQUENCE",
+                    "message": "No target fear is authored for an identity in the consequence map.",
                     "matchedFacts": []
                   }
                 ]
@@ -1468,7 +1487,9 @@
               "MISSING_PROMISED_TO",
               "MISSING_KNOWS_SECRET_ABOUT",
               "MISSING_HAS_LEVERAGE_OVER",
-              "MISSING_FEARS_TARGET",
+              "MISSING_PRESSURE_LEVERAGE",
+              "MISSING_PRESSURE_DEMAND",
+              "MISSING_PRESSURE_FEARED_CONSEQUENCE",
               "MISSING_BELIEVES",
               "MISSING_DEPENDS_ON"
             ]
@@ -1653,13 +1674,18 @@
                 "status": "BLOCKED",
                 "blockers": [
                   {
-                    "code": "MISSING_HAS_LEVERAGE_OVER",
-                    "message": "An authored leverage basis is not authored for this direction.",
+                    "code": "MISSING_PRESSURE_LEVERAGE",
+                    "message": "No actual, asserted, active leverage basis is authored for this actor and target.",
                     "matchedFacts": []
                   },
                   {
-                    "code": "MISSING_FEARS_TARGET",
-                    "message": "A target-relevant vulnerability is not authored for the target.",
+                    "code": "MISSING_PRESSURE_DEMAND",
+                    "message": "No active authored obligation or promise connects the target to the actor's leverage basis.",
+                    "matchedFacts": []
+                  },
+                  {
+                    "code": "MISSING_PRESSURE_FEARED_CONSEQUENCE",
+                    "message": "No target fear is authored for an identity in the consequence map.",
                     "matchedFacts": []
                   },
                   {
@@ -1768,7 +1794,9 @@
               "MISSING_PERMITTED",
               "MISSING_KNOWS_SECRET_ABOUT",
               "MISSING_HAS_LEVERAGE_OVER",
-              "MISSING_FEARS_TARGET",
+              "MISSING_PRESSURE_LEVERAGE",
+              "MISSING_PRESSURE_DEMAND",
+              "MISSING_PRESSURE_FEARED_CONSEQUENCE",
               "MISSING_BELIEVES",
               "MISSING_DEPENDS_ON",
               "MISSING_TRUSTS"
@@ -1924,13 +1952,18 @@
                 "status": "BLOCKED",
                 "blockers": [
                   {
-                    "code": "MISSING_HAS_LEVERAGE_OVER",
-                    "message": "An authored leverage basis is not authored for this direction.",
+                    "code": "MISSING_PRESSURE_LEVERAGE",
+                    "message": "No actual, asserted, active leverage basis is authored for this actor and target.",
                     "matchedFacts": []
                   },
                   {
-                    "code": "MISSING_FEARS_TARGET",
-                    "message": "A target-relevant vulnerability is not authored for the target.",
+                    "code": "MISSING_PRESSURE_DEMAND",
+                    "message": "No active authored obligation or promise connects the target to the actor's leverage basis.",
+                    "matchedFacts": []
+                  },
+                  {
+                    "code": "MISSING_PRESSURE_FEARED_CONSEQUENCE",
+                    "message": "No target fear is authored for an identity in the consequence map.",
                     "matchedFacts": []
                   }
                 ]
@@ -2011,7 +2044,9 @@
               "MISSING_DEPENDS_ON",
               "MISSING_KNOWS_SECRET_ABOUT",
               "MISSING_HAS_LEVERAGE_OVER",
-              "MISSING_FEARS_TARGET",
+              "MISSING_PRESSURE_LEVERAGE",
+              "MISSING_PRESSURE_DEMAND",
+              "MISSING_PRESSURE_FEARED_CONSEQUENCE",
               "MISSING_BELIEVES",
               "MISSING_TRUSTS"
             ]
@@ -2188,13 +2223,20 @@
                 "status": "BLOCKED",
                 "blockers": [
                   {
-                    "code": "MISSING_HAS_LEVERAGE_OVER",
-                    "message": "An authored leverage basis is not authored for this direction.",
+                    "code": "MISSING_PRESSURE_LEVERAGE",
+                    "message": "No actual, asserted, active leverage basis is authored for this actor and target.",
                     "matchedFacts": []
                   },
                   {
-                    "code": "MISSING_FEARS_TARGET",
-                    "message": "A target-relevant vulnerability is not authored for the target.",
+                    "code": "PRESSURE_DEMAND_LEVERAGE_MISMATCH",
+                    "message": "The authored demand term does not match the actor's leverage basis; pressure cannot cross-contaminate obligations.",
+                    "matchedFacts": [
+                      "imani_promised_privacy"
+                    ]
+                  },
+                  {
+                    "code": "MISSING_PRESSURE_FEARED_CONSEQUENCE",
+                    "message": "No target fear is authored for an identity in the consequence map.",
                     "matchedFacts": []
                   }
                 ]
@@ -2234,7 +2276,9 @@
               "MISSING_DEPENDS_ON",
               "MISSING_KNOWS_SECRET_ABOUT",
               "MISSING_HAS_LEVERAGE_OVER",
-              "MISSING_FEARS_TARGET",
+              "MISSING_PRESSURE_LEVERAGE",
+              "PRESSURE_DEMAND_LEVERAGE_MISMATCH",
+              "MISSING_PRESSURE_FEARED_CONSEQUENCE",
               "MISSING_BELIEVES"
             ]
           },
@@ -2243,20 +2287,13 @@
             "targetId": "player",
             "contextId": "PRIVATE_DISCLOSURE",
             "availableActionIds": [
-              "TRADE_INFORMATION",
-              "INVOKE_CONSEQUENCE"
+              "TRADE_INFORMATION"
             ],
             "availableActions": [
               {
                 "actionId": "TRADE_INFORMATION",
                 "displayName": "Trade authored information",
                 "macroAct": "DEAL",
-                "status": "AVAILABLE"
-              },
-              {
-                "actionId": "INVOKE_CONSEQUENCE",
-                "displayName": "Invoke an authored consequence",
-                "macroAct": "PRESSURE",
                 "status": "AVAILABLE"
               }
             ],
@@ -2265,6 +2302,7 @@
               "OFFER_PARTIAL_PAYMENT",
               "OFFER_CASH_FOR_EXTENSION",
               "REQUEST_ACCESS",
+              "INVOKE_CONSEQUENCE",
               "CHALLENGE_DEBT_VALIDITY",
               "REQUEST_EVIDENCE",
               "REQUEST_SUPPORT"
@@ -2373,6 +2411,32 @@
                 ]
               },
               {
+                "actionId": "INVOKE_CONSEQUENCE",
+                "displayName": "Invoke an authored consequence",
+                "macroAct": "PRESSURE",
+                "status": "BLOCKED",
+                "blockers": [
+                  {
+                    "code": "MISSING_PRESSURE_LEVERAGE",
+                    "message": "No actual, asserted, active leverage basis is authored for this actor and target.",
+                    "matchedFacts": []
+                  },
+                  {
+                    "code": "MISSING_PRESSURE_DEMAND",
+                    "message": "No active authored obligation or promise connects the target to the actor's leverage basis.",
+                    "matchedFacts": []
+                  },
+                  {
+                    "code": "PRESSURE_CONSEQUENCE_DEMAND_NOT_LINKED",
+                    "message": "The feared consequence is authored, but no demand is linked to the leverage basis.",
+                    "matchedFacts": [
+                      "imani_leverage_bid_secret",
+                      "player_fears_counterparty_disclosure"
+                    ]
+                  }
+                ]
+              },
+              {
                 "actionId": "CHALLENGE_DEBT_VALIDITY",
                 "displayName": "Challenge the debt validity",
                 "macroAct": "ASK",
@@ -2440,6 +2504,9 @@
               "MISSING_CONTROLS",
               "MISSING_PERMITTED",
               "MISSING_DEPENDS_ON",
+              "MISSING_PRESSURE_LEVERAGE",
+              "MISSING_PRESSURE_DEMAND",
+              "PRESSURE_CONSEQUENCE_DEMAND_NOT_LINKED",
               "MISSING_BELIEVES",
               "MISSING_KNOWS_SECRET_ABOUT",
               "MISSING_TRUSTS"
@@ -2453,14 +2520,14 @@
       "actCompatibleTheoretical": 4320,
       "totalCandidateCombinations": 12960,
       "actIncompatible": 8640,
-      "blocked": 3660,
+      "blocked": 3720,
       "duplicate": 0,
       "unreachable": 0,
-      "validUnique": 660,
+      "validUnique": 600,
       "candidatePairs": 8,
-      "blockedCandidates": 3660,
+      "blockedCandidates": 3720,
       "duplicateCandidates": 0,
-      "validUniqueSemanticConfigurations": 660,
+      "validUniqueSemanticConfigurations": 600,
       "validConfigurations": [
         {
           "scenarioId": "fixture-marcus-apt-305",
@@ -7261,495 +7328,15 @@
           "actionId": "TRADE_INFORMATION",
           "macroAct": "DEAL",
           "coordinateKey": "DEAL_DE_OVERT"
-        },
-        {
-          "scenarioId": "fixture-secret-leverage",
-          "actorId": "imani_intermediary",
-          "targetId": "player",
-          "actionId": "INVOKE_CONSEQUENCE",
-          "macroAct": "PRESSURE",
-          "coordinateKey": "PRESSURE_BA_SUBTLE"
-        },
-        {
-          "scenarioId": "fixture-secret-leverage",
-          "actorId": "imani_intermediary",
-          "targetId": "player",
-          "actionId": "INVOKE_CONSEQUENCE",
-          "macroAct": "PRESSURE",
-          "coordinateKey": "PRESSURE_BA_BALANCED"
-        },
-        {
-          "scenarioId": "fixture-secret-leverage",
-          "actorId": "imani_intermediary",
-          "targetId": "player",
-          "actionId": "INVOKE_CONSEQUENCE",
-          "macroAct": "PRESSURE",
-          "coordinateKey": "PRESSURE_BA_OVERT"
-        },
-        {
-          "scenarioId": "fixture-secret-leverage",
-          "actorId": "imani_intermediary",
-          "targetId": "player",
-          "actionId": "INVOKE_CONSEQUENCE",
-          "macroAct": "PRESSURE",
-          "coordinateKey": "PRESSURE_BS_SUBTLE"
-        },
-        {
-          "scenarioId": "fixture-secret-leverage",
-          "actorId": "imani_intermediary",
-          "targetId": "player",
-          "actionId": "INVOKE_CONSEQUENCE",
-          "macroAct": "PRESSURE",
-          "coordinateKey": "PRESSURE_BS_BALANCED"
-        },
-        {
-          "scenarioId": "fixture-secret-leverage",
-          "actorId": "imani_intermediary",
-          "targetId": "player",
-          "actionId": "INVOKE_CONSEQUENCE",
-          "macroAct": "PRESSURE",
-          "coordinateKey": "PRESSURE_BS_OVERT"
-        },
-        {
-          "scenarioId": "fixture-secret-leverage",
-          "actorId": "imani_intermediary",
-          "targetId": "player",
-          "actionId": "INVOKE_CONSEQUENCE",
-          "macroAct": "PRESSURE",
-          "coordinateKey": "PRESSURE_BE_SUBTLE"
-        },
-        {
-          "scenarioId": "fixture-secret-leverage",
-          "actorId": "imani_intermediary",
-          "targetId": "player",
-          "actionId": "INVOKE_CONSEQUENCE",
-          "macroAct": "PRESSURE",
-          "coordinateKey": "PRESSURE_BE_BALANCED"
-        },
-        {
-          "scenarioId": "fixture-secret-leverage",
-          "actorId": "imani_intermediary",
-          "targetId": "player",
-          "actionId": "INVOKE_CONSEQUENCE",
-          "macroAct": "PRESSURE",
-          "coordinateKey": "PRESSURE_BE_OVERT"
-        },
-        {
-          "scenarioId": "fixture-secret-leverage",
-          "actorId": "imani_intermediary",
-          "targetId": "player",
-          "actionId": "INVOKE_CONSEQUENCE",
-          "macroAct": "PRESSURE",
-          "coordinateKey": "PRESSURE_BD_SUBTLE"
-        },
-        {
-          "scenarioId": "fixture-secret-leverage",
-          "actorId": "imani_intermediary",
-          "targetId": "player",
-          "actionId": "INVOKE_CONSEQUENCE",
-          "macroAct": "PRESSURE",
-          "coordinateKey": "PRESSURE_BD_BALANCED"
-        },
-        {
-          "scenarioId": "fixture-secret-leverage",
-          "actorId": "imani_intermediary",
-          "targetId": "player",
-          "actionId": "INVOKE_CONSEQUENCE",
-          "macroAct": "PRESSURE",
-          "coordinateKey": "PRESSURE_BD_OVERT"
-        },
-        {
-          "scenarioId": "fixture-secret-leverage",
-          "actorId": "imani_intermediary",
-          "targetId": "player",
-          "actionId": "INVOKE_CONSEQUENCE",
-          "macroAct": "PRESSURE",
-          "coordinateKey": "PRESSURE_AB_SUBTLE"
-        },
-        {
-          "scenarioId": "fixture-secret-leverage",
-          "actorId": "imani_intermediary",
-          "targetId": "player",
-          "actionId": "INVOKE_CONSEQUENCE",
-          "macroAct": "PRESSURE",
-          "coordinateKey": "PRESSURE_AB_BALANCED"
-        },
-        {
-          "scenarioId": "fixture-secret-leverage",
-          "actorId": "imani_intermediary",
-          "targetId": "player",
-          "actionId": "INVOKE_CONSEQUENCE",
-          "macroAct": "PRESSURE",
-          "coordinateKey": "PRESSURE_AB_OVERT"
-        },
-        {
-          "scenarioId": "fixture-secret-leverage",
-          "actorId": "imani_intermediary",
-          "targetId": "player",
-          "actionId": "INVOKE_CONSEQUENCE",
-          "macroAct": "PRESSURE",
-          "coordinateKey": "PRESSURE_AS_SUBTLE"
-        },
-        {
-          "scenarioId": "fixture-secret-leverage",
-          "actorId": "imani_intermediary",
-          "targetId": "player",
-          "actionId": "INVOKE_CONSEQUENCE",
-          "macroAct": "PRESSURE",
-          "coordinateKey": "PRESSURE_AS_BALANCED"
-        },
-        {
-          "scenarioId": "fixture-secret-leverage",
-          "actorId": "imani_intermediary",
-          "targetId": "player",
-          "actionId": "INVOKE_CONSEQUENCE",
-          "macroAct": "PRESSURE",
-          "coordinateKey": "PRESSURE_AS_OVERT"
-        },
-        {
-          "scenarioId": "fixture-secret-leverage",
-          "actorId": "imani_intermediary",
-          "targetId": "player",
-          "actionId": "INVOKE_CONSEQUENCE",
-          "macroAct": "PRESSURE",
-          "coordinateKey": "PRESSURE_AE_SUBTLE"
-        },
-        {
-          "scenarioId": "fixture-secret-leverage",
-          "actorId": "imani_intermediary",
-          "targetId": "player",
-          "actionId": "INVOKE_CONSEQUENCE",
-          "macroAct": "PRESSURE",
-          "coordinateKey": "PRESSURE_AE_BALANCED"
-        },
-        {
-          "scenarioId": "fixture-secret-leverage",
-          "actorId": "imani_intermediary",
-          "targetId": "player",
-          "actionId": "INVOKE_CONSEQUENCE",
-          "macroAct": "PRESSURE",
-          "coordinateKey": "PRESSURE_AE_OVERT"
-        },
-        {
-          "scenarioId": "fixture-secret-leverage",
-          "actorId": "imani_intermediary",
-          "targetId": "player",
-          "actionId": "INVOKE_CONSEQUENCE",
-          "macroAct": "PRESSURE",
-          "coordinateKey": "PRESSURE_AD_SUBTLE"
-        },
-        {
-          "scenarioId": "fixture-secret-leverage",
-          "actorId": "imani_intermediary",
-          "targetId": "player",
-          "actionId": "INVOKE_CONSEQUENCE",
-          "macroAct": "PRESSURE",
-          "coordinateKey": "PRESSURE_AD_BALANCED"
-        },
-        {
-          "scenarioId": "fixture-secret-leverage",
-          "actorId": "imani_intermediary",
-          "targetId": "player",
-          "actionId": "INVOKE_CONSEQUENCE",
-          "macroAct": "PRESSURE",
-          "coordinateKey": "PRESSURE_AD_OVERT"
-        },
-        {
-          "scenarioId": "fixture-secret-leverage",
-          "actorId": "imani_intermediary",
-          "targetId": "player",
-          "actionId": "INVOKE_CONSEQUENCE",
-          "macroAct": "PRESSURE",
-          "coordinateKey": "PRESSURE_SB_SUBTLE"
-        },
-        {
-          "scenarioId": "fixture-secret-leverage",
-          "actorId": "imani_intermediary",
-          "targetId": "player",
-          "actionId": "INVOKE_CONSEQUENCE",
-          "macroAct": "PRESSURE",
-          "coordinateKey": "PRESSURE_SB_BALANCED"
-        },
-        {
-          "scenarioId": "fixture-secret-leverage",
-          "actorId": "imani_intermediary",
-          "targetId": "player",
-          "actionId": "INVOKE_CONSEQUENCE",
-          "macroAct": "PRESSURE",
-          "coordinateKey": "PRESSURE_SB_OVERT"
-        },
-        {
-          "scenarioId": "fixture-secret-leverage",
-          "actorId": "imani_intermediary",
-          "targetId": "player",
-          "actionId": "INVOKE_CONSEQUENCE",
-          "macroAct": "PRESSURE",
-          "coordinateKey": "PRESSURE_SA_SUBTLE"
-        },
-        {
-          "scenarioId": "fixture-secret-leverage",
-          "actorId": "imani_intermediary",
-          "targetId": "player",
-          "actionId": "INVOKE_CONSEQUENCE",
-          "macroAct": "PRESSURE",
-          "coordinateKey": "PRESSURE_SA_BALANCED"
-        },
-        {
-          "scenarioId": "fixture-secret-leverage",
-          "actorId": "imani_intermediary",
-          "targetId": "player",
-          "actionId": "INVOKE_CONSEQUENCE",
-          "macroAct": "PRESSURE",
-          "coordinateKey": "PRESSURE_SA_OVERT"
-        },
-        {
-          "scenarioId": "fixture-secret-leverage",
-          "actorId": "imani_intermediary",
-          "targetId": "player",
-          "actionId": "INVOKE_CONSEQUENCE",
-          "macroAct": "PRESSURE",
-          "coordinateKey": "PRESSURE_SE_SUBTLE"
-        },
-        {
-          "scenarioId": "fixture-secret-leverage",
-          "actorId": "imani_intermediary",
-          "targetId": "player",
-          "actionId": "INVOKE_CONSEQUENCE",
-          "macroAct": "PRESSURE",
-          "coordinateKey": "PRESSURE_SE_BALANCED"
-        },
-        {
-          "scenarioId": "fixture-secret-leverage",
-          "actorId": "imani_intermediary",
-          "targetId": "player",
-          "actionId": "INVOKE_CONSEQUENCE",
-          "macroAct": "PRESSURE",
-          "coordinateKey": "PRESSURE_SE_OVERT"
-        },
-        {
-          "scenarioId": "fixture-secret-leverage",
-          "actorId": "imani_intermediary",
-          "targetId": "player",
-          "actionId": "INVOKE_CONSEQUENCE",
-          "macroAct": "PRESSURE",
-          "coordinateKey": "PRESSURE_SD_SUBTLE"
-        },
-        {
-          "scenarioId": "fixture-secret-leverage",
-          "actorId": "imani_intermediary",
-          "targetId": "player",
-          "actionId": "INVOKE_CONSEQUENCE",
-          "macroAct": "PRESSURE",
-          "coordinateKey": "PRESSURE_SD_BALANCED"
-        },
-        {
-          "scenarioId": "fixture-secret-leverage",
-          "actorId": "imani_intermediary",
-          "targetId": "player",
-          "actionId": "INVOKE_CONSEQUENCE",
-          "macroAct": "PRESSURE",
-          "coordinateKey": "PRESSURE_SD_OVERT"
-        },
-        {
-          "scenarioId": "fixture-secret-leverage",
-          "actorId": "imani_intermediary",
-          "targetId": "player",
-          "actionId": "INVOKE_CONSEQUENCE",
-          "macroAct": "PRESSURE",
-          "coordinateKey": "PRESSURE_EB_SUBTLE"
-        },
-        {
-          "scenarioId": "fixture-secret-leverage",
-          "actorId": "imani_intermediary",
-          "targetId": "player",
-          "actionId": "INVOKE_CONSEQUENCE",
-          "macroAct": "PRESSURE",
-          "coordinateKey": "PRESSURE_EB_BALANCED"
-        },
-        {
-          "scenarioId": "fixture-secret-leverage",
-          "actorId": "imani_intermediary",
-          "targetId": "player",
-          "actionId": "INVOKE_CONSEQUENCE",
-          "macroAct": "PRESSURE",
-          "coordinateKey": "PRESSURE_EB_OVERT"
-        },
-        {
-          "scenarioId": "fixture-secret-leverage",
-          "actorId": "imani_intermediary",
-          "targetId": "player",
-          "actionId": "INVOKE_CONSEQUENCE",
-          "macroAct": "PRESSURE",
-          "coordinateKey": "PRESSURE_EA_SUBTLE"
-        },
-        {
-          "scenarioId": "fixture-secret-leverage",
-          "actorId": "imani_intermediary",
-          "targetId": "player",
-          "actionId": "INVOKE_CONSEQUENCE",
-          "macroAct": "PRESSURE",
-          "coordinateKey": "PRESSURE_EA_BALANCED"
-        },
-        {
-          "scenarioId": "fixture-secret-leverage",
-          "actorId": "imani_intermediary",
-          "targetId": "player",
-          "actionId": "INVOKE_CONSEQUENCE",
-          "macroAct": "PRESSURE",
-          "coordinateKey": "PRESSURE_EA_OVERT"
-        },
-        {
-          "scenarioId": "fixture-secret-leverage",
-          "actorId": "imani_intermediary",
-          "targetId": "player",
-          "actionId": "INVOKE_CONSEQUENCE",
-          "macroAct": "PRESSURE",
-          "coordinateKey": "PRESSURE_ES_SUBTLE"
-        },
-        {
-          "scenarioId": "fixture-secret-leverage",
-          "actorId": "imani_intermediary",
-          "targetId": "player",
-          "actionId": "INVOKE_CONSEQUENCE",
-          "macroAct": "PRESSURE",
-          "coordinateKey": "PRESSURE_ES_BALANCED"
-        },
-        {
-          "scenarioId": "fixture-secret-leverage",
-          "actorId": "imani_intermediary",
-          "targetId": "player",
-          "actionId": "INVOKE_CONSEQUENCE",
-          "macroAct": "PRESSURE",
-          "coordinateKey": "PRESSURE_ES_OVERT"
-        },
-        {
-          "scenarioId": "fixture-secret-leverage",
-          "actorId": "imani_intermediary",
-          "targetId": "player",
-          "actionId": "INVOKE_CONSEQUENCE",
-          "macroAct": "PRESSURE",
-          "coordinateKey": "PRESSURE_ED_SUBTLE"
-        },
-        {
-          "scenarioId": "fixture-secret-leverage",
-          "actorId": "imani_intermediary",
-          "targetId": "player",
-          "actionId": "INVOKE_CONSEQUENCE",
-          "macroAct": "PRESSURE",
-          "coordinateKey": "PRESSURE_ED_BALANCED"
-        },
-        {
-          "scenarioId": "fixture-secret-leverage",
-          "actorId": "imani_intermediary",
-          "targetId": "player",
-          "actionId": "INVOKE_CONSEQUENCE",
-          "macroAct": "PRESSURE",
-          "coordinateKey": "PRESSURE_ED_OVERT"
-        },
-        {
-          "scenarioId": "fixture-secret-leverage",
-          "actorId": "imani_intermediary",
-          "targetId": "player",
-          "actionId": "INVOKE_CONSEQUENCE",
-          "macroAct": "PRESSURE",
-          "coordinateKey": "PRESSURE_DB_SUBTLE"
-        },
-        {
-          "scenarioId": "fixture-secret-leverage",
-          "actorId": "imani_intermediary",
-          "targetId": "player",
-          "actionId": "INVOKE_CONSEQUENCE",
-          "macroAct": "PRESSURE",
-          "coordinateKey": "PRESSURE_DB_BALANCED"
-        },
-        {
-          "scenarioId": "fixture-secret-leverage",
-          "actorId": "imani_intermediary",
-          "targetId": "player",
-          "actionId": "INVOKE_CONSEQUENCE",
-          "macroAct": "PRESSURE",
-          "coordinateKey": "PRESSURE_DB_OVERT"
-        },
-        {
-          "scenarioId": "fixture-secret-leverage",
-          "actorId": "imani_intermediary",
-          "targetId": "player",
-          "actionId": "INVOKE_CONSEQUENCE",
-          "macroAct": "PRESSURE",
-          "coordinateKey": "PRESSURE_DA_SUBTLE"
-        },
-        {
-          "scenarioId": "fixture-secret-leverage",
-          "actorId": "imani_intermediary",
-          "targetId": "player",
-          "actionId": "INVOKE_CONSEQUENCE",
-          "macroAct": "PRESSURE",
-          "coordinateKey": "PRESSURE_DA_BALANCED"
-        },
-        {
-          "scenarioId": "fixture-secret-leverage",
-          "actorId": "imani_intermediary",
-          "targetId": "player",
-          "actionId": "INVOKE_CONSEQUENCE",
-          "macroAct": "PRESSURE",
-          "coordinateKey": "PRESSURE_DA_OVERT"
-        },
-        {
-          "scenarioId": "fixture-secret-leverage",
-          "actorId": "imani_intermediary",
-          "targetId": "player",
-          "actionId": "INVOKE_CONSEQUENCE",
-          "macroAct": "PRESSURE",
-          "coordinateKey": "PRESSURE_DS_SUBTLE"
-        },
-        {
-          "scenarioId": "fixture-secret-leverage",
-          "actorId": "imani_intermediary",
-          "targetId": "player",
-          "actionId": "INVOKE_CONSEQUENCE",
-          "macroAct": "PRESSURE",
-          "coordinateKey": "PRESSURE_DS_BALANCED"
-        },
-        {
-          "scenarioId": "fixture-secret-leverage",
-          "actorId": "imani_intermediary",
-          "targetId": "player",
-          "actionId": "INVOKE_CONSEQUENCE",
-          "macroAct": "PRESSURE",
-          "coordinateKey": "PRESSURE_DS_OVERT"
-        },
-        {
-          "scenarioId": "fixture-secret-leverage",
-          "actorId": "imani_intermediary",
-          "targetId": "player",
-          "actionId": "INVOKE_CONSEQUENCE",
-          "macroAct": "PRESSURE",
-          "coordinateKey": "PRESSURE_DE_SUBTLE"
-        },
-        {
-          "scenarioId": "fixture-secret-leverage",
-          "actorId": "imani_intermediary",
-          "targetId": "player",
-          "actionId": "INVOKE_CONSEQUENCE",
-          "macroAct": "PRESSURE",
-          "coordinateKey": "PRESSURE_DE_BALANCED"
-        },
-        {
-          "scenarioId": "fixture-secret-leverage",
-          "actorId": "imani_intermediary",
-          "targetId": "player",
-          "actionId": "INVOKE_CONSEQUENCE",
-          "macroAct": "PRESSURE",
-          "coordinateKey": "PRESSURE_DE_OVERT"
         }
       ],
       "classificationTotals": {
         "theoretical": 4320,
         "actIncompatible": 8640,
-        "blocked": 3660,
+        "blocked": 3720,
         "duplicate": 0,
         "unreachable": 0,
-        "validUnique": 660
+        "validUnique": 600
       },
       "notes": [
         "Theoretical is the act-compatible action/coordinate cross-product; act-incompatible combinations are excluded before availability evaluation.",
@@ -8887,7 +8474,7 @@
         "sourceId": "atomic-2020",
         "status": "ACQUIRED_AND_INDEXED",
         "artifactFilename": "atomic2020_data-feb2021.zip",
-        "artifactCachePath": ".cache\\external-data\\atomic-2020\\atomic2020_data-feb2021.zip",
+        "artifactCachePath": ".cache/external-data/atomic-2020/atomic2020_data-feb2021.zip",
         "retrievedAt": "2026-09-02T14:22:09.220Z",
         "byteSize": 12580048,
         "sha256": "47c5f362ab4a3ea58c4962eebfdfd1c5420d3780e74cd3fe09efeef64f941c2b",
@@ -8923,7 +8510,7 @@
         "sourceId": "social-chemistry-101",
         "status": "ACQUIRED_AND_INDEXED",
         "artifactFilename": "social-chem-101.zip",
-        "artifactCachePath": ".cache\\external-data\\social-chemistry-101\\social-chem-101.zip",
+        "artifactCachePath": ".cache/external-data/social-chemistry-101/social-chem-101.zip",
         "retrievedAt": "2026-09-02T14:22:09.220Z",
         "byteSize": 27610699,
         "sha256": "ebaa524280c53aa3dbfb2b73502b120eeb71d03523a557c659275aebb2afd95a",
@@ -8931,8 +8518,8 @@
           "raw": 355922,
           "accepted": 348769,
           "rejected": 7153,
-          "duplicate": 223,
-          "aggregatedAnnotationRows": 63032,
+          "duplicate": 0,
+          "aggregatedAnnotationRows": 63255,
           "normalized": 285514,
           "indexed": 285514
         },
@@ -8959,7 +8546,7 @@
         "sourceId": "casino",
         "status": "ACQUIRED_AND_INDEXED",
         "artifactFilename": "casino-corpus.zip",
-        "artifactCachePath": ".cache\\external-data\\casino\\casino-corpus.zip",
+        "artifactCachePath": ".cache/external-data/casino/casino-corpus.zip",
         "retrievedAt": "2026-09-02T14:22:09.220Z",
         "byteSize": 875020,
         "sha256": "71448281f192ffcecfa05877e0aecb0b2f7c68db763b8cf8dc5f9d1010ece387",
@@ -8995,7 +8582,7 @@
         "sourceId": "persuasion-for-good",
         "status": "ACQUIRED_AND_INDEXED",
         "artifactFilename": "persuasionforgood-master.zip",
-        "artifactCachePath": ".cache\\external-data\\persuasion-for-good\\persuasionforgood-master.zip",
+        "artifactCachePath": ".cache/external-data/persuasion-for-good/persuasionforgood-master.zip",
         "retrievedAt": "2026-09-02T14:22:09.220Z",
         "byteSize": 324414067,
         "sha256": "0d9deadfb126564a8dbbd9b0c33df1c7986cccbf65e03fd60ef2eaec9ec7a41d",
@@ -9031,7 +8618,7 @@
         "sourceId": "stanford-politeness-wikipedia",
         "status": "ACQUIRED_AND_INDEXED",
         "artifactFilename": "wikipedia-politeness-corpus.zip",
-        "artifactCachePath": ".cache\\external-data\\stanford-politeness-wikipedia\\wikipedia-politeness-corpus.zip",
+        "artifactCachePath": ".cache/external-data/stanford-politeness-wikipedia/wikipedia-politeness-corpus.zip",
         "retrievedAt": "2026-09-02T14:22:09.220Z",
         "byteSize": 1737651,
         "sha256": "90ec6c2c6e05d064a805d2e4be4a8d442f370b31f0025798e8eaf62d0014ba48",
@@ -9067,7 +8654,7 @@
         "sourceId": "stanford-politeness-stack-exchange",
         "status": "ACQUIRED_AND_INDEXED",
         "artifactFilename": "stack-exchange-politeness-corpus.zip",
-        "artifactCachePath": ".cache\\external-data\\stanford-politeness-stack-exchange\\stack-exchange-politeness-corpus.zip",
+        "artifactCachePath": ".cache/external-data/stanford-politeness-stack-exchange/stack-exchange-politeness-corpus.zip",
         "retrievedAt": "2026-09-02T14:22:09.220Z",
         "byteSize": 2264294,
         "sha256": "d5be7586c3f4224cffdb45cf87af17b5ad17c0ed4d2d5f6560bcb201703681a3",
@@ -9103,7 +8690,7 @@
         "sourceId": "moral-stories",
         "status": "ACQUIRED_AND_INDEXED",
         "artifactFilename": "moral_stories_full.jsonl",
-        "artifactCachePath": ".cache\\external-data\\moral-stories\\moral_stories_full.jsonl",
+        "artifactCachePath": ".cache/external-data/moral-stories/moral_stories_full.jsonl",
         "retrievedAt": "2026-09-02T14:22:09.220Z",
         "byteSize": 8015650,
         "sha256": "98a62d4a083e02ba234ca3d4f2312df6c337ef10cd3f12dcf917a2957ba59c10",
@@ -9139,7 +8726,7 @@
         "sourceId": "tpl-ontology-luangrath-peck-barger",
         "status": "ACQUIRED_NOT_INDEXED",
         "artifactFilename": "1605.06799.pdf",
-        "artifactCachePath": ".cache\\external-data\\tpl-ontology-luangrath-peck-barger\\1605.06799.pdf",
+        "artifactCachePath": ".cache/external-data/tpl-ontology-luangrath-peck-barger/1605.06799.pdf",
         "retrievedAt": "2026-09-02T14:28:33.491Z",
         "byteSize": 1306437,
         "sha256": "4174eb89805e2e4a4fa3409f2cdc45f5313bc538f1e561f8d21a103ef3904104",
@@ -9148,6 +8735,7 @@
           "accepted": 0,
           "rejected": 0,
           "duplicate": 0,
+          "aggregatedAnnotationRows": 0,
           "normalized": 0,
           "indexed": 0
         },

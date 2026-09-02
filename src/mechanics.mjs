@@ -56,6 +56,7 @@ const baseState = (scenarioId, title, contextId, entities, facts, extras = {}) =
   priors: extras.priors ?? [],
   history: [],
   consequences: extras.consequences ?? {},
+  pressureContracts: extras.pressureContracts ?? [],
   blockers: extras.blockers ?? [],
   recommendedPairs: extras.recommendedPairs ?? [],
 });
@@ -106,6 +107,23 @@ export function createMarcusScenario() {
     [secret]: entity(secret, "Unregistered sublet secret", "SECRET"),
   }, facts, {
     consequences: { [consequence]: "Marcus reports the active debt to the building owner." },
+    pressureContracts: [{
+      contractId: "pressure_debt_exposure",
+      actorId: marcus,
+      targetId: player,
+      contextId: c,
+      scope: "ACTUAL",
+      status: "ACTIVE",
+      validFrom: "2026-01-01T00:00:00.000Z",
+      validUntil: null,
+      leverageAssertionId: "marcus_leverage_debt",
+      obligationAssertionId: "player_owes_marcus_250",
+      fearAssertionId: "player_fears_exposure",
+      demand: "pay debt_250_usd",
+      fearedConsequenceId: consequence,
+      consequenceId: consequence,
+      provenance: projectProv("pressure_debt_exposure"),
+    }],
     blockers: [{ id: "active_lock", actor: player, target: entry, reason: "entry_locked_after_hours" }],
     recommendedPairs: [
       { actorId: player, targetId: marcus, contextId: c },
@@ -303,6 +321,273 @@ const checkActiveContext = (state, _actorId, _targetId, contextId) => contextIsA
   : fail(contextId ? "CONTEXT_NOT_ACTIVE" : "CONTEXT_REQUIRED", contextId ? `Context ${contextId} does not exist or is inactive.` : "An active context is required.");
 contextChecks.add(checkActiveContext);
 
+const compareAssertionIds = (left, right) => String(left.assertionId).localeCompare(String(right.assertionId));
+const sortedFacts = (entries) => [...entries].sort(compareAssertionIds);
+const nonEmpty = (value) => typeof value === "string" && value.trim().length > 0;
+const pressureObligationStatuses = new Set(["ACTIVE", "PENDING"]);
+
+function factMatchesDirection(entry, subject, object) {
+  return entry.args?.subject === subject && entry.args?.object === object;
+}
+
+function factValidityDiagnostic(state, entries, fallbackCode, fallbackMessage) {
+  const now = timeOf(state.now);
+  const candidates = sortedFacts(entries);
+  const belief = candidates.filter((entry) => entry.scope !== "ACTUAL");
+  if (belief.length) return { code: "PRESSURE_SCOPE_NOT_ACTUAL", message: "Pressure evidence is belief-scoped and cannot authorize an actual-world action.", matchedFacts: belief.map((entry) => entry.assertionId) };
+  const disputed = candidates.filter((entry) => entry.polarity !== "ASSERTED");
+  if (disputed.length) return { code: "PRESSURE_EVIDENCE_NOT_ASSERTED", message: "Pressure evidence is denied or disputed and cannot authorize an action.", matchedFacts: disputed.map((entry) => entry.assertionId) };
+  const inactive = candidates.filter((entry) => entry.status !== "ACTIVE");
+  if (inactive.length) return { code: "PRESSURE_EVIDENCE_NOT_ACTIVE", message: "Pressure evidence is not in an active authored state.", matchedFacts: inactive.map((entry) => entry.assertionId) };
+  const outsideValidity = candidates.filter((entry) => {
+    const validFrom = timeOf(entry.validFrom);
+    const validUntil = entry.validUntil == null ? null : timeOf(entry.validUntil);
+    return now === null || validFrom === null || validFrom > now || (entry.validUntil != null && (validUntil === null || now >= validUntil));
+  });
+  if (outsideValidity.length) return { code: "PRESSURE_EVIDENCE_OUTSIDE_VALIDITY", message: "Pressure evidence is outside its authored validity interval.", matchedFacts: outsideValidity.map((entry) => entry.assertionId) };
+  return { code: fallbackCode, message: fallbackMessage, matchedFacts: [] };
+}
+
+function pressureEvidenceCandidates(state, keywordId, predicate) {
+  return sortedFacts((state.facts ?? []).filter((entry) => entry.keywordId === keywordId && predicate(entry)));
+}
+
+function pressureActualFacts(state, keywordId, predicate, contextId) {
+  return sortedFacts(activeFacts(state, keywordId, { contextId }).filter(predicate));
+}
+
+function activePressureObligation(entry) {
+  const status = entry.args?.status;
+  return status == null || pressureObligationStatuses.has(status);
+}
+
+function pressureDemandId(entry) {
+  return `${entry.keywordId}:${entry.assertionId}`;
+}
+
+function isPressureFactActive(state, entry, contextId, keywordId) {
+  if (!entry || entry.keywordId !== keywordId || entry.polarity !== "ASSERTED" || entry.status !== "ACTIVE" || (keywordId === "OWES" && !activePressureObligation(entry))) return false;
+  if (entry.scope !== "ACTUAL" || !contextIsActive(state, contextId)) return false;
+  if (entry.contextIds?.length && !entry.contextIds.includes(contextId)) return false;
+  const now = timeOf(state.now);
+  const validFrom = timeOf(entry.validFrom);
+  const validUntil = entry.validUntil == null ? null : timeOf(entry.validUntil);
+  return now !== null && validFrom !== null && validFrom <= now && (entry.validUntil == null || (validUntil !== null && now < validUntil));
+}
+
+function pressureContractFact(state, contract, assertionId, keywordId, contextId) {
+  const entry = (state.facts ?? []).find((candidate) => candidate.assertionId === assertionId);
+  return isPressureFactActive(state, entry, contextId, keywordId) ? entry : null;
+}
+
+function pressureFactFailure(state, assertionId, keywordId, contextId) {
+  const entry = (state.facts ?? []).find((candidate) => candidate.assertionId === assertionId);
+  if (!entry) return ["OWES", "PROMISED_TO"].includes(keywordId) ? "MISSING_PRESSURE_DEMAND" : "PRESSURE_EVIDENCE_MISSING";
+  if (entry.scope !== "ACTUAL") return "PRESSURE_SCOPE_NOT_ACTUAL";
+  if (entry.polarity !== "ASSERTED") return "PRESSURE_EVIDENCE_NOT_ASSERTED";
+  if (entry.status !== "ACTIVE" || (keywordId === "OWES" && !activePressureObligation(entry))) return keywordId === "OWES" ? "MISSING_PRESSURE_DEMAND" : "PRESSURE_EVIDENCE_NOT_ACTIVE";
+  if (!contextIsActive(state, contextId) || (entry.contextIds?.length && !entry.contextIds.includes(contextId))) return "CONTEXT_NOT_ACTIVE";
+  const now = timeOf(state.now);
+  const validFrom = timeOf(entry.validFrom);
+  const validUntil = entry.validUntil == null ? null : timeOf(entry.validUntil);
+  if (now === null || validFrom === null || validFrom > now || (entry.validUntil != null && (validUntil === null || now >= validUntil))) return "PRESSURE_EVIDENCE_OUTSIDE_VALIDITY";
+  return "PRESSURE_EVIDENCE_INVALID";
+}
+
+function pressureContractValidity(state, contract, actorId, targetId, contextId) {
+  const reasons = [];
+  const now = timeOf(state.now);
+  if (!nonEmpty(contract.contractId)) reasons.push("PRESSURE_CONTRACT_ID_MISSING");
+  if (!contract.provenance || ["sourceId", "sourceVersion", "sourceRecordId", "transformVersion", "licenseId"].some((field) => !nonEmpty(contract.provenance[field]))) reasons.push("PRESSURE_CONTRACT_PROVENANCE_MISSING");
+  if (contract.actorId !== actorId || contract.targetId !== targetId) reasons.push("PRESSURE_CONTRACT_ACTOR_TARGET_MISMATCH");
+  if (contract.contextId !== contextId) reasons.push("PRESSURE_CONTRACT_CONTEXT_MISMATCH");
+  if (contract.scope !== "ACTUAL") reasons.push("PRESSURE_SCOPE_NOT_ACTUAL");
+  if (contract.status !== "ACTIVE") reasons.push("PRESSURE_CONTRACT_NOT_ACTIVE");
+  const validFrom = timeOf(contract.validFrom);
+  const validUntil = contract.validUntil == null ? null : timeOf(contract.validUntil);
+  if (now === null || validFrom === null || validFrom > now || (contract.validUntil != null && (validUntil === null || now >= validUntil))) reasons.push("PRESSURE_EVIDENCE_OUTSIDE_VALIDITY");
+  if (!nonEmpty(contract.demand)) reasons.push("PRESSURE_DEMAND_MISSING");
+  const leverage = pressureContractFact(state, contract, contract.leverageAssertionId, "HAS_LEVERAGE_OVER", contextId);
+  const demand = pressureContractFact(state, contract, contract.obligationAssertionId, "OWES", contextId) ?? pressureContractFact(state, contract, contract.obligationAssertionId, "PROMISED_TO", contextId);
+  const fear = pressureContractFact(state, contract, contract.fearAssertionId, "FEARS", contextId);
+  if (!leverage) reasons.push(pressureFactFailure(state, contract.leverageAssertionId, "HAS_LEVERAGE_OVER", contextId));
+  if (!demand) reasons.push(pressureFactFailure(state, contract.obligationAssertionId, "OWES", contextId));
+  if (!fear) reasons.push(pressureFactFailure(state, contract.fearAssertionId, "FEARS", contextId));
+  if (leverage && !factMatchesDirection(leverage, actorId, targetId)) reasons.push("PRESSURE_LEVERAGE_ACTOR_TARGET_MISMATCH");
+  if (demand && (!factMatchesDirection(demand, targetId, actorId) || !nonEmpty(demand.args?.term) || stableKey(demand.args.term) !== stableKey(leverage?.args?.basis))) reasons.push("PRESSURE_DEMAND_LEVERAGE_MISMATCH");
+  if (fear && (fear.args?.subject !== targetId || fear.args?.object !== contract.fearedConsequenceId || fear.args?.object !== contract.consequenceId)) reasons.push("PRESSURE_FEAR_NOT_LINKED");
+  if (!nonEmpty(contract.consequenceId) || !nonEmpty(state.consequences?.[contract.consequenceId]) || contract.consequenceId !== contract.fearedConsequenceId) reasons.push("PRESSURE_CONSEQUENCE_NOT_AUTHORED");
+  return { contract, leverage, demand, fear, consequenceId: contract.consequenceId, reasons, valid: reasons.length === 0 };
+}
+
+/**
+ * Resolve pressure only through an explicit authored contract.  The contract
+ * binds actor, target, leverage, demand, fear, consequence, context, scope,
+ * and time; no fallback text or unrelated fact may fill a missing edge.
+ */
+export function resolvePressureGrounding(state, actorId, targetId, contextId) {
+  const leveragePredicate = (entry) => factMatchesDirection(entry, actorId, targetId) && nonEmpty(entry.args?.basis);
+  const leverageCandidates = pressureEvidenceCandidates(state, "HAS_LEVERAGE_OVER", leveragePredicate);
+  const leverages = pressureActualFacts(state, "HAS_LEVERAGE_OVER", leveragePredicate, contextId);
+  const obligationPredicate = (entry) => factMatchesDirection(entry, targetId, actorId) && nonEmpty(entry.args?.term) && activePressureObligation(entry);
+  const obligationCandidates = sortedFacts((state.facts ?? []).filter((entry) => ["OWES", "PROMISED_TO"].includes(entry.keywordId) && obligationPredicate(entry)));
+  const obligations = sortedFacts([
+    ...pressureActualFacts(state, "OWES", obligationPredicate, contextId),
+    ...pressureActualFacts(state, "PROMISED_TO", obligationPredicate, contextId),
+  ]);
+  const fearPredicate = (entry) => entry.args?.subject === targetId && nonEmpty(entry.args?.object);
+  const fearCandidates = pressureEvidenceCandidates(state, "FEARS", fearPredicate);
+  const fears = pressureActualFacts(state, "FEARS", fearPredicate, contextId);
+  const authoredConsequences = new Set(Object.keys(state.consequences ?? {}).filter((key) => nonEmpty(key) && nonEmpty(state.consequences[key])));
+  const consequenceFears = fears.filter((entry) => authoredConsequences.has(entry.args.object));
+  const leverageBasisKeys = new Set(leverages.map((entry) => stableKey(entry.args.basis)));
+  const demandByBasis = obligations.filter((entry) => leverageBasisKeys.has(stableKey(entry.args.term)));
+  const contractCandidates = (state.pressureContracts ?? []).filter((contract) => contract.actorId === actorId && contract.targetId === targetId && contract.contextId === contextId).sort((left, right) => String(left.contractId).localeCompare(String(right.contractId)));
+  const contractEvidence = contractCandidates.map((contract) => pressureContractValidity(state, contract, actorId, targetId, contextId));
+  const matchingProhibitions = pressureActualFacts(state, "PROHIBITED", (entry) => {
+    const directionMatches = factMatchesDirection(entry, actorId, targetId) || factMatchesDirection(entry, targetId, actorId);
+    const termMatches = entry.args?.term === "INVOKE_CONSEQUENCE" || leverageBasisKeys.has(stableKey(entry.args?.term)) || obligations.some((demand) => stableKey(demand.args?.term) === stableKey(entry.args?.term));
+    return directionMatches && termMatches;
+  }, contextId);
+  const linked = contractEvidence.filter((entry) => entry.valid && !matchingProhibitions.length);
+  const chains = linked.map((entry) => ({
+    contract: entry.contract,
+    pressureContractId: entry.contract.contractId,
+    leverage: entry.leverage,
+    demand: entry.demand,
+    fear: entry.fear,
+    consequenceId: entry.consequenceId,
+    prohibited: matchingProhibitions,
+  }));
+  return {
+    leverageCandidates, leverages, linkedLeverages: contractEvidence.filter((entry) => entry.leverage).map((entry) => entry.leverage),
+    obligationCandidates, obligations, linkedDemands: contractEvidence.filter((entry) => entry.demand).map((entry) => entry.demand),
+    demandByBasis, fearCandidates, fears, consequenceFears,
+    authoredConsequences: [...authoredConsequences].sort(), matchingProhibitions,
+    contractCandidates, contractEvidence, chain: chains[0] ?? null, chains,
+  };
+}
+
+function pressureMatchedIds(...groups) {
+  return groups.flatMap((group) => group ?? []).map((entry) => entry.assertionId).filter(Boolean).sort();
+}
+
+function pressureContractMatchedIds(evidence) {
+  return [
+    evidence.contract?.contractId,
+    evidence.leverage?.assertionId,
+    evidence.demand?.assertionId,
+    evidence.fear?.assertionId,
+  ].filter(Boolean).sort();
+}
+
+const checkPressureLeverage = (state, actorId, targetId, contextId) => {
+  const evidence = resolvePressureGrounding(state, actorId, targetId, contextId);
+  if (evidence.linkedLeverages.length) return pass("PRESSURE_LEVERAGE_GROUNDED", "An actual, asserted, active leverage basis is authored for this actor and target.", pressureMatchedIds(evidence.linkedLeverages));
+  const contractDiagnostic = evidence.contractEvidence.flatMap((entry) => entry.reasons).find((code) => ["PRESSURE_SCOPE_NOT_ACTUAL", "PRESSURE_EVIDENCE_NOT_ASSERTED", "PRESSURE_EVIDENCE_OUTSIDE_VALIDITY", "PRESSURE_EVIDENCE_NOT_ACTIVE"].includes(code));
+  if (contractDiagnostic) return fail(contractDiagnostic, "The pressure contract's leverage evidence is not actual, asserted, active, and time-valid.", []);
+  if (evidence.leverages.length && evidence.contractCandidates.length) return fail("PRESSURE_DEMAND_LEVERAGE_MISMATCH", "The authored pressure contract does not link the actor's active leverage basis.", pressureMatchedIds(evidence.leverages));
+  const diagnostic = factValidityDiagnostic(state, evidence.leverageCandidates, "MISSING_PRESSURE_LEVERAGE", "No actual, asserted, active leverage basis is authored for this actor and target.");
+  return fail(diagnostic.code, diagnostic.message, diagnostic.matchedFacts);
+};
+
+const checkPressureDemand = (state, actorId, targetId, contextId) => {
+  const evidence = resolvePressureGrounding(state, actorId, targetId, contextId);
+  if (evidence.linkedDemands.length) return pass("PRESSURE_DEMAND_GROUNDED", "An active authored obligation or promise is named by the pressure contract.", pressureMatchedIds(evidence.linkedDemands, evidence.linkedLeverages));
+  const contractDiagnostic = evidence.contractEvidence.flatMap((entry) => entry.reasons).find((code) => ["PRESSURE_SCOPE_NOT_ACTUAL", "PRESSURE_EVIDENCE_NOT_ASSERTED", "PRESSURE_EVIDENCE_OUTSIDE_VALIDITY", "PRESSURE_EVIDENCE_NOT_ACTIVE"].includes(code));
+  if (contractDiagnostic) return fail(contractDiagnostic, "The pressure contract's demand evidence is not actual, asserted, active, and time-valid.", []);
+  const missingContractEvidence = evidence.contractEvidence.flatMap((entry) => entry.reasons).find((code) => ["PRESSURE_EVIDENCE_MISSING", "MISSING_PRESSURE_DEMAND"].includes(code));
+  if (missingContractEvidence) return fail(missingContractEvidence, "The pressure contract names no active authored demand evidence.", []);
+  if (evidence.demandByBasis.length && evidence.contractCandidates.length) return fail("PRESSURE_DEMAND_LEVERAGE_MISMATCH", "The active obligation is not the obligation named by the authored pressure contract.", pressureMatchedIds(evidence.demandByBasis));
+  if (evidence.obligations.length) return fail("PRESSURE_DEMAND_LEVERAGE_MISMATCH", "The authored demand term does not match the actor's leverage basis; pressure cannot cross-contaminate obligations.", pressureMatchedIds(evidence.obligations, evidence.leverages));
+  const diagnostic = factValidityDiagnostic(state, evidence.obligationCandidates, "MISSING_PRESSURE_DEMAND", "No active authored obligation or promise connects the target to the actor's leverage basis.");
+  return fail(diagnostic.code, diagnostic.message, diagnostic.matchedFacts);
+};
+
+const checkPressureConsequence = (state, actorId, targetId, contextId) => {
+  const evidence = resolvePressureGrounding(state, actorId, targetId, contextId);
+  if (evidence.chain) return pass("PRESSURE_CONSEQUENCE_GROUNDED", "The target's authored fear names the selected authored consequence within the same pressure chain.", pressureContractMatchedIds(evidence.chain));
+  if (evidence.matchingProhibitions.length) return fail("PRESSURE_PROHIBITED", "An authored prohibition defeats this pressure chain.", pressureMatchedIds(evidence.matchingProhibitions));
+  const invalidContract = evidence.contractEvidence.find((entry) => entry.reasons.length);
+  if (invalidContract) {
+    const priority = ["PRESSURE_FEAR_NOT_LINKED", "PRESSURE_CONSEQUENCE_NOT_AUTHORED", "PRESSURE_CONTRACT_PROVENANCE_MISSING", "PRESSURE_EVIDENCE_MISSING", "PRESSURE_EVIDENCE_NOT_ASSERTED", "PRESSURE_EVIDENCE_NOT_ACTIVE", "PRESSURE_EVIDENCE_OUTSIDE_VALIDITY"];
+    const reason = priority.find((code) => invalidContract.reasons.includes(code)) ?? invalidContract.reasons[0];
+    return fail(reason, `The authored pressure contract ${invalidContract.contract.contractId} failed its linked evidence checks.`, pressureContractMatchedIds(invalidContract));
+  }
+  if (evidence.fears.length && !evidence.consequenceFears.length) return fail("PRESSURE_FEAR_NOT_LINKED", "The target has fear evidence, but it does not name an authored consequence identity.", pressureMatchedIds(evidence.fears));
+  if (evidence.consequenceFears.length && !evidence.demandByBasis.length) return fail("PRESSURE_CONSEQUENCE_DEMAND_NOT_LINKED", "The feared consequence is authored, but no demand is linked to the leverage basis.", pressureMatchedIds(evidence.consequenceFears, evidence.leverages));
+  if (evidence.fearCandidates.length) {
+    const diagnostic = factValidityDiagnostic(state, evidence.fearCandidates, "MISSING_PRESSURE_FEARED_CONSEQUENCE", "No actual, asserted, active, time-valid target fear is available for this pressure chain.");
+    return fail(diagnostic.code, diagnostic.message, diagnostic.matchedFacts);
+  }
+  return fail("MISSING_PRESSURE_FEARED_CONSEQUENCE", "No target fear is authored for an identity in the consequence map.");
+};
+
+function pressurePayload(actorId, targetId, state, contextId) {
+  const evidence = resolvePressureGrounding(state, actorId, targetId, contextId);
+  if (!evidence.chain) throw new Error("PRESSURE_GROUNDING_UNAVAILABLE");
+  const { leverage, demand, fear, consequenceId } = evidence.chain;
+  const allEvidence = [evidence.chain.contract, leverage, demand, fear];
+  const validFromEntry = allEvidence.reduce((current, entry) => timeOf(entry.validFrom) > timeOf(current.validFrom) ? entry : current, allEvidence[0]);
+  const boundedUntil = allEvidence.filter((entry) => entry.validUntil != null).sort((left, right) => timeOf(left.validUntil) - timeOf(right.validUntil))[0] ?? null;
+  const compactFields = (fields) => Object.fromEntries(Object.entries(fields).filter(([, value]) => value !== undefined && value !== null));
+  const validity = compactFields({
+    scope: "ACTUAL",
+    contextId,
+    validFrom: validFromEntry.validFrom,
+    validUntil: boundedUntil?.validUntil ?? null,
+    validUntilIsUnbounded: boundedUntil === null,
+  });
+  return {
+    actor: actorId,
+    target: targetId,
+    action: "INVOKE_CONSEQUENCE",
+    contextId,
+    leverage: compactFields({
+      actor: actorId,
+      target: targetId,
+      basis: leverage.args.basis,
+      sourceAssertionId: leverage.assertionId,
+      scope: leverage.scope,
+      contextId,
+      validFrom: leverage.validFrom,
+      validUntil: leverage.validUntil,
+      pressureContractId: evidence.chain.pressureContractId,
+    }),
+    demand: compactFields({
+      kind: demand.keywordId === "OWES" ? "FULFILL_OBLIGATION" : "HONOR_PROMISE",
+      demandId: pressureDemandId(demand),
+      subject: demand.args.subject,
+      object: demand.args.object,
+      term: demand.args.term,
+      amount: demand.args.amount,
+      unit: demand.args.unit,
+      due: demand.args.due,
+      sourceAssertionId: demand.assertionId,
+      scope: demand.scope,
+      contextId,
+      validFrom: demand.validFrom,
+      validUntil: demand.validUntil,
+      pressureContractId: evidence.chain.pressureContractId,
+      authoredDemand: evidence.chain.contract.demand,
+    }),
+    consequence: compactFields({
+      consequenceId,
+      text: state.consequences[consequenceId],
+      fearedBy: fear.args.subject,
+      fearedConsequenceSourceAssertionId: fear.assertionId,
+      leverageBasis: leverage.args.basis,
+      demandId: pressureDemandId(demand),
+      scope: fear.scope,
+      contextId,
+      validFrom: fear.validFrom,
+      validUntil: fear.validUntil,
+      validity,
+      pressureContractId: evidence.chain.pressureContractId,
+    }),
+  };
+};
+
 export const ACTION_DEFINITIONS = Object.freeze([
   {
     actionId: "REQUEST_EXTENSION", displayName: "Request a repayment extension", macroAct: "ASK",
@@ -342,9 +627,9 @@ export const ACTION_DEFINITIONS = Object.freeze([
   },
   {
     actionId: "INVOKE_CONSEQUENCE", displayName: "Invoke an authored consequence", macroAct: "PRESSURE",
-    requiredChecks: [checkAnyFact("HAS_LEVERAGE_OVER", "An authored leverage basis"), checkTargetVulnerability("FEARS", "A target-relevant vulnerability")],
+    requiredChecks: [checkActiveContext, checkPressureLeverage, checkPressureDemand, checkPressureConsequence],
     forbiddenChecks: [],
-    payload: (actorId, targetId, state) => ({ actor: actorId, target: targetId, action: "INVOKE_CONSEQUENCE", demand: "satisfy the active obligation", consequence: Object.values(state.consequences)[0] ?? "the authored consequence" }),
+    payload: pressurePayload,
     history: "CONSEQUENCE_INVOKED",
   },
   {
@@ -421,7 +706,7 @@ export function resolveAction(state, actionId, actorId, targetId, contextId) {
   const action = ACTION_BY_ID.get(actionId);
   const nextState = structuredClone(state);
   const available = evaluation.status === "AVAILABLE";
-  const payload = available ? action.payload(actorId, targetId, state) : null;
+  const payload = available ? action.payload(actorId, targetId, state, contextId) : null;
   const existingHistoryIds = new Set((state.history ?? []).map((event) => event.historyId));
   const priorOccurrences = (state.history ?? []).filter((event) => event.actionId === actionId && event.actorId === actorId && event.targetId === targetId && event.contextId === contextId).length;
   let occurrence = priorOccurrences + 1;

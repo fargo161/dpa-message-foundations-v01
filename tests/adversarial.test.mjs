@@ -1,12 +1,13 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync, statSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import {
   DEMO_SCENARIOS,
   createAccessScenario,
   createMarcusScenario,
+  createSecretScenario,
   enumerateSemanticConfigurations,
   evaluateAction,
   fact,
@@ -15,6 +16,8 @@ import {
 import { generateMatrix } from "../src/based.mjs";
 import { normalizeAtomicRows, normalizeSocialChemistryTsv } from "../src/ingestion.mjs";
 import { SOURCE_BY_ID, validateArtifactDigest } from "../src/sources.mjs";
+import { assertValidDocument } from "../src/schema-validator.mjs";
+import { FoundationStore } from "../src/store.mjs";
 import addFormats from "ajv-formats";
 
 const root = fileURLToPath(new URL("..", import.meta.url));
@@ -70,10 +73,12 @@ test("capacity is independently derived into act-compatible and incompatible cla
   assert.equal(capacity.candidatePairs, 8);
   assert.equal(metric(capacity, "theoretical"), 4320);
   assert.equal(metric(capacity, "actIncompatible", "actIncompatibleCandidates"), 8640);
-  assert.equal(metric(capacity, "blocked", "blockedCandidates"), 3660);
+  // Strict pressure grounding removes the previously available but unauthored
+  // secret-pressure branch: 600 valid and 3,720 blocked.
+  assert.equal(metric(capacity, "blocked", "blockedCandidates"), 3720);
   assert.equal(metric(capacity, "duplicate", "duplicateCandidates"), 0);
   assert.equal(metric(capacity, "unreachable", "unreachableCandidates"), 0);
-  assert.equal(metric(capacity, "validUnique", "validUniqueSemanticConfigurations"), 660);
+  assert.equal(metric(capacity, "validUnique", "validUniqueSemanticConfigurations"), 600);
 });
 
 test("belief-scoped debt cannot authorize an actual-world request", () => {
@@ -304,4 +309,303 @@ test("raw corpus bytes are not tracked and candidate text contains no secrets or
     if (secretPattern.test(content)) sensitive.push(relativePath);
   }
   assert.deepEqual(sensitive, [], `secrets or private machine paths found in candidate files: ${sensitive.join(", ")}`);
+});
+
+test("INVOKE_CONSEQUENCE requires linked authored pressure evidence", () => {
+  const unrelatedFear = createMarcusScenario();
+  unrelatedFear.facts = unrelatedFear.facts.filter((entry) => entry.keywordId !== "FEARS");
+  unrelatedFear.facts.push(fact("FEARS", { subject: "player", object: "unrelated_social_embarrassment" }, {
+    assertionId: "player_fears_unrelated_embarrassment",
+    contextIds: ["PRIVATE_NEGOTIATION"],
+  }));
+  assert.equal(
+    evaluateAction(unrelatedFear, "INVOKE_CONSEQUENCE", "marcus_broker_hill", "player", "PRIVATE_NEGOTIATION").status,
+    "BLOCKED",
+    "an unrelated target fear authorized pressure",
+  );
+
+  const noObligation = createMarcusScenario();
+  noObligation.facts = noObligation.facts.filter((entry) => !["OWES", "PROMISED_TO"].includes(entry.keywordId));
+  assert.equal(
+    evaluateAction(noObligation, "INVOKE_CONSEQUENCE", "marcus_broker_hill", "player", "PRIVATE_NEGOTIATION").status,
+    "BLOCKED",
+    "generic pressure remained available without an active authored demand or obligation",
+  );
+
+  const mismatchedSecret = createSecretScenario();
+  const secretPressure = resolveAction(mismatchedSecret, "INVOKE_CONSEQUENCE", "imani_intermediary", "player", "PRIVATE_DISCLOSURE");
+  assert.equal(secretPressure.outcome, "BLOCKED", "secret leverage silently became an obligation pressure");
+
+  const linked = resolveAction(createMarcusScenario(), "INVOKE_CONSEQUENCE", "marcus_broker_hill", "player", "PRIVATE_NEGOTIATION");
+  assert.equal(linked.outcome, "PROPOSED", "the fully linked authored pressure chain was rejected");
+  assert.equal(linked.payload.leverage.sourceAssertionId, "marcus_leverage_debt");
+  assert.equal(linked.payload.leverage.basis, "debt_250_usd");
+  assert.equal(linked.payload.demand.sourceAssertionId, "player_owes_marcus_250");
+  assert.equal(linked.payload.demand.term, "debt_250_usd");
+  assert.equal(linked.payload.consequence.consequenceId, "public_debt_exposure");
+  assert.equal(linked.payload.consequence.fearedConsequenceSourceAssertionId, "player_fears_exposure");
+  assert.equal(linked.payload.consequence.leverageBasis, linked.payload.leverage.basis);
+  assert.equal(linked.payload.consequence.demandId, linked.payload.demand.demandId);
+});
+
+test("pressure evidence obeys scope, time, context, dispute, and prohibition boundaries", () => {
+  const mutations = [
+    ["belief-only leverage", (state) => state.facts.filter((entry) => entry.keywordId === "HAS_LEVERAGE_OVER").forEach((entry) => { entry.scope = "BELIEF"; })],
+    ["expired leverage", (state) => state.facts.filter((entry) => entry.keywordId === "HAS_LEVERAGE_OVER").forEach((entry) => { entry.validUntil = state.now; })],
+    ["disputed leverage", (state) => state.facts.filter((entry) => entry.keywordId === "HAS_LEVERAGE_OVER").forEach((entry) => { entry.polarity = "DISPUTED"; })],
+    ["inactive context", (state) => { state.contexts[0].active = false; }],
+    ["prohibited pressure", (state) => state.facts.push(fact("PROHIBITED", { subject: "player", object: "marcus_broker_hill", term: "INVOKE_CONSEQUENCE" }, { assertionId: "prohibit_pressure", contextIds: ["PRIVATE_NEGOTIATION"] }))],
+  ];
+  for (const [label, mutate] of mutations) {
+    const state = createMarcusScenario();
+    mutate(state);
+    const evaluation = evaluateAction(state, "INVOKE_CONSEQUENCE", "marcus_broker_hill", "player", "PRIVATE_NEGOTIATION");
+    assert.equal(evaluation.status, "BLOCKED", `${label} evidence authorized pressure`);
+  }
+});
+
+test("adapter derives occurrence-specific identities and authenticates event provenance", () => {
+  const adapter = adapterLoad.module;
+  assert.ok(adapter, "action adapter did not load");
+  const state = createMarcusScenario();
+  const firstResolution = resolveAction(state, "REQUEST_EXTENSION", "player", "marcus_broker_hill", "PRIVATE_NEGOTIATION");
+  const first = adapter.adaptResolvedActionToSemanticRequest(firstResolution);
+  const replay = adapter.adaptResolvedActionToSemanticRequest(firstResolution);
+  const secondResolution = resolveAction(firstResolution.stateAfter, "REQUEST_EXTENSION", "player", "marcus_broker_hill", "PRIVATE_NEGOTIATION");
+  const second = adapter.adaptResolvedActionToSemanticRequest(secondResolution);
+
+  assert.equal(first.ok, true);
+  assert.equal(replay.ok, true);
+  assert.equal(second.ok, true);
+  assert.equal(replay.semanticRequest.semanticRequestId, first.semanticRequest.semanticRequestId, "replaying one immutable event was not idempotent");
+  assert.notEqual(first.semanticRequest.semanticRequestId, second.semanticRequest.semanticRequestId, "separate event occurrences collided");
+  assert.equal(first.semanticRequest.provenance[0].sourceRecordId, firstResolution.emittedHistory[0].historyId, "adapter provenance does not identify the emitted event");
+  assert.equal(second.semanticRequest.provenance[0].sourceRecordId, secondResolution.emittedHistory[0].historyId);
+
+  const missingHistory = structuredClone(firstResolution);
+  delete missingHistory.emittedHistory;
+  assert.equal(adapter.adaptResolvedActionToSemanticRequest(missingHistory).ok, false, "resolution without event identity crossed the adapter");
+  const driftedHistory = structuredClone(firstResolution);
+  driftedHistory.emittedHistory[0].historyId = "unrelated:event:identity";
+  assert.equal(adapter.adaptResolvedActionToSemanticRequest(driftedHistory).ok, false, "drifted event identity crossed the adapter");
+  const contextDrift = structuredClone(firstResolution);
+  contextDrift.contextId = "OTHER_CONTEXT";
+  assert.equal(adapter.adaptResolvedActionToSemanticRequest(contextDrift).ok, false, "explicit context drift from event identity crossed the adapter");
+  const missingStateSnapshots = structuredClone(firstResolution);
+  delete missingStateSnapshots.stateBefore;
+  delete missingStateSnapshots.stateAfter;
+  assert.equal(adapter.adaptResolvedActionToSemanticRequest(missingStateSnapshots).ok, false, "event identity without state snapshots crossed the adapter");
+});
+
+test("semantic invariance covers the complete envelope, contradictory slot pairs, and identity consistency", (t) => {
+  const tpl = requireTpl(t);
+  if (!tpl) return;
+  const before = {
+    schemaVersion: "dpa-keyword-foundation@0.1",
+    adapterVersion: "action-tpl-adapter@0.1",
+    semanticRequestId: "envelope-red-team",
+    actionId: "REQUEST_EXTENSION",
+    actorId: "player",
+    targetId: "marcus_broker_hill",
+    contextId: "PRIVATE_NEGOTIATION",
+    actor: "player",
+    target: "marcus_broker_hill",
+    action: "REQUEST_EXTENSION",
+    speechAct: "ASK",
+    outcome: "PROPOSED",
+    slots: { REQUEST: "review the ledger", request: "review the ledger", actor: "player", target: "marcus_broker_hill", action: "REQUEST_EXTENSION", contextId: "PRIVATE_NEGOTIATION" },
+    mandatorySemanticFacts: ["player_owes_marcus_250"],
+    forbiddenSemanticAdditions: ["unauthored_threat"],
+    provenance: [{ sourceId: "mechanics-action-resolution", sourceRecordId: "event-1", transformVersion: "action-tpl-adapter@0.1", licenseId: "PROJECT_AUTHORED" }],
+  };
+  const scalarMutations = {
+    schemaVersion: "other-schema@9",
+    adapterVersion: "other-adapter@9",
+    semanticRequestId: "other-request",
+    actionId: "OTHER_ACTION",
+    actorId: "other-actor",
+    targetId: "other-target",
+    contextId: "OTHER_CONTEXT",
+    actor: "other-actor",
+    target: "other-target",
+    action: "OTHER_ACTION",
+    speechAct: "DEAL",
+    outcome: "BLOCKED",
+  };
+  for (const [field, value] of Object.entries(scalarMutations)) {
+    const changed = structuredClone(before);
+    changed[field] = value;
+    assert.equal(tpl.validateSemanticInvariance(before, changed).passed, false, `${field} mutation was accepted`);
+    const removed = structuredClone(before);
+    delete removed[field];
+    assert.equal(tpl.validateSemanticInvariance(before, removed).passed, false, `${field} removal was accepted`);
+    const added = structuredClone(before);
+    delete added[field];
+    assert.equal(tpl.validateSemanticInvariance(added, before).passed, false, `${field} addition was accepted`);
+  }
+  for (const field of ["slots", "mandatorySemanticFacts", "forbiddenSemanticAdditions", "provenance"]) {
+    const changed = structuredClone(before);
+    if (field === "slots") changed.slots.REQUEST = "pay now";
+    else if (field === "provenance") changed.provenance[0].sourceRecordId = "event-2";
+    else changed[field].push("unauthorized-mutation");
+    assert.equal(tpl.validateSemanticInvariance(before, changed).passed, false, `${field} mutation was accepted`);
+    const removed = structuredClone(before);
+    delete removed[field];
+    assert.equal(tpl.validateSemanticInvariance(before, removed).passed, false, `${field} removal was accepted`);
+  }
+
+  const contradictoryCase = structuredClone(before);
+  contradictoryCase.slots.request = "pay now";
+  assert.equal(tpl.validateSemanticPayload(contradictoryCase).passed, false, "contradictory REQUEST/request slots were accepted");
+  const slotIdentityDrift = structuredClone(before);
+  slotIdentityDrift.slots.actor = "other-actor";
+  assert.equal(tpl.validateSemanticPayload(slotIdentityDrift).passed, false, "slot actor drift from top-level actor was accepted");
+});
+
+test("malformed required semantic slots fail closed", (t) => {
+  const tpl = requireTpl(t);
+  if (!tpl) return;
+  const cases = [
+    ["ASK", { REQUEST: {} }],
+    ["ASK", { REQUEST: [] }],
+    ["DEAL", { OFFER: {}, RETURN: { object: "extension" } }],
+    ["DEAL", { OFFER: { object: "cash", quantity: "eighty", unit: "USD" }, RETURN: { object: "extension" } }],
+    ["DEAL", { OFFER: { object: "cash", quantity: 80, unit: "USD" }, RETURN: [] }],
+    ["PRESSURE", { DEMAND: {}, CONSEQUENCE: "report the debt" }],
+    ["PRESSURE", { DEMAND: "pay today", CONSEQUENCE: [] }],
+  ];
+  for (const [speechAct, slots] of cases) {
+    assert.equal(tpl.validateSemanticPayload({ semanticRequestId: `malformed-${speechAct}`, speechAct, slots }).passed, false, `${speechAct} malformed slots were accepted`);
+  }
+});
+
+test("the executable mechanics schema accepts the actual repaired state and pressure resolution", () => {
+  const schema = JSON.parse(readFileSync(`${root}/schemas/mechanics.schema.json`, "utf8"));
+  const state = createMarcusScenario();
+  assert.doesNotThrow(() => assertValidDocument(state, schema, "red-team:mechanics-state"), "the mechanics schema rejects the actual state shape");
+  const pressure = resolveAction(state, "INVOKE_CONSEQUENCE", "marcus_broker_hill", "player", "PRIVATE_NEGOTIATION");
+  assert.doesNotThrow(() => assertValidDocument(pressure, schema, "red-team:pressure-resolution"), "the mechanics schema rejects the actual pressure resolution shape");
+});
+
+test("Social Chemistry preserves row-specific action evidence, collisions, duplicates, and order", () => {
+  const headers = ["rot-id", "rot", "situation", "split", "rot-bad", "rot-agree", "rot-categorization", "rot-moral-foundations", "action-legal", "action-pressure", "rot-worker-id", "breakdown-worker-id", "action", "area"];
+  const row = (action, legal, pressure, rotWorker, breakdownWorker) => ["rot-collision", "Honor the agreement", "A deal is pending", "train", "0", "3", "fairness", "fairness", legal, String(pressure), rotWorker, breakdownWorker, action, "negotiation"];
+  const rows = [
+    row("ask for a fair extension", "legal", 0.1, "worker-a", "breakdown-a"),
+    row("demand immediate payment", "illegal", 0.9, "worker-a", "breakdown-a"),
+    row("demand immediate payment", "illegal", 0.9, "worker-a", "breakdown-a"),
+    row("suggest mediation", "unclear", 0.5, "worker-b", "breakdown-b"),
+  ];
+  const text = [headers, ...rows].map((entry) => entry.join("\t")).join("\n");
+  const reversed = [headers, ...rows.toReversed()].map((entry) => entry.join("\t")).join("\n");
+  const first = normalizeSocialChemistryTsv(text);
+  const second = normalizeSocialChemistryTsv(reversed);
+  assert.deepEqual(second, first, "reordering rows changed normalized Social Chemistry evidence");
+  assert.equal(first.records.length, 1);
+  assert.equal(first.records[0].annotations.length, 3, "distinct annotation collision was discarded");
+  assert.equal(first.duplicateRecords.length, 1, "exact duplicate was not counted separately");
+  assert.equal(first.aggregatedAnnotationRows, 2);
+  for (const action of ["ask for a fair extension", "demand immediate payment", "suggest mediation"]) {
+    assert.ok(first.records[0].annotations.some((annotation) => annotation.action === action), `row-specific action evidence ${action} was discarded`);
+  }
+  assert.deepEqual(first.records[0].annotations.map((annotation) => annotation.legalityJudgment), ["illegal", "legal", "unclear"]);
+  assert.deepEqual(first.records[0].annotations.map((annotation) => annotation.culturalPressure), [0.9, 0.1, 0.5]);
+  assert.equal(first.records[0].aggregatedAnnotationCount, 3);
+});
+
+test("FoundationStore rejects non-synthetic bytes that do not match the registered receipt", () => {
+  const source = SOURCE_BY_ID.get("atomic-2020");
+  const result = new FoundationStore().importSource({
+    source,
+    records: [],
+    bytes: Buffer.from("corrupted artifact bytes"),
+    retrievedAt: "2026-09-02T12:00:00.000Z",
+    synthetic: false,
+  });
+  assert.equal(result.status, "BLOCKED", "unregistered bytes were committed as an acquired source");
+  assert.ok(result.errors.some((error) => /CHECKSUM|BYTE_SIZE/.test(error)));
+});
+
+test("TPL authority and acquisition code fail closed before receipt or extraction", () => {
+  const processor = readFileSync(`${root}/scripts/process-real-datasets.mjs`, "utf8");
+  const registerStart = processor.indexOf("async function registerTplAuthority");
+  const registerEnd = processor.indexOf("\n}\n\nawait mkdir", registerStart);
+  assert.ok(registerStart >= 0 && registerEnd > registerStart, "TPL authority registration function was not found");
+  const registration = processor.slice(registerStart, registerEnd);
+  const validationPosition = registration.indexOf("validateArtifactDigest(source, receipt)");
+  const receiptWritePosition = registration.indexOf("writeFile(receiptPath");
+  assert.ok(validationPosition >= 0, "TPL authority registration never validates the registered digest");
+  assert.ok(validationPosition < receiptWritePosition, "TPL authority receipt is written before digest validation");
+
+  assert.match(processor, /import\s*\{[^}]*EXTERNAL_DATA_CACHE_ROOT[^}]*\}\s*from\s*["']\.\.\/src\/sources\.mjs["']/s, "processor duplicated the cache root instead of importing it");
+  assert.match(processor, /function trackedPath\(path\)\s*\{\s*return canonicalPosixPath\(relative\(root, path\)\);\s*\}/, "processor does not canonicalize tracked paths to POSIX separators");
+});
+
+test("tracked acquisition paths are canonical POSIX paths", () => {
+  const manifest = JSON.parse(readFileSync(`${root}/data/acquisition-manifest.json`, "utf8"));
+  const pathValues = [];
+  for (const source of manifest.sources) pathValues.push(source.artifactCachePath, source.receiptPath, source.normalizedRecordsPath, source.extraction?.extractedPath, source.indexSnapshot?.persistedPostingsPath);
+  assert.ok(pathValues.every((value) => value == null || !String(value).includes("\\")), "tracked manifest contains Windows separators");
+});
+
+test("every acquisition source reports the same count fields", () => {
+  const manifest = JSON.parse(readFileSync(`${root}/data/acquisition-manifest.json`, "utf8"));
+  for (const source of manifest.sources) {
+    for (const key of ["raw", "accepted", "rejected", "duplicate", "aggregatedAnnotationRows", "normalized", "indexed"]) assert.ok(Object.hasOwn(source.counts, key), `${source.sourceId} lacks counts.${key}`);
+  }
+});
+
+test("CI declares minimum read-only permissions", () => {
+  const workflow = readFileSync(`${root}/.github/workflows/ci.yml`, "utf8");
+  assert.match(workflow, /permissions:\s*\n\s*contents:\s*read/, "CI workflow does not declare minimum read-only permissions");
+});
+
+test("CI enforces generated-artifact freshness", () => {
+  const workflow = readFileSync(`${root}/.github/workflows/ci.yml`, "utf8");
+  assert.ok(/git\s+diff\s+--exit-code\s+--\s+(?:data\/generated|data\/source-manifest)/.test(workflow) || /node\s+scripts\/check-generated\.mjs/.test(workflow), "CI builds artifacts but never fails on stale tracked generated output");
+});
+
+test("generated tracked artifacts exactly match the current executable builders", (t) => {
+  if (inspectionLoad.error) {
+    t.skip(`inspection import blocker: ${inspectionLoad.error.message}`);
+    return;
+  }
+  const inspection = inspectionLoad.module;
+  const report = inspection.buildInspectionReport();
+  assert.deepEqual(JSON.parse(readFileSync(`${root}/data/generated/foundation-inspection.json`, "utf8")), JSON.parse(JSON.stringify(report)), "foundation inspection artifact is stale");
+  assert.deepEqual(JSON.parse(readFileSync(`${root}/data/source-manifest.json`, "utf8")), JSON.parse(JSON.stringify(report.sources)), "source-manifest artifact is stale");
+  if (!tplLoad.module) {
+    t.skip(syntaxBlocker ?? "TPL import unavailable");
+    return;
+  }
+  const tpl = tplLoad.module;
+  const basedTpl = {
+    schemaVersion: report.schemaVersion,
+    cues: report.based.cues,
+    vibes: report.based.vibes,
+    speechActs: report.based.speechActs,
+    deliveryIntensities: report.based.deliveryIntensities,
+    matrix: tpl.buildTplScaffold().matrix,
+    tplFamilies: tpl.TPL_FAMILIES,
+    atoms: tpl.TPL_ATOMS,
+    constructions: tpl.TPL_CONSTRUCTIONS,
+    protocols: tpl.TPL_PROTOCOLS,
+    semanticInvarianceBoundary: tpl.FACE_COMPATIBILITY_BOUNDARY,
+    fallbackPolicy: tpl.TPL_FALLBACK_POLICY,
+  };
+  assert.deepEqual(JSON.parse(readFileSync(`${root}/data/generated/based-tpl-foundation.json`, "utf8")), basedTpl, "BASED/TPL artifact is stale");
+});
+
+test("tracked repository surface has no unexpectedly large files and acquisition attribution is complete", () => {
+  const tracked = runGit(["ls-files"]).split(/\r?\n/).filter(Boolean);
+  const large = tracked.filter((relativePath) => existsSync(`${root}/${relativePath}`) && statSync(`${root}/${relativePath}`).size > 10 * 1024 * 1024);
+  assert.deepEqual(large, [], `unexpectedly large tracked files: ${large.join(", ")}`);
+  const manifest = JSON.parse(readFileSync(`${root}/data/acquisition-manifest.json`, "utf8"));
+  for (const source of manifest.sources) {
+    assert.ok(source.sourceVersion, `${source.sourceId} has no source version`);
+    assert.ok(source.licenseId, `${source.sourceId} has no license attribution`);
+    assert.ok(source.artifactFilename, `${source.sourceId} has no artifact filename`);
+    assert.match(source.sha256, /^[a-f0-9]{64}$/, `${source.sourceId} has no SHA-256 receipt`);
+    assert.ok(Number.isSafeInteger(source.byteSize) && source.byteSize > 0, `${source.sourceId} has no byte size receipt`);
+  }
 });

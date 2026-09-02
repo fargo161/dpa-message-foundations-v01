@@ -55,15 +55,135 @@ const protectedSlots = [
 ];
 const semanticSlots = ["OFFER", "RETURN", "DEMAND", "CONSEQUENCE", "REQUEST"];
 const allowedSlotNames = new Set([...protectedSlots, ...semanticSlots]);
-const topLevelProtectedFields = [
-  "actor", "target", "recipient", "action", "object", "quantity", "price", "deadline", "location", "ownership", "permission",
-  "prohibition", "condition", "leverage", "consequence", "outcome", "knowledge", "authorOnlyReveal", "stateDelta", "contextId",
-  "actorId", "targetId", "actionId",
+const canonicalEnvelopeFields = [
+  "schemaVersion", "adapterVersion", "semanticRequestId", "actionId", "actorId", "targetId", "contextId",
+  "actor", "target", "action", "speechAct", "outcome", "slots", "mandatorySemanticFacts", "forbiddenSemanticAdditions", "provenance",
 ];
+const canonicalEnvelopeFieldSet = new Set(canonicalEnvelopeFields);
+const legacyEnvelopeFields = new Set(["semanticRequestId", "speechAct", "slots", "actorId", "targetId"]);
+const identityFields = ["actor", "target", "action", "contextId", "actorId", "targetId", "actionId"];
+const requiredCanonicalFields = canonicalEnvelopeFields;
 
 const hasOwn = (value, key) => Object.prototype.hasOwnProperty.call(value ?? {}, key);
 const isObject = (value) => value !== null && typeof value === "object" && !Array.isArray(value);
 const isPresent = (value) => value !== undefined && value !== null && (!(typeof value === "string") || value.trim().length > 0);
+
+function hasCanonicalEnvelope(payload) {
+  return isObject(payload) && hasOwn(payload, "schemaVersion");
+}
+
+function meaningfulValue(value, path = "value") {
+  if (value === undefined || value === null) return rejection("REJECT_MEANINGLESS_VALUE", `${path} must not be null or undefined.`, { path });
+  if (typeof value === "string") return value.trim().length ? null : rejection("REJECT_MEANINGLESS_VALUE", `${path} must not be empty.`, { path });
+  if (typeof value === "number") return Number.isFinite(value) ? null : rejection("REJECT_MEANINGLESS_VALUE", `${path} must be finite.`, { path });
+  if (typeof value === "boolean") return null;
+  if (Array.isArray(value)) {
+    if (!value.length) return rejection("REJECT_EMPTY_ARRAY", `${path} must not be empty.`, { path });
+    for (const [index, entry] of value.entries()) {
+      const reason = meaningfulValue(entry, `${path}[${index}]`);
+      if (reason) return reason;
+    }
+    return null;
+  }
+  if (isObject(value)) {
+    const keys = Object.keys(value);
+    if (!keys.length) return rejection("REJECT_EMPTY_OBJECT", `${path} must not be empty.`, { path });
+    for (const key of keys) {
+      if (!key.trim()) return rejection("REJECT_MEANINGLESS_KEY", `${path} contains an empty key.`, { path });
+      const reason = meaningfulValue(value[key], `${path}.${key}`);
+      if (reason) return reason;
+    }
+    if (hasOwn(value, "quantity") && (typeof value.quantity !== "number" || !Number.isFinite(value.quantity) || value.quantity <= 0)) {
+      return rejection("REJECT_QUANTITY_INVALID", `${path}.quantity must be a finite positive number.`, { path: `${path}.quantity` });
+    }
+    if (hasOwn(value, "price") && (typeof value.price !== "number" || !Number.isFinite(value.price) || value.price < 0)) {
+      return rejection("REJECT_PRICE_INVALID", `${path}.price must be a finite non-negative number.`, { path: `${path}.price` });
+    }
+    return null;
+  }
+  return rejection("REJECT_MEANINGLESS_VALUE", `${path} has an unsupported value type.`, { path });
+}
+
+function nonEmptyString(value, code, field) {
+  return typeof value === "string" && value.trim().length
+    ? null
+    : rejection(code, `${field} must be a non-empty string.`, { field });
+}
+
+function validateCanonicalProvenance(provenance) {
+  const reasons = [];
+  if (!Array.isArray(provenance) || !provenance.length) {
+    reasons.push(rejection("REJECT_PROVENANCE_EMPTY", "provenance must be a non-empty array."));
+    return reasons;
+  }
+  for (const [index, reference] of provenance.entries()) {
+    if (!isObject(reference)) {
+      reasons.push(rejection("REJECT_PROVENANCE_ENTRY_INVALID", `provenance[${index}] must be an object.`, { index }));
+      continue;
+    }
+    for (const field of ["sourceId", "sourceRecordId", "transformVersion", "licenseId"]) {
+      const reason = nonEmptyString(reference[field], "REJECT_PROVENANCE_FIELD_INVALID", `provenance[${index}].${field}`);
+      if (reason) reasons.push(reason);
+    }
+  }
+  return reasons;
+}
+
+function validateCanonicalEnvelope(payload, reasons) {
+  for (const field of requiredCanonicalFields) {
+    if (!hasOwn(payload, field)) reasons.push(rejection("REJECT_ENVELOPE_FIELD_MISSING", `Canonical semantic field ${field} is required.`, { field }));
+  }
+  for (const field of Object.keys(payload)) {
+    if (!canonicalEnvelopeFieldSet.has(field)) reasons.push(rejection("REJECT_UNAUTHORIZED_SEMANTIC_FIELD", `Top-level semantic field ${field} is not in the canonical envelope.`, { field }));
+  }
+  if (payload.schemaVersion !== "dpa-keyword-foundation@0.1") reasons.push(rejection("REJECT_SCHEMA_VERSION_INVALID", "schemaVersion does not identify the canonical semantic contract."));
+  for (const field of ["adapterVersion", "semanticRequestId", "actionId", "actorId", "targetId", "contextId", "actor", "target", "action"]) {
+    const reason = nonEmptyString(payload[field], "REJECT_ENVELOPE_FIELD_INVALID", field);
+    if (reason) reasons.push(reason);
+  }
+  if (typeof payload.actionId === "string" && !/^[A-Z][A-Z0-9_]+$/.test(payload.actionId)) reasons.push(rejection("REJECT_ACTION_ID_INVALID", "actionId must be a stable uppercase action identifier."));
+  if (payload.actor !== payload.actorId) reasons.push(rejection("REJECT_ACTOR_ID_MISMATCH", "actor must equal actorId."));
+  if (payload.target !== payload.targetId) reasons.push(rejection("REJECT_TARGET_ID_MISMATCH", "target must equal targetId."));
+  if (payload.action !== payload.actionId) reasons.push(rejection("REJECT_ACTION_ID_MISMATCH", "action must equal actionId."));
+  if (!SPEECH_ACTS.includes(payload.speechAct)) reasons.push(rejection("REJECT_SPEECH_ACT_INVALID", `Unsupported macro speech act: ${payload.speechAct}.`));
+  if (payload.outcome !== "PROPOSED") reasons.push(rejection("REJECT_OUTCOME_INVALID", "Only PROPOSED semantic requests may cross the TPL boundary."));
+  for (const field of ["mandatorySemanticFacts", "forbiddenSemanticAdditions"]) {
+    if (!Array.isArray(payload[field]) || !payload[field].length) reasons.push(rejection("REJECT_POLICY_ARRAY_INVALID", `${field} must be a non-empty array.`, { field }));
+    else for (const [index, value] of payload[field].entries()) {
+      const reason = meaningfulValue(value, `${field}[${index}]`);
+      if (reason) reasons.push(reason);
+    }
+  }
+  reasons.push(...validateCanonicalProvenance(payload.provenance));
+}
+
+function validateSlotPairs(payload, reasons, strictCanonical) {
+  const slots = payload.slots;
+  const requiredSlots = SEMANTIC_SLOTS_BY_ACT[payload.speechAct] ?? [];
+  for (const upperSlot of semanticSlots) {
+    const lowerSlot = upperSlot.toLowerCase();
+    const upperPresent = hasOwn(slots, upperSlot);
+    const lowerPresent = hasOwn(slots, lowerSlot);
+    const required = requiredSlots.includes(upperSlot);
+    if (required && !upperPresent) reasons.push(rejection("REJECT_REQUIRED_SLOT_MISSING", `Required ${payload.speechAct} slot ${upperSlot} is missing.`, { slot: upperSlot }));
+    if (required && strictCanonical && !lowerPresent) reasons.push(rejection("REJECT_LOWERCASE_SLOT_MISSING", `Canonical lowercase slot ${lowerSlot} is required alongside ${upperSlot}.`, { slot: lowerSlot }));
+    if (!required && (upperPresent || lowerPresent)) reasons.push(rejection("REJECT_CROSS_ACT_SLOT", `Slot ${upperSlot}/${lowerSlot} is not valid for ${payload.speechAct}.`, { slot: upperSlot }));
+    if (upperPresent && lowerPresent && !valuesEqual(slots[upperSlot], slots[lowerSlot])) reasons.push(rejection("REJECT_UPPERCASE_LOWERCASE_MISMATCH", `Slots ${upperSlot} and ${lowerSlot} must carry identical values.`, { upperSlot, lowerSlot }));
+    for (const slot of [upperSlot, lowerSlot]) if (hasOwn(slots, slot)) {
+      const reason = meaningfulValue(slots[slot], `slots.${slot}`);
+      if (reason) reasons.push(reason);
+    }
+  }
+  for (const [slot, value] of Object.entries(slots)) {
+    if (!allowedSlotNames.has(slot)) reasons.push(rejection("REJECT_UNAUTHORIZED_SLOT", `Slot ${slot} is not in the semantic payload contract.`, { slot }));
+    if (semanticSlots.includes(slot)) continue;
+    const reason = meaningfulValue(value, `slots.${slot}`);
+    if (reason) reasons.push(reason);
+  }
+  for (const field of identityFields) {
+    if (hasOwn(slots, field) && hasOwn(payload, field) && !valuesEqual(slots[field], payload[field])) reasons.push(rejection("REJECT_SLOT_IDENTITY_MISMATCH", `slots.${field} does not agree with the top-level identity.`, { field }));
+  }
+}
 
 function canonicalJson(value) {
   if (value === undefined) return "undefined";
@@ -83,30 +203,49 @@ function rejection(code, message, extra = {}) {
 export function validateSemanticPayload(payload) {
   const reasons = [];
   if (!isObject(payload)) return { passed: false, reasons: [rejection("REJECT_PAYLOAD_NOT_OBJECT", "The semantic request must be an object.")] };
-  if (!isPresent(payload.semanticRequestId)) reasons.push(rejection("REJECT_REQUEST_ID_MISSING", "The semantic request identity is required."));
-  if (!SPEECH_ACTS.includes(payload.speechAct)) reasons.push(rejection("REJECT_SPEECH_ACT_INVALID", `Unsupported macro speech act: ${payload.speechAct}.`));
+  const strictCanonical = hasCanonicalEnvelope(payload);
+  if (strictCanonical) validateCanonicalEnvelope(payload, reasons);
+  else {
+    if (!isPresent(payload.semanticRequestId)) reasons.push(rejection("REJECT_REQUEST_ID_MISSING", "The semantic request identity is required."));
+    if (!SPEECH_ACTS.includes(payload.speechAct)) reasons.push(rejection("REJECT_SPEECH_ACT_INVALID", `Unsupported macro speech act: ${payload.speechAct}.`));
+    for (const field of Object.keys(payload)) if (!legacyEnvelopeFields.has(field)) reasons.push(rejection("REJECT_UNAUTHORIZED_SEMANTIC_FIELD", `Top-level semantic field ${field} requires the canonical envelope.`, { field }));
+  }
   if (!isObject(payload.slots)) {
     reasons.push(rejection("REJECT_SLOTS_NOT_OBJECT", "The semantic request slots must be an object."));
     return { passed: reasons.length === 0, reasons };
   }
-  for (const slot of Object.keys(payload.slots)) {
-    if (!allowedSlotNames.has(slot)) reasons.push(rejection("REJECT_UNAUTHORIZED_SLOT", `Slot ${slot} is not in the semantic payload contract.`, { slot }));
-  }
-  const requiredSlots = SEMANTIC_SLOTS_BY_ACT[payload.speechAct] ?? [];
-  for (const slot of requiredSlots) {
-    if (!isPresent(payload.slots[slot])) reasons.push(rejection("REJECT_REQUIRED_SLOT_MISSING", `Required ${payload.speechAct} slot ${slot} is missing.`, { slot }));
-  }
-  for (const slot of semanticSlots) {
-    if (hasOwn(payload.slots, slot) && !requiredSlots.includes(slot)) reasons.push(rejection("REJECT_CROSS_ACT_SLOT", `Slot ${slot} is not valid for ${payload.speechAct}.`, { slot }));
-  }
+  validateSlotPairs(payload, reasons, strictCanonical);
   return { passed: reasons.length === 0, reasons };
 }
 
 export function validateSemanticInvariance(payloadBefore, payloadAfter, evidence = {}) {
   const reasons = [];
-  if (payloadBefore.semanticRequestId !== payloadAfter.semanticRequestId) reasons.push({ code: "REJECT_REQUEST_ID_CHANGED", message: "The semantic request identity changed." });
-  if (payloadBefore.speechAct !== payloadAfter.speechAct) reasons.push({ code: "REJECT_SPEECH_ACT_DRIFT", message: "The macro speech act changed." });
+  if (!isObject(payloadBefore) || !isObject(payloadAfter)) return { passed: false, reasons: [rejection("REJECT_PAYLOAD_NOT_OBJECT", "Both semantic payloads must be objects.")] };
+  const strictCanonical = hasCanonicalEnvelope(payloadBefore) || hasCanonicalEnvelope(payloadAfter);
+  if (payloadBefore.semanticRequestId !== payloadAfter.semanticRequestId) reasons.push(rejection("REJECT_REQUEST_ID_CHANGED", "The semantic request identity changed."));
+  if (payloadBefore.speechAct !== payloadAfter.speechAct) reasons.push(rejection("REJECT_SPEECH_ACT_DRIFT", "The macro speech act changed."));
   reasons.push(...validateSemanticPayload(payloadBefore).reasons, ...validateSemanticPayload(payloadAfter).reasons);
+  const topLevelNames = strictCanonical
+    ? new Set([...canonicalEnvelopeFields, ...Object.keys(payloadBefore), ...Object.keys(payloadAfter)])
+    : new Set([...Object.keys(payloadBefore), ...Object.keys(payloadAfter)]);
+  for (const field of topLevelNames) {
+    const beforePresent = hasOwn(payloadBefore, field);
+    const afterPresent = hasOwn(payloadAfter, field);
+    if (!beforePresent && afterPresent) reasons.push(rejection("REJECT_SEMANTIC_FIELD_ADDED", `Protected semantic field ${field} was added by realization.`, { field }));
+    else if (beforePresent && !afterPresent) reasons.push(rejection("REJECT_SEMANTIC_FIELD_REMOVED", `Protected semantic field ${field} was removed by realization.`, { field }));
+    else if (field === "slots") continue;
+    else if (beforePresent && !valuesEqual(payloadBefore[field], payloadAfter[field])) {
+      const code = field === "semanticRequestId" ? "REJECT_REQUEST_ID_CHANGED"
+        : field === "schemaVersion" ? "REJECT_SCHEMA_VERSION_CHANGED"
+          : field === "adapterVersion" ? "REJECT_ADAPTER_VERSION_CHANGED"
+            : field === "mandatorySemanticFacts" ? "REJECT_MANDATORY_FACTS_CHANGED"
+              : field === "forbiddenSemanticAdditions" ? "REJECT_FORBIDDEN_ADDITIONS_CHANGED"
+                : field === "provenance" ? "REJECT_PROVENANCE_CHANGED"
+                  : field === "speechAct" ? "REJECT_SPEECH_ACT_DRIFT"
+                    : field === "deadline" ? "REJECT_DEADLINE_DRIFT" : "REJECT_SEMANTIC_FIELD_CHANGED";
+      reasons.push(rejection(code, `Protected semantic field ${field} changed.`, { field }));
+    }
+  }
   const beforeSlots = payloadBefore.slots ?? {};
   const afterSlots = payloadAfter.slots ?? {};
   const slotNames = new Set([...Object.keys(beforeSlots), ...Object.keys(afterSlots)]);
@@ -125,13 +264,6 @@ export function validateSemanticInvariance(payloadBefore, payloadAfter, evidence
     } else if (beforePresent && !valuesEqual(beforeSlots[slot], afterSlots[slot])) {
       reasons.push(rejection(slot === "deadline" ? "REJECT_DEADLINE_DRIFT" : "REJECT_SLOT_VALUE_CHANGED", `Protected slot ${slot} changed.`, { slot }));
     }
-  }
-  for (const field of topLevelProtectedFields) {
-    const beforePresent = hasOwn(payloadBefore, field);
-    const afterPresent = hasOwn(payloadAfter, field);
-    if (!beforePresent && afterPresent) reasons.push(rejection("REJECT_SEMANTIC_FIELD_ADDED", `Protected semantic field ${field} was added by realization.`, { field }));
-    else if (beforePresent && !afterPresent) reasons.push(rejection("REJECT_SEMANTIC_FIELD_REMOVED", `Protected semantic field ${field} was removed by realization.`, { field }));
-    else if (beforePresent && !valuesEqual(payloadBefore[field], payloadAfter[field])) reasons.push(rejection(field === "deadline" ? "REJECT_DEADLINE_DRIFT" : "REJECT_SEMANTIC_FIELD_CHANGED", `Protected semantic field ${field} changed.`, { field }));
   }
   for (const addition of evidence.unauthorizedAdditions ?? []) reasons.push(rejection(addition.code ?? "REJECT_ADDED_PROPOSITION", addition.message ?? "An unauthorized semantic addition was detected."));
   if ((evidence.speakerKnowledgeClaims ?? []).some((claim) => claim.available === false)) reasons.push(rejection("REJECT_UNAVAILABLE_SPEAKER_KNOWLEDGE", "The realization asserts knowledge unavailable to the speaker."));

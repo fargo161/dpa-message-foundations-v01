@@ -160,7 +160,11 @@ export function buildInspectionReport() {
       actualAcquisitions: acquisitionManifest.sources.map(({ sourceId, status, artifactFilename, artifactCachePath, retrievedAt, byteSize, sha256, counts, probes, evidenceBoundary }) => ({ sourceId, status, artifactFilename, artifactCachePath, retrievedAt, byteSize, sha256, counts, probes: probes.map((probe) => ({ query: probe.query, hitCount: probe.results.length, provenancePreserved: probe.results.every((result) => result.provenance?.length > 0) })), evidenceBoundary })),
       runtimeRecordCount: foundationStoreStatus.runtimeRecordCount,
       storeStatus: foundationStoreStatus,
-      manifests: SOURCE_MANIFESTS.map(({ sourceId, title, sourceType, canonicalUrl, artifactUrl, currentAcquisitionUrl, sourceVersion, licenseId, licenseUrl, acquisitionStatus, redistributionPolicy, notes }) => ({ sourceId, title, sourceType, canonicalUrl, artifactUrl, currentAcquisitionUrl, sourceVersion, licenseId, licenseUrl, acquisitionStatus, redistributionPolicy, notes })),
+      manifests: SOURCE_MANIFESTS.map(({ sourceId, title, sourceType, canonicalUrl, artifactUrl, currentAcquisitionUrl, sourceVersion, licenseId, licenseUrl, acquisitionStatus, redistributionPolicy, notes }) => ({
+        sourceId, title, sourceType, canonicalUrl, artifactUrl,
+        ...(currentAcquisitionUrl === undefined ? {} : { currentAcquisitionUrl }),
+        sourceVersion, licenseId, licenseUrl, acquisitionStatus, redistributionPolicy, notes,
+      })),
     },
   };
 }

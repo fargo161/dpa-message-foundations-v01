@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { DEMO_SCENARIOS, evaluateAction, evaluateAvailableActions, enumerateSemanticConfigurations, priorCannotMutateState, resolveAction } from "../src/mechanics.mjs";
+import { DEMO_SCENARIOS, evaluateAction, evaluateAvailableActions, enumerateSemanticConfigurations, fact, priorCannotMutateState, resolveAction } from "../src/mechanics.mjs";
 import { generateMatrix } from "../src/based.mjs";
 
 test("demo scenarios expose directional actions and authored blockers", () => {
@@ -38,14 +38,16 @@ test("authored action capacity clears the requested proof threshold", () => {
   assert.equal(capacity.theoretical, 4320);
   assert.equal(capacity.actCompatibleTheoretical, 4320);
   assert.equal(capacity.actIncompatible, 8640);
-  assert.equal(capacity.blocked, 3660);
+  // The strict pressure grounding repair correctly removes the previously
+  // available but unauthored secret-pressure branch: 600 valid, 3,720 blocked.
+  assert.equal(capacity.blocked, 3720);
   assert.equal(capacity.duplicate, 0);
   assert.equal(capacity.unreachable, 0);
-  assert.equal(capacity.validUnique, 660);
+  assert.equal(capacity.validUnique, 600);
   assert.equal(capacity.totalCandidateCombinations, 12960);
-  assert.equal(capacity.validUniqueSemanticConfigurations, 660);
-  assert.equal(capacity.blockedCandidates, 3660);
-  assert.deepEqual(capacity.classificationTotals, { theoretical: 4320, actIncompatible: 8640, blocked: 3660, duplicate: 0, unreachable: 0, validUnique: 660 });
+  assert.equal(capacity.validUniqueSemanticConfigurations, 600);
+  assert.equal(capacity.blockedCandidates, 3720);
+  assert.deepEqual(capacity.classificationTotals, { theoretical: 4320, actIncompatible: 8640, blocked: 3720, duplicate: 0, unreachable: 0, validUnique: 600 });
   assert.ok(capacity.validUnique > 100);
   assert.ok(capacity.validConfigurations.every((entry) => entry.coordinateKey.startsWith(`${entry.macroAct}_`)));
 });
@@ -109,4 +111,142 @@ test("blocked actions are quarantined and repeated resolutions receive unique hi
   assert.equal(blocked.payload, null);
   assert.equal(blocked.quarantine.status, "QUARANTINED");
   assert.ok(blocked.trace.some((step) => step.step === "BLOCKED_ACTION_QUARANTINED"));
+});
+
+test("INVOKE_CONSEQUENCE emits only a fully linked authored pressure payload", () => {
+  const state = structuredClone(DEMO_SCENARIOS[0]);
+  const resolved = resolveAction(state, "INVOKE_CONSEQUENCE", "marcus_broker_hill", "player", "PRIVATE_NEGOTIATION");
+  assert.equal(resolved.outcome, "PROPOSED");
+  assert.equal(resolved.payload.actor, "marcus_broker_hill");
+  assert.equal(resolved.payload.target, "player");
+  assert.equal(resolved.payload.contextId, "PRIVATE_NEGOTIATION");
+  assert.deepEqual(resolved.payload.leverage, {
+    actor: "marcus_broker_hill",
+    target: "player",
+    basis: "debt_250_usd",
+    sourceAssertionId: "marcus_leverage_debt",
+    scope: "ACTUAL",
+    contextId: "PRIVATE_NEGOTIATION",
+    validFrom: "2026-01-01T00:00:00.000Z",
+    pressureContractId: "pressure_debt_exposure",
+  });
+  assert.equal(resolved.payload.demand.kind, "FULFILL_OBLIGATION");
+  assert.equal(resolved.payload.demand.demandId, "OWES:player_owes_marcus_250");
+  assert.equal(resolved.payload.demand.term, "debt_250_usd");
+  assert.equal(resolved.payload.demand.sourceAssertionId, "player_owes_marcus_250");
+  assert.equal(resolved.payload.demand.scope, "ACTUAL");
+  assert.equal(resolved.payload.demand.contextId, "PRIVATE_NEGOTIATION");
+  assert.equal(resolved.payload.demand.validUntil, undefined);
+  assert.equal(resolved.payload.consequence.consequenceId, "public_debt_exposure");
+  assert.equal(resolved.payload.consequence.text, "Marcus reports the active debt to the building owner.");
+  assert.equal(resolved.payload.consequence.fearedBy, "player");
+  assert.equal(resolved.payload.consequence.fearedConsequenceSourceAssertionId, "player_fears_exposure");
+  assert.equal(resolved.payload.consequence.leverageBasis, "debt_250_usd");
+  assert.equal(resolved.payload.consequence.demandId, "OWES:player_owes_marcus_250");
+  assert.deepEqual(resolved.payload.consequence.validity, {
+    scope: "ACTUAL",
+    contextId: "PRIVATE_NEGOTIATION",
+    validFrom: "2026-01-01T00:00:00.000Z",
+    validUntilIsUnbounded: true,
+  });
+  assert.ok(resolved.trace.some((step) => step.code === "PRESSURE_LEVERAGE_GROUNDED" && step.matchedFacts.includes("marcus_leverage_debt")));
+  assert.ok(resolved.trace.some((step) => step.code === "PRESSURE_DEMAND_GROUNDED" && step.matchedFacts.includes("player_owes_marcus_250")));
+  assert.ok(resolved.trace.some((step) => step.code === "PRESSURE_CONSEQUENCE_GROUNDED" && step.matchedFacts.includes("player_fears_exposure")));
+});
+
+test("INVOKE_CONSEQUENCE rejects unrelated fear and consequence identities", () => {
+  const state = structuredClone(DEMO_SCENARIOS[0]);
+  state.facts.find((entry) => entry.assertionId === "player_fears_exposure").args.object = "unrelated_fear";
+  const unlinked = evaluateAction(state, "INVOKE_CONSEQUENCE", "marcus_broker_hill", "player", "PRIVATE_NEGOTIATION");
+  assert.equal(unlinked.status, "BLOCKED");
+  assert.ok(unlinked.blockers.some((entry) => entry.code === "PRESSURE_FEAR_NOT_LINKED"));
+});
+
+test("INVOKE_CONSEQUENCE rejects a consequence with no active authored demand", () => {
+  const state = structuredClone(DEMO_SCENARIOS[0]);
+  state.facts = state.facts.filter((entry) => !["player_owes_marcus_250", "player_promised_payment"].includes(entry.assertionId));
+  const evaluation = evaluateAction(state, "INVOKE_CONSEQUENCE", "marcus_broker_hill", "player", "PRIVATE_NEGOTIATION");
+  assert.equal(evaluation.status, "BLOCKED");
+  assert.ok(evaluation.blockers.some((entry) => ["MISSING_PRESSURE_DEMAND", "PRESSURE_EVIDENCE_NOT_ACTIVE", "PRESSURE_EVIDENCE_MISSING"].includes(entry.code)));
+  const resolved = resolveAction(state, "INVOKE_CONSEQUENCE", "marcus_broker_hill", "player", "PRIVATE_NEGOTIATION");
+  assert.equal(resolved.payload, null);
+  assert.equal(resolved.emittedHistory.length, 0);
+});
+
+test("INVOKE_CONSEQUENCE rejects inactive or completed obligations", () => {
+  const state = structuredClone(DEMO_SCENARIOS[0]);
+  for (const assertionId of ["player_owes_marcus_250", "player_promised_payment"]) {
+    state.facts.find((entry) => entry.assertionId === assertionId).args.status = "FULFILLED";
+  }
+  const evaluation = evaluateAction(state, "INVOKE_CONSEQUENCE", "marcus_broker_hill", "player", "PRIVATE_NEGOTIATION");
+  assert.equal(evaluation.status, "BLOCKED");
+  assert.ok(evaluation.blockers.some((entry) => ["MISSING_PRESSURE_DEMAND", "PRESSURE_EVIDENCE_NOT_ACTIVE"].includes(entry.code)));
+});
+
+test("INVOKE_CONSEQUENCE cannot cross-contaminate secret and debt leverage", () => {
+  const secretOnly = structuredClone(DEMO_SCENARIOS[0]);
+  secretOnly.facts = secretOnly.facts.filter((entry) => entry.assertionId !== "marcus_leverage_debt");
+  const secretEvaluation = evaluateAction(secretOnly, "INVOKE_CONSEQUENCE", "marcus_broker_hill", "player", "PRIVATE_NEGOTIATION");
+  assert.equal(secretEvaluation.status, "BLOCKED");
+  assert.ok(secretEvaluation.blockers.some((entry) => entry.code === "PRESSURE_DEMAND_LEVERAGE_MISMATCH"));
+
+  const secretDemandOnly = structuredClone(DEMO_SCENARIOS[0]);
+  secretDemandOnly.facts = secretDemandOnly.facts.filter((entry) => !["player_owes_marcus_250", "player_promised_payment"].includes(entry.assertionId));
+  secretDemandOnly.facts.push(fact("PROMISED_TO", { subject: "player", object: "marcus_broker_hill", term: "secret_unregistered_sublet", status: "PENDING" }, {
+    assertionId: "player_promised_secret_disclosure",
+    contextIds: ["PRIVATE_NEGOTIATION"],
+  }));
+  const debtEvaluation = evaluateAction(secretDemandOnly, "INVOKE_CONSEQUENCE", "marcus_broker_hill", "player", "PRIVATE_NEGOTIATION");
+  assert.equal(debtEvaluation.status, "BLOCKED");
+  assert.ok(debtEvaluation.blockers.some((entry) => ["MISSING_PRESSURE_DEMAND", "PRESSURE_EVIDENCE_MISSING", "PRESSURE_DEMAND_LEVERAGE_MISMATCH", "MISSING_PRESSURE_FEARED_CONSEQUENCE"].includes(entry.code)));
+});
+
+test("INVOKE_CONSEQUENCE rejects belief-only, disputed, future, and expired pressure evidence", () => {
+  const cases = [
+    ["BELIEF", (state) => { state.facts.find((entry) => entry.assertionId === "marcus_leverage_debt").scope = "BELIEF"; }, "PRESSURE_SCOPE_NOT_ACTUAL"],
+    ["DISPUTED", (state) => { state.facts.find((entry) => entry.assertionId === "marcus_leverage_debt").polarity = "DISPUTED"; }, "PRESSURE_EVIDENCE_NOT_ASSERTED"],
+    ["FUTURE", (state) => { state.facts.find((entry) => entry.assertionId === "marcus_leverage_debt").validFrom = "2026-09-03T00:00:00.000Z"; }, "PRESSURE_EVIDENCE_OUTSIDE_VALIDITY"],
+    ["EXPIRED", (state) => { state.facts.find((entry) => entry.assertionId === "marcus_leverage_debt").validUntil = "2026-09-02T11:59:59.000Z"; }, "PRESSURE_EVIDENCE_OUTSIDE_VALIDITY"],
+  ];
+  for (const [label, mutate, expectedCode] of cases) {
+    const state = structuredClone(DEMO_SCENARIOS[0]);
+    state.facts = state.facts.filter((entry) => entry.assertionId !== "marcus_leverage_secret");
+    mutate(state);
+    const evaluation = evaluateAction(state, "INVOKE_CONSEQUENCE", "marcus_broker_hill", "player", "PRIVATE_NEGOTIATION");
+    assert.equal(evaluation.status, "BLOCKED", `${label} pressure evidence was accepted`);
+    assert.ok(evaluation.blockers.some((entry) => entry.code === expectedCode), `${label} did not preserve ${expectedCode} in the deterministic trace`);
+  }
+});
+
+test("INVOKE_CONSEQUENCE rejects matching authored prohibition and inactive context", () => {
+  const prohibited = structuredClone(DEMO_SCENARIOS[0]);
+  prohibited.facts.push(fact("PROHIBITED", { subject: "player", object: "marcus_broker_hill", term: "debt_250_usd" }, {
+    assertionId: "player_prohibits_debt_pressure",
+    contextIds: ["PRIVATE_NEGOTIATION"],
+  }));
+  const prohibitionEvaluation = evaluateAction(prohibited, "INVOKE_CONSEQUENCE", "marcus_broker_hill", "player", "PRIVATE_NEGOTIATION");
+  assert.equal(prohibitionEvaluation.status, "BLOCKED");
+  assert.ok(prohibitionEvaluation.blockers.some((entry) => entry.code === "PRESSURE_PROHIBITED"));
+
+  const inactive = structuredClone(DEMO_SCENARIOS[0]);
+  inactive.contexts[0].active = false;
+  const inactiveEvaluation = evaluateAction(inactive, "INVOKE_CONSEQUENCE", "marcus_broker_hill", "player", "PRIVATE_NEGOTIATION");
+  assert.equal(inactiveEvaluation.status, "BLOCKED");
+  assert.ok(inactiveEvaluation.blockers.some((entry) => entry.code === "CONTEXT_NOT_ACTIVE"));
+});
+
+test("INVOKE_CONSEQUENCE requires an explicit pressure contract and preserves its failure trace", () => {
+  const missingContract = structuredClone(DEMO_SCENARIOS[0]);
+  missingContract.pressureContracts = [];
+  const missingEvaluation = evaluateAction(missingContract, "INVOKE_CONSEQUENCE", "marcus_broker_hill", "player", "PRIVATE_NEGOTIATION");
+  assert.equal(missingEvaluation.status, "BLOCKED");
+  assert.ok(missingEvaluation.blockers.some((entry) => entry.code === "MISSING_PRESSURE_LEVERAGE"));
+
+  const unprovenContract = structuredClone(DEMO_SCENARIOS[0]);
+  delete unprovenContract.pressureContracts[0].provenance;
+  const unprovenEvaluation = evaluateAction(unprovenContract, "INVOKE_CONSEQUENCE", "marcus_broker_hill", "player", "PRIVATE_NEGOTIATION");
+  assert.equal(unprovenEvaluation.status, "BLOCKED");
+  const trace = unprovenEvaluation.requiredChecks.find((entry) => entry.code === "PRESSURE_CONTRACT_PROVENANCE_MISSING");
+  assert.ok(trace, "contract provenance failure was not retained in the pressure trace");
+  assert.ok(trace.matchedFacts.includes("pressure_debt_exposure"));
 });

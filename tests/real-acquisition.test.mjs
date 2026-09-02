@@ -29,6 +29,12 @@ async function firstJsonRecord(path) {
 test("real acquisition receipts, ignored cache, indexing, and source statuses are reproducible", async () => {
   const manifest = JSON.parse(await readFile(manifestPath, "utf8"));
   assert.equal(manifest.sources.length, 8);
+  for (const source of manifest.sources) {
+    for (const path of [source.artifactCachePath, source.receiptPath, source.normalizedRecordsPath, source.extraction?.extractedPath, source.indexSnapshot?.persistedPostingsPath].filter(Boolean)) {
+      assert.doesNotMatch(path, /\\/, `${source.sourceId}: tracked path is not POSIX-canonical`);
+    }
+    for (const file of source.extraction?.extractedFiles ?? []) assert.doesNotMatch(file.outputPath, /\\/, `${source.sourceId}: extracted path is not POSIX-canonical`);
+  }
   assert.deepEqual(
     Object.fromEntries(manifest.sources.map((source) => [source.status, manifest.sources.filter((item) => item.status === source.status).length])),
     { ACQUIRED_AND_INDEXED: 7, ACQUIRED_NOT_INDEXED: 1 },

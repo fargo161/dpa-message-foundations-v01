@@ -5,6 +5,10 @@ export const ACQUISITION_STATES = Object.freeze(["MANIFEST_ONLY", "PAPER_ONLY", 
 export const EXTERNAL_DATA_CACHE_ROOT = ".cache/external-data";
 const SHA256_PATTERN = /^[a-f0-9]{64}$/;
 
+export function canonicalPosixPath(pathValue) {
+  return String(pathValue).replaceAll("\\", "/");
+}
+
 const source = (spec) => ({
   sourceVersion: "unspecified",
   expectedArtifactName: "operator-supplied-and-validated",

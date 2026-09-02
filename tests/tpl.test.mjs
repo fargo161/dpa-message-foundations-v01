@@ -5,6 +5,42 @@ import { BASED_VIBES, buildMatrixWithAnchors, generateMatrix } from "../src/base
 import { adaptResolvedActionToSemanticRequest } from "../src/action-tpl-adapter.mjs";
 import { FACE_COMPATIBILITY_BOUNDARY, TPL_ATOMS, TPL_CONSTRUCTIONS, TPL_FALLBACK_POLICY, TPL_FAMILIES, TPL_PROTOCOLS, renderSafeFallback, resolveMatrixCell, validateSemanticInvariance, validateSemanticPayload } from "../src/tpl.mjs";
 
+const makeSemanticRequest = (speechAct, semanticSlots, overrides = {}) => {
+  const slots = {
+    actor: "player",
+    target: "marcus_broker_hill",
+    action: speechAct === "ASK" ? "REQUEST_EXTENSION" : speechAct === "DEAL" ? "OFFER_PARTIAL_PAYMENT" : "INVOKE_CONSEQUENCE",
+    contextId: "PRIVATE_NEGOTIATION",
+    object: "debt_relief",
+    deadline: "2026-09-03T09:00:00.000Z",
+    ...semanticSlots,
+  };
+  return {
+    schemaVersion: "dpa-keyword-foundation@0.1",
+    adapterVersion: "action-tpl-adapter@0.1",
+    semanticRequestId: `semantic:test:${speechAct.toLowerCase()}`,
+    actionId: slots.action,
+    actorId: "player",
+    targetId: "marcus_broker_hill",
+    contextId: "PRIVATE_NEGOTIATION",
+    actor: "player",
+    target: "marcus_broker_hill",
+    action: slots.action,
+    speechAct,
+    outcome: "PROPOSED",
+    slots,
+    mandatorySemanticFacts: ["actor", "target", "action", "contextId"],
+    forbiddenSemanticAdditions: ["unauthored_deadline", "unauthored_threat"],
+    provenance: [{ sourceId: "project-authored-test", sourceRecordId: "history:test:1", transformVersion: "tpl-test@1", licenseId: "PROJECT_AUTHORED" }],
+    ...overrides,
+  };
+};
+
+const canonicalAsk = () => makeSemanticRequest("ASK", {
+  REQUEST: { action: "REQUEST_EXTENSION", object: "debt_relief" },
+  request: { action: "REQUEST_EXTENSION", object: "debt_relief" },
+});
+
 test("TPL scaffold covers each family while remaining unapproved", () => {
   assert.deepEqual(TPL_FAMILIES, ["VOICE_QUALITY", "VOCALIZATION", "TACTILE_KINESIC", "VISUAL_KINESIC", "ARTIFACT"]);
   for (const family of TPL_FAMILIES) assert.ok(TPL_ATOMS.some((atom) => atom.family === family));
@@ -23,7 +59,7 @@ test("TPL scaffold covers each family while remaining unapproved", () => {
 });
 
 test("semantic invariance blocks drift and unsupported knowledge", () => {
-  const before = { semanticRequestId: "r1", speechAct: "ASK", slots: { REQUEST: "review the ledger", deadline: "2026-09-03" } };
+  const before = canonicalAsk();
   assert.equal(validateSemanticInvariance(before, structuredClone(before)).passed, true);
   const changedDeadline = structuredClone(before);
   changedDeadline.slots.deadline = "2026-09-10";
@@ -40,23 +76,108 @@ test("semantic invariance blocks drift and unsupported knowledge", () => {
   assert.equal(validateSemanticInvariance(before, renamedRequest).passed, false);
   assert.ok(validateSemanticInvariance(before, renamedRequest).reasons.some((reason) => reason.code === "REJECT_REQUIRED_SLOT_REMOVED"));
 
-  const deal = { semanticRequestId: "deal-1", speechAct: "DEAL", slots: { OFFER: { object: "cash", quantity: 80, unit: "USD" }, RETURN: { object: "extension" } } };
+  const deal = makeSemanticRequest("DEAL", {
+    OFFER: { object: "cash", quantity: 80, unit: "USD" },
+    offer: { object: "cash", quantity: 80, unit: "USD" },
+    RETURN: { object: "extension" },
+    return: { object: "extension" },
+  });
   const changedOffer = structuredClone(deal);
   changedOffer.slots.OFFER.quantity = 800;
   assert.equal(validateSemanticInvariance(deal, changedOffer).passed, false);
   assert.equal(validateSemanticInvariance(deal, changedOffer).reasons.some((reason) => reason.slot === "OFFER"), true);
   const changedReturn = structuredClone(deal);
-  changedReturn.slots.return = { object: "ownership_transfer" };
+  changedReturn.slots.RETURN = { object: "ownership_transfer" };
   assert.equal(validateSemanticInvariance(deal, changedReturn).passed, false);
 
-  const pressure = { semanticRequestId: "pressure-1", speechAct: "PRESSURE", slots: { DEMAND: "pay today", CONSEQUENCE: "report the debt", consequence: "report the debt" } };
+  const pressure = makeSemanticRequest("PRESSURE", {
+    DEMAND: "pay today",
+    demand: "pay today",
+    CONSEQUENCE: "report the debt",
+    consequence: "report the debt",
+  });
   const inventedThreat = structuredClone(pressure);
   inventedThreat.slots.CONSEQUENCE = "destroy the building";
   assert.equal(validateSemanticInvariance(pressure, inventedThreat).passed, false);
   const lowercaseActorDrift = structuredClone(before);
   lowercaseActorDrift.slots.actor = "different-actor";
-  assert.equal(validateSemanticInvariance({ ...before, slots: { ...before.slots, actor: "speaker" } }, lowercaseActorDrift).passed, false);
-  assert.equal(validateSemanticPayload({ semanticRequestId: "bad", speechAct: "ASK", slots: { request: "lowercase only" } }).passed, false);
+  assert.equal(validateSemanticInvariance(before, lowercaseActorDrift).passed, false);
+  assert.equal(validateSemanticPayload({ ...canonicalAsk(), slots: { request: { action: "REQUEST_EXTENSION" } } }).passed, false);
+});
+
+test("canonical envelope protects every top-level field and preserves nested types", () => {
+  const before = canonicalAsk();
+  const mutations = {
+    schemaVersion: "dpa-keyword-foundation@9.9",
+    adapterVersion: "other-adapter@9",
+    semanticRequestId: "semantic:test:other-occurrence",
+    actionId: "REQUEST_ACCESS",
+    actorId: "other-actor",
+    targetId: "other-target",
+    contextId: "OTHER_CONTEXT",
+    actor: "other-actor",
+    target: "other-target",
+    action: "REQUEST_ACCESS",
+    speechAct: "DEAL",
+    outcome: "BLOCKED",
+    slots: { ...before.slots, REQUEST: { action: "REQUEST_EXTENSION", object: "debt_relief", quantity: "1" }, request: { action: "REQUEST_EXTENSION", object: "debt_relief", quantity: "1" } },
+    mandatorySemanticFacts: [...before.mandatorySemanticFacts, "invented_fact"],
+    forbiddenSemanticAdditions: [...before.forbiddenSemanticAdditions, "unauthorized_policy_change"],
+    provenance: [{ ...before.provenance[0], sourceRecordId: "different-history" }],
+  };
+  for (const [field, value] of Object.entries(mutations)) {
+    const after = structuredClone(before);
+    after[field] = value;
+    const result = validateSemanticInvariance(before, after);
+    assert.equal(result.passed, false, `mutation of ${field} was accepted`);
+  }
+  const nestedTypeChange = structuredClone(before);
+  nestedTypeChange.slots.REQUEST.object = ["debt_relief"];
+  nestedTypeChange.slots.request.object = ["debt_relief"];
+  assert.equal(validateSemanticInvariance(before, nestedTypeChange).passed, false);
+  const addedProposition = structuredClone(before);
+  addedProposition.slots.inventedThreat = "pay or else";
+  assert.equal(validateSemanticInvariance(before, addedProposition).passed, false);
+});
+
+test("macro acts require exact uppercase/lowercase semantic slot pairs", () => {
+  for (const payload of [
+    makeSemanticRequest("ASK", { REQUEST: "review the ledger", request: "review the ledger" }),
+    makeSemanticRequest("DEAL", { OFFER: { object: "cash", quantity: 80 }, offer: { object: "cash", quantity: 80 }, RETURN: { object: "extension" }, return: { object: "extension" } }),
+    makeSemanticRequest("PRESSURE", { DEMAND: "pay today", demand: "pay today", CONSEQUENCE: "report the debt", consequence: "report the debt" }),
+  ]) assert.equal(validateSemanticPayload(payload).passed, true);
+
+  const contradictory = canonicalAsk();
+  contradictory.slots.request = { action: "PAY_NOW", object: "debt_relief" };
+  assert.equal(validateSemanticPayload(contradictory).passed, false);
+
+  const missingLowercase = canonicalAsk();
+  delete missingLowercase.slots.request;
+  assert.equal(validateSemanticPayload(missingLowercase).passed, false);
+
+  const crossAct = canonicalAsk();
+  crossAct.slots.OFFER = { object: "cash", quantity: 80 };
+  crossAct.slots.offer = { object: "cash", quantity: 80 };
+  assert.equal(validateSemanticPayload(crossAct).passed, false);
+});
+
+test("required semantic slots reject empty and malformed shapes", () => {
+  for (const [field, value] of [["REQUEST", ""], ["REQUEST", {}], ["REQUEST", []], ["REQUEST", { action: "" }]]) {
+    const payload = canonicalAsk();
+    payload.slots[field] = value;
+    payload.slots[field.toLowerCase()] = structuredClone(value);
+    assert.equal(validateSemanticPayload(payload).passed, false, `${field} malformed value was accepted`);
+  }
+  const malformedQuantity = makeSemanticRequest("DEAL", {
+    OFFER: { object: "cash", quantity: 0 },
+    offer: { object: "cash", quantity: 0 },
+    RETURN: { object: "extension" },
+    return: { object: "extension" },
+  });
+  assert.equal(validateSemanticPayload(malformedQuantity).passed, false);
+  const emptyPolicy = canonicalAsk();
+  emptyPolicy.forbiddenSemanticAdditions = [];
+  assert.equal(validateSemanticPayload(emptyPolicy).passed, false);
 });
 
 test("safe fallback preserves the selected act and records unmapped-cell deferment", () => {
@@ -92,6 +213,16 @@ test("resolved actions cross the TPL boundary through a canonical adapter", () =
   assert.deepEqual(adapted.semanticRequest.slots.request, adapted.semanticRequest.slots.REQUEST);
   assert.equal(validateSemanticPayload(adapted.semanticRequest).passed, true);
   assert.equal(validateSemanticInvariance(adapted.semanticRequest, structuredClone(adapted.semanticRequest)).passed, true);
+
+  const contradictoryPayload = structuredClone(resolved);
+  contradictoryPayload.payload = {
+    ...contradictoryPayload.payload,
+    REQUEST: { action: "REQUEST_EXTENSION", object: "debt_relief" },
+    request: "pay now",
+  };
+  const contradictory = adaptResolvedActionToSemanticRequest(contradictoryPayload);
+  assert.equal(contradictory.ok, false);
+  assert.ok(contradictory.failures.some((failure) => failure.code === "RESOLUTION_UPPERCASE_LOWERCASE_MISMATCH"));
 
   const blocked = resolveAction(state, "REQUEST_EXTENSION", "player", "apartment_305_entry", "PRIVATE_NEGOTIATION");
   const rejected = adaptResolvedActionToSemanticRequest(blocked);

@@ -1,7 +1,7 @@
 import { SPEECH_ACTS } from "./based.mjs";
 import { SEMANTIC_SLOTS_BY_ACT, validateSemanticPayload } from "./tpl.mjs";
 
-const ADAPTER_VERSION = "action-tpl-adapter@0.1";
+export const ADAPTER_VERSION = "action-tpl-adapter@0.1";
 const REQUIRED_RESOLUTION_FIELDS = ["actionId", "actorId", "targetId", "macroAct", "outcome", "payload"];
 
 const isObject = (value) => value !== null && typeof value === "object" && !Array.isArray(value);
@@ -27,9 +27,75 @@ function stablePart(value) {
   return encodeURIComponent(String(value));
 }
 
-function derivedRequestId(resolvedAction, contextId) {
-  const scenarioId = resolvedAction.stateBefore?.scenarioId ?? "unknown-scenario";
-  return ["semantic", scenarioId, resolvedAction.actionId, resolvedAction.actorId, resolvedAction.targetId, contextId].map(stablePart).join(":");
+function derivedRequestId(historyId) {
+  return ["semantic", historyId].map(stablePart).join(":");
+}
+
+function canonicalJson(value) {
+  if (value === undefined) return "undefined";
+  if (value === null || typeof value !== "object") return JSON.stringify(value);
+  if (Array.isArray(value)) return `[${value.map(canonicalJson).join(",")}]`;
+  return `{${Object.keys(value).sort().map((key) => `${JSON.stringify(key)}:${canonicalJson(value[key])}`).join(",")}}`;
+}
+
+const valuesEqual = (left, right) => canonicalJson(left) === canonicalJson(right);
+
+function nonEmptyString(value) {
+  return typeof value === "string" && value.trim().length > 0;
+}
+
+function validateResolutionIdentity(resolvedAction) {
+  const failures = [];
+  const emittedHistory = resolvedAction.emittedHistory;
+  if (!Array.isArray(emittedHistory)) return { failures: [failure("RESOLUTION_HISTORY_MISSING", "A successful resolution must include emitted history identity evidence.")] };
+  if (emittedHistory.length !== 1) {
+    return { failures: [failure("RESOLUTION_HISTORY_CARDINALITY_INVALID", "A successful resolution must emit exactly one history event for adapter identity.", { count: emittedHistory.length })] };
+  }
+
+  const historyEvent = emittedHistory[0];
+  if (!isObject(historyEvent)) return { failures: [failure("RESOLUTION_HISTORY_NOT_OBJECT", "The emitted history identity evidence must be an object.")] };
+  if (!nonEmptyString(historyEvent.historyId)) failures.push(failure("RESOLUTION_HISTORY_ID_MISSING", "The emitted history event must carry a non-empty historyId."));
+  if (!nonEmptyString(historyEvent.eventType)) failures.push(failure("RESOLUTION_HISTORY_EVENT_TYPE_MISSING", "The emitted history event must carry a non-empty eventType."));
+
+  const identityFields = ["actionId", "actorId", "targetId"];
+  for (const field of identityFields) {
+    if (historyEvent[field] !== resolvedAction[field]) {
+      failures.push(failure("RESOLUTION_HISTORY_IDENTITY_DRIFT", `Emitted history field ${field} does not match the resolved action.`, { field, expected: resolvedAction[field], actual: historyEvent[field] }));
+    }
+  }
+  if (hasOwn(resolvedAction, "contextId") && historyEvent.contextId !== resolvedAction.contextId) {
+    failures.push(failure("RESOLUTION_HISTORY_IDENTITY_DRIFT", "Emitted history contextId does not match the resolved action.", { field: "contextId", expected: resolvedAction.contextId, actual: historyEvent.contextId }));
+  }
+
+  if (Array.isArray(resolvedAction.deterministicEffects)) {
+    const matchingEffect = resolvedAction.deterministicEffects.some((effect) => isObject(effect) && effect.kind === "EMIT_HISTORY" && effect.historyId === historyEvent.historyId);
+    if (!matchingEffect) failures.push(failure("RESOLUTION_EFFECT_HISTORY_MISMATCH", "The deterministic history effect does not identify the emitted history event.", { historyId: historyEvent.historyId }));
+  } else {
+    failures.push(failure("RESOLUTION_EFFECTS_MISSING", "A successful resolution must include deterministic history effects."));
+  }
+
+  const stateBeforeHistory = resolvedAction.stateBefore?.history;
+  if (!Array.isArray(stateBeforeHistory)) failures.push(failure("RESOLUTION_STATE_BEFORE_MISSING", "A successful resolution must include the stateBefore history snapshot."));
+  if (Array.isArray(stateBeforeHistory) && stateBeforeHistory.some((event) => isObject(event) && event.historyId === historyEvent.historyId)) {
+    failures.push(failure("RESOLUTION_HISTORY_ALREADY_PRESENT", "The emitted history identity already exists in stateBefore; the resolution occurrence is not distinct."));
+  }
+
+  const stateAfterHistory = resolvedAction.stateAfter?.history;
+  if (!Array.isArray(stateAfterHistory)) failures.push(failure("RESOLUTION_STATE_AFTER_MISSING", "A successful resolution must include the stateAfter history snapshot."));
+  if (Array.isArray(stateAfterHistory)) {
+    const matchingAfterEvents = stateAfterHistory.filter((event) => isObject(event) && event.historyId === historyEvent.historyId);
+    if (!matchingAfterEvents.length) {
+      failures.push(failure("RESOLUTION_HISTORY_NOT_IN_STATE_AFTER", "The emitted history identity is absent from stateAfter.", { historyId: historyEvent.historyId }));
+    } else if (matchingAfterEvents.length !== 1) {
+      failures.push(failure("RESOLUTION_HISTORY_ID_NOT_UNIQUE", "The emitted history identity occurs more than once in stateAfter.", { historyId: historyEvent.historyId, count: matchingAfterEvents.length }));
+    } else if (canonicalJson(matchingAfterEvents[0]) !== canonicalJson(historyEvent)) {
+      failures.push(failure("RESOLUTION_HISTORY_EVENT_DRIFT", "The emitted history event differs from the event persisted in stateAfter.", { historyId: historyEvent.historyId }));
+    }
+  }
+
+  const contextId = resolvedAction.contextId ?? historyEvent.contextId;
+  if (!nonEmptyString(contextId)) failures.push(failure("RESOLUTION_CONTEXT_MISSING", "A resolved action must carry a non-empty contextId or emitted-history context."));
+  return { failures, historyEvent, contextId };
 }
 
 function addIdentityFailure(failures, payload, field, expected) {
@@ -38,18 +104,26 @@ function addIdentityFailure(failures, payload, field, expected) {
 
 function mapSemanticSlots(resolvedAction, payload, failures) {
   const { macroAct } = resolvedAction;
+  for (const upperSlot of ["OFFER", "RETURN", "DEMAND", "CONSEQUENCE", "REQUEST"]) {
+    const lowerSlot = upperSlot.toLowerCase();
+    if (hasOwn(payload, upperSlot) && hasOwn(payload, lowerSlot) && !valuesEqual(payload[upperSlot], payload[lowerSlot])) {
+      failures.push(failure("RESOLUTION_UPPERCASE_LOWERCASE_MISMATCH", `Resolved payload slots ${upperSlot} and ${lowerSlot} disagree.`, { upperSlot, lowerSlot }));
+    }
+  }
+  if (failures.length) return null;
   if (macroAct === "DEAL") {
-    for (const field of ["offer", "return"]) if (!hasOwn(payload, field) || payload[field] === null || payload[field] === undefined) failures.push(failure("MISSING_DEAL_SEMANTIC_CONTENT", `A DEAL resolution must provide ${field}.`, { field }));
+    for (const field of ["offer", "return"]) if ((!hasOwn(payload, field) && !hasOwn(payload, field.toUpperCase())) || (hasOwn(payload, field) && (payload[field] === null || payload[field] === undefined))) failures.push(failure("MISSING_DEAL_SEMANTIC_CONTENT", `A DEAL resolution must provide ${field}.`, { field }));
     if (failures.length) return null;
-    return { OFFER: clone(payload.offer), RETURN: clone(payload.return) };
+    return { OFFER: clone(payload.offer ?? payload.OFFER), RETURN: clone(payload.return ?? payload.RETURN) };
   }
   if (macroAct === "PRESSURE") {
-    for (const field of ["demand", "consequence"]) if (!hasOwn(payload, field) || payload[field] === null || payload[field] === undefined) failures.push(failure("MISSING_PRESSURE_SEMANTIC_CONTENT", `A PRESSURE resolution must provide ${field}.`, { field }));
+    for (const field of ["demand", "consequence"]) if ((!hasOwn(payload, field) && !hasOwn(payload, field.toUpperCase())) || (hasOwn(payload, field) && (payload[field] === null || payload[field] === undefined))) failures.push(failure("MISSING_PRESSURE_SEMANTIC_CONTENT", `A PRESSURE resolution must provide ${field}.`, { field }));
     if (failures.length) return null;
-    return { DEMAND: clone(payload.demand), CONSEQUENCE: clone(payload.consequence) };
+    return { DEMAND: clone(payload.demand ?? payload.DEMAND), CONSEQUENCE: clone(payload.consequence ?? payload.CONSEQUENCE) };
   }
   if (macroAct === "ASK") {
-    if (hasOwn(payload, "request") && payload.request !== null && payload.request !== undefined) return { REQUEST: clone(payload.request) };
+    if ((hasOwn(payload, "request") || hasOwn(payload, "REQUEST")) && payload.request !== null && payload.request !== undefined) return { REQUEST: clone(payload.request ?? payload.REQUEST) };
+    if (hasOwn(payload, "REQUEST") && payload.REQUEST !== null && payload.REQUEST !== undefined) return { REQUEST: clone(payload.REQUEST) };
     const frame = {};
     for (const field of ["action", "object", "permission", "information", "condition", "leverage"]) if (hasOwn(payload, field)) frame[field] = clone(payload[field]);
     if (!hasOwn(frame, "action") && !hasOwn(frame, "object") && !hasOwn(frame, "permission") && !hasOwn(frame, "information")) {
@@ -77,8 +151,13 @@ export function adaptResolvedActionToSemanticRequest(resolvedAction) {
   if (!SPEECH_ACTS.includes(resolvedAction.macroAct)) return rejected([failure("UNSUPPORTED_MACRO_ACT", `Cannot adapt unsupported macro act ${resolvedAction.macroAct}.`)]);
   if (!isObject(resolvedAction.payload)) return rejected([failure("RESOLUTION_PAYLOAD_NOT_OBJECT", "The resolved action payload must be an object.")]);
 
-  const contextId = resolvedAction.contextId ?? resolvedAction.emittedHistory?.[0]?.contextId;
-  if (contextId === undefined || contextId === null || contextId === "") return rejected([failure("RESOLUTION_CONTEXT_MISSING", "A resolved action must carry an explicit contextId or emitted-history context.")]);
+  const identity = validateResolutionIdentity(resolvedAction);
+  if (identity.failures.length) return rejected(identity.failures, [{ step: "RESOLUTION_IDENTITY_VALIDATED", passed: false }]);
+  const { contextId, historyEvent } = identity;
+  const expectedSemanticRequestId = derivedRequestId(historyEvent.historyId);
+  if (hasOwn(resolvedAction, "semanticRequestId") && resolvedAction.semanticRequestId !== expectedSemanticRequestId) {
+    return rejected([failure("RESOLUTION_SEMANTIC_REQUEST_ID_DRIFT", "The supplied semantic request identity does not match the emitted history occurrence.", { expected: expectedSemanticRequestId, actual: resolvedAction.semanticRequestId })], [{ step: "RESOLUTION_IDENTITY_VALIDATED", passed: false }]);
+  }
 
   const payload = resolvedAction.payload;
   addIdentityFailure(failures, payload, "actor", resolvedAction.actorId);
@@ -103,7 +182,7 @@ export function adaptResolvedActionToSemanticRequest(resolvedAction) {
   const semanticRequest = {
     schemaVersion: "dpa-keyword-foundation@0.1",
     adapterVersion: ADAPTER_VERSION,
-    semanticRequestId: resolvedAction.semanticRequestId ?? derivedRequestId(resolvedAction, contextId),
+    semanticRequestId: expectedSemanticRequestId,
     actionId: resolvedAction.actionId,
     actorId: resolvedAction.actorId,
     targetId: resolvedAction.targetId,
@@ -118,7 +197,7 @@ export function adaptResolvedActionToSemanticRequest(resolvedAction) {
     forbiddenSemanticAdditions: clone(resolvedAction.forbiddenSemanticAdditions ?? []),
     provenance: [{
       sourceId: "mechanics-action-resolution",
-      sourceRecordId: `${resolvedAction.stateBefore?.scenarioId ?? "unknown-scenario"}:${resolvedAction.actionId}`,
+      sourceRecordId: historyEvent.historyId,
       transformVersion: ADAPTER_VERSION,
       licenseId: "PROJECT_AUTHORED",
     }],
@@ -133,6 +212,7 @@ export function adaptResolvedActionToSemanticRequest(resolvedAction) {
     failures: [],
     trace: [
       { step: "ACTION_BOUNDARY_CHECK", passed: true, actionId: resolvedAction.actionId, macroAct: resolvedAction.macroAct },
+      { step: "RESOLUTION_IDENTITY_VALIDATED", passed: true, historyId: historyEvent.historyId, semanticRequestId: expectedSemanticRequestId },
       { step: "SEMANTIC_SLOTS_MAPPED", slots: [...SEMANTIC_SLOTS_BY_ACT[resolvedAction.macroAct]] },
       { step: "ADAPTER_OUTPUT_VALIDATED", passed: true },
     ],

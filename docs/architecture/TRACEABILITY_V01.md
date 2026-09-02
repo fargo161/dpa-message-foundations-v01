@@ -16,7 +16,9 @@ This table records what the foundation can prove now and what remains deliberate
 | Idempotent imports | `FoundationStore` stages imports, requires a verified checksum, deduplicates exact replays, and keeps synthetic fixtures labeled and resettable. | `tests/store.test.mjs` |
 | Author inspection | `inspect`, `report`, and `demo` commands expose readable action names, authored-fact counts, blockers, provenance, and deferments without a player-facing TPL picker. | `tests/cli.test.mjs`, `tests/inspection.test.mjs` |
 | Action-to-render inspection trace | The demo selects an actually available action, adapts only its emitted payload into the act-required semantic slots, selects a BASED coordinate, and resolves the current `UNMAPPED` cell through the safe fallback. Missing action content is rejected rather than invented. | `buildAuthoringPipelineTrace()`, `node src/cli.mjs demo`, `tests/inspection.test.mjs` |
-| Executable schema/tooling gates | Project JSON Schemas are checked by the dependency-free validator; ESLint and TypeScript `checkJs` validate source and scripts; CI runs only portable gates. | `npm run schema:validate`, `npm run lint`, `npm run typecheck`, `.github/workflows/ci.yml` |
+| Act-specific semantic schemas | Mechanics schemas describe linked pressure leverage, demand, and consequence payloads; semantic-request schemas require the complete envelope, act-required uppercase/lowercase slots, nonempty values, and strict provenance. Representative `DEAL`, `PRESSURE`, and `ASK` adapter outputs are validated. | `schemas/mechanics.schema.json`, `schemas/semantic-request.schema.json`, `scripts/validate-schemas.mjs`, `tests/schema-validation.test.mjs` |
+| Executable schema/tooling gates | Project JSON Schemas are checked by the dependency-free validator; ESLint and TypeScript `checkJs` validate source and scripts; CI runs only portable gates with `contents: read`. | `npm run schema:validate`, `npm run lint`, `npm run typecheck`, `.github/workflows/ci.yml` |
+| Generated-artifact freshness | The build writes three tracked reports and a post-build checker fails when any is missing, untracked, staged-different, or different in the worktree. | `scripts/check-generated.mjs`, `tests/generated-freshness.test.mjs`, `.github/workflows/ci.yml` |
 
 External corpora remain evidence-only and are not runtime fixtures. The authored demo scenarios provide the facts used by the CLI trace; imported research records remain outside mechanics, BASED approval, TPL protocol approval, and runtime dialogue.
 
@@ -25,3 +27,11 @@ External corpora remain evidence-only and are not runtime fixtures. The authored
 The inspection layer is an authoring/verification surface, not an approval path. It proves that authored facts can produce an available action and that a resolved action can reach a semantic request only when the action adapter can validate its emitted content. It then selects one ordered BASED Vibe and Delivery Intensity and calls the existing matrix resolver. Because every current matrix cell is `UNMAPPED`, the expected result is a deterministic safe fallback with `MATRIX_CELL_UNMAPPED`; this is not evidence of an approved TPL protocol or dynamic dialogue.
 
 The canonical adapter carries an ASK action frame when no authored prose phrase exists—for example, `REQUEST_EXTENSION` supplies the explicit action and object fields. It does not invent dialogue. Blocked resolutions remain quarantined and cannot cross into TPL rendering.
+
+## Current status register
+
+- Acquisition: seven external datasets are `ACQUIRED_AND_INDEXED`; the Luangrath-Peck-Barger manuscript is `ACQUIRED_NOT_INDEXED`; the project role core is `FIXTURE_ONLY`. No source is `MANIFEST_ONLY`, `BLOCKED`, or `EXCLUDED` in the verified local manifest.
+- Runtime boundary: imported research records are `EVIDENCE_PRIOR`, `defaultOnly`, and `runtimeEligible: false`; runtime corpus records remain 0.
+- TPL boundary: five families, six candidate atoms, three reviewed constructions, three candidate protocols, and 0 approved runtime protocols. All 180 matrix cells remain `UNMAPPED`.
+- Licensing: the package remains `UNLICENSED`; no repository reuse license has been selected.
+- Extension procedures: see `docs/architecture/PHASE_2_EXTENSION_POINTS_V01.md`.

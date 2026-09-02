@@ -12,6 +12,143 @@
     "id": { "type": "string", "minLength": 1, "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$" },
     "macroAct": { "type": "string", "enum": ["DEAL", "PRESSURE", "ASK"] },
     "scope": { "type": "string", "enum": ["ACTUAL", "BELIEF"] },
+    "nonEmptyString": { "type": "string", "minLength": 1 },
+    "actionPayloadBase": {
+      "type": "object",
+      "required": ["actor", "target", "action"],
+      "properties": {
+        "actor": { "$ref": "#/$defs/id" },
+        "target": { "$ref": "#/$defs/id" },
+        "action": { "type": "string", "pattern": "^[A-Z][A-Z0-9_]+$" }
+      }
+    },
+    "exchangePayload": {
+      "type": "object",
+      "minProperties": 1,
+      "properties": {
+        "object": { "$ref": "#/$defs/nonEmptyString" },
+        "quantity": { "type": "number", "minimum": 0.000001 },
+        "unit": { "$ref": "#/$defs/nonEmptyString" },
+        "status": { "$ref": "#/$defs/nonEmptyString" },
+        "change": { "$ref": "#/$defs/nonEmptyString" }
+      },
+      "additionalProperties": false
+    },
+    "dealPayload": {
+      "type": "object",
+      "required": ["actor", "target", "action", "return"],
+      "properties": {
+        "actor": { "$ref": "#/$defs/id" },
+        "target": { "$ref": "#/$defs/id" },
+        "action": { "type": "string", "pattern": "^[A-Z][A-Z0-9_]+$" },
+        "offer": { "$ref": "#/$defs/exchangePayload" },
+        "information": { "$ref": "#/$defs/nonEmptyString" },
+        "return": { "$ref": "#/$defs/exchangePayload" }
+      },
+      "anyOf": [
+        { "required": ["offer"] },
+        { "required": ["information"] }
+      ],
+      "additionalProperties": false
+    },
+    "linkedLeverage": {
+      "type": "object",
+      "required": ["actor", "target", "basis", "sourceAssertionId", "scope", "contextId", "validFrom", "pressureContractId"],
+      "properties": {
+        "actor": { "$ref": "#/$defs/id" },
+        "target": { "$ref": "#/$defs/id" },
+        "basis": { "$ref": "#/$defs/id" },
+        "sourceAssertionId": { "$ref": "#/$defs/id" },
+        "scope": { "$ref": "#/$defs/scope" },
+        "contextId": { "$ref": "#/$defs/id" },
+        "validFrom": { "type": "string", "format": "date-time" },
+        "pressureContractId": { "$ref": "#/$defs/id" }
+      },
+      "additionalProperties": false
+    },
+    "linkedDemand": {
+      "type": "object",
+      "required": ["kind", "demandId", "subject", "object", "term", "amount", "unit", "due", "sourceAssertionId", "scope", "contextId", "validFrom", "pressureContractId", "authoredDemand"],
+      "properties": {
+        "kind": { "const": "FULFILL_OBLIGATION" },
+        "demandId": { "$ref": "#/$defs/id" },
+        "subject": { "$ref": "#/$defs/id" },
+        "object": { "$ref": "#/$defs/id" },
+        "term": { "$ref": "#/$defs/id" },
+        "amount": { "type": "number", "minimum": 0.000001 },
+        "unit": { "$ref": "#/$defs/nonEmptyString" },
+        "due": { "type": "string", "format": "date-time" },
+        "sourceAssertionId": { "$ref": "#/$defs/id" },
+        "scope": { "$ref": "#/$defs/scope" },
+        "contextId": { "$ref": "#/$defs/id" },
+        "validFrom": { "type": "string", "format": "date-time" },
+        "pressureContractId": { "$ref": "#/$defs/id" },
+        "authoredDemand": { "$ref": "#/$defs/nonEmptyString" }
+      },
+      "additionalProperties": false
+    },
+    "linkedConsequence": {
+      "type": "object",
+      "required": ["consequenceId", "text", "fearedBy", "fearedConsequenceSourceAssertionId", "leverageBasis", "demandId", "scope", "contextId", "validFrom", "validity", "pressureContractId"],
+      "properties": {
+        "consequenceId": { "$ref": "#/$defs/id" },
+        "text": { "$ref": "#/$defs/nonEmptyString" },
+        "fearedBy": { "$ref": "#/$defs/id" },
+        "fearedConsequenceSourceAssertionId": { "$ref": "#/$defs/id" },
+        "leverageBasis": { "$ref": "#/$defs/id" },
+        "demandId": { "$ref": "#/$defs/id" },
+        "scope": { "$ref": "#/$defs/scope" },
+        "contextId": { "$ref": "#/$defs/id" },
+        "validFrom": { "type": "string", "format": "date-time" },
+        "validity": {
+          "type": "object",
+          "required": ["scope", "contextId", "validFrom", "validUntilIsUnbounded"],
+          "properties": {
+            "scope": { "$ref": "#/$defs/scope" },
+            "contextId": { "$ref": "#/$defs/id" },
+            "validFrom": { "type": "string", "format": "date-time" },
+            "validUntilIsUnbounded": { "type": "boolean" }
+          },
+          "additionalProperties": false
+        },
+        "pressureContractId": { "$ref": "#/$defs/id" }
+      },
+      "additionalProperties": false
+    },
+    "pressurePayload": {
+      "type": "object",
+      "required": ["actor", "target", "action", "contextId", "leverage", "demand", "consequence"],
+      "properties": {
+        "actor": { "$ref": "#/$defs/id" },
+        "target": { "$ref": "#/$defs/id" },
+        "action": { "type": "string", "pattern": "^[A-Z][A-Z0-9_]+$" },
+        "contextId": { "$ref": "#/$defs/id" },
+        "leverage": { "$ref": "#/$defs/linkedLeverage" },
+        "demand": { "$ref": "#/$defs/linkedDemand" },
+        "consequence": { "$ref": "#/$defs/linkedConsequence" }
+      },
+      "additionalProperties": false
+    },
+    "askPayload": {
+      "type": "object",
+      "required": ["actor", "target", "action"],
+      "properties": {
+        "actor": { "$ref": "#/$defs/id" },
+        "target": { "$ref": "#/$defs/id" },
+        "action": { "type": "string", "pattern": "^[A-Z][A-Z0-9_]+$" },
+        "object": { "$ref": "#/$defs/nonEmptyString" },
+        "permission": { "$ref": "#/$defs/nonEmptyString" },
+        "information": { "$ref": "#/$defs/nonEmptyString" },
+        "request": { "$ref": "#/$defs/nonEmptyString" }
+      },
+      "anyOf": [
+        { "required": ["object"] },
+        { "required": ["permission"] },
+        { "required": ["information"] },
+        { "required": ["request"] }
+      ],
+      "additionalProperties": false
+    },
     "provenance": {
       "type": "object",
       "required": ["sourceId", "sourceVersion", "sourceRecordId", "transformVersion", "licenseId"],
@@ -81,6 +218,28 @@
       },
       "additionalProperties": false
     },
+    "pressureContract": {
+      "type": "object",
+      "required": ["contractId", "actorId", "targetId", "contextId", "scope", "status", "validFrom", "validUntil", "leverageAssertionId", "obligationAssertionId", "fearAssertionId", "demand", "fearedConsequenceId", "consequenceId", "provenance"],
+      "properties": {
+        "contractId": { "$ref": "#/$defs/id" },
+        "actorId": { "$ref": "#/$defs/id" },
+        "targetId": { "$ref": "#/$defs/id" },
+        "contextId": { "$ref": "#/$defs/id" },
+        "scope": { "$ref": "#/$defs/scope" },
+        "status": { "enum": ["ACTIVE", "INACTIVE"] },
+        "validFrom": { "type": "string", "format": "date-time" },
+        "validUntil": { "type": ["string", "null"], "format": "date-time" },
+        "leverageAssertionId": { "$ref": "#/$defs/id" },
+        "obligationAssertionId": { "$ref": "#/$defs/id" },
+        "fearAssertionId": { "$ref": "#/$defs/id" },
+        "demand": { "$ref": "#/$defs/nonEmptyString" },
+        "fearedConsequenceId": { "$ref": "#/$defs/id" },
+        "consequenceId": { "$ref": "#/$defs/id" },
+        "provenance": { "$ref": "#/$defs/provenance" }
+      },
+      "additionalProperties": false
+    },
     "historyEvent": {
       "type": "object",
       "required": ["historyId", "eventType", "actorId", "targetId", "actionId", "contextId", "createdAt", "provenance"],
@@ -109,7 +268,7 @@
     },
     "state": {
       "type": "object",
-      "required": ["schemaVersion", "scenarioId", "title", "now", "entities", "contexts", "facts", "priors", "history", "consequences", "blockers", "recommendedPairs"],
+      "required": ["schemaVersion", "scenarioId", "title", "now", "entities", "contexts", "facts", "priors", "history", "consequences", "blockers", "pressureContracts", "recommendedPairs"],
       "properties": {
         "schemaVersion": { "const": "dpa-keyword-foundation@0.1" },
         "scenarioId": { "$ref": "#/$defs/id" },
@@ -122,6 +281,7 @@
         "history": { "type": "array", "items": { "$ref": "#/$defs/historyEvent" } },
         "consequences": { "type": "object", "additionalProperties": { "type": "string" } },
         "blockers": { "type": "array", "items": { "$ref": "#/$defs/blocker" } },
+        "pressureContracts": { "type": "array", "items": { "$ref": "#/$defs/pressureContract" } },
         "recommendedPairs": { "type": "array", "items": { "$ref": "#/$defs/pair" } }
       },
       "additionalProperties": false
@@ -170,6 +330,18 @@
       "additionalProperties": false
     },
     "resolvedAction": {
+      "allOf": [
+        { "$ref": "#/$defs/resolvedActionBase" },
+        {
+          "oneOf": [
+            { "$ref": "#/$defs/dealResolution" },
+            { "$ref": "#/$defs/pressureResolution" },
+            { "$ref": "#/$defs/askResolution" }
+          ]
+        }
+      ]
+    },
+    "resolvedActionBase": {
       "type": "object",
       "required": ["actionId", "actorId", "targetId", "macroAct", "payload", "preconditionEvaluations", "outcome", "deterministicEffects", "emittedHistory", "mandatorySemanticFacts", "forbiddenSemanticAdditions", "quarantine", "trace", "stateBefore", "stateAfter"],
       "properties": {
@@ -190,6 +362,27 @@
         "stateAfter": { "$ref": "#/$defs/state" }
       },
       "additionalProperties": false
+    },
+    "dealResolution": {
+      "type": "object",
+      "properties": {
+        "macroAct": { "const": "DEAL" },
+        "payload": { "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/dealPayload" }] }
+      }
+    },
+    "pressureResolution": {
+      "type": "object",
+      "properties": {
+        "macroAct": { "const": "PRESSURE" },
+        "payload": { "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/pressurePayload" }] }
+      }
+    },
+    "askResolution": {
+      "type": "object",
+      "properties": {
+        "macroAct": { "const": "ASK" },
+        "payload": { "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/askPayload" }] }
+      }
     },
     "configuration": {
       "type": "object",

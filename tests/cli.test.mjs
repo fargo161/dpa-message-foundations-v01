@@ -9,7 +9,7 @@ const run = (command) => execFileSync(process.execPath, ["src/cli.mjs", command]
 test("author-facing CLI exposes report, inspect, and demo", () => {
   const report = run("report");
   assert.match(report, /180 matrix cells/);
-  assert.match(report, /Semantic capacity: 660 valid unique configurations; theoretical coordinate cross-product 4320/);
+  assert.match(report, /Semantic capacity: 600 valid unique configurations; theoretical coordinate cross-product 4320/);
   const inspect = JSON.parse(run("inspect"));
   assert.equal(inspect.based.matrixCellCount, 180);
   assert.equal(inspect.sources.realAcquiredSourceCount, 8);

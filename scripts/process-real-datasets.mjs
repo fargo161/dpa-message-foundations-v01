@@ -1,18 +1,18 @@
 #!/usr/bin/env node
 import { createHash } from "node:crypto";
 import { createReadStream, createWriteStream } from "node:fs";
-import { mkdir, readFile, stat, writeFile } from "node:fs/promises";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { once } from "node:events";
 import { createInterface } from "node:readline";
 import { resolve, relative, basename } from "node:path";
 import { fileURLToPath } from "node:url";
-import { SOURCE_BY_ID, validateArtifactDigest } from "../src/sources.mjs";
+import { EXTERNAL_DATA_CACHE_ROOT, SOURCE_BY_ID, canonicalPosixPath, validateArtifactDigest } from "../src/sources.mjs";
 import { extractZipFile } from "../src/archive.mjs";
 import { buildSearchIndex } from "../src/index.mjs";
-import { aggregateSocialChemistryRecords, normalizeAtomicRows, normalizeJsonl, normalizeMoralStoriesRows, normalizePfgCsv, normalizeSocialChemistryRow, dedupeNormalizedRecords, parseCsv, parseTsv } from "../src/ingestion.mjs";
+import { normalizeAtomicRows, normalizeJsonl, normalizeMoralStoriesRows, normalizePfgCsv, normalizeSocialChemistryRow, dedupeNormalizedRecords, parseCsv, parseTsv } from "../src/ingestion.mjs";
 
 const root = fileURLToPath(new URL("..", import.meta.url));
-const cacheRoot = resolve(root, ".cache/external-data");
+const cacheRoot = resolve(root, EXTERNAL_DATA_CACHE_ROOT);
 const indexRoot = resolve(root, "data/indexes");
 const acquisitionManifestPath = resolve(root, "data/acquisition-manifest.json");
 let registrationTime = new Date().toISOString();
@@ -36,8 +36,61 @@ function sourceInfo(sourceId) {
   if (!source) throw new Error(`SOURCE_MANIFEST_MISSING:${sourceId}`);
   return source;
 }
+function trackedPath(path) { return canonicalPosixPath(relative(root, path)); }
 function nonemptyLines(text) { return text.split(/\r?\n/).filter((line) => line.trim()); }
 function firstJsonLine(text) { const line = nonemptyLines(text)[0]; return line ? JSON.parse(line) : {}; }
+
+function annotationFingerprint(annotation) {
+  return annotation.annotationFingerprint ?? createHash("sha256").update(JSON.stringify(annotation)).digest("hex");
+}
+
+function annotationSortKey(annotation) {
+  return [annotation.legalityJudgment ?? "", annotation.action ?? "", annotation.culturalPressure ?? "", annotationFingerprint(annotation)].join("\u0000");
+}
+
+function mergeSocialChemistryRecord(groups, record) {
+  let group = groups.get(record.recordId);
+  if (!group) {
+    group = { canonical: record, annotations: new Map(), duplicateRecords: [] };
+    groups.set(record.recordId, group);
+  } else if (String(record.fingerprint).localeCompare(String(group.canonical.fingerprint)) < 0) {
+    group.canonical = record;
+  }
+  const annotations = record.annotations?.length ? record.annotations : [{ annotationId: record.fingerprint, observedFields: {} }];
+  for (const annotation of annotations) {
+    const baseId = annotation.annotationId;
+    const valueFingerprint = annotationFingerprint(annotation);
+    const key = `${baseId}\u0000${valueFingerprint}`;
+    if (group.annotations.has(key)) group.duplicateRecords.push(record.recordId);
+    else group.annotations.set(key, { annotation, baseId, valueFingerprint });
+  }
+}
+
+function finalizeSocialChemistryGroups(groups) {
+  const records = [];
+  const duplicateRecords = [];
+  let aggregatedAnnotationRows = 0;
+  for (const [recordId, group] of [...groups.entries()].sort(([left], [right]) => left.localeCompare(right))) {
+    const baseIds = new Set();
+    const annotations = [...group.annotations.values()]
+      .sort((left, right) => annotationSortKey(left.annotation).localeCompare(annotationSortKey(right.annotation)))
+      .map(({ annotation, baseId, valueFingerprint }) => {
+        if (!baseIds.has(baseId)) {
+          baseIds.add(baseId);
+          return annotation;
+        }
+        return { ...annotation, annotationId: `${baseId}:${valueFingerprint}`, sourceAnnotationId: baseId };
+      });
+    const canonical = { ...group.canonical, annotations };
+    canonical.aggregatedAnnotationCount = annotations.length;
+    canonical.fingerprint = createHash("sha256").update(JSON.stringify({ sourceId: canonical.sourceId, sourceRecordId: canonical.sourceRecordId, situation: canonical.situation, ruleOfThumb: canonical.ruleOfThumb, action: canonical.action, annotations: canonical.annotations })).digest("hex");
+    records.push(canonical);
+    duplicateRecords.push(...group.duplicateRecords);
+    aggregatedAnnotationRows += Math.max(0, annotations.length - 1);
+    if (recordId !== canonical.recordId) throw new Error(`SOCIAL_RECORD_ID_DRIFT:${recordId}`);
+  }
+  return { records, duplicateRecords: duplicateRecords.sort(), aggregatedAnnotationRows };
+}
 
 async function receiptForFile(source, artifactPath) {
   const hash = createHash("sha256");
@@ -71,7 +124,7 @@ async function streamNormalize(job, source, dataPath, normalizedPath, schema) {
   let duplicate = 0;
   let aggregatedAnnotationRows = 0;
   let headers = null;
-  const socialRecords = [];
+  const socialGroups = new Map();
   for (const currentPath of (Array.isArray(dataPath) ? dataPath : [dataPath])) {
     const input = createInterface({ input: createReadStream(currentPath), crlfDelay: Infinity });
     let splitRecordCount = 0;
@@ -89,7 +142,7 @@ async function streamNormalize(job, source, dataPath, normalizedPath, schema) {
       for (const record of candidates) {
         accepted += 1;
         if (job.kind === "social") {
-          socialRecords.push(record);
+          mergeSocialChemistryRecord(socialGroups, record);
           continue;
         }
         const key = record.recordId;
@@ -103,7 +156,7 @@ async function streamNormalize(job, source, dataPath, normalizedPath, schema) {
     }
   }
   if (job.kind === "social") {
-    const aggregated = aggregateSocialChemistryRecords(socialRecords);
+    const aggregated = finalizeSocialChemistryGroups(socialGroups);
     duplicate = aggregated.duplicateRecords.length;
     aggregatedAnnotationRows = aggregated.aggregatedAnnotationRows;
     for (const record of aggregated.records) {
@@ -121,13 +174,13 @@ async function finalize({ job, source, artifactPath, receipt, receiptPath, extra
   if (probes.some((probe) => probe.results.length === 0)) throw new Error(`RETRIEVAL_PROBE_EMPTY:${job.sourceId}`);
   const postingsPath = resolve(cacheRoot, job.sourceId, "search-index.postings.jsonl");
   const persistedPostings = await persistPostings(index, postingsPath);
-  const extractionListing = extractedFiles.map(({ name, sha256 }) => ({ name, outputPath: relative(root, resolve(cacheRoot, job.extracted, name)), sha256 }));
+  const extractionListing = extractedFiles.map(({ name, sha256 }) => ({ name: canonicalPosixPath(name), outputPath: trackedPath(resolve(cacheRoot, job.extracted, name)), sha256 }));
   const payload = {
     status: "ACQUIRED_AND_INDEXED", sourceId: job.sourceId, sourceVersion: source.sourceVersion, licenseId: source.licenseId, redistributionPolicy: source.redistributionPolicy,
-    canonicalUrl: source.canonicalUrl, artifactUrl: source.artifactUrl, artifactFilename: basename(artifactPath), artifactCachePath: relative(root, artifactPath), retrievedAt: receipt.retrievedAt, byteSize: receipt.byteSize, sha256: receipt.sha256, receiptPath: relative(root, receiptPath),
-    extraction: job.archive ? { sourceArchive: true, extractedPath: relative(root, resolve(cacheRoot, job.extracted)), extractedFileCount: extractionListing.length, extractedFiles: extractionListing } : { sourceArchive: false, extractedPath: null },
-    observedSchema: result.schema, counts: { raw: counts.raw, accepted: counts.accepted, rejected: counts.rejected, duplicate: counts.duplicate, aggregatedAnnotationRows: counts.aggregatedAnnotationRows ?? 0, normalized: counts.normalized, indexed: index.records.size }, duplicateRecordIds: counts.duplicateRecordIds ?? [], rejections: result.rejections ?? [], indexSnapshot: { ...index.snapshot(), persistedPostingsPath: relative(root, persistedPostings.path), persistedTokenCount: persistedPostings.tokenCount }, probes,
-    normalizedRecordsPath: relative(root, normalizedPath), evidenceBoundary: "Evidence/prior only. No mechanics, BASED mapping, TPL protocol, or runtime dialogue approval is implied.",
+    canonicalUrl: source.canonicalUrl, artifactUrl: source.artifactUrl, artifactFilename: basename(artifactPath), artifactCachePath: trackedPath(artifactPath), retrievedAt: receipt.retrievedAt, byteSize: receipt.byteSize, sha256: receipt.sha256, receiptPath: trackedPath(receiptPath),
+    extraction: job.archive ? { sourceArchive: true, extractedPath: trackedPath(resolve(cacheRoot, job.extracted)), extractedFileCount: extractionListing.length, extractedFiles: extractionListing } : { sourceArchive: false, extractedPath: null },
+    observedSchema: result.schema, counts: { raw: counts.raw, accepted: counts.accepted, rejected: counts.rejected, duplicate: counts.duplicate, aggregatedAnnotationRows: counts.aggregatedAnnotationRows ?? 0, normalized: counts.normalized, indexed: index.records.size }, duplicateRecordIds: counts.duplicateRecordIds ?? [], rejections: result.rejections ?? [], indexSnapshot: { ...index.snapshot(), persistedPostingsPath: trackedPath(persistedPostings.path), persistedTokenCount: persistedPostings.tokenCount }, probes,
+    normalizedRecordsPath: trackedPath(normalizedPath), evidenceBoundary: "Evidence/prior only. No mechanics, BASED mapping, TPL protocol, or runtime dialogue approval is implied.",
   };
   await writeFile(resolve(indexRoot, `${job.sourceId}.json`), `${JSON.stringify(payload, null, 2)}\n`, "utf8");
   return payload;
@@ -179,16 +232,17 @@ async function registerTplAuthority() {
   const source = sourceInfo(job.sourceId);
   const artifactPath = resolve(cacheRoot, job.artifact);
   const receipt = await receiptForFile(source, artifactPath);
+  // Validate the computed bytes before either the ignored receipt or the
+  // tracked acquisition manifest can be rewritten.
+  validateArtifactDigest(source, receipt);
   const receiptPath = resolve(cacheRoot, job.sourceId, "receipt.json");
   await writeFile(receiptPath, `${JSON.stringify(receipt, null, 2)}\n`, "utf8");
-  const file = await stat(artifactPath);
-  if (file.size !== receipt.byteSize) throw new Error("TPL_AUTHORITY_RECEIPT_SIZE_MISMATCH");
   return {
     status: "ACQUIRED_NOT_INDEXED", sourceId: source.sourceId, sourceVersion: source.sourceVersion, licenseId: source.licenseId, redistributionPolicy: source.redistributionPolicy,
-    canonicalUrl: source.canonicalUrl, artifactUrl: source.artifactUrl, artifactFilename: basename(artifactPath), artifactCachePath: relative(root, artifactPath), retrievedAt: receipt.retrievedAt, byteSize: receipt.byteSize, sha256: receipt.sha256, receiptPath: relative(root, receiptPath),
+    canonicalUrl: source.canonicalUrl, artifactUrl: source.artifactUrl, artifactFilename: basename(artifactPath), artifactCachePath: trackedPath(artifactPath), retrievedAt: receipt.retrievedAt, byteSize: receipt.byteSize, sha256: receipt.sha256, receiptPath: trackedPath(receiptPath),
     extraction: { sourceArchive: false, extractedPath: null, extractedFileCount: 0, extractedFiles: [] },
     observedSchema: { format: "PDF", fields: ["manuscript metadata and conceptual TPL taxonomy"], note: "Research authority registration only; no underlying social-media corpus is asserted available or reusable." },
-    counts: { raw: 0, accepted: 0, rejected: 0, duplicate: 0, normalized: 0, indexed: 0 }, duplicateRecordIds: [], rejections: [], indexSnapshot: null, probes: [], normalizedRecordsPath: null,
+    counts: { raw: 0, accepted: 0, rejected: 0, duplicate: 0, aggregatedAnnotationRows: 0, normalized: 0, indexed: 0 }, duplicateRecordIds: [], rejections: [], indexSnapshot: null, probes: [], normalizedRecordsPath: null,
     evidenceBoundary: "Research authority only. No underlying social-media corpus was acquired, normalized, indexed, or claimed reusable; no mechanics, BASED mapping, TPL protocol, or runtime dialogue approval is implied.",
   };
 }

@@ -7,6 +7,7 @@ import { createMarcusScenario, enumerateSemanticConfigurations, evaluateAction, 
 import { BASED_CUES, BASED_VIBES, DELIVERY_INTENSITIES, SPEECH_ACTS, buildMatrixWithAnchors } from "../src/based.mjs";
 import { TPL_ATOMS, TPL_CONSTRUCTIONS, TPL_FAMILIES, TPL_PROTOCOLS, TPL_FALLBACK_POLICY, FACE_COMPATIBILITY_BOUNDARY } from "../src/tpl.mjs";
 import { buildAuthoringPipelineTrace } from "../src/inspection.mjs";
+import { adaptResolvedActionToSemanticRequest } from "../src/action-tpl-adapter.mjs";
 import { assertValidDocument } from "../src/schema-validator.mjs";
 
 const root = fileURLToPath(new URL("..", import.meta.url));
@@ -21,7 +22,19 @@ for (const keyword of KEYWORDS) assertValidDocument(keyword, keywordSchema, `key
 const state = createMarcusScenario();
 assertValidDocument(state, mechanicsSchema, "mechanics:state");
 assertValidDocument(evaluateAction(state, "REQUEST_EXTENSION", "player", "marcus_broker_hill", "PRIVATE_NEGOTIATION"), mechanicsSchema, "mechanics:action-evaluation");
-assertValidDocument(resolveAction(state, "REQUEST_EXTENSION", "player", "marcus_broker_hill", "PRIVATE_NEGOTIATION"), mechanicsSchema, "mechanics:resolved-action");
+const representativeResolutions = [
+  ["DEAL", "OFFER_PARTIAL_PAYMENT", "player", "marcus_broker_hill", "PRIVATE_NEGOTIATION"],
+  ["PRESSURE", "INVOKE_CONSEQUENCE", "marcus_broker_hill", "player", "PRIVATE_NEGOTIATION"],
+  ["ASK", "REQUEST_EXTENSION", "player", "marcus_broker_hill", "PRIVATE_NEGOTIATION"],
+];
+for (const [macroAct, actionId, actorId, targetId, contextId] of representativeResolutions) {
+  const resolved = resolveAction(state, actionId, actorId, targetId, contextId);
+  assertValidDocument(resolved, mechanicsSchema, `mechanics:resolved-action:${macroAct}`);
+  if (resolved.macroAct !== macroAct) throw new Error(`SCHEMA_REPRESENTATIVE_ACT_MISMATCH:${actionId}`);
+  const adapted = adaptResolvedActionToSemanticRequest(resolved);
+  if (!adapted.ok) throw new Error(`SCHEMA_REPRESENTATIVE_ADAPTER_FAILED:${macroAct}:${adapted.failures.map((failure) => failure.code).join(",")}`);
+  assertValidDocument(adapted.semanticRequest, semanticRequestSchema, `semantic-request:${macroAct}`);
+}
 assertValidDocument(enumerateSemanticConfigurations([state], buildMatrixWithAnchors()), mechanicsSchema, "mechanics:capacity");
 const matrix = buildMatrixWithAnchors();
 assertValidDocument({ schemaVersion: "dpa-keyword-foundation@0.1", cues: BASED_CUES, vibes: BASED_VIBES, speechActs: SPEECH_ACTS, deliveryIntensities: DELIVERY_INTENSITIES, matrix, tplFamilies: TPL_FAMILIES, atoms: TPL_ATOMS, constructions: TPL_CONSTRUCTIONS, protocols: TPL_PROTOCOLS, semanticInvarianceBoundary: FACE_COMPATIBILITY_BOUNDARY, fallbackPolicy: TPL_FALLBACK_POLICY }, basedTplSchema, "based-tpl");

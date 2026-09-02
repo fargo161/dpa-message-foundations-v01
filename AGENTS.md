@@ -26,5 +26,13 @@ This isolated repository implements the Phase 1 semantic keyword, mechanics, BAS
 - Use stable deterministic IDs and idempotent imports. Persistence-level uniqueness is required.
 - Preserve existing files and changes. Never use destructive reset, checkout, clean, or broad deletion commands.
 - Use `apply_patch` for local source edits.
-- Run `npm test`, `npm run lint`, `npm run typecheck`, and `npm run build` in this repository before handoff.
+- Run `npm ci`, `npm test`, `npm run lint`, `npm run typecheck`, `npm run schema:validate`, and `npm run build` in this repository before handoff.
+- Run `node scripts/check-generated.mjs` after every build. It is the freshness gate for tracked generated reports and must pass before handoff.
+- Keep `npm test` portable for a clean clone. Use `npm run test:real` only for a workstation with the separately acquired, ignored corpus cache; CI does not claim to contain those corpora.
 - The CLI must expose readable names and explicit states; raw IDs are diagnostics only.
+
+## Phase-2 boundary
+
+The exact extension procedures are in `docs/architecture/PHASE_2_EXTENSION_POINTS_V01.md`. The current status is 14 approved keywords, 9 authored actions, 5 BASED cues, 20 ordered Vibes, 180 `UNMAPPED` matrix cells, 0 approved runtime TPL protocols, 0 runtime corpus records, and external research retained as evidence-only priors. Dynamic dialogue population remains deferred to Phase 2.
+
+The package is `UNLICENSED`. Do not add a reuse license without an explicit project-owner decision.

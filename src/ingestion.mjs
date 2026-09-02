@@ -190,6 +190,7 @@ export function normalizeSocialChemistryRow(row, headers, options = {}, rowNumbe
   const bad = stableText(get("rot-bad"));
   const annotation = {
     annotationId: `${sourceRecordId}:${stableText(get("rot-worker-id")) || "unknown-rot-worker"}:${stableText(get("breakdown-worker-id")) || "unknown-breakdown-worker"}`,
+    action: stableText(get("action")) || null,
     rotWorkerId: stableText(get("rot-worker-id")) || null,
     breakdownWorkerId: stableText(get("breakdown-worker-id")) || null,
     agreementBucket: get("rot-agree") === "" ? null : Number(get("rot-agree")),
@@ -202,6 +203,7 @@ export function normalizeSocialChemistryRow(row, headers, options = {}, rowNumbe
     actionAgency: stableText(get("action-agency")) || null,
     actionCharacterInvolved: stableText(get("action-char-involved")) || null,
     actionHypothetical: stableText(get("action-hypothetical")) || null,
+    observedFields: Object.fromEntries(headers.map((header, position) => [header, stableText(row[position]) || null])),
   };
   annotation.annotationFingerprint = fingerprint(Object.fromEntries(Object.entries(annotation).filter(([key]) => key !== "annotationId")));
   const record = {
@@ -253,38 +255,48 @@ export function normalizeSocialChemistryTsv(text, options = {}) {
 }
 
 export function aggregateSocialChemistryRecords(records) {
-  const byRecordId = new Map();
+  const groups = new Map();
+  for (const record of records) {
+    if (!groups.has(record.recordId)) groups.set(record.recordId, []);
+    groups.get(record.recordId).push(record);
+  }
   const duplicateRecords = [];
   let aggregatedAnnotationRows = 0;
-  for (const record of [...records].sort((left, right) => `${left.recordId}:${left.annotations?.[0]?.annotationId ?? ""}`.localeCompare(`${right.recordId}:${right.annotations?.[0]?.annotationId ?? ""}`))) {
-    const existing = byRecordId.get(record.recordId);
-    if (!existing) {
-      byRecordId.set(record.recordId, structuredClone(record));
-      continue;
+  const output = [];
+  const stableRecord = (record) => JSON.stringify(Object.fromEntries(Object.entries(record).filter(([key]) => key !== "fingerprint").sort(([left], [right]) => left.localeCompare(right))));
+  const annotationFingerprint = (annotation) => annotation.annotationFingerprint ?? fingerprint(Object.fromEntries(Object.entries(annotation).filter(([key]) => key !== "annotationId")));
+  const annotationSortKey = (annotation) => [annotation.legalityJudgment ?? "", annotation.action ?? "", annotation.culturalPressure ?? "", annotationFingerprint(annotation)].join("\u0000");
+  for (const [recordId, group] of [...groups.entries()].sort(([left], [right]) => left.localeCompare(right))) {
+    const orderedRows = [...group].sort((left, right) => stableRecord(left).localeCompare(stableRecord(right)));
+    const canonical = structuredClone(orderedRows[0]);
+    const entries = orderedRows.flatMap((record) => (record.annotations?.length ? record.annotations : [{ annotationId: record.fingerprint, observedFields: {} }]).map((annotation) => ({ annotation: structuredClone(annotation), row: record })));
+    const seen = new Set();
+    const distinct = [];
+    for (const { annotation } of entries.sort((left, right) => annotationSortKey(left.annotation).localeCompare(annotationSortKey(right.annotation)))) {
+      const baseId = annotation.annotationId;
+      const valueFingerprint = annotationFingerprint(annotation);
+      const duplicateKey = `${baseId}\u0000${valueFingerprint}`;
+      if (seen.has(duplicateKey)) {
+        duplicateRecords.push(recordId);
+        continue;
+      }
+      seen.add(duplicateKey);
+      distinct.push({ annotation, baseId, valueFingerprint });
     }
-    const incoming = record.annotations?.[0] ?? { annotationId: record.fingerprint };
-    const existingIds = new Set((existing.annotations ?? []).map((annotation) => annotation.annotationId));
-    const incomingBaseId = incoming.annotationId;
-    const incomingFingerprint = incoming.annotationFingerprint ?? fingerprint(Object.fromEntries(Object.entries(incoming).filter(([key]) => key !== "annotationId")));
-    const current = existing.annotations.find((annotation) => annotation.annotationId === incomingBaseId);
-    const currentFingerprint = current?.annotationFingerprint ?? fingerprint(Object.fromEntries(Object.entries(current ?? {}).filter(([key]) => key !== "annotationId")));
-    if (current && incomingFingerprint === currentFingerprint) {
-      duplicateRecords.push(record.recordId);
-      continue;
-    }
-    if (current) {
-      let collisionId = `${incomingBaseId}:${incomingFingerprint}`;
-      let collisionNumber = 2;
-      while (existingIds.has(collisionId)) collisionId = `${incomingBaseId}:${incomingFingerprint}:${collisionNumber++}`;
-      incoming.annotationId = collisionId;
-      incoming.sourceAnnotationId = incomingBaseId;
-    }
-    existing.annotations = [...(existing.annotations ?? []), structuredClone(incoming)].sort((left, right) => left.annotationId.localeCompare(right.annotationId));
-    aggregatedAnnotationRows += 1;
-    existing.aggregatedAnnotationCount = existing.annotations.length;
-    existing.fingerprint = fingerprint({ sourceId: existing.sourceId, sourceRecordId: existing.sourceRecordId, situation: existing.situation, ruleOfThumb: existing.ruleOfThumb, action: existing.action, annotations: existing.annotations });
+    const baseIds = new Set();
+    canonical.annotations = distinct.map(({ annotation, baseId, valueFingerprint }) => {
+      if (!baseIds.has(baseId)) {
+        baseIds.add(baseId);
+        return annotation;
+      }
+      return { ...annotation, annotationId: `${baseId}:${valueFingerprint}`, sourceAnnotationId: baseId };
+    }).sort((left, right) => annotationSortKey(left).localeCompare(annotationSortKey(right)));
+    aggregatedAnnotationRows += Math.max(0, canonical.annotations.length - 1);
+    canonical.aggregatedAnnotationCount = canonical.annotations.length;
+    canonical.fingerprint = fingerprint({ sourceId: canonical.sourceId, sourceRecordId: canonical.sourceRecordId, situation: canonical.situation, ruleOfThumb: canonical.ruleOfThumb, action: canonical.action, annotations: canonical.annotations });
+    output.push(canonical);
   }
-  return { records: [...byRecordId.values()].sort((left, right) => left.recordId.localeCompare(right.recordId)), duplicateRecords: duplicateRecords.sort(), aggregatedAnnotationRows };
+  return { records: output, duplicateRecords: duplicateRecords.sort(), aggregatedAnnotationRows };
 }
 
 export function normalizeMoralStoriesRows(rows, options = {}) {

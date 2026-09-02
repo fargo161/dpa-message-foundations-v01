@@ -1,7 +1,8 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
-import { SOURCE_BY_ID, SOURCE_MANIFESTS, assertAllowedSourceUrl, createReceipt, safeExtractEntries, validateAllSourceManifests, validateArtifactDigest, validateRedirectChain } from "../src/sources.mjs";
+import { readFileSync } from "node:fs";
+import { SOURCE_BY_ID, SOURCE_MANIFESTS, assertAllowedSourceUrl, canonicalPosixPath, createReceipt, safeExtractEntries, validateAllSourceManifests, validateArtifactDigest, validateRedirectChain } from "../src/sources.mjs";
 import { normalizeAtomicRows, normalizeMoralStoriesRows, normalizeSocialChemistryTsv, dedupeNormalizedRecords } from "../src/ingestion.mjs";
 
 test("source manifest is complete and source URLs are policy-gated", () => {
@@ -23,6 +24,33 @@ test("registered artifact receipts reject altered or unregistered bytes", () => 
   assert.throws(() => validateArtifactDigest(atomic, { byteSize: atomic.byteSize - 1, sha256: atomic.checksum }), /SOURCE_BYTE_SIZE_MISMATCH/);
   assert.throws(() => validateArtifactDigest(atomic, { byteSize: atomic.byteSize, sha256: "0".repeat(64) }), /SOURCE_CHECKSUM_MISMATCH/);
   assert.throws(() => validateArtifactDigest(SOURCE_BY_ID.get("project-role-core"), { byteSize: 1, sha256: "0".repeat(64) }), /SOURCE_EXPECTED_RECEIPT_MISSING/);
+});
+
+test("TPL authority corruption fails closed before receipt or manifest writes", () => {
+  const source = SOURCE_BY_ID.get("tpl-ontology-luangrath-peck-barger");
+  const corruptedBytes = Buffer.from("%PDF-corrupted-manuscript");
+  const corruptedDigest = { byteSize: corruptedBytes.byteLength, sha256: createHash("sha256").update(corruptedBytes).digest("hex") };
+  assert.throws(() => validateArtifactDigest(source, corruptedDigest), /SOURCE_BYTE_SIZE_MISMATCH|SOURCE_CHECKSUM_MISMATCH/);
+  const processor = readFileSync(new URL("../scripts/process-real-datasets.mjs", import.meta.url), "utf8");
+  const registrationStart = processor.indexOf("async function registerTplAuthority()");
+  const validation = processor.indexOf("validateArtifactDigest(source, receipt)", registrationStart);
+  const receiptWrite = processor.indexOf("writeFile(receiptPath", registrationStart);
+  const manifestWrite = processor.indexOf("writeFile(acquisitionManifestPath", registrationStart);
+  assert.ok(registrationStart >= 0 && validation > registrationStart, "TPL registration has no registered-digest validation");
+  assert.ok(validation < receiptWrite, "TPL registration writes a receipt before validating its digest");
+  assert.ok(validation < manifestWrite, "TPL registration can reach manifest serialization before validating its digest");
+});
+
+test("tracked acquisition paths use canonical POSIX separators across platforms", () => {
+  assert.equal(canonicalPosixPath(".cache\\external-data\\tpl-authority\\receipt.json"), ".cache/external-data/tpl-authority/receipt.json");
+  assert.equal(canonicalPosixPath("data/acquisition-manifest.json"), "data/acquisition-manifest.json");
+});
+
+test("synthetic fixture receipts remain explicitly synthetic and cannot validate as acquired", () => {
+  const source = SOURCE_BY_ID.get("project-role-core");
+  const receipt = createReceipt({ sourceId: source.sourceId, sourceVersion: source.sourceVersion, licenseId: source.licenseId, artifactUrl: source.canonicalUrl, bytes: Buffer.from("synthetic-fixture"), retrievedAt: "2026-09-02T12:00:00.000Z" });
+  assert.equal(source.acquisitionStatus, "FIXTURE_ONLY");
+  assert.throws(() => validateArtifactDigest(source, receipt), /SOURCE_EXPECTED_RECEIPT_MISSING/);
 });
 
 test("receipts and archive extraction reject unsafe or unverifiable artifacts", () => {

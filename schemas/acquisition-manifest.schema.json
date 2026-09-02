@@ -15,15 +15,15 @@
         "properties": {
           "sourceId": { "type": "string", "minLength": 1 },
           "status": { "enum": ["ACQUIRED_AND_INDEXED", "ACQUIRED_NOT_INDEXED", "FIXTURE_ONLY", "MANIFEST_ONLY", "BLOCKED", "EXCLUDED"] },
-          "sourceVersion": { "type": "string", "minLength": 1 },
-          "licenseId": { "type": "string", "minLength": 1 },
-          "artifactFilename": { "type": "string", "minLength": 1 },
-          "artifactCachePath": { "type": "string", "minLength": 1 },
+        "sourceVersion": { "type": "string", "minLength": 1 },
+        "licenseId": { "type": "string", "minLength": 1 },
+        "artifactFilename": { "type": "string", "minLength": 1 },
+          "artifactCachePath": { "type": "string", "minLength": 1, "pattern": "^\\.cache/external-data/[^\\\\]+/[^\\\\]+$" },
           "retrievedAt": { "type": "string", "format": "date-time" },
           "byteSize": { "type": "integer", "minimum": 1 },
           "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
-          "counts": { "type": "object", "required": ["raw", "accepted", "rejected", "duplicate", "normalized", "indexed"], "properties": { "raw": { "type": "integer", "minimum": 0 }, "accepted": { "type": "integer", "minimum": 0 }, "rejected": { "type": "integer", "minimum": 0 }, "duplicate": { "type": "integer", "minimum": 0 }, "aggregatedAnnotationRows": { "type": "integer", "minimum": 0 }, "normalized": { "type": "integer", "minimum": 0 }, "indexed": { "type": "integer", "minimum": 0 } }, "additionalProperties": true },
-          "probes": { "type": "array" },
+          "counts": { "type": "object", "required": ["raw", "accepted", "rejected", "duplicate", "aggregatedAnnotationRows", "normalized", "indexed"], "properties": { "raw": { "type": "integer", "minimum": 0 }, "accepted": { "type": "integer", "minimum": 0 }, "rejected": { "type": "integer", "minimum": 0 }, "duplicate": { "type": "integer", "minimum": 0 }, "aggregatedAnnotationRows": { "type": "integer", "minimum": 0 }, "normalized": { "type": "integer", "minimum": 0 }, "indexed": { "type": "integer", "minimum": 0 } }, "additionalProperties": false },
+          "probes": { "type": "array", "items": { "type": "object", "required": ["query", "results"], "properties": { "query": { "type": "string", "minLength": 1 }, "results": { "type": "array", "items": { "type": "object", "required": ["recordId", "sourceId", "sourceRecordId", "score", "matchedTokens", "provenance", "preview"], "properties": { "recordId": { "type": "string", "minLength": 1 }, "sourceId": { "type": "string", "minLength": 1 }, "sourceRecordId": { "type": "string", "minLength": 1 }, "score": { "type": "number", "minimum": 0 }, "matchedTokens": { "type": "array", "items": { "type": "string", "minLength": 1 } }, "provenance": { "type": "array", "minItems": 1 }, "preview": { "type": "string", "minLength": 1 } }, "additionalProperties": true } } }, "additionalProperties": false } },
           "evidenceBoundary": { "type": "string", "minLength": 1 }
         },
         "additionalProperties": true

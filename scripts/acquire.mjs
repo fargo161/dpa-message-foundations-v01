@@ -2,11 +2,11 @@
 import { createHash } from "node:crypto";
 import { createReadStream, createWriteStream, existsSync } from "node:fs";
 import { copyFile, mkdir, readFile, rename, stat, unlink, writeFile } from "node:fs/promises";
-import { basename, relative, resolve, sep } from "node:path";
+import { basename, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { Readable, Transform } from "node:stream";
 import { pipeline } from "node:stream/promises";
-import { EXTERNAL_DATA_CACHE_ROOT, SOURCE_BY_ID, SOURCE_MANIFESTS, assertAllowedSourceUrl, createReceiptFromDigest, validateArtifactDigest } from "../src/sources.mjs";
+import { EXTERNAL_DATA_CACHE_ROOT, SOURCE_BY_ID, SOURCE_MANIFESTS, assertAllowedSourceUrl, canonicalPosixPath, createReceiptFromDigest, validateArtifactDigest } from "../src/sources.mjs";
 
 const root = fileURLToPath(new URL("..", import.meta.url));
 const cacheRoot = resolve(root, EXTERNAL_DATA_CACHE_ROOT);
@@ -31,7 +31,7 @@ if ((!sourceId && !all) || (sourceId && all) || (all && localFile)) usage(1);
 const selectedSources = all ? SOURCE_MANIFESTS.filter((source) => source.artifactUrl) : [SOURCE_BY_ID.get(sourceId)];
 if (!selectedSources[0]) throw new Error(`UNKNOWN_SOURCE:${sourceId}`);
 
-function displayPath(path) { return relative(root, path).split(sep).join("/"); }
+function displayPath(path) { return canonicalPosixPath(relative(root, path)); }
 function artifactPath(source) { return resolve(cacheRoot, source.sourceId, basename(source.expectedArtifactName || `${source.sourceId}.archive`)); }
 function receiptPath(source) { return resolve(cacheRoot, source.sourceId, "receipt.json"); }
 

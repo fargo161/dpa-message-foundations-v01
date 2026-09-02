@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto";
-import { normalizeImportIdentity, createReceipt } from "./sources.mjs";
+import { normalizeImportIdentity, createReceipt, validateArtifactDigest } from "./sources.mjs";
 
 const hashJson = (value) => createHash("sha256").update(JSON.stringify(value)).digest("hex");
 const recordNaturalKey = (record) => `${record.sourceId ?? record.provenance?.[0]?.sourceId ?? "unknown"}:${record.sourceRecordId ?? record.externalId ?? record.recordId}`;
@@ -12,8 +12,14 @@ export class FoundationStore {
   }
 
   importSource({ source, records, bytes = null, retrievedAt = null, synthetic = false }) {
-    const sha256 = bytes ? createReceipt({ sourceId: source.sourceId, sourceVersion: source.sourceVersion, licenseId: source.licenseId, artifactUrl: source.artifactUrl, bytes, retrievedAt: retrievedAt ?? new Date().toISOString() }).sha256 : source.checksum;
+    const receipt = bytes ? createReceipt({ sourceId: source.sourceId, sourceVersion: source.sourceVersion, licenseId: source.licenseId, artifactUrl: source.artifactUrl, bytes, retrievedAt: retrievedAt ?? new Date().toISOString() }) : null;
+    const sha256 = receipt?.sha256 ?? source.checksum;
     if (!sha256) return { status: "BLOCKED", sourceId: source.sourceId, insertedSources: 0, insertedRecords: 0, duplicateRecords: 0, errors: ["VERIFIED_CHECKSUM_REQUIRED"] };
+    if (!synthetic && source.sourceType !== "PROJECT_AUTHORED_PACK") {
+      if (!receipt) return { status: "BLOCKED", sourceId: source.sourceId, insertedSources: 0, insertedRecords: 0, duplicateRecords: 0, errors: ["VERIFIED_ARTIFACT_BYTES_REQUIRED"] };
+      try { validateArtifactDigest(source, receipt); }
+      catch (error) { return { status: "BLOCKED", sourceId: source.sourceId, insertedSources: 0, insertedRecords: 0, duplicateRecords: 0, errors: [error.message] }; }
+    }
     const importFingerprint = hashJson(normalizeImportIdentity({ sourceId: source.sourceId, sourceVersion: source.sourceVersion, licenseId: source.licenseId, sha256 }));
     const existingSource = this.sources.get(importFingerprint);
     if (existingSource) {

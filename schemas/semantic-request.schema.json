@@ -2,25 +2,234 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://dpa-message-foundations.invalid/schemas/semantic-request.schema.json",
   "title": "DPA semantic request contract",
-  "type": "object",
-  "required": ["schemaVersion", "adapterVersion", "semanticRequestId", "actionId", "actorId", "targetId", "contextId", "speechAct", "outcome", "slots", "mandatorySemanticFacts", "forbiddenSemanticAdditions", "provenance"],
-  "properties": {
-    "schemaVersion": { "const": "dpa-keyword-foundation@0.1" },
-    "adapterVersion": { "type": "string", "minLength": 1 },
-    "semanticRequestId": { "type": "string", "minLength": 1 },
-    "actionId": { "type": "string", "pattern": "^[A-Z][A-Z0-9_]+$" },
-    "actorId": { "type": "string", "minLength": 1 },
-    "targetId": { "type": "string", "minLength": 1 },
-    "contextId": { "type": "string", "minLength": 1 },
-    "actor": { "type": "string", "minLength": 1 },
-    "target": { "type": "string", "minLength": 1 },
-    "action": { "type": "string", "minLength": 1 },
-    "speechAct": { "enum": ["DEAL", "PRESSURE", "ASK"] },
-    "outcome": { "const": "PROPOSED" },
-    "slots": { "type": "object", "minProperties": 1 },
-    "mandatorySemanticFacts": { "type": "array" },
-    "forbiddenSemanticAdditions": { "type": "array" },
-    "provenance": { "type": "array", "minItems": 1, "items": { "type": "object", "required": ["sourceId", "sourceRecordId", "transformVersion", "licenseId"], "additionalProperties": true } }
-  },
-  "additionalProperties": false
+  "allOf": [
+    { "$ref": "#/$defs/baseRequest" },
+    {
+      "oneOf": [
+        { "$ref": "#/$defs/dealRequest" },
+        { "$ref": "#/$defs/pressureRequest" },
+        { "$ref": "#/$defs/askRequest" }
+      ]
+    }
+  ],
+  "$defs": {
+    "nonEmptyString": {
+      "type": "string",
+      "minLength": 1
+    },
+    "identifier": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:%-]*$"
+    },
+    "actionIdentifier": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^[A-Z][A-Z0-9_]+$"
+    },
+    "nonEmptyObject": {
+      "type": "object",
+      "minProperties": 1
+    },
+    "semanticValue": {
+      "oneOf": [
+        { "$ref": "#/$defs/nonEmptyString" },
+        { "type": "number" },
+        { "type": "boolean" },
+        { "$ref": "#/$defs/nonEmptyObject" },
+        { "type": "array", "minItems": 1 }
+      ]
+    },
+    "quantity": {
+      "type": "number",
+      "minimum": 0.000001
+    },
+    "exchangeSlot": {
+      "type": "object",
+      "minProperties": 1,
+      "properties": {
+        "object": { "$ref": "#/$defs/nonEmptyString" },
+        "quantity": { "$ref": "#/$defs/quantity" },
+        "unit": { "$ref": "#/$defs/nonEmptyString" },
+        "status": { "$ref": "#/$defs/nonEmptyString" },
+        "change": { "$ref": "#/$defs/nonEmptyString" },
+        "information": { "$ref": "#/$defs/nonEmptyString" }
+      },
+      "additionalProperties": true
+    },
+    "requestSlot": {
+      "oneOf": [
+        { "$ref": "#/$defs/nonEmptyString" },
+        {
+          "type": "object",
+          "minProperties": 1,
+          "additionalProperties": true
+        }
+      ]
+    },
+    "pressureSlot": {
+      "oneOf": [
+        { "$ref": "#/$defs/nonEmptyString" },
+        {
+          "type": "object",
+          "minProperties": 1,
+          "additionalProperties": true
+        }
+      ]
+    },
+    "slots": {
+      "type": "object",
+      "required": ["actor", "target", "action", "contextId"],
+      "properties": {
+        "actor": { "$ref": "#/$defs/nonEmptyString" },
+        "target": { "$ref": "#/$defs/nonEmptyString" },
+        "recipient": { "$ref": "#/$defs/nonEmptyString" },
+        "action": { "$ref": "#/$defs/actionIdentifier" },
+        "object": { "$ref": "#/$defs/nonEmptyString" },
+        "quantity": { "$ref": "#/$defs/quantity" },
+        "price": { "$ref": "#/$defs/semanticValue" },
+        "deadline": { "$ref": "#/$defs/nonEmptyString" },
+        "location": { "$ref": "#/$defs/nonEmptyString" },
+        "ownership": { "$ref": "#/$defs/semanticValue" },
+        "permission": { "$ref": "#/$defs/nonEmptyString" },
+        "prohibition": { "$ref": "#/$defs/nonEmptyString" },
+        "condition": { "$ref": "#/$defs/semanticValue" },
+        "leverage": { "$ref": "#/$defs/semanticValue" },
+        "consequence": { "$ref": "#/$defs/pressureSlot" },
+        "demand": { "$ref": "#/$defs/pressureSlot" },
+        "request": { "$ref": "#/$defs/requestSlot" },
+        "offer": { "$ref": "#/$defs/exchangeSlot" },
+        "return": { "$ref": "#/$defs/exchangeSlot" },
+        "information": { "$ref": "#/$defs/semanticValue" },
+        "knowledge": { "$ref": "#/$defs/semanticValue" },
+        "authorOnlyReveal": { "$ref": "#/$defs/semanticValue" },
+        "stateDelta": { "$ref": "#/$defs/semanticValue" },
+        "contextId": { "$ref": "#/$defs/identifier" },
+        "actorId": { "$ref": "#/$defs/identifier" },
+        "targetId": { "$ref": "#/$defs/identifier" },
+        "actionId": { "$ref": "#/$defs/actionIdentifier" },
+        "speechAct": { "enum": ["DEAL", "PRESSURE", "ASK"] },
+        "outcome": { "const": "PROPOSED" },
+        "OFFER": { "$ref": "#/$defs/exchangeSlot" },
+        "RETURN": { "$ref": "#/$defs/exchangeSlot" },
+        "DEMAND": { "$ref": "#/$defs/pressureSlot" },
+        "CONSEQUENCE": { "$ref": "#/$defs/pressureSlot" },
+        "REQUEST": { "$ref": "#/$defs/requestSlot" }
+      },
+      "additionalProperties": false
+    },
+    "provenanceEntry": {
+      "type": "object",
+      "required": ["sourceId", "sourceRecordId", "transformVersion", "licenseId"],
+      "properties": {
+        "sourceId": { "$ref": "#/$defs/nonEmptyString" },
+        "sourceRecordId": { "$ref": "#/$defs/nonEmptyString" },
+        "transformVersion": { "$ref": "#/$defs/nonEmptyString" },
+        "licenseId": { "$ref": "#/$defs/nonEmptyString" }
+      },
+      "additionalProperties": false
+    },
+    "baseRequest": {
+      "type": "object",
+      "required": [
+        "schemaVersion", "adapterVersion", "semanticRequestId", "actionId", "actorId", "targetId", "contextId",
+        "actor", "target", "action", "speechAct", "outcome", "slots", "mandatorySemanticFacts",
+        "forbiddenSemanticAdditions", "provenance"
+      ],
+      "properties": {
+        "schemaVersion": { "const": "dpa-keyword-foundation@0.1" },
+        "adapterVersion": { "const": "action-tpl-adapter@0.1" },
+        "semanticRequestId": { "$ref": "#/$defs/identifier" },
+        "actionId": { "$ref": "#/$defs/actionIdentifier" },
+        "actorId": { "$ref": "#/$defs/identifier" },
+        "targetId": { "$ref": "#/$defs/identifier" },
+        "contextId": { "$ref": "#/$defs/identifier" },
+        "actor": { "$ref": "#/$defs/nonEmptyString" },
+        "target": { "$ref": "#/$defs/nonEmptyString" },
+        "action": { "$ref": "#/$defs/actionIdentifier" },
+        "speechAct": { "enum": ["DEAL", "PRESSURE", "ASK"] },
+        "outcome": { "const": "PROPOSED" },
+        "slots": { "$ref": "#/$defs/slots" },
+        "mandatorySemanticFacts": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/nonEmptyString" },
+          "uniqueItems": true
+        },
+        "forbiddenSemanticAdditions": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/nonEmptyString" },
+          "uniqueItems": true
+        },
+        "provenance": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/provenanceEntry" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "dealRequest": {
+      "type": "object",
+      "properties": {
+        "speechAct": { "const": "DEAL" },
+        "slots": {
+          "allOf": [
+            { "$ref": "#/$defs/slots" },
+            {
+              "type": "object",
+              "required": ["OFFER", "RETURN", "offer", "return"],
+              "properties": {
+                "OFFER": { "$ref": "#/$defs/exchangeSlot" },
+                "RETURN": { "$ref": "#/$defs/exchangeSlot" },
+                "offer": { "$ref": "#/$defs/exchangeSlot" },
+                "return": { "$ref": "#/$defs/exchangeSlot" }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "pressureRequest": {
+      "type": "object",
+      "properties": {
+        "speechAct": { "const": "PRESSURE" },
+        "slots": {
+          "allOf": [
+            { "$ref": "#/$defs/slots" },
+            {
+              "type": "object",
+              "required": ["DEMAND", "CONSEQUENCE", "demand", "consequence"],
+              "properties": {
+                "DEMAND": { "$ref": "#/$defs/pressureSlot" },
+                "CONSEQUENCE": { "$ref": "#/$defs/pressureSlot" },
+                "demand": { "$ref": "#/$defs/pressureSlot" },
+                "consequence": { "$ref": "#/$defs/pressureSlot" }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "askRequest": {
+      "type": "object",
+      "properties": {
+        "speechAct": { "const": "ASK" },
+        "slots": {
+          "allOf": [
+            { "$ref": "#/$defs/slots" },
+            {
+              "type": "object",
+              "required": ["REQUEST", "request"],
+              "properties": {
+                "REQUEST": { "$ref": "#/$defs/requestSlot" },
+                "request": { "$ref": "#/$defs/requestSlot" }
+              }
+            }
+          ]
+        }
+      }
+    }
+  }
 }
