@@ -1,0 +1,12 @@
+﻿.cache/
+data/raw/
+data/downloads/
+data/extracted/
+data/indexes/
+*.local.json
+node_modules/
+dist/
+build/
+coverage/
+.env
+.env.*

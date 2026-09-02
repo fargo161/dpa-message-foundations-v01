@@ -1,0 +1,5790 @@
+{
+  "schemaVersion": "dpa-keyword-foundation@0.1",
+  "cues": [
+    {
+      "cueId": "B",
+      "name": "Belligerence",
+      "governingForce": "Oppositional force: threat, intimidation, escalation, antagonism, dominance."
+    },
+    {
+      "cueId": "A",
+      "name": "Aggression",
+      "governingForce": "Advancing force: direct pursuit, forceful action, attack, decisive movement."
+    },
+    {
+      "cueId": "S",
+      "name": "Sociability",
+      "governingForce": "Affiliative force: charm, rapport, influence, favors, networking."
+    },
+    {
+      "cueId": "E",
+      "name": "Empathy",
+      "governingForce": "Perspective-modeling force: reading, calming, helping, emotional truth."
+    },
+    {
+      "cueId": "D",
+      "name": "Deception",
+      "governingForce": "Interpretive control: lying, hiding intent, disguise, scam, misdirection."
+    }
+  ],
+  "vibes": [
+    {
+      "vibeId": "BA",
+      "name": "Reckless",
+      "primaryCue": "B",
+      "secondaryCue": "A",
+      "fusionLogic": "Opposition leads; forward force makes it rash, volatile, and ready to act.",
+      "provenance": {
+        "source": "BASED_MESSAGE_BUILDER_180_TPL_MATRIX_V01",
+        "status": "PROJECT_AUTHORED"
+      }
+    },
+    {
+      "vibeId": "BS",
+      "name": "Instigating",
+      "primaryCue": "B",
+      "secondaryCue": "S",
+      "fusionLogic": "Opposition leads; social awareness turns it into bait, spectacle, or provocation.",
+      "provenance": {
+        "source": "BASED_MESSAGE_BUILDER_180_TPL_MATRIX_V01",
+        "status": "PROJECT_AUTHORED"
+      }
+    },
+    {
+      "vibeId": "BE",
+      "name": "Condemning",
+      "primaryCue": "B",
+      "secondaryCue": "E",
+      "fusionLogic": "Opposition leads; emotional reading becomes judgment, guilt, or moral accusation.",
+      "provenance": {
+        "source": "BASED_MESSAGE_BUILDER_180_TPL_MATRIX_V01",
+        "status": "PROJECT_AUTHORED"
+      }
+    },
+    {
+      "vibeId": "BD",
+      "name": "Extortive",
+      "primaryCue": "B",
+      "secondaryCue": "D",
+      "fusionLogic": "Opposition leads; concealed or ambiguous leverage controls the target.",
+      "provenance": {
+        "source": "BASED_MESSAGE_BUILDER_180_TPL_MATRIX_V01",
+        "status": "PROJECT_AUTHORED"
+      }
+    },
+    {
+      "vibeId": "AB",
+      "name": "Menacing",
+      "primaryCue": "A",
+      "secondaryCue": "B",
+      "fusionLogic": "Forward movement leads; hostility makes the advance threatening.",
+      "provenance": {
+        "source": "BASED_MESSAGE_BUILDER_180_TPL_MATRIX_V01",
+        "status": "PROJECT_AUTHORED"
+      }
+    },
+    {
+      "vibeId": "AS",
+      "name": "Commanding",
+      "primaryCue": "A",
+      "secondaryCue": "S",
+      "fusionLogic": "Forward movement leads; social fluency makes direction feel authoritative.",
+      "provenance": {
+        "source": "BASED_MESSAGE_BUILDER_180_TPL_MATRIX_V01",
+        "status": "PROJECT_AUTHORED"
+      }
+    },
+    {
+      "vibeId": "AE",
+      "name": "Urgent",
+      "primaryCue": "A",
+      "secondaryCue": "E",
+      "fusionLogic": "Forward movement leads; recognized stakes make action immediate and emotionally legible.",
+      "provenance": {
+        "source": "BASED_MESSAGE_BUILDER_180_TPL_MATRIX_V01",
+        "status": "PROJECT_AUTHORED"
+      }
+    },
+    {
+      "vibeId": "AD",
+      "name": "Hustled",
+      "primaryCue": "A",
+      "secondaryCue": "D",
+      "fusionLogic": "Forward movement leads; obscured terms and compressed time prevent scrutiny.",
+      "provenance": {
+        "source": "BASED_MESSAGE_BUILDER_180_TPL_MATRIX_V01",
+        "status": "PROJECT_AUTHORED"
+      }
+    },
+    {
+      "vibeId": "SB",
+      "name": "Irreverent",
+      "primaryCue": "S",
+      "secondaryCue": "B",
+      "fusionLogic": "Rapport leads; antagonism appears as insolence, teasing, mockery, or social trespass.",
+      "provenance": {
+        "source": "BASED_MESSAGE_BUILDER_180_TPL_MATRIX_V01",
+        "status": "PROJECT_AUTHORED"
+      }
+    },
+    {
+      "vibeId": "SA",
+      "name": "Charismatic",
+      "primaryCue": "S",
+      "secondaryCue": "A",
+      "fusionLogic": "Rapport leads; confidence and forward motion turn charm into momentum.",
+      "provenance": {
+        "source": "BASED_MESSAGE_BUILDER_180_TPL_MATRIX_V01",
+        "status": "PROJECT_AUTHORED"
+      }
+    },
+    {
+      "vibeId": "SE",
+      "name": "Compassionate",
+      "primaryCue": "S",
+      "secondaryCue": "E",
+      "fusionLogic": "Rapport leads; emotional care makes the bond supportive and sincere.",
+      "provenance": {
+        "source": "BASED_MESSAGE_BUILDER_180_TPL_MATRIX_V01",
+        "status": "PROJECT_AUTHORED"
+      }
+    },
+    {
+      "vibeId": "SD",
+      "name": "Coaxing",
+      "primaryCue": "S",
+      "secondaryCue": "D",
+      "fusionLogic": "Rapport leads; concealed intent gently steers the target.",
+      "provenance": {
+        "source": "BASED_MESSAGE_BUILDER_180_TPL_MATRIX_V01",
+        "status": "PROJECT_AUTHORED"
+      }
+    },
+    {
+      "vibeId": "EB",
+      "name": "Steadfast",
+      "primaryCue": "E",
+      "secondaryCue": "B",
+      "fusionLogic": "Understanding leads; opposition makes the speaker emotionally aware but immovable.",
+      "provenance": {
+        "source": "BASED_MESSAGE_BUILDER_180_TPL_MATRIX_V01",
+        "status": "PROJECT_AUTHORED"
+      }
+    },
+    {
+      "vibeId": "EA",
+      "name": "Boundaried",
+      "primaryCue": "E",
+      "secondaryCue": "A",
+      "fusionLogic": "Understanding leads; decisive force establishes a clear limit or next move.",
+      "provenance": {
+        "source": "BASED_MESSAGE_BUILDER_180_TPL_MATRIX_V01",
+        "status": "PROJECT_AUTHORED"
+      }
+    },
+    {
+      "vibeId": "ES",
+      "name": "Communal",
+      "primaryCue": "E",
+      "secondaryCue": "S",
+      "fusionLogic": "Understanding leads; affiliation turns shared feeling into collective action.",
+      "provenance": {
+        "source": "BASED_MESSAGE_BUILDER_180_TPL_MATRIX_V01",
+        "status": "PROJECT_AUTHORED"
+      }
+    },
+    {
+      "vibeId": "ED",
+      "name": "Deflecting",
+      "primaryCue": "E",
+      "secondaryCue": "D",
+      "fusionLogic": "Understanding leads; emotional recognition redirects attention or avoids the real issue.",
+      "provenance": {
+        "source": "BASED_MESSAGE_BUILDER_180_TPL_MATRIX_V01",
+        "status": "PROJECT_AUTHORED"
+      }
+    },
+    {
+      "vibeId": "DB",
+      "name": "Bluffing",
+      "primaryCue": "D",
+      "secondaryCue": "B",
+      "fusionLogic": "Interpretive control leads; hostility is projected through uncertain or false threat.",
+      "provenance": {
+        "source": "BASED_MESSAGE_BUILDER_180_TPL_MATRIX_V01",
+        "status": "PROJECT_AUTHORED"
+      }
+    },
+    {
+      "vibeId": "DA",
+      "name": "Predatory",
+      "primaryCue": "D",
+      "secondaryCue": "A",
+      "fusionLogic": "Interpretive control leads; concealed intent advances toward an exposed weakness.",
+      "provenance": {
+        "source": "BASED_MESSAGE_BUILDER_180_TPL_MATRIX_V01",
+        "status": "PROJECT_AUTHORED"
+      }
+    },
+    {
+      "vibeId": "DS",
+      "name": "Insinuating",
+      "primaryCue": "D",
+      "secondaryCue": "S",
+      "fusionLogic": "Interpretation leads; implication travels through friendly or social framing.",
+      "provenance": {
+        "source": "BASED_MESSAGE_BUILDER_180_TPL_MATRIX_V01",
+        "status": "PROJECT_AUTHORED"
+      }
+    },
+    {
+      "vibeId": "DE",
+      "name": "Feigning",
+      "primaryCue": "D",
+      "secondaryCue": "E",
+      "fusionLogic": "Interpretive control leads; simulated understanding or care conceals the real motive.",
+      "provenance": {
+        "source": "BASED_MESSAGE_BUILDER_180_TPL_MATRIX_V01",
+        "status": "PROJECT_AUTHORED"
+      }
+    }
+  ],
+  "speechActs": [
+    "DEAL",
+    "PRESSURE",
+    "ASK"
+  ],
+  "deliveryIntensities": [
+    "SUBTLE",
+    "BALANCED",
+    "OVERT"
+  ],
+  "matrix": [
+    {
+      "key": "DEAL_BA_SUBTLE",
+      "vibeId": "BA",
+      "speechAct": "DEAL",
+      "deliveryIntensity": "SUBTLE",
+      "actionInvariant": [
+        "OFFER",
+        "RETURN"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_DEAL_BA"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "DEAL_BA_BALANCED",
+      "vibeId": "BA",
+      "speechAct": "DEAL",
+      "deliveryIntensity": "BALANCED",
+      "actionInvariant": [
+        "OFFER",
+        "RETURN"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_DEAL_BA"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "DEAL_BA_OVERT",
+      "vibeId": "BA",
+      "speechAct": "DEAL",
+      "deliveryIntensity": "OVERT",
+      "actionInvariant": [
+        "OFFER",
+        "RETURN"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_DEAL_BA"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "DEAL_BS_SUBTLE",
+      "vibeId": "BS",
+      "speechAct": "DEAL",
+      "deliveryIntensity": "SUBTLE",
+      "actionInvariant": [
+        "OFFER",
+        "RETURN"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_DEAL_BS"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "DEAL_BS_BALANCED",
+      "vibeId": "BS",
+      "speechAct": "DEAL",
+      "deliveryIntensity": "BALANCED",
+      "actionInvariant": [
+        "OFFER",
+        "RETURN"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_DEAL_BS"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "DEAL_BS_OVERT",
+      "vibeId": "BS",
+      "speechAct": "DEAL",
+      "deliveryIntensity": "OVERT",
+      "actionInvariant": [
+        "OFFER",
+        "RETURN"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_DEAL_BS"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "DEAL_BE_SUBTLE",
+      "vibeId": "BE",
+      "speechAct": "DEAL",
+      "deliveryIntensity": "SUBTLE",
+      "actionInvariant": [
+        "OFFER",
+        "RETURN"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_DEAL_BE"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "DEAL_BE_BALANCED",
+      "vibeId": "BE",
+      "speechAct": "DEAL",
+      "deliveryIntensity": "BALANCED",
+      "actionInvariant": [
+        "OFFER",
+        "RETURN"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_DEAL_BE"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "DEAL_BE_OVERT",
+      "vibeId": "BE",
+      "speechAct": "DEAL",
+      "deliveryIntensity": "OVERT",
+      "actionInvariant": [
+        "OFFER",
+        "RETURN"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_DEAL_BE"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "DEAL_BD_SUBTLE",
+      "vibeId": "BD",
+      "speechAct": "DEAL",
+      "deliveryIntensity": "SUBTLE",
+      "actionInvariant": [
+        "OFFER",
+        "RETURN"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_DEAL_BD"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "DEAL_BD_BALANCED",
+      "vibeId": "BD",
+      "speechAct": "DEAL",
+      "deliveryIntensity": "BALANCED",
+      "actionInvariant": [
+        "OFFER",
+        "RETURN"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_DEAL_BD"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "DEAL_BD_OVERT",
+      "vibeId": "BD",
+      "speechAct": "DEAL",
+      "deliveryIntensity": "OVERT",
+      "actionInvariant": [
+        "OFFER",
+        "RETURN"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_DEAL_BD"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "DEAL_AB_SUBTLE",
+      "vibeId": "AB",
+      "speechAct": "DEAL",
+      "deliveryIntensity": "SUBTLE",
+      "actionInvariant": [
+        "OFFER",
+        "RETURN"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_DEAL_AB"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "DEAL_AB_BALANCED",
+      "vibeId": "AB",
+      "speechAct": "DEAL",
+      "deliveryIntensity": "BALANCED",
+      "actionInvariant": [
+        "OFFER",
+        "RETURN"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_DEAL_AB"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "DEAL_AB_OVERT",
+      "vibeId": "AB",
+      "speechAct": "DEAL",
+      "deliveryIntensity": "OVERT",
+      "actionInvariant": [
+        "OFFER",
+        "RETURN"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_DEAL_AB"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "DEAL_AS_SUBTLE",
+      "vibeId": "AS",
+      "speechAct": "DEAL",
+      "deliveryIntensity": "SUBTLE",
+      "actionInvariant": [
+        "OFFER",
+        "RETURN"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_DEAL_AS"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "DEAL_AS_BALANCED",
+      "vibeId": "AS",
+      "speechAct": "DEAL",
+      "deliveryIntensity": "BALANCED",
+      "actionInvariant": [
+        "OFFER",
+        "RETURN"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_DEAL_AS"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "DEAL_AS_OVERT",
+      "vibeId": "AS",
+      "speechAct": "DEAL",
+      "deliveryIntensity": "OVERT",
+      "actionInvariant": [
+        "OFFER",
+        "RETURN"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_DEAL_AS"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "DEAL_AE_SUBTLE",
+      "vibeId": "AE",
+      "speechAct": "DEAL",
+      "deliveryIntensity": "SUBTLE",
+      "actionInvariant": [
+        "OFFER",
+        "RETURN"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_DEAL_AE"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "DEAL_AE_BALANCED",
+      "vibeId": "AE",
+      "speechAct": "DEAL",
+      "deliveryIntensity": "BALANCED",
+      "actionInvariant": [
+        "OFFER",
+        "RETURN"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_DEAL_AE"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "DEAL_AE_OVERT",
+      "vibeId": "AE",
+      "speechAct": "DEAL",
+      "deliveryIntensity": "OVERT",
+      "actionInvariant": [
+        "OFFER",
+        "RETURN"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_DEAL_AE"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "DEAL_AD_SUBTLE",
+      "vibeId": "AD",
+      "speechAct": "DEAL",
+      "deliveryIntensity": "SUBTLE",
+      "actionInvariant": [
+        "OFFER",
+        "RETURN"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_DEAL_AD"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "DEAL_AD_BALANCED",
+      "vibeId": "AD",
+      "speechAct": "DEAL",
+      "deliveryIntensity": "BALANCED",
+      "actionInvariant": [
+        "OFFER",
+        "RETURN"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_DEAL_AD"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "DEAL_AD_OVERT",
+      "vibeId": "AD",
+      "speechAct": "DEAL",
+      "deliveryIntensity": "OVERT",
+      "actionInvariant": [
+        "OFFER",
+        "RETURN"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_DEAL_AD"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "DEAL_SB_SUBTLE",
+      "vibeId": "SB",
+      "speechAct": "DEAL",
+      "deliveryIntensity": "SUBTLE",
+      "actionInvariant": [
+        "OFFER",
+        "RETURN"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_DEAL_SB"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "DEAL_SB_BALANCED",
+      "vibeId": "SB",
+      "speechAct": "DEAL",
+      "deliveryIntensity": "BALANCED",
+      "actionInvariant": [
+        "OFFER",
+        "RETURN"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_DEAL_SB"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "DEAL_SB_OVERT",
+      "vibeId": "SB",
+      "speechAct": "DEAL",
+      "deliveryIntensity": "OVERT",
+      "actionInvariant": [
+        "OFFER",
+        "RETURN"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_DEAL_SB"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "DEAL_SA_SUBTLE",
+      "vibeId": "SA",
+      "speechAct": "DEAL",
+      "deliveryIntensity": "SUBTLE",
+      "actionInvariant": [
+        "OFFER",
+        "RETURN"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_DEAL_SA"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "DEAL_SA_BALANCED",
+      "vibeId": "SA",
+      "speechAct": "DEAL",
+      "deliveryIntensity": "BALANCED",
+      "actionInvariant": [
+        "OFFER",
+        "RETURN"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_DEAL_SA"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "DEAL_SA_OVERT",
+      "vibeId": "SA",
+      "speechAct": "DEAL",
+      "deliveryIntensity": "OVERT",
+      "actionInvariant": [
+        "OFFER",
+        "RETURN"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_DEAL_SA"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "DEAL_SE_SUBTLE",
+      "vibeId": "SE",
+      "speechAct": "DEAL",
+      "deliveryIntensity": "SUBTLE",
+      "actionInvariant": [
+        "OFFER",
+        "RETURN"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_DEAL_SE"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "DEAL_SE_BALANCED",
+      "vibeId": "SE",
+      "speechAct": "DEAL",
+      "deliveryIntensity": "BALANCED",
+      "actionInvariant": [
+        "OFFER",
+        "RETURN"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_DEAL_SE"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "DEAL_SE_OVERT",
+      "vibeId": "SE",
+      "speechAct": "DEAL",
+      "deliveryIntensity": "OVERT",
+      "actionInvariant": [
+        "OFFER",
+        "RETURN"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_DEAL_SE"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "DEAL_SD_SUBTLE",
+      "vibeId": "SD",
+      "speechAct": "DEAL",
+      "deliveryIntensity": "SUBTLE",
+      "actionInvariant": [
+        "OFFER",
+        "RETURN"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_DEAL_SD"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "DEAL_SD_BALANCED",
+      "vibeId": "SD",
+      "speechAct": "DEAL",
+      "deliveryIntensity": "BALANCED",
+      "actionInvariant": [
+        "OFFER",
+        "RETURN"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_DEAL_SD"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "DEAL_SD_OVERT",
+      "vibeId": "SD",
+      "speechAct": "DEAL",
+      "deliveryIntensity": "OVERT",
+      "actionInvariant": [
+        "OFFER",
+        "RETURN"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_DEAL_SD"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "DEAL_EB_SUBTLE",
+      "vibeId": "EB",
+      "speechAct": "DEAL",
+      "deliveryIntensity": "SUBTLE",
+      "actionInvariant": [
+        "OFFER",
+        "RETURN"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_DEAL_EB"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "DEAL_EB_BALANCED",
+      "vibeId": "EB",
+      "speechAct": "DEAL",
+      "deliveryIntensity": "BALANCED",
+      "actionInvariant": [
+        "OFFER",
+        "RETURN"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_DEAL_EB"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "DEAL_EB_OVERT",
+      "vibeId": "EB",
+      "speechAct": "DEAL",
+      "deliveryIntensity": "OVERT",
+      "actionInvariant": [
+        "OFFER",
+        "RETURN"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_DEAL_EB"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "DEAL_EA_SUBTLE",
+      "vibeId": "EA",
+      "speechAct": "DEAL",
+      "deliveryIntensity": "SUBTLE",
+      "actionInvariant": [
+        "OFFER",
+        "RETURN"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_DEAL_EA"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "DEAL_EA_BALANCED",
+      "vibeId": "EA",
+      "speechAct": "DEAL",
+      "deliveryIntensity": "BALANCED",
+      "actionInvariant": [
+        "OFFER",
+        "RETURN"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_DEAL_EA"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "DEAL_EA_OVERT",
+      "vibeId": "EA",
+      "speechAct": "DEAL",
+      "deliveryIntensity": "OVERT",
+      "actionInvariant": [
+        "OFFER",
+        "RETURN"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_DEAL_EA"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "DEAL_ES_SUBTLE",
+      "vibeId": "ES",
+      "speechAct": "DEAL",
+      "deliveryIntensity": "SUBTLE",
+      "actionInvariant": [
+        "OFFER",
+        "RETURN"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_DEAL_ES"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "DEAL_ES_BALANCED",
+      "vibeId": "ES",
+      "speechAct": "DEAL",
+      "deliveryIntensity": "BALANCED",
+      "actionInvariant": [
+        "OFFER",
+        "RETURN"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_DEAL_ES"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "DEAL_ES_OVERT",
+      "vibeId": "ES",
+      "speechAct": "DEAL",
+      "deliveryIntensity": "OVERT",
+      "actionInvariant": [
+        "OFFER",
+        "RETURN"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_DEAL_ES"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "DEAL_ED_SUBTLE",
+      "vibeId": "ED",
+      "speechAct": "DEAL",
+      "deliveryIntensity": "SUBTLE",
+      "actionInvariant": [
+        "OFFER",
+        "RETURN"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_DEAL_ED"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "DEAL_ED_BALANCED",
+      "vibeId": "ED",
+      "speechAct": "DEAL",
+      "deliveryIntensity": "BALANCED",
+      "actionInvariant": [
+        "OFFER",
+        "RETURN"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_DEAL_ED"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "DEAL_ED_OVERT",
+      "vibeId": "ED",
+      "speechAct": "DEAL",
+      "deliveryIntensity": "OVERT",
+      "actionInvariant": [
+        "OFFER",
+        "RETURN"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_DEAL_ED"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "DEAL_DB_SUBTLE",
+      "vibeId": "DB",
+      "speechAct": "DEAL",
+      "deliveryIntensity": "SUBTLE",
+      "actionInvariant": [
+        "OFFER",
+        "RETURN"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_DEAL_DB"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "DEAL_DB_BALANCED",
+      "vibeId": "DB",
+      "speechAct": "DEAL",
+      "deliveryIntensity": "BALANCED",
+      "actionInvariant": [
+        "OFFER",
+        "RETURN"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_DEAL_DB"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "DEAL_DB_OVERT",
+      "vibeId": "DB",
+      "speechAct": "DEAL",
+      "deliveryIntensity": "OVERT",
+      "actionInvariant": [
+        "OFFER",
+        "RETURN"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_DEAL_DB"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "DEAL_DA_SUBTLE",
+      "vibeId": "DA",
+      "speechAct": "DEAL",
+      "deliveryIntensity": "SUBTLE",
+      "actionInvariant": [
+        "OFFER",
+        "RETURN"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_DEAL_DA"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "DEAL_DA_BALANCED",
+      "vibeId": "DA",
+      "speechAct": "DEAL",
+      "deliveryIntensity": "BALANCED",
+      "actionInvariant": [
+        "OFFER",
+        "RETURN"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_DEAL_DA"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "DEAL_DA_OVERT",
+      "vibeId": "DA",
+      "speechAct": "DEAL",
+      "deliveryIntensity": "OVERT",
+      "actionInvariant": [
+        "OFFER",
+        "RETURN"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_DEAL_DA"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "DEAL_DS_SUBTLE",
+      "vibeId": "DS",
+      "speechAct": "DEAL",
+      "deliveryIntensity": "SUBTLE",
+      "actionInvariant": [
+        "OFFER",
+        "RETURN"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_DEAL_DS"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "DEAL_DS_BALANCED",
+      "vibeId": "DS",
+      "speechAct": "DEAL",
+      "deliveryIntensity": "BALANCED",
+      "actionInvariant": [
+        "OFFER",
+        "RETURN"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_DEAL_DS"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "DEAL_DS_OVERT",
+      "vibeId": "DS",
+      "speechAct": "DEAL",
+      "deliveryIntensity": "OVERT",
+      "actionInvariant": [
+        "OFFER",
+        "RETURN"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_DEAL_DS"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "DEAL_DE_SUBTLE",
+      "vibeId": "DE",
+      "speechAct": "DEAL",
+      "deliveryIntensity": "SUBTLE",
+      "actionInvariant": [
+        "OFFER",
+        "RETURN"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_DEAL_DE"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "DEAL_DE_BALANCED",
+      "vibeId": "DE",
+      "speechAct": "DEAL",
+      "deliveryIntensity": "BALANCED",
+      "actionInvariant": [
+        "OFFER",
+        "RETURN"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_DEAL_DE"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "DEAL_DE_OVERT",
+      "vibeId": "DE",
+      "speechAct": "DEAL",
+      "deliveryIntensity": "OVERT",
+      "actionInvariant": [
+        "OFFER",
+        "RETURN"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_DEAL_DE"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "PRESSURE_BA_SUBTLE",
+      "vibeId": "BA",
+      "speechAct": "PRESSURE",
+      "deliveryIntensity": "SUBTLE",
+      "actionInvariant": [
+        "DEMAND",
+        "CONSEQUENCE"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_PRESSURE_BA"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "PRESSURE_BA_BALANCED",
+      "vibeId": "BA",
+      "speechAct": "PRESSURE",
+      "deliveryIntensity": "BALANCED",
+      "actionInvariant": [
+        "DEMAND",
+        "CONSEQUENCE"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_PRESSURE_BA"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "PRESSURE_BA_OVERT",
+      "vibeId": "BA",
+      "speechAct": "PRESSURE",
+      "deliveryIntensity": "OVERT",
+      "actionInvariant": [
+        "DEMAND",
+        "CONSEQUENCE"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_PRESSURE_BA"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "PRESSURE_BS_SUBTLE",
+      "vibeId": "BS",
+      "speechAct": "PRESSURE",
+      "deliveryIntensity": "SUBTLE",
+      "actionInvariant": [
+        "DEMAND",
+        "CONSEQUENCE"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_PRESSURE_BS"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "PRESSURE_BS_BALANCED",
+      "vibeId": "BS",
+      "speechAct": "PRESSURE",
+      "deliveryIntensity": "BALANCED",
+      "actionInvariant": [
+        "DEMAND",
+        "CONSEQUENCE"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_PRESSURE_BS"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "PRESSURE_BS_OVERT",
+      "vibeId": "BS",
+      "speechAct": "PRESSURE",
+      "deliveryIntensity": "OVERT",
+      "actionInvariant": [
+        "DEMAND",
+        "CONSEQUENCE"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_PRESSURE_BS"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "PRESSURE_BE_SUBTLE",
+      "vibeId": "BE",
+      "speechAct": "PRESSURE",
+      "deliveryIntensity": "SUBTLE",
+      "actionInvariant": [
+        "DEMAND",
+        "CONSEQUENCE"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_PRESSURE_BE"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "PRESSURE_BE_BALANCED",
+      "vibeId": "BE",
+      "speechAct": "PRESSURE",
+      "deliveryIntensity": "BALANCED",
+      "actionInvariant": [
+        "DEMAND",
+        "CONSEQUENCE"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_PRESSURE_BE"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "PRESSURE_BE_OVERT",
+      "vibeId": "BE",
+      "speechAct": "PRESSURE",
+      "deliveryIntensity": "OVERT",
+      "actionInvariant": [
+        "DEMAND",
+        "CONSEQUENCE"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_PRESSURE_BE"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "PRESSURE_BD_SUBTLE",
+      "vibeId": "BD",
+      "speechAct": "PRESSURE",
+      "deliveryIntensity": "SUBTLE",
+      "actionInvariant": [
+        "DEMAND",
+        "CONSEQUENCE"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_PRESSURE_BD"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "PRESSURE_BD_BALANCED",
+      "vibeId": "BD",
+      "speechAct": "PRESSURE",
+      "deliveryIntensity": "BALANCED",
+      "actionInvariant": [
+        "DEMAND",
+        "CONSEQUENCE"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_PRESSURE_BD"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "PRESSURE_BD_OVERT",
+      "vibeId": "BD",
+      "speechAct": "PRESSURE",
+      "deliveryIntensity": "OVERT",
+      "actionInvariant": [
+        "DEMAND",
+        "CONSEQUENCE"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_PRESSURE_BD"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "PRESSURE_AB_SUBTLE",
+      "vibeId": "AB",
+      "speechAct": "PRESSURE",
+      "deliveryIntensity": "SUBTLE",
+      "actionInvariant": [
+        "DEMAND",
+        "CONSEQUENCE"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_PRESSURE_AB"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "PRESSURE_AB_BALANCED",
+      "vibeId": "AB",
+      "speechAct": "PRESSURE",
+      "deliveryIntensity": "BALANCED",
+      "actionInvariant": [
+        "DEMAND",
+        "CONSEQUENCE"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_PRESSURE_AB"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "PRESSURE_AB_OVERT",
+      "vibeId": "AB",
+      "speechAct": "PRESSURE",
+      "deliveryIntensity": "OVERT",
+      "actionInvariant": [
+        "DEMAND",
+        "CONSEQUENCE"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_PRESSURE_AB"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "PRESSURE_AS_SUBTLE",
+      "vibeId": "AS",
+      "speechAct": "PRESSURE",
+      "deliveryIntensity": "SUBTLE",
+      "actionInvariant": [
+        "DEMAND",
+        "CONSEQUENCE"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_PRESSURE_AS"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "PRESSURE_AS_BALANCED",
+      "vibeId": "AS",
+      "speechAct": "PRESSURE",
+      "deliveryIntensity": "BALANCED",
+      "actionInvariant": [
+        "DEMAND",
+        "CONSEQUENCE"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_PRESSURE_AS"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "PRESSURE_AS_OVERT",
+      "vibeId": "AS",
+      "speechAct": "PRESSURE",
+      "deliveryIntensity": "OVERT",
+      "actionInvariant": [
+        "DEMAND",
+        "CONSEQUENCE"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_PRESSURE_AS"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "PRESSURE_AE_SUBTLE",
+      "vibeId": "AE",
+      "speechAct": "PRESSURE",
+      "deliveryIntensity": "SUBTLE",
+      "actionInvariant": [
+        "DEMAND",
+        "CONSEQUENCE"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_PRESSURE_AE"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "PRESSURE_AE_BALANCED",
+      "vibeId": "AE",
+      "speechAct": "PRESSURE",
+      "deliveryIntensity": "BALANCED",
+      "actionInvariant": [
+        "DEMAND",
+        "CONSEQUENCE"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_PRESSURE_AE"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "PRESSURE_AE_OVERT",
+      "vibeId": "AE",
+      "speechAct": "PRESSURE",
+      "deliveryIntensity": "OVERT",
+      "actionInvariant": [
+        "DEMAND",
+        "CONSEQUENCE"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_PRESSURE_AE"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "PRESSURE_AD_SUBTLE",
+      "vibeId": "AD",
+      "speechAct": "PRESSURE",
+      "deliveryIntensity": "SUBTLE",
+      "actionInvariant": [
+        "DEMAND",
+        "CONSEQUENCE"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_PRESSURE_AD"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "PRESSURE_AD_BALANCED",
+      "vibeId": "AD",
+      "speechAct": "PRESSURE",
+      "deliveryIntensity": "BALANCED",
+      "actionInvariant": [
+        "DEMAND",
+        "CONSEQUENCE"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_PRESSURE_AD"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "PRESSURE_AD_OVERT",
+      "vibeId": "AD",
+      "speechAct": "PRESSURE",
+      "deliveryIntensity": "OVERT",
+      "actionInvariant": [
+        "DEMAND",
+        "CONSEQUENCE"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_PRESSURE_AD"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "PRESSURE_SB_SUBTLE",
+      "vibeId": "SB",
+      "speechAct": "PRESSURE",
+      "deliveryIntensity": "SUBTLE",
+      "actionInvariant": [
+        "DEMAND",
+        "CONSEQUENCE"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_PRESSURE_SB"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "PRESSURE_SB_BALANCED",
+      "vibeId": "SB",
+      "speechAct": "PRESSURE",
+      "deliveryIntensity": "BALANCED",
+      "actionInvariant": [
+        "DEMAND",
+        "CONSEQUENCE"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_PRESSURE_SB"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "PRESSURE_SB_OVERT",
+      "vibeId": "SB",
+      "speechAct": "PRESSURE",
+      "deliveryIntensity": "OVERT",
+      "actionInvariant": [
+        "DEMAND",
+        "CONSEQUENCE"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_PRESSURE_SB"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "PRESSURE_SA_SUBTLE",
+      "vibeId": "SA",
+      "speechAct": "PRESSURE",
+      "deliveryIntensity": "SUBTLE",
+      "actionInvariant": [
+        "DEMAND",
+        "CONSEQUENCE"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_PRESSURE_SA"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "PRESSURE_SA_BALANCED",
+      "vibeId": "SA",
+      "speechAct": "PRESSURE",
+      "deliveryIntensity": "BALANCED",
+      "actionInvariant": [
+        "DEMAND",
+        "CONSEQUENCE"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_PRESSURE_SA"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "PRESSURE_SA_OVERT",
+      "vibeId": "SA",
+      "speechAct": "PRESSURE",
+      "deliveryIntensity": "OVERT",
+      "actionInvariant": [
+        "DEMAND",
+        "CONSEQUENCE"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_PRESSURE_SA"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "PRESSURE_SE_SUBTLE",
+      "vibeId": "SE",
+      "speechAct": "PRESSURE",
+      "deliveryIntensity": "SUBTLE",
+      "actionInvariant": [
+        "DEMAND",
+        "CONSEQUENCE"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_PRESSURE_SE"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "PRESSURE_SE_BALANCED",
+      "vibeId": "SE",
+      "speechAct": "PRESSURE",
+      "deliveryIntensity": "BALANCED",
+      "actionInvariant": [
+        "DEMAND",
+        "CONSEQUENCE"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_PRESSURE_SE"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "PRESSURE_SE_OVERT",
+      "vibeId": "SE",
+      "speechAct": "PRESSURE",
+      "deliveryIntensity": "OVERT",
+      "actionInvariant": [
+        "DEMAND",
+        "CONSEQUENCE"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_PRESSURE_SE"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "PRESSURE_SD_SUBTLE",
+      "vibeId": "SD",
+      "speechAct": "PRESSURE",
+      "deliveryIntensity": "SUBTLE",
+      "actionInvariant": [
+        "DEMAND",
+        "CONSEQUENCE"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_PRESSURE_SD"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "PRESSURE_SD_BALANCED",
+      "vibeId": "SD",
+      "speechAct": "PRESSURE",
+      "deliveryIntensity": "BALANCED",
+      "actionInvariant": [
+        "DEMAND",
+        "CONSEQUENCE"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_PRESSURE_SD"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "PRESSURE_SD_OVERT",
+      "vibeId": "SD",
+      "speechAct": "PRESSURE",
+      "deliveryIntensity": "OVERT",
+      "actionInvariant": [
+        "DEMAND",
+        "CONSEQUENCE"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_PRESSURE_SD"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "PRESSURE_EB_SUBTLE",
+      "vibeId": "EB",
+      "speechAct": "PRESSURE",
+      "deliveryIntensity": "SUBTLE",
+      "actionInvariant": [
+        "DEMAND",
+        "CONSEQUENCE"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_PRESSURE_EB"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "PRESSURE_EB_BALANCED",
+      "vibeId": "EB",
+      "speechAct": "PRESSURE",
+      "deliveryIntensity": "BALANCED",
+      "actionInvariant": [
+        "DEMAND",
+        "CONSEQUENCE"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_PRESSURE_EB"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "PRESSURE_EB_OVERT",
+      "vibeId": "EB",
+      "speechAct": "PRESSURE",
+      "deliveryIntensity": "OVERT",
+      "actionInvariant": [
+        "DEMAND",
+        "CONSEQUENCE"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_PRESSURE_EB"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "PRESSURE_EA_SUBTLE",
+      "vibeId": "EA",
+      "speechAct": "PRESSURE",
+      "deliveryIntensity": "SUBTLE",
+      "actionInvariant": [
+        "DEMAND",
+        "CONSEQUENCE"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_PRESSURE_EA"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "PRESSURE_EA_BALANCED",
+      "vibeId": "EA",
+      "speechAct": "PRESSURE",
+      "deliveryIntensity": "BALANCED",
+      "actionInvariant": [
+        "DEMAND",
+        "CONSEQUENCE"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_PRESSURE_EA"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "PRESSURE_EA_OVERT",
+      "vibeId": "EA",
+      "speechAct": "PRESSURE",
+      "deliveryIntensity": "OVERT",
+      "actionInvariant": [
+        "DEMAND",
+        "CONSEQUENCE"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_PRESSURE_EA"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "PRESSURE_ES_SUBTLE",
+      "vibeId": "ES",
+      "speechAct": "PRESSURE",
+      "deliveryIntensity": "SUBTLE",
+      "actionInvariant": [
+        "DEMAND",
+        "CONSEQUENCE"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_PRESSURE_ES"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "PRESSURE_ES_BALANCED",
+      "vibeId": "ES",
+      "speechAct": "PRESSURE",
+      "deliveryIntensity": "BALANCED",
+      "actionInvariant": [
+        "DEMAND",
+        "CONSEQUENCE"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_PRESSURE_ES"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "PRESSURE_ES_OVERT",
+      "vibeId": "ES",
+      "speechAct": "PRESSURE",
+      "deliveryIntensity": "OVERT",
+      "actionInvariant": [
+        "DEMAND",
+        "CONSEQUENCE"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_PRESSURE_ES"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "PRESSURE_ED_SUBTLE",
+      "vibeId": "ED",
+      "speechAct": "PRESSURE",
+      "deliveryIntensity": "SUBTLE",
+      "actionInvariant": [
+        "DEMAND",
+        "CONSEQUENCE"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_PRESSURE_ED"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "PRESSURE_ED_BALANCED",
+      "vibeId": "ED",
+      "speechAct": "PRESSURE",
+      "deliveryIntensity": "BALANCED",
+      "actionInvariant": [
+        "DEMAND",
+        "CONSEQUENCE"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_PRESSURE_ED"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "PRESSURE_ED_OVERT",
+      "vibeId": "ED",
+      "speechAct": "PRESSURE",
+      "deliveryIntensity": "OVERT",
+      "actionInvariant": [
+        "DEMAND",
+        "CONSEQUENCE"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_PRESSURE_ED"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "PRESSURE_DB_SUBTLE",
+      "vibeId": "DB",
+      "speechAct": "PRESSURE",
+      "deliveryIntensity": "SUBTLE",
+      "actionInvariant": [
+        "DEMAND",
+        "CONSEQUENCE"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_PRESSURE_DB"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "PRESSURE_DB_BALANCED",
+      "vibeId": "DB",
+      "speechAct": "PRESSURE",
+      "deliveryIntensity": "BALANCED",
+      "actionInvariant": [
+        "DEMAND",
+        "CONSEQUENCE"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_PRESSURE_DB"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "PRESSURE_DB_OVERT",
+      "vibeId": "DB",
+      "speechAct": "PRESSURE",
+      "deliveryIntensity": "OVERT",
+      "actionInvariant": [
+        "DEMAND",
+        "CONSEQUENCE"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_PRESSURE_DB"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "PRESSURE_DA_SUBTLE",
+      "vibeId": "DA",
+      "speechAct": "PRESSURE",
+      "deliveryIntensity": "SUBTLE",
+      "actionInvariant": [
+        "DEMAND",
+        "CONSEQUENCE"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_PRESSURE_DA"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "PRESSURE_DA_BALANCED",
+      "vibeId": "DA",
+      "speechAct": "PRESSURE",
+      "deliveryIntensity": "BALANCED",
+      "actionInvariant": [
+        "DEMAND",
+        "CONSEQUENCE"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_PRESSURE_DA"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "PRESSURE_DA_OVERT",
+      "vibeId": "DA",
+      "speechAct": "PRESSURE",
+      "deliveryIntensity": "OVERT",
+      "actionInvariant": [
+        "DEMAND",
+        "CONSEQUENCE"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_PRESSURE_DA"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "PRESSURE_DS_SUBTLE",
+      "vibeId": "DS",
+      "speechAct": "PRESSURE",
+      "deliveryIntensity": "SUBTLE",
+      "actionInvariant": [
+        "DEMAND",
+        "CONSEQUENCE"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_PRESSURE_DS"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "PRESSURE_DS_BALANCED",
+      "vibeId": "DS",
+      "speechAct": "PRESSURE",
+      "deliveryIntensity": "BALANCED",
+      "actionInvariant": [
+        "DEMAND",
+        "CONSEQUENCE"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_PRESSURE_DS"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "PRESSURE_DS_OVERT",
+      "vibeId": "DS",
+      "speechAct": "PRESSURE",
+      "deliveryIntensity": "OVERT",
+      "actionInvariant": [
+        "DEMAND",
+        "CONSEQUENCE"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_PRESSURE_DS"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "PRESSURE_DE_SUBTLE",
+      "vibeId": "DE",
+      "speechAct": "PRESSURE",
+      "deliveryIntensity": "SUBTLE",
+      "actionInvariant": [
+        "DEMAND",
+        "CONSEQUENCE"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_PRESSURE_DE"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "PRESSURE_DE_BALANCED",
+      "vibeId": "DE",
+      "speechAct": "PRESSURE",
+      "deliveryIntensity": "BALANCED",
+      "actionInvariant": [
+        "DEMAND",
+        "CONSEQUENCE"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_PRESSURE_DE"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "PRESSURE_DE_OVERT",
+      "vibeId": "DE",
+      "speechAct": "PRESSURE",
+      "deliveryIntensity": "OVERT",
+      "actionInvariant": [
+        "DEMAND",
+        "CONSEQUENCE"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_PRESSURE_DE"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "ASK_BA_SUBTLE",
+      "vibeId": "BA",
+      "speechAct": "ASK",
+      "deliveryIntensity": "SUBTLE",
+      "actionInvariant": [
+        "REQUEST"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_ASK_BA"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "ASK_BA_BALANCED",
+      "vibeId": "BA",
+      "speechAct": "ASK",
+      "deliveryIntensity": "BALANCED",
+      "actionInvariant": [
+        "REQUEST"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_ASK_BA"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "ASK_BA_OVERT",
+      "vibeId": "BA",
+      "speechAct": "ASK",
+      "deliveryIntensity": "OVERT",
+      "actionInvariant": [
+        "REQUEST"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_ASK_BA"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "ASK_BS_SUBTLE",
+      "vibeId": "BS",
+      "speechAct": "ASK",
+      "deliveryIntensity": "SUBTLE",
+      "actionInvariant": [
+        "REQUEST"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_ASK_BS"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "ASK_BS_BALANCED",
+      "vibeId": "BS",
+      "speechAct": "ASK",
+      "deliveryIntensity": "BALANCED",
+      "actionInvariant": [
+        "REQUEST"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_ASK_BS"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "ASK_BS_OVERT",
+      "vibeId": "BS",
+      "speechAct": "ASK",
+      "deliveryIntensity": "OVERT",
+      "actionInvariant": [
+        "REQUEST"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_ASK_BS"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "ASK_BE_SUBTLE",
+      "vibeId": "BE",
+      "speechAct": "ASK",
+      "deliveryIntensity": "SUBTLE",
+      "actionInvariant": [
+        "REQUEST"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_ASK_BE"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "ASK_BE_BALANCED",
+      "vibeId": "BE",
+      "speechAct": "ASK",
+      "deliveryIntensity": "BALANCED",
+      "actionInvariant": [
+        "REQUEST"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_ASK_BE"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "ASK_BE_OVERT",
+      "vibeId": "BE",
+      "speechAct": "ASK",
+      "deliveryIntensity": "OVERT",
+      "actionInvariant": [
+        "REQUEST"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_ASK_BE"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "ASK_BD_SUBTLE",
+      "vibeId": "BD",
+      "speechAct": "ASK",
+      "deliveryIntensity": "SUBTLE",
+      "actionInvariant": [
+        "REQUEST"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_ASK_BD"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "ASK_BD_BALANCED",
+      "vibeId": "BD",
+      "speechAct": "ASK",
+      "deliveryIntensity": "BALANCED",
+      "actionInvariant": [
+        "REQUEST"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_ASK_BD"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "ASK_BD_OVERT",
+      "vibeId": "BD",
+      "speechAct": "ASK",
+      "deliveryIntensity": "OVERT",
+      "actionInvariant": [
+        "REQUEST"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_ASK_BD"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "ASK_AB_SUBTLE",
+      "vibeId": "AB",
+      "speechAct": "ASK",
+      "deliveryIntensity": "SUBTLE",
+      "actionInvariant": [
+        "REQUEST"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_ASK_AB"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "ASK_AB_BALANCED",
+      "vibeId": "AB",
+      "speechAct": "ASK",
+      "deliveryIntensity": "BALANCED",
+      "actionInvariant": [
+        "REQUEST"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_ASK_AB"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "ASK_AB_OVERT",
+      "vibeId": "AB",
+      "speechAct": "ASK",
+      "deliveryIntensity": "OVERT",
+      "actionInvariant": [
+        "REQUEST"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_ASK_AB"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "ASK_AS_SUBTLE",
+      "vibeId": "AS",
+      "speechAct": "ASK",
+      "deliveryIntensity": "SUBTLE",
+      "actionInvariant": [
+        "REQUEST"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_ASK_AS"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "ASK_AS_BALANCED",
+      "vibeId": "AS",
+      "speechAct": "ASK",
+      "deliveryIntensity": "BALANCED",
+      "actionInvariant": [
+        "REQUEST"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_ASK_AS"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "ASK_AS_OVERT",
+      "vibeId": "AS",
+      "speechAct": "ASK",
+      "deliveryIntensity": "OVERT",
+      "actionInvariant": [
+        "REQUEST"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_ASK_AS"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "ASK_AE_SUBTLE",
+      "vibeId": "AE",
+      "speechAct": "ASK",
+      "deliveryIntensity": "SUBTLE",
+      "actionInvariant": [
+        "REQUEST"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_ASK_AE"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "ASK_AE_BALANCED",
+      "vibeId": "AE",
+      "speechAct": "ASK",
+      "deliveryIntensity": "BALANCED",
+      "actionInvariant": [
+        "REQUEST"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_ASK_AE"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "ASK_AE_OVERT",
+      "vibeId": "AE",
+      "speechAct": "ASK",
+      "deliveryIntensity": "OVERT",
+      "actionInvariant": [
+        "REQUEST"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_ASK_AE"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "ASK_AD_SUBTLE",
+      "vibeId": "AD",
+      "speechAct": "ASK",
+      "deliveryIntensity": "SUBTLE",
+      "actionInvariant": [
+        "REQUEST"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_ASK_AD"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "ASK_AD_BALANCED",
+      "vibeId": "AD",
+      "speechAct": "ASK",
+      "deliveryIntensity": "BALANCED",
+      "actionInvariant": [
+        "REQUEST"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_ASK_AD"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "ASK_AD_OVERT",
+      "vibeId": "AD",
+      "speechAct": "ASK",
+      "deliveryIntensity": "OVERT",
+      "actionInvariant": [
+        "REQUEST"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_ASK_AD"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "ASK_SB_SUBTLE",
+      "vibeId": "SB",
+      "speechAct": "ASK",
+      "deliveryIntensity": "SUBTLE",
+      "actionInvariant": [
+        "REQUEST"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_ASK_SB"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "ASK_SB_BALANCED",
+      "vibeId": "SB",
+      "speechAct": "ASK",
+      "deliveryIntensity": "BALANCED",
+      "actionInvariant": [
+        "REQUEST"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_ASK_SB"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "ASK_SB_OVERT",
+      "vibeId": "SB",
+      "speechAct": "ASK",
+      "deliveryIntensity": "OVERT",
+      "actionInvariant": [
+        "REQUEST"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_ASK_SB"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "ASK_SA_SUBTLE",
+      "vibeId": "SA",
+      "speechAct": "ASK",
+      "deliveryIntensity": "SUBTLE",
+      "actionInvariant": [
+        "REQUEST"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_ASK_SA"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "ASK_SA_BALANCED",
+      "vibeId": "SA",
+      "speechAct": "ASK",
+      "deliveryIntensity": "BALANCED",
+      "actionInvariant": [
+        "REQUEST"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_ASK_SA"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "ASK_SA_OVERT",
+      "vibeId": "SA",
+      "speechAct": "ASK",
+      "deliveryIntensity": "OVERT",
+      "actionInvariant": [
+        "REQUEST"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_ASK_SA"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "ASK_SE_SUBTLE",
+      "vibeId": "SE",
+      "speechAct": "ASK",
+      "deliveryIntensity": "SUBTLE",
+      "actionInvariant": [
+        "REQUEST"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_ASK_SE"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "ASK_SE_BALANCED",
+      "vibeId": "SE",
+      "speechAct": "ASK",
+      "deliveryIntensity": "BALANCED",
+      "actionInvariant": [
+        "REQUEST"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_ASK_SE"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "ASK_SE_OVERT",
+      "vibeId": "SE",
+      "speechAct": "ASK",
+      "deliveryIntensity": "OVERT",
+      "actionInvariant": [
+        "REQUEST"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_ASK_SE"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "ASK_SD_SUBTLE",
+      "vibeId": "SD",
+      "speechAct": "ASK",
+      "deliveryIntensity": "SUBTLE",
+      "actionInvariant": [
+        "REQUEST"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_ASK_SD"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "ASK_SD_BALANCED",
+      "vibeId": "SD",
+      "speechAct": "ASK",
+      "deliveryIntensity": "BALANCED",
+      "actionInvariant": [
+        "REQUEST"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_ASK_SD"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "ASK_SD_OVERT",
+      "vibeId": "SD",
+      "speechAct": "ASK",
+      "deliveryIntensity": "OVERT",
+      "actionInvariant": [
+        "REQUEST"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_ASK_SD"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "ASK_EB_SUBTLE",
+      "vibeId": "EB",
+      "speechAct": "ASK",
+      "deliveryIntensity": "SUBTLE",
+      "actionInvariant": [
+        "REQUEST"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_ASK_EB"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "ASK_EB_BALANCED",
+      "vibeId": "EB",
+      "speechAct": "ASK",
+      "deliveryIntensity": "BALANCED",
+      "actionInvariant": [
+        "REQUEST"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_ASK_EB"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "ASK_EB_OVERT",
+      "vibeId": "EB",
+      "speechAct": "ASK",
+      "deliveryIntensity": "OVERT",
+      "actionInvariant": [
+        "REQUEST"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_ASK_EB"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "ASK_EA_SUBTLE",
+      "vibeId": "EA",
+      "speechAct": "ASK",
+      "deliveryIntensity": "SUBTLE",
+      "actionInvariant": [
+        "REQUEST"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_ASK_EA"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "ASK_EA_BALANCED",
+      "vibeId": "EA",
+      "speechAct": "ASK",
+      "deliveryIntensity": "BALANCED",
+      "actionInvariant": [
+        "REQUEST"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_ASK_EA"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "ASK_EA_OVERT",
+      "vibeId": "EA",
+      "speechAct": "ASK",
+      "deliveryIntensity": "OVERT",
+      "actionInvariant": [
+        "REQUEST"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_ASK_EA"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "ASK_ES_SUBTLE",
+      "vibeId": "ES",
+      "speechAct": "ASK",
+      "deliveryIntensity": "SUBTLE",
+      "actionInvariant": [
+        "REQUEST"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_ASK_ES"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "ASK_ES_BALANCED",
+      "vibeId": "ES",
+      "speechAct": "ASK",
+      "deliveryIntensity": "BALANCED",
+      "actionInvariant": [
+        "REQUEST"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_ASK_ES"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "ASK_ES_OVERT",
+      "vibeId": "ES",
+      "speechAct": "ASK",
+      "deliveryIntensity": "OVERT",
+      "actionInvariant": [
+        "REQUEST"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_ASK_ES"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "ASK_ED_SUBTLE",
+      "vibeId": "ED",
+      "speechAct": "ASK",
+      "deliveryIntensity": "SUBTLE",
+      "actionInvariant": [
+        "REQUEST"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_ASK_ED"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "ASK_ED_BALANCED",
+      "vibeId": "ED",
+      "speechAct": "ASK",
+      "deliveryIntensity": "BALANCED",
+      "actionInvariant": [
+        "REQUEST"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_ASK_ED"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "ASK_ED_OVERT",
+      "vibeId": "ED",
+      "speechAct": "ASK",
+      "deliveryIntensity": "OVERT",
+      "actionInvariant": [
+        "REQUEST"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_ASK_ED"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "ASK_DB_SUBTLE",
+      "vibeId": "DB",
+      "speechAct": "ASK",
+      "deliveryIntensity": "SUBTLE",
+      "actionInvariant": [
+        "REQUEST"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_ASK_DB"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "ASK_DB_BALANCED",
+      "vibeId": "DB",
+      "speechAct": "ASK",
+      "deliveryIntensity": "BALANCED",
+      "actionInvariant": [
+        "REQUEST"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_ASK_DB"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "ASK_DB_OVERT",
+      "vibeId": "DB",
+      "speechAct": "ASK",
+      "deliveryIntensity": "OVERT",
+      "actionInvariant": [
+        "REQUEST"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_ASK_DB"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "ASK_DA_SUBTLE",
+      "vibeId": "DA",
+      "speechAct": "ASK",
+      "deliveryIntensity": "SUBTLE",
+      "actionInvariant": [
+        "REQUEST"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_ASK_DA"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "ASK_DA_BALANCED",
+      "vibeId": "DA",
+      "speechAct": "ASK",
+      "deliveryIntensity": "BALANCED",
+      "actionInvariant": [
+        "REQUEST"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_ASK_DA"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "ASK_DA_OVERT",
+      "vibeId": "DA",
+      "speechAct": "ASK",
+      "deliveryIntensity": "OVERT",
+      "actionInvariant": [
+        "REQUEST"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_ASK_DA"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "ASK_DS_SUBTLE",
+      "vibeId": "DS",
+      "speechAct": "ASK",
+      "deliveryIntensity": "SUBTLE",
+      "actionInvariant": [
+        "REQUEST"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_ASK_DS"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "ASK_DS_BALANCED",
+      "vibeId": "DS",
+      "speechAct": "ASK",
+      "deliveryIntensity": "BALANCED",
+      "actionInvariant": [
+        "REQUEST"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_ASK_DS"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "ASK_DS_OVERT",
+      "vibeId": "DS",
+      "speechAct": "ASK",
+      "deliveryIntensity": "OVERT",
+      "actionInvariant": [
+        "REQUEST"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_ASK_DS"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "ASK_DE_SUBTLE",
+      "vibeId": "DE",
+      "speechAct": "ASK",
+      "deliveryIntensity": "SUBTLE",
+      "actionInvariant": [
+        "REQUEST"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_ASK_DE"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "ASK_DE_BALANCED",
+      "vibeId": "DE",
+      "speechAct": "ASK",
+      "deliveryIntensity": "BALANCED",
+      "actionInvariant": [
+        "REQUEST"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_ASK_DE"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    },
+    {
+      "key": "ASK_DE_OVERT",
+      "vibeId": "DE",
+      "speechAct": "ASK",
+      "deliveryIntensity": "OVERT",
+      "actionInvariant": [
+        "REQUEST"
+      ],
+      "candidateAnchorIds": [
+        "ANCHOR_ASK_DE"
+      ],
+      "universalFallbackId": null,
+      "allowedProtocolIds": [],
+      "preferredProtocolIds": [],
+      "excludedProtocolIds": [],
+      "requiredContextOrLoreFacts": [],
+      "forbiddenSemanticAdditions": [
+        "unauthored_threat",
+        "unauthored_promise",
+        "unauthored_deadline",
+        "unauthored_knowledge",
+        "unauthored_consequence"
+      ],
+      "reviewStatus": "UNMAPPED",
+      "provenance": {
+        "source": "AUTHORED_PROJECT_COMPATIBILITY",
+        "schemaVersion": "dpa-keyword-foundation@0.1"
+      }
+    }
+  ],
+  "tplFamilies": [
+    "VOICE_QUALITY",
+    "VOCALIZATION",
+    "TACTILE_KINESIC",
+    "VISUAL_KINESIC",
+    "ARTIFACT"
+  ],
+  "atoms": [
+    {
+      "atomId": "ATOM_VQ_ELLIPSIS",
+      "family": "VOICE_QUALITY",
+      "subtype": "silence",
+      "operation": "bounded_ellipsis",
+      "maxOccurrences": 1,
+      "status": "CANDIDATE",
+      "provenance": "PROJECT_AUTHORED"
+    },
+    {
+      "atomId": "ATOM_VQ_FRAGMENT",
+      "family": "VOICE_QUALITY",
+      "subtype": "rhythm",
+      "operation": "bounded_fragment",
+      "maxOccurrences": 1,
+      "status": "CANDIDATE",
+      "provenance": "PROJECT_AUTHORED"
+    },
+    {
+      "atomId": "ATOM_VOCAL_ACK",
+      "family": "VOCALIZATION",
+      "subtype": "acknowledgment",
+      "operation": "authored_acknowledgment",
+      "maxOccurrences": 1,
+      "status": "CANDIDATE",
+      "provenance": "PROJECT_AUTHORED"
+    },
+    {
+      "atomId": "ATOM_TACTILE_PAUSE",
+      "family": "TACTILE_KINESIC",
+      "subtype": "contact",
+      "operation": "context_gated_contact_reference",
+      "maxOccurrences": 1,
+      "status": "CANDIDATE",
+      "statusReason": "Reference-only scaffold; no renderer mutation or physical action is implied.",
+      "provenance": "PROJECT_AUTHORED"
+    },
+    {
+      "atomId": "ATOM_VISUAL_GESTURE",
+      "family": "VISUAL_KINESIC",
+      "subtype": "gesture",
+      "operation": "written_gesture",
+      "maxOccurrences": 1,
+      "status": "CANDIDATE",
+      "statusReason": "Requires context gate and remains separate from face evidence.",
+      "provenance": "PROJECT_AUTHORED"
+    },
+    {
+      "atomId": "ATOM_ARTIFACT_BREAK",
+      "family": "ARTIFACT",
+      "subtype": "segmentation",
+      "operation": "line_break",
+      "maxOccurrences": 2,
+      "status": "CANDIDATE",
+      "provenance": "PROJECT_AUTHORED"
+    }
+  ],
+  "constructions": [
+    {
+      "constructionId": "CONSTRUCTION_ASK_REQUEST",
+      "speechActs": [
+        "ASK"
+      ],
+      "requiredSlots": [
+        "REQUEST"
+      ],
+      "status": "REVIEWED",
+      "provenance": "PROJECT_AUTHORED"
+    },
+    {
+      "constructionId": "CONSTRUCTION_DEAL_EXCHANGE",
+      "speechActs": [
+        "DEAL"
+      ],
+      "requiredSlots": [
+        "OFFER",
+        "RETURN"
+      ],
+      "status": "REVIEWED",
+      "provenance": "PROJECT_AUTHORED"
+    },
+    {
+      "constructionId": "CONSTRUCTION_PRESSURE_CONSEQUENCE",
+      "speechActs": [
+        "PRESSURE"
+      ],
+      "requiredSlots": [
+        "DEMAND",
+        "CONSEQUENCE"
+      ],
+      "status": "REVIEWED",
+      "provenance": "PROJECT_AUTHORED"
+    }
+  ],
+  "protocols": [
+    {
+      "tplProtocolId": "PROTOCOL_ASK_SAFE_FALLBACK",
+      "speechActs": [
+        "ASK"
+      ],
+      "constructionIds": [
+        "CONSTRUCTION_ASK_REQUEST"
+      ],
+      "requiredAtomIds": [],
+      "optionalAtomIds": [
+        "ATOM_VQ_ELLIPSIS",
+        "ATOM_ARTIFACT_BREAK"
+      ],
+      "excludedAtomIds": [],
+      "intensityProfiles": [
+        "SUBTLE",
+        "BALANCED",
+        "OVERT"
+      ],
+      "semanticInvarianceRequired": true,
+      "reviewStatus": "CANDIDATE",
+      "provenance": [
+        "PROJECT_AUTHORED"
+      ]
+    },
+    {
+      "tplProtocolId": "PROTOCOL_DEAL_SAFE_FALLBACK",
+      "speechActs": [
+        "DEAL"
+      ],
+      "constructionIds": [
+        "CONSTRUCTION_DEAL_EXCHANGE"
+      ],
+      "requiredAtomIds": [],
+      "optionalAtomIds": [
+        "ATOM_VQ_FRAGMENT",
+        "ATOM_ARTIFACT_BREAK"
+      ],
+      "excludedAtomIds": [],
+      "intensityProfiles": [
+        "SUBTLE",
+        "BALANCED",
+        "OVERT"
+      ],
+      "semanticInvarianceRequired": true,
+      "reviewStatus": "CANDIDATE",
+      "provenance": [
+        "PROJECT_AUTHORED"
+      ]
+    },
+    {
+      "tplProtocolId": "PROTOCOL_PRESSURE_SAFE_FALLBACK",
+      "speechActs": [
+        "PRESSURE"
+      ],
+      "constructionIds": [
+        "CONSTRUCTION_PRESSURE_CONSEQUENCE"
+      ],
+      "requiredAtomIds": [],
+      "optionalAtomIds": [
+        "ATOM_VQ_FRAGMENT",
+        "ATOM_ARTIFACT_BREAK"
+      ],
+      "excludedAtomIds": [],
+      "intensityProfiles": [
+        "SUBTLE",
+        "BALANCED",
+        "OVERT"
+      ],
+      "semanticInvarianceRequired": true,
+      "reviewStatus": "CANDIDATE",
+      "provenance": [
+        "PROJECT_AUTHORED"
+      ]
+    }
+  ],
+  "semanticInvarianceBoundary": {
+    "system": "SEPARATE_FACE_EVIDENCE",
+    "relation": "MANY_TO_MANY",
+    "reactionFaceField": "reactionFaceId",
+    "replyFaceField": "replyFaceId",
+    "rendererMayMutateFaceSlots": false
+  }
+}

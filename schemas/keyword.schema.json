@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dpa-message-foundations.invalid/schemas/keyword.schema.json",
+  "title": "DPA semantic keyword definition",
+  "type": "object",
+  "required": ["keywordId", "displayName", "definition", "explicitNonMeanings", "category", "arity", "typedArgumentRoles", "directionality", "inverseOrReciprocalRule", "allowedEntityAndResourceTypes", "temporalityAndHistoryBehavior", "negationDisputeAndBeliefHandling", "requiredAndForbiddenContexts", "relatedStats", "compatibleKeywords", "conflictingKeywords", "possibleAffordances", "blockersAndDefeaters", "possibleHistoryEmissions", "sourceAndProjectProvenance", "positiveExamples", "boundaryExamples", "counterexamples", "schemaVersion", "reviewStatus"],
+  "properties": {
+    "keywordId": { "type": "string", "pattern": "^[A-Z][A-Z0-9_]+$" },
+    "displayName": { "type": "string" },
+    "definition": { "type": "string" },
+    "explicitNonMeanings": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+    "arity": { "type": "integer", "minimum": 2, "maximum": 3 },
+    "typedArgumentRoles": { "type": "object", "minProperties": 2 },
+    "possibleAffordances": { "type": "object", "required": ["DEAL", "PRESSURE", "ASK"] },
+    "reviewStatus": { "const": "APPROVED" },
+    "schemaVersion": { "const": "dpa-keyword-foundation@0.1" }
+  },
+  "additionalProperties": true
+}

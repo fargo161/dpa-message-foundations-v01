@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dpa-message-foundations.invalid/schemas/mechanics.schema.json",
+  "title": "DPA authored mechanics state and action contract",
+  "type": "object",
+  "required": ["schemaVersion", "scenarioId", "entities", "facts", "history", "recommendedPairs"],
+  "properties": {
+    "schemaVersion": { "const": "dpa-keyword-foundation@0.1" },
+    "scenarioId": { "type": "string" },
+    "entities": { "type": "object" },
+    "facts": { "type": "array" },
+    "history": { "type": "array" },
+    "recommendedPairs": { "type": "array", "items": { "type": "object", "required": ["actorId", "targetId", "contextId"] } }
+  },
+  "additionalProperties": true
+}

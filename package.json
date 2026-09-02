@@ -1,0 +1,19 @@
+{
+  "name": "dpa-message-foundations",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.13.0"
+  },
+  "scripts": {
+    "test": "node --test",
+    "lint": "node scripts/lint.mjs",
+    "typecheck": "node scripts/typecheck.mjs",
+    "build": "node scripts/build.mjs",
+    "ingest:real": "node --max-old-space-size=2048 scripts/process-real-datasets.mjs",
+    "inspect": "node src/cli.mjs inspect",
+    "demo": "node src/cli.mjs demo",
+    "report": "node src/cli.mjs report"
+  }
+}

@@ -1,0 +1,436 @@
+{
+  "manifestCount": 9,
+  "manifestAcquisitionStatuses": {
+    "ACQUIRED": 8,
+    "FIXTURE_ONLY": 1
+  },
+  "acquisitionStatuses": {
+    "ACQUIRED_AND_INDEXED": 7,
+    "ACQUIRED_NOT_INDEXED": 1
+  },
+  "acquisitionManifestGeneratedAt": "2026-09-02T15:00:11.578Z",
+  "realAcquiredSourceCount": 8,
+  "indexedExternalSourceCount": 7,
+  "acquiredNotIndexedSourceCount": 1,
+  "actualAcquisitions": [
+    {
+      "sourceId": "atomic-2020",
+      "status": "ACQUIRED_AND_INDEXED",
+      "artifactFilename": "atomic2020_data-feb2021.zip",
+      "artifactCachePath": ".cache\\external-data\\atomic-2020\\atomic2020_data-feb2021.zip",
+      "retrievedAt": "2026-09-02T14:22:09.220Z",
+      "byteSize": 12580048,
+      "sha256": "47c5f362ab4a3ea58c4962eebfdfd1c5420d3780e74cd3fe09efeef64f941c2b",
+      "counts": {
+        "raw": 1331113,
+        "accepted": 1243208,
+        "rejected": 87905,
+        "duplicate": 0,
+        "normalized": 1243208,
+        "indexed": 1243208
+      },
+      "probes": [
+        {
+          "query": "xIntent",
+          "hitCount": 3,
+          "provenancePreserved": true
+        },
+        {
+          "query": "xNeed",
+          "hitCount": 3,
+          "provenancePreserved": true
+        },
+        {
+          "query": "HinderedBy",
+          "hitCount": 3,
+          "provenancePreserved": true
+        }
+      ],
+      "evidenceBoundary": "Evidence/prior only. No mechanics, BASED mapping, TPL protocol, or runtime dialogue approval is implied."
+    },
+    {
+      "sourceId": "social-chemistry-101",
+      "status": "ACQUIRED_AND_INDEXED",
+      "artifactFilename": "social-chem-101.zip",
+      "artifactCachePath": ".cache\\external-data\\social-chemistry-101\\social-chem-101.zip",
+      "retrievedAt": "2026-09-02T14:22:09.220Z",
+      "byteSize": 27610699,
+      "sha256": "ebaa524280c53aa3dbfb2b73502b120eeb71d03523a557c659275aebb2afd95a",
+      "counts": {
+        "raw": 355922,
+        "accepted": 348769,
+        "rejected": 7153,
+        "duplicate": 63255,
+        "normalized": 285514,
+        "indexed": 285514
+      },
+      "probes": [
+        {
+          "query": "losing trust",
+          "hitCount": 3,
+          "provenancePreserved": true
+        },
+        {
+          "query": "thanks",
+          "hitCount": 3,
+          "provenancePreserved": true
+        },
+        {
+          "query": "legal",
+          "hitCount": 3,
+          "provenancePreserved": true
+        }
+      ],
+      "evidenceBoundary": "Evidence/prior only. No mechanics, BASED mapping, TPL protocol, or runtime dialogue approval is implied."
+    },
+    {
+      "sourceId": "casino",
+      "status": "ACQUIRED_AND_INDEXED",
+      "artifactFilename": "casino-corpus.zip",
+      "artifactCachePath": ".cache\\external-data\\casino\\casino-corpus.zip",
+      "retrievedAt": "2026-09-02T14:22:09.220Z",
+      "byteSize": 875020,
+      "sha256": "71448281f192ffcecfa05877e0aecb0b2f7c68db763b8cf8dc5f9d1010ece387",
+      "counts": {
+        "raw": 14297,
+        "accepted": 14297,
+        "rejected": 0,
+        "duplicate": 0,
+        "normalized": 14297,
+        "indexed": 14297
+      },
+      "probes": [
+        {
+          "query": "firewood",
+          "hitCount": 3,
+          "provenancePreserved": true
+        },
+        {
+          "query": "food",
+          "hitCount": 3,
+          "provenancePreserved": true
+        },
+        {
+          "query": "water",
+          "hitCount": 3,
+          "provenancePreserved": true
+        }
+      ],
+      "evidenceBoundary": "Evidence/prior only. No mechanics, BASED mapping, TPL protocol, or runtime dialogue approval is implied."
+    },
+    {
+      "sourceId": "persuasion-for-good",
+      "status": "ACQUIRED_AND_INDEXED",
+      "artifactFilename": "persuasionforgood-master.zip",
+      "artifactCachePath": ".cache\\external-data\\persuasion-for-good\\persuasionforgood-master.zip",
+      "retrievedAt": "2026-09-02T14:22:09.220Z",
+      "byteSize": 324414067,
+      "sha256": "0d9deadfb126564a8dbbd9b0c33df1c7986cccbf65e03fd60ef2eaec9ec7a41d",
+      "counts": {
+        "raw": 20932,
+        "accepted": 20932,
+        "rejected": 0,
+        "duplicate": 0,
+        "normalized": 20932,
+        "indexed": 20932
+      },
+      "probes": [
+        {
+          "query": "donate",
+          "hitCount": 3,
+          "provenancePreserved": true
+        },
+        {
+          "query": "charity",
+          "hitCount": 3,
+          "provenancePreserved": true
+        },
+        {
+          "query": "good",
+          "hitCount": 3,
+          "provenancePreserved": true
+        }
+      ],
+      "evidenceBoundary": "Evidence/prior only. No mechanics, BASED mapping, TPL protocol, or runtime dialogue approval is implied."
+    },
+    {
+      "sourceId": "stanford-politeness-wikipedia",
+      "status": "ACQUIRED_AND_INDEXED",
+      "artifactFilename": "wikipedia-politeness-corpus.zip",
+      "artifactCachePath": ".cache\\external-data\\stanford-politeness-wikipedia\\wikipedia-politeness-corpus.zip",
+      "retrievedAt": "2026-09-02T14:22:09.220Z",
+      "byteSize": 1737651,
+      "sha256": "90ec6c2c6e05d064a805d2e4be4a8d442f370b31f0025798e8eaf62d0014ba48",
+      "counts": {
+        "raw": 4353,
+        "accepted": 4353,
+        "rejected": 0,
+        "duplicate": 0,
+        "normalized": 4353,
+        "indexed": 4353
+      },
+      "probes": [
+        {
+          "query": "thanks",
+          "hitCount": 3,
+          "provenancePreserved": true
+        },
+        {
+          "query": "please",
+          "hitCount": 3,
+          "provenancePreserved": true
+        },
+        {
+          "query": "would you",
+          "hitCount": 3,
+          "provenancePreserved": true
+        }
+      ],
+      "evidenceBoundary": "Evidence/prior only. No mechanics, BASED mapping, TPL protocol, or runtime dialogue approval is implied."
+    },
+    {
+      "sourceId": "stanford-politeness-stack-exchange",
+      "status": "ACQUIRED_AND_INDEXED",
+      "artifactFilename": "stack-exchange-politeness-corpus.zip",
+      "artifactCachePath": ".cache\\external-data\\stanford-politeness-stack-exchange\\stack-exchange-politeness-corpus.zip",
+      "retrievedAt": "2026-09-02T14:22:09.220Z",
+      "byteSize": 2264294,
+      "sha256": "d5be7586c3f4224cffdb45cf87af17b5ad17c0ed4d2d5f6560bcb201703681a3",
+      "counts": {
+        "raw": 6603,
+        "accepted": 6603,
+        "rejected": 0,
+        "duplicate": 0,
+        "normalized": 6603,
+        "indexed": 6603
+      },
+      "probes": [
+        {
+          "query": "explain",
+          "hitCount": 3,
+          "provenancePreserved": true
+        },
+        {
+          "query": "question",
+          "hitCount": 3,
+          "provenancePreserved": true
+        },
+        {
+          "query": "please",
+          "hitCount": 3,
+          "provenancePreserved": true
+        }
+      ],
+      "evidenceBoundary": "Evidence/prior only. No mechanics, BASED mapping, TPL protocol, or runtime dialogue approval is implied."
+    },
+    {
+      "sourceId": "moral-stories",
+      "status": "ACQUIRED_AND_INDEXED",
+      "artifactFilename": "moral_stories_full.jsonl",
+      "artifactCachePath": ".cache\\external-data\\moral-stories\\moral_stories_full.jsonl",
+      "retrievedAt": "2026-09-02T14:22:09.220Z",
+      "byteSize": 8015650,
+      "sha256": "98a62d4a083e02ba234ca3d4f2312df6c337ef10cd3f12dcf917a2957ba59c10",
+      "counts": {
+        "raw": 12000,
+        "accepted": 12000,
+        "rejected": 0,
+        "duplicate": 0,
+        "normalized": 12000,
+        "indexed": 12000
+      },
+      "probes": [
+        {
+          "query": "moral_action",
+          "hitCount": 3,
+          "provenancePreserved": true
+        },
+        {
+          "query": "immoral_action",
+          "hitCount": 3,
+          "provenancePreserved": true
+        },
+        {
+          "query": "responsible",
+          "hitCount": 3,
+          "provenancePreserved": true
+        }
+      ],
+      "evidenceBoundary": "Evidence/prior only. No mechanics, BASED mapping, TPL protocol, or runtime dialogue approval is implied."
+    },
+    {
+      "sourceId": "tpl-ontology-luangrath-peck-barger",
+      "status": "ACQUIRED_NOT_INDEXED",
+      "artifactFilename": "1605.06799.pdf",
+      "artifactCachePath": ".cache\\external-data\\tpl-ontology-luangrath-peck-barger\\1605.06799.pdf",
+      "retrievedAt": "2026-09-02T14:28:33.491Z",
+      "byteSize": 1306437,
+      "sha256": "4174eb89805e2e4a4fa3409f2cdc45f5313bc538f1e561f8d21a103ef3904104",
+      "counts": {
+        "raw": 0,
+        "accepted": 0,
+        "rejected": 0,
+        "duplicate": 0,
+        "normalized": 0,
+        "indexed": 0
+      },
+      "probes": [],
+      "evidenceBoundary": "Research authority only. No underlying social-media corpus was acquired, normalized, indexed, or claimed reusable; no mechanics, BASED mapping, TPL protocol, or runtime dialogue approval is implied."
+    }
+  ],
+  "runtimeRecordCount": 0,
+  "storeStatus": {
+    "sourcesByStatus": {},
+    "sourcesByLabel": {},
+    "recordsByLifecycle": {},
+    "sourceCount": 0,
+    "recordCount": 0,
+    "runtimeRecordCount": 0
+  },
+  "manifests": [
+    {
+      "sourceId": "atomic-2020",
+      "title": "ATOMIC 2020",
+      "sourceType": "HUMAN_LOGIC_DATASET",
+      "canonicalUrl": "https://github.com/allenai/comet-atomic-2020",
+      "artifactUrl": "https://drive.google.com/uc?export=download&id=1uuY0Y_s8dhxdsoOe8OHRgsqf-9qJIai7",
+      "sourceVersion": "atomic2020_data-feb2021",
+      "licenseId": "CC-BY-UNVERSIONED",
+      "licenseUrl": "https://github.com/allenai/comet-atomic-2020",
+      "acquisitionStatus": "ACQUIRED",
+      "redistributionPolicy": "REFERENCE_ONLY",
+      "notes": [
+        "Official repository distinguishes Apache-2.0 code from CC-BY dataset.",
+        "The downloaded archive is retained in the ignored external-data cache; raw and normalized records remain evidence/prior material."
+      ]
+    },
+    {
+      "sourceId": "social-chemistry-101",
+      "title": "Social Chemistry 101",
+      "sourceType": "HUMAN_LOGIC_DATASET",
+      "canonicalUrl": "https://github.com/mbforbes/social-chemistry-101",
+      "artifactUrl": "https://storage.googleapis.com/ai2-mosaic-public/projects/social-chemistry/data/social-chem-101.zip",
+      "sourceVersion": "v1.0",
+      "licenseId": "CC-BY-SA-4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "acquisitionStatus": "ACQUIRED",
+      "redistributionPolicy": "REFERENCE_ONLY",
+      "notes": [
+        "rot-bad records are excluded from default retrieval but retained in audit state.",
+        "Source repository notes historical training dependencies are outdated; this foundation uses no training stack.",
+        "Upstream user-generated/scraped material requires separate rights review."
+      ]
+    },
+    {
+      "sourceId": "moral-stories",
+      "title": "Moral Stories",
+      "sourceType": "HUMAN_LOGIC_DATASET",
+      "canonicalUrl": "https://github.com/demelin/moral_stories",
+      "artifactUrl": "https://huggingface.co/datasets/demelin/moral_stories/resolve/main/data/moral_stories_full.jsonl?download=true",
+      "currentAcquisitionUrl": "https://tinyurl.com/moral-stories-data",
+      "sourceVersion": "main@329b83476b07d389ea035b98dddd876540519207",
+      "licenseId": "MIT",
+      "licenseUrl": "https://raw.githubusercontent.com/demelin/moral_stories/master/LICENSE",
+      "acquisitionStatus": "ACQUIRED",
+      "redistributionPolicy": "REFERENCE_ONLY",
+      "notes": [
+        "The maintainer now points to the Hugging Face file; its dataset listing identifies the downloaded file by the pinned file OID in sourceVersion.",
+        "Both branches remain priors; moral labels do not define mechanical outcomes."
+      ]
+    },
+    {
+      "sourceId": "tpl-ontology-luangrath-peck-barger",
+      "title": "Textual Paralanguage and its Implications for Marketing Communications",
+      "sourceType": "PAPER",
+      "canonicalUrl": "https://doi.org/10.1016/j.jcps.2016.05.002",
+      "artifactUrl": "https://arxiv.org/pdf/1605.06799",
+      "sourceVersion": "arXiv:1605.06799",
+      "licenseId": "PAPER_CONCEPTUAL_REFERENCE",
+      "licenseUrl": "https://arxiv.org/abs/1605.06799",
+      "acquisitionStatus": "ACQUIRED",
+      "redistributionPolicy": "REFERENCE_ONLY",
+      "notes": [
+        "The manuscript PDF and metadata are acquired as research authority only. No underlying social-platform posts are copied or redistributed, and the underlying corpus is not claimed available or reusable."
+      ]
+    },
+    {
+      "sourceId": "stanford-politeness-wikipedia",
+      "title": "Stanford Politeness Corpus — Wikipedia",
+      "sourceType": "TPL_PRAGMATIC_DATASET",
+      "canonicalUrl": "https://convokit.cornell.edu/documentation/wiki_politeness.html",
+      "artifactUrl": "https://zissou.infosci.cornell.edu/convokit/datasets/wikipedia-politeness-corpus/wikipedia-politeness-corpus.zip",
+      "sourceVersion": "ConvoKit@1",
+      "licenseId": "CC-BY-4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "acquisitionStatus": "ACQUIRED",
+      "redistributionPolicy": "REFERENCE_ONLY",
+      "notes": [
+        "The documented HTTP endpoint redirects to this verified HTTPS artifact.",
+        "ConvoKit reports 4,353 utterances."
+      ]
+    },
+    {
+      "sourceId": "stanford-politeness-stack-exchange",
+      "title": "Stanford Politeness Corpus — Stack Exchange",
+      "sourceType": "TPL_PRAGMATIC_DATASET",
+      "canonicalUrl": "https://convokit.cornell.edu/documentation/stack_politeness.html",
+      "artifactUrl": "https://zissou.infosci.cornell.edu/convokit/datasets/stack-exchange-politeness-corpus/stack-exchange-politeness-corpus.zip",
+      "sourceVersion": "ConvoKit@1",
+      "licenseId": "CC-BY-4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "acquisitionStatus": "ACQUIRED",
+      "redistributionPolicy": "REFERENCE_ONLY",
+      "notes": [
+        "The documented HTTP endpoint redirects to this verified HTTPS artifact.",
+        "ConvoKit reports 6,603 utterances."
+      ]
+    },
+    {
+      "sourceId": "casino",
+      "title": "CaSiNo: Campsite Negotiation Dialogues",
+      "sourceType": "TPL_PRAGMATIC_DATASET",
+      "canonicalUrl": "https://github.com/kushalchawla/CaSiNo",
+      "artifactUrl": "https://zissou.infosci.cornell.edu/convokit/datasets/casino-corpus/casino-corpus.zip",
+      "sourceVersion": "ConvoKit@1",
+      "licenseId": "CC-BY-4.0",
+      "licenseUrl": "https://github.com/kushalchawla/CaSiNo/blob/main/LICENSE",
+      "acquisitionStatus": "ACQUIRED",
+      "redistributionPolicy": "REFERENCE_ONLY",
+      "notes": [
+        "The documented ConvoKit HTTP artifact route was verified through the HTTPS endpoint and acquired into the ignored cache.",
+        "Demographics, personality, preferences, and outcomes are excluded from runtime semantics."
+      ]
+    },
+    {
+      "sourceId": "persuasion-for-good",
+      "title": "PersuasionForGood",
+      "sourceType": "TPL_PRAGMATIC_DATASET",
+      "canonicalUrl": "https://convokit.cornell.edu/documentation/persuasionforgood.html",
+      "artifactUrl": "https://gitlab.com/ucdavisnlp/persuasionforgood/-/archive/master/persuasionforgood-master.zip",
+      "sourceVersion": "master@90a3fd7b",
+      "licenseId": "APACHE-2.0",
+      "licenseUrl": "https://gitlab.com/ucdavisnlp/persuasionforgood/-/raw/master/LICENSE",
+      "acquisitionStatus": "ACQUIRED",
+      "redistributionPolicy": "REFERENCE_ONLY",
+      "notes": [
+        "Acquisition uses the maintainer's HTTPS GitLab repository archive because the current ConvoKit artifact route is HTTP.",
+        "The official documentation reports demographic and psychological survey fields; these are excluded from runtime derivatives."
+      ]
+    },
+    {
+      "sourceId": "project-role-core",
+      "title": "EMP Relationship Role Core",
+      "sourceType": "PROJECT_AUTHORED_PACK",
+      "canonicalUrl": "https://github.com/fargo161/one-room-behavior-lab",
+      "artifactUrl": null,
+      "sourceVersion": "unspecified",
+      "licenseId": "PROJECT_AUTHORED",
+      "licenseUrl": null,
+      "acquisitionStatus": "FIXTURE_ONLY",
+      "redistributionPolicy": "ALLOW_WITH_ATTRIBUTION",
+      "notes": [
+        "Role suggestions are not universal behavior; authors must review concrete facts."
+      ]
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dpa-message-foundations.invalid/schemas/based-tpl.schema.json",
+  "title": "DPA BASED and TPL foundation artifacts",
+  "type": "object",
+  "required": ["schemaVersion", "cues", "vibes", "matrix", "tplFamilies"],
+  "properties": {
+    "schemaVersion": { "const": "dpa-keyword-foundation@0.1" },
+    "cues": { "type": "array", "minItems": 5, "maxItems": 5 },
+    "vibes": { "type": "array", "minItems": 20, "maxItems": 20 },
+    "matrix": { "type": "array", "minItems": 180, "maxItems": 180 },
+    "tplFamilies": { "type": "array", "const": ["VOICE_QUALITY", "VOCALIZATION", "TACTILE_KINESIC", "VISUAL_KINESIC", "ARTIFACT"] },
+    "semanticInvariance": { "type": "object" }
+  },
+  "additionalProperties": true
+}
