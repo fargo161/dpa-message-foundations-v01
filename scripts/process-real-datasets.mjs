@@ -6,15 +6,20 @@ import { once } from "node:events";
 import { createInterface } from "node:readline";
 import { resolve, relative, basename } from "node:path";
 import { fileURLToPath } from "node:url";
-import { SOURCE_BY_ID } from "../src/sources.mjs";
+import { SOURCE_BY_ID, validateArtifactDigest } from "../src/sources.mjs";
 import { extractZipFile } from "../src/archive.mjs";
 import { buildSearchIndex } from "../src/index.mjs";
-import { normalizeAtomicRows, normalizeJsonl, normalizeMoralStoriesRows, normalizePfgCsv, normalizeSocialChemistryRow, dedupeNormalizedRecords, parseCsv, parseTsv } from "../src/ingestion.mjs";
+import { aggregateSocialChemistryRecords, normalizeAtomicRows, normalizeJsonl, normalizeMoralStoriesRows, normalizePfgCsv, normalizeSocialChemistryRow, dedupeNormalizedRecords, parseCsv, parseTsv } from "../src/ingestion.mjs";
 
 const root = fileURLToPath(new URL("..", import.meta.url));
 const cacheRoot = resolve(root, ".cache/external-data");
 const indexRoot = resolve(root, "data/indexes");
-const registrationTime = new Date().toISOString();
+const acquisitionManifestPath = resolve(root, "data/acquisition-manifest.json");
+let registrationTime = new Date().toISOString();
+try {
+  const previousManifest = JSON.parse(await readFile(acquisitionManifestPath, "utf8"));
+  if (previousManifest.generatedAt) registrationTime = previousManifest.generatedAt;
+} catch {}
 
 const artifactJobs = [
   { sourceId: "atomic-2020", archive: "atomic-2020/atomic2020_data-feb2021.zip", extracted: "atomic-2020/extracted", kind: "atomic", probes: ["xIntent", "xNeed", "HinderedBy"] },
@@ -64,7 +69,9 @@ async function streamNormalize(job, source, dataPath, normalizedPath, schema) {
   let rawRecordCount = 0;
   let accepted = 0;
   let duplicate = 0;
+  let aggregatedAnnotationRows = 0;
   let headers = null;
+  const socialRecords = [];
   for (const currentPath of (Array.isArray(dataPath) ? dataPath : [dataPath])) {
     const input = createInterface({ input: createReadStream(currentPath), crlfDelay: Infinity });
     let splitRecordCount = 0;
@@ -81,6 +88,10 @@ async function streamNormalize(job, source, dataPath, normalizedPath, schema) {
       const candidates = normalized.records ?? (normalized.record ? [normalized.record] : []);
       for (const record of candidates) {
         accepted += 1;
+        if (job.kind === "social") {
+          socialRecords.push(record);
+          continue;
+        }
         const key = record.recordId;
         if (seen.has(key)) { duplicate += 1; continue; }
         seen.add(key);
@@ -91,9 +102,18 @@ async function streamNormalize(job, source, dataPath, normalizedPath, schema) {
       for (const item of rejected) rejections.push(item);
     }
   }
+  if (job.kind === "social") {
+    const aggregated = aggregateSocialChemistryRecords(socialRecords);
+    duplicate = aggregated.duplicateRecords.length;
+    aggregatedAnnotationRows = aggregated.aggregatedAnnotationRows;
+    for (const record of aggregated.records) {
+      index.add([record]);
+      await writeLine(output, JSON.stringify(record));
+    }
+  }
   output.end();
   await once(output, "finish");
-  return { index, rawRecordCount, accepted, rejected: rejections.length, duplicate, rejections: rejections.slice(0, 100), schema: job.kind === "social" ? { ...schema, fields: headers } : schema };
+  return { index, rawRecordCount, accepted, rejected: rejections.length, duplicate, aggregatedAnnotationRows, rejections: rejections.slice(0, 100), schema: job.kind === "social" ? { ...schema, fields: headers } : schema };
 }
 
 async function finalize({ job, source, artifactPath, receipt, receiptPath, extractedFiles, result, index, normalizedPath, counts }) {
@@ -101,11 +121,12 @@ async function finalize({ job, source, artifactPath, receipt, receiptPath, extra
   if (probes.some((probe) => probe.results.length === 0)) throw new Error(`RETRIEVAL_PROBE_EMPTY:${job.sourceId}`);
   const postingsPath = resolve(cacheRoot, job.sourceId, "search-index.postings.jsonl");
   const persistedPostings = await persistPostings(index, postingsPath);
+  const extractionListing = extractedFiles.map(({ name, sha256 }) => ({ name, outputPath: relative(root, resolve(cacheRoot, job.extracted, name)), sha256 }));
   const payload = {
     status: "ACQUIRED_AND_INDEXED", sourceId: job.sourceId, sourceVersion: source.sourceVersion, licenseId: source.licenseId, redistributionPolicy: source.redistributionPolicy,
     canonicalUrl: source.canonicalUrl, artifactUrl: source.artifactUrl, artifactFilename: basename(artifactPath), artifactCachePath: relative(root, artifactPath), retrievedAt: receipt.retrievedAt, byteSize: receipt.byteSize, sha256: receipt.sha256, receiptPath: relative(root, receiptPath),
-    extraction: job.archive ? { sourceArchive: true, extractedPath: relative(root, resolve(cacheRoot, job.extracted)), extractedFileCount: extractedFiles.length, extractedFiles } : { sourceArchive: false, extractedPath: null },
-    observedSchema: result.schema, counts: { raw: counts.raw, accepted: counts.accepted, rejected: counts.rejected, duplicate: counts.duplicate, normalized: counts.normalized, indexed: index.records.size }, duplicateRecordIds: counts.duplicateRecordIds ?? [], rejections: result.rejections ?? [], indexSnapshot: { ...index.snapshot(), persistedPostingsPath: relative(root, persistedPostings.path), persistedTokenCount: persistedPostings.tokenCount }, probes,
+    extraction: job.archive ? { sourceArchive: true, extractedPath: relative(root, resolve(cacheRoot, job.extracted)), extractedFileCount: extractionListing.length, extractedFiles: extractionListing } : { sourceArchive: false, extractedPath: null },
+    observedSchema: result.schema, counts: { raw: counts.raw, accepted: counts.accepted, rejected: counts.rejected, duplicate: counts.duplicate, aggregatedAnnotationRows: counts.aggregatedAnnotationRows ?? 0, normalized: counts.normalized, indexed: index.records.size }, duplicateRecordIds: counts.duplicateRecordIds ?? [], rejections: result.rejections ?? [], indexSnapshot: { ...index.snapshot(), persistedPostingsPath: relative(root, persistedPostings.path), persistedTokenCount: persistedPostings.tokenCount }, probes,
     normalizedRecordsPath: relative(root, normalizedPath), evidenceBoundary: "Evidence/prior only. No mechanics, BASED mapping, TPL protocol, or runtime dialogue approval is implied.",
   };
   await writeFile(resolve(indexRoot, `${job.sourceId}.json`), `${JSON.stringify(payload, null, 2)}\n`, "utf8");
@@ -116,6 +137,9 @@ async function normalizeJob(job) {
   const source = sourceInfo(job.sourceId);
   const artifactPath = resolve(cacheRoot, job.artifact ?? job.archive);
   const receipt = await receiptForFile(source, artifactPath);
+  // Fail closed before any archive extraction or normalization can observe bytes
+  // that do not match the registered artifact receipt.
+  validateArtifactDigest(source, receipt);
   const receiptPath = resolve(cacheRoot, job.sourceId, "receipt.json");
   await writeFile(receiptPath, `${JSON.stringify(receipt, null, 2)}\n`, "utf8");
   let extractedFiles = [];
@@ -124,7 +148,7 @@ async function normalizeJob(job) {
   if (job.kind === "atomic" || job.kind === "social") {
     const dataPath = job.kind === "atomic" ? ["train.tsv", "dev.tsv", "test.tsv"].map((split) => resolve(cacheRoot, job.extracted, "atomic2020_data-feb2021", split)) : resolve(cacheRoot, job.extracted, "social-chem-101", "social-chem-101.v1.0.tsv");
     const result = await streamNormalize(job, source, dataPath, normalizedPath, { format: job.kind === "atomic" ? "headerless TSV" : "TSV", fields: job.kind === "atomic" ? ["head", "relation", "tail"] : [] });
-    return finalize({ job, source, artifactPath, receipt, receiptPath, extractedFiles, result: { schema: result.schema, rejections: result.rejections }, index: result.index, normalizedPath, counts: { raw: result.rawRecordCount, accepted: result.accepted, rejected: result.rejected, duplicate: result.duplicate, normalized: result.index.records.size } });
+    return finalize({ job, source, artifactPath, receipt, receiptPath, extractedFiles, result: { schema: result.schema, rejections: result.rejections }, index: result.index, normalizedPath, counts: { raw: result.rawRecordCount, accepted: result.accepted, rejected: result.rejected, duplicate: result.duplicate, aggregatedAnnotationRows: result.aggregatedAnnotationRows, normalized: result.index.records.size } });
   }
   let text;
   let result;
@@ -180,5 +204,5 @@ for (const job of [...artifactJobs, ...directJobs]) {
 const tplAuthority = await registerTplAuthority();
 results.push(tplAuthority);
 console.log(JSON.stringify({ sourceId: tplAuthority.sourceId, status: tplAuthority.status, artifactFilename: tplAuthority.artifactFilename, byteSize: tplAuthority.byteSize, sha256: tplAuthority.sha256, counts: tplAuthority.counts }, null, 2));
-await writeFile(resolve(root, "data/acquisition-manifest.json"), `${JSON.stringify({ generatedAt: registrationTime, sources: results }, null, 2)}\n`, "utf8");
+await writeFile(acquisitionManifestPath, `${JSON.stringify({ generatedAt: registrationTime, sources: results }, null, 2)}\n`, "utf8");
 console.log(`real-acquisition-ok: ${results.filter((result) => result.status === "ACQUIRED_AND_INDEXED").length} datasets acquired and indexed; ${results.filter((result) => result.status === "ACQUIRED_NOT_INDEXED").length} research authority artifact acquired`);

@@ -145,12 +145,24 @@ export function normalizeAtomicRows(rows, options = {}) {
       rejections.push({ sourceRecordId, reason: !family ? "UNSUPPORTED_RELATION" : "MISSING_HEAD_RELATION_TAIL", raw: { head, relation, tail } });
       continue;
     }
+    const priorKind = relation === "HinderedBy" ? "OBSTACLE"
+      : relation === "xIntent" || relation === "xReason" ? "INTENT"
+        : relation === "xNeed" ? "PRECONDITION"
+          : relation === "xEffect" ? "SELF_EFFECT"
+            : relation === "oEffect" ? "OTHER_EFFECT"
+              : relation === "xReact" ? "SELF_REACTION"
+                : relation === "oReact" ? "OTHER_REACTION"
+                  : relation === "xWant" ? "SELF_WANT"
+                    : relation === "oWant" ? "OTHER_WANT"
+                      : relation === "HasSubEvent" ? "SUBEVENT"
+                        : relation.includes("Before") || relation.includes("After") ? "EVENT_ORDER"
+                          : "OBJECT_AFFORDANCE";
     normalized.push({
       recordId: `${sourceId}:${sourceRecordId}`,
       sourceId,
       sourceRecordId,
       kind: "HUMAN_LOGIC_PRIOR",
-      priorKind: relation === "HinderedBy" ? "OBSTACLE" : relation === "xIntent" || relation === "xReason" ? "INTENT" : relation === "xNeed" ? "PRECONDITION" : relation.includes("Effect") ? "OTHER_EFFECT" : relation.includes("React") ? "OTHER_REACTION" : relation === "HasSubEvent" ? "SUBEVENT" : relation.includes("Before") || relation.includes("After") ? "EVENT_ORDER" : "OBJECT_AFFORDANCE",
+      priorKind,
       head,
       relation,
       tail,
@@ -176,6 +188,22 @@ export function normalizeSocialChemistryRow(row, headers, options = {}, rowNumbe
   const sourceRecordId = stableText(get("rot-id"));
   if (!sourceRecordId) return { record: null, rejected: { sourceRecordId: String(rowNumber), reason: "MISSING_ROT_ID" } };
   const bad = stableText(get("rot-bad"));
+  const annotation = {
+    annotationId: `${sourceRecordId}:${stableText(get("rot-worker-id")) || "unknown-rot-worker"}:${stableText(get("breakdown-worker-id")) || "unknown-breakdown-worker"}`,
+    rotWorkerId: stableText(get("rot-worker-id")) || null,
+    breakdownWorkerId: stableText(get("breakdown-worker-id")) || null,
+    agreementBucket: get("rot-agree") === "" ? null : Number(get("rot-agree")),
+    categorizations: stableText(get("rot-categorization")).split("|").filter(Boolean).sort(),
+    moralFoundations: stableText(get("rot-moral-foundations")).split("|").filter(Boolean).sort(),
+    legalityJudgment: stableText(get("action-legal")) || null,
+    culturalPressure: get("action-pressure") === "" ? null : Number(get("action-pressure")),
+    actionAgreement: stableText(get("action-agree")) || null,
+    actionMoralJudgment: stableText(get("action-moral-judgment")) || null,
+    actionAgency: stableText(get("action-agency")) || null,
+    actionCharacterInvolved: stableText(get("action-char-involved")) || null,
+    actionHypothetical: stableText(get("action-hypothetical")) || null,
+  };
+  annotation.annotationFingerprint = fingerprint(Object.fromEntries(Object.entries(annotation).filter(([key]) => key !== "annotationId")));
   const record = {
     recordId: `${sourceId}:${sourceRecordId}`,
     sourceId,
@@ -194,6 +222,7 @@ export function normalizeSocialChemistryRow(row, headers, options = {}, rowNumbe
     legalityJudgment: stableText(get("action-legal")) || null,
     culturalPressure: get("action-pressure") === "" ? null : Number(get("action-pressure")),
     actionHypothetical: stableText(get("action-hypothetical")) || null,
+    annotations: [annotation],
     culturallyContingent: true,
     defaultOnly: true,
     evidenceOnly: true,
@@ -201,7 +230,7 @@ export function normalizeSocialChemistryRow(row, headers, options = {}, rowNumbe
     runtimeEligible: false,
     provenance: [sourceRef(sourceId, sourceVersion, sourceRecordId, licenseId, get("split") || undefined, get("area") || undefined)],
   };
-  record.fingerprint = fingerprint({ sourceId, sourceRecordId, situation: record.situation, ruleOfThumb: record.ruleOfThumb, action: record.action });
+  record.fingerprint = fingerprint({ sourceId, sourceRecordId, situation: record.situation, ruleOfThumb: record.ruleOfThumb, action: record.action, annotation });
   return bad === "1" ? { record: null, rejected: record } : { record, rejected: null };
 }
 
@@ -219,7 +248,43 @@ export function normalizeSocialChemistryTsv(text, options = {}) {
     if (normalized.record) records.push(normalized.record);
     if (normalized.rejected) rejected.push(normalized.rejected);
   }
-  return { records: records.sort((a, b) => a.recordId.localeCompare(b.recordId)), rejected: rejected.sort((a, b) => String(a.recordId).localeCompare(String(b.recordId))), errors };
+  const aggregated = aggregateSocialChemistryRecords(records);
+  return { records: aggregated.records, rejected: rejected.sort((a, b) => String(a.recordId).localeCompare(String(b.recordId))), errors, duplicateRecords: aggregated.duplicateRecords, aggregatedAnnotationRows: aggregated.aggregatedAnnotationRows };
+}
+
+export function aggregateSocialChemistryRecords(records) {
+  const byRecordId = new Map();
+  const duplicateRecords = [];
+  let aggregatedAnnotationRows = 0;
+  for (const record of [...records].sort((left, right) => `${left.recordId}:${left.annotations?.[0]?.annotationId ?? ""}`.localeCompare(`${right.recordId}:${right.annotations?.[0]?.annotationId ?? ""}`))) {
+    const existing = byRecordId.get(record.recordId);
+    if (!existing) {
+      byRecordId.set(record.recordId, structuredClone(record));
+      continue;
+    }
+    const incoming = record.annotations?.[0] ?? { annotationId: record.fingerprint };
+    const existingIds = new Set((existing.annotations ?? []).map((annotation) => annotation.annotationId));
+    const incomingBaseId = incoming.annotationId;
+    const incomingFingerprint = incoming.annotationFingerprint ?? fingerprint(Object.fromEntries(Object.entries(incoming).filter(([key]) => key !== "annotationId")));
+    const current = existing.annotations.find((annotation) => annotation.annotationId === incomingBaseId);
+    const currentFingerprint = current?.annotationFingerprint ?? fingerprint(Object.fromEntries(Object.entries(current ?? {}).filter(([key]) => key !== "annotationId")));
+    if (current && incomingFingerprint === currentFingerprint) {
+      duplicateRecords.push(record.recordId);
+      continue;
+    }
+    if (current) {
+      let collisionId = `${incomingBaseId}:${incomingFingerprint}`;
+      let collisionNumber = 2;
+      while (existingIds.has(collisionId)) collisionId = `${incomingBaseId}:${incomingFingerprint}:${collisionNumber++}`;
+      incoming.annotationId = collisionId;
+      incoming.sourceAnnotationId = incomingBaseId;
+    }
+    existing.annotations = [...(existing.annotations ?? []), structuredClone(incoming)].sort((left, right) => left.annotationId.localeCompare(right.annotationId));
+    aggregatedAnnotationRows += 1;
+    existing.aggregatedAnnotationCount = existing.annotations.length;
+    existing.fingerprint = fingerprint({ sourceId: existing.sourceId, sourceRecordId: existing.sourceRecordId, situation: existing.situation, ruleOfThumb: existing.ruleOfThumb, action: existing.action, annotations: existing.annotations });
+  }
+  return { records: [...byRecordId.values()].sort((left, right) => left.recordId.localeCompare(right.recordId)), duplicateRecords: duplicateRecords.sort(), aggregatedAnnotationRows };
 }
 
 export function normalizeMoralStoriesRows(rows, options = {}) {

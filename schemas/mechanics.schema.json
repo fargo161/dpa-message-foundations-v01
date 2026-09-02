@@ -1,16 +1,230 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://dpa-message-foundations.invalid/schemas/mechanics.schema.json",
-  "title": "DPA authored mechanics state and action contract",
-  "type": "object",
-  "required": ["schemaVersion", "scenarioId", "entities", "facts", "history", "recommendedPairs"],
-  "properties": {
-    "schemaVersion": { "const": "dpa-keyword-foundation@0.1" },
-    "scenarioId": { "type": "string" },
-    "entities": { "type": "object" },
-    "facts": { "type": "array" },
-    "history": { "type": "array" },
-    "recommendedPairs": { "type": "array", "items": { "type": "object", "required": ["actorId", "targetId", "contextId"] } }
-  },
-  "additionalProperties": true
+  "title": "DPA mechanics state, action, transition, trace, and capacity contracts",
+  "oneOf": [
+    { "$ref": "#/$defs/state" },
+    { "$ref": "#/$defs/actionEvaluation" },
+    { "$ref": "#/$defs/resolvedAction" },
+    { "$ref": "#/$defs/capacity" }
+  ],
+  "$defs": {
+    "id": { "type": "string", "minLength": 1, "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$" },
+    "macroAct": { "type": "string", "enum": ["DEAL", "PRESSURE", "ASK"] },
+    "scope": { "type": "string", "enum": ["ACTUAL", "BELIEF"] },
+    "provenance": {
+      "type": "object",
+      "required": ["sourceId", "sourceVersion", "sourceRecordId", "transformVersion", "licenseId"],
+      "properties": {
+        "sourceId": { "$ref": "#/$defs/id" },
+        "sourceVersion": { "type": "string", "minLength": 1 },
+        "sourceRecordId": { "$ref": "#/$defs/id" },
+        "transformVersion": { "type": "string", "minLength": 1 },
+        "licenseId": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    },
+    "entity": {
+      "type": "object",
+      "required": ["id", "displayName", "type"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "displayName": { "type": "string", "minLength": 1 },
+        "type": { "type": "string", "enum": ["ACTOR", "RESOURCE", "OBJECT", "LOCATION", "ACTION", "PROPOSITION", "SECRET", "OBLIGATION"] }
+      },
+      "additionalProperties": false
+    },
+    "context": {
+      "type": "object",
+      "required": ["id", "name", "active"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "name": { "type": "string", "minLength": 1 },
+        "active": { "type": "boolean" }
+      },
+      "additionalProperties": false
+    },
+    "fact": {
+      "type": "object",
+      "required": ["assertionId", "keywordId", "args", "scope", "polarity", "status", "contextIds", "validFrom", "validUntil", "provenance", "notes"],
+      "properties": {
+        "assertionId": { "$ref": "#/$defs/id" },
+        "keywordId": { "type": "string", "pattern": "^[A-Z][A-Z0-9_]*$" },
+        "args": { "type": "object", "minProperties": 1 },
+        "scope": { "$ref": "#/$defs/scope" },
+        "polarity": { "type": "string", "enum": ["ASSERTED", "DENIED", "DISPUTED"] },
+        "status": { "type": "string", "enum": ["ACTIVE", "INACTIVE", "PENDING", "FULFILLED", "BROKEN", "SUPERSEDED"] },
+        "contextIds": { "type": "array", "items": { "$ref": "#/$defs/id" }, "uniqueItems": true },
+        "validFrom": { "type": "string", "format": "date-time" },
+        "validUntil": { "type": ["string", "null"], "format": "date-time" },
+        "provenance": { "$ref": "#/$defs/provenance" },
+        "notes": { "type": "array", "items": { "type": "string" } }
+      },
+      "additionalProperties": false
+    },
+    "blocker": {
+      "type": "object",
+      "required": ["id", "reason"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "actionId": { "$ref": "#/$defs/id" },
+        "actionIds": { "type": "array", "items": { "$ref": "#/$defs/id" }, "uniqueItems": true },
+        "actor": { "$ref": "#/$defs/id" },
+        "target": { "$ref": "#/$defs/id" },
+        "contextId": { "$ref": "#/$defs/id" },
+        "contextIds": { "type": "array", "items": { "$ref": "#/$defs/id" }, "uniqueItems": true },
+        "scope": { "$ref": "#/$defs/scope" },
+        "status": { "type": "string", "enum": ["ACTIVE", "INACTIVE"] },
+        "validFrom": { "type": "string", "format": "date-time" },
+        "validUntil": { "type": ["string", "null"], "format": "date-time" },
+        "reason": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    },
+    "historyEvent": {
+      "type": "object",
+      "required": ["historyId", "eventType", "actorId", "targetId", "actionId", "contextId", "createdAt", "provenance"],
+      "properties": {
+        "historyId": { "$ref": "#/$defs/id" },
+        "eventType": { "$ref": "#/$defs/id" },
+        "actorId": { "$ref": "#/$defs/id" },
+        "targetId": { "$ref": "#/$defs/id" },
+        "actionId": { "$ref": "#/$defs/id" },
+        "contextId": { "$ref": "#/$defs/id" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "provenance": { "$ref": "#/$defs/provenance" }
+      },
+      "additionalProperties": false
+    },
+    "pair": {
+      "type": "object",
+      "required": ["actorId", "targetId", "contextId"],
+      "properties": {
+        "actorId": { "$ref": "#/$defs/id" },
+        "targetId": { "$ref": "#/$defs/id" },
+        "contextId": { "$ref": "#/$defs/id" },
+        "reachable": { "type": "boolean" }
+      },
+      "additionalProperties": false
+    },
+    "state": {
+      "type": "object",
+      "required": ["schemaVersion", "scenarioId", "title", "now", "entities", "contexts", "facts", "priors", "history", "consequences", "blockers", "recommendedPairs"],
+      "properties": {
+        "schemaVersion": { "const": "dpa-keyword-foundation@0.1" },
+        "scenarioId": { "$ref": "#/$defs/id" },
+        "title": { "type": "string", "minLength": 1 },
+        "now": { "type": "string", "format": "date-time" },
+        "entities": { "type": "object", "patternProperties": { "^[A-Za-z0-9][A-Za-z0-9_.:-]*$": { "$ref": "#/$defs/entity" } }, "additionalProperties": false },
+        "contexts": { "type": "array", "items": { "$ref": "#/$defs/context" }, "uniqueItems": true },
+        "facts": { "type": "array", "items": { "$ref": "#/$defs/fact" } },
+        "priors": { "type": "array" },
+        "history": { "type": "array", "items": { "$ref": "#/$defs/historyEvent" } },
+        "consequences": { "type": "object", "additionalProperties": { "type": "string" } },
+        "blockers": { "type": "array", "items": { "$ref": "#/$defs/blocker" } },
+        "recommendedPairs": { "type": "array", "items": { "$ref": "#/$defs/pair" } }
+      },
+      "additionalProperties": false
+    },
+    "check": {
+      "type": "object",
+      "required": ["passed", "code", "message", "matchedFacts"],
+      "properties": {
+        "passed": { "type": "boolean" },
+        "code": { "$ref": "#/$defs/id" },
+        "message": { "type": "string" },
+        "matchedFacts": { "type": "array", "items": { "$ref": "#/$defs/id" } }
+      },
+      "additionalProperties": false
+    },
+    "traceStep": {
+      "type": "object",
+      "required": ["step"],
+      "properties": {
+        "step": { "$ref": "#/$defs/id" },
+        "code": { "$ref": "#/$defs/id" },
+        "passed": { "type": "boolean" },
+        "status": { "type": "string" },
+        "detail": { "type": "string" },
+        "matchedFacts": { "type": "array", "items": { "$ref": "#/$defs/id" } }
+      },
+      "additionalProperties": false
+    },
+    "actionEvaluation": {
+      "type": "object",
+      "required": ["actionId", "displayName", "macroAct", "actorId", "targetId", "contextId", "status", "requiredChecks", "forbiddenChecks", "blockers", "trace"],
+      "properties": {
+        "actionId": { "$ref": "#/$defs/id" },
+        "displayName": { "type": "string" },
+        "macroAct": { "$ref": "#/$defs/macroAct" },
+        "actorId": { "$ref": "#/$defs/id" },
+        "targetId": { "$ref": "#/$defs/id" },
+        "contextId": { "$ref": "#/$defs/id" },
+        "status": { "type": "string", "enum": ["AVAILABLE", "BLOCKED"] },
+        "requiredChecks": { "type": "array", "items": { "$ref": "#/$defs/check" } },
+        "forbiddenChecks": { "type": "array", "items": { "$ref": "#/$defs/check" } },
+        "consistencyChecks": { "type": "array", "items": { "$ref": "#/$defs/check" } },
+        "blockers": { "type": "array", "items": { "$ref": "#/$defs/check" } },
+        "trace": { "type": "array", "items": { "$ref": "#/$defs/traceStep" } }
+      },
+      "additionalProperties": false
+    },
+    "resolvedAction": {
+      "type": "object",
+      "required": ["actionId", "actorId", "targetId", "macroAct", "payload", "preconditionEvaluations", "outcome", "deterministicEffects", "emittedHistory", "mandatorySemanticFacts", "forbiddenSemanticAdditions", "quarantine", "trace", "stateBefore", "stateAfter"],
+      "properties": {
+        "actionId": { "$ref": "#/$defs/id" },
+        "actorId": { "$ref": "#/$defs/id" },
+        "targetId": { "$ref": "#/$defs/id" },
+        "macroAct": { "$ref": "#/$defs/macroAct" },
+        "payload": { "type": ["object", "null"] },
+        "preconditionEvaluations": { "type": "object", "required": ["required", "forbidden"], "properties": { "required": { "type": "array" }, "forbidden": { "type": "array" } }, "additionalProperties": false },
+        "outcome": { "type": "string", "enum": ["PROPOSED", "BLOCKED"] },
+        "deterministicEffects": { "type": "array" },
+        "emittedHistory": { "type": "array", "items": { "$ref": "#/$defs/historyEvent" } },
+        "mandatorySemanticFacts": { "type": "array", "items": { "type": "string" } },
+        "forbiddenSemanticAdditions": { "type": "array", "items": { "type": "string" } },
+        "quarantine": { "type": ["object", "null"] },
+        "trace": { "type": "array", "items": { "$ref": "#/$defs/traceStep" } },
+        "stateBefore": { "$ref": "#/$defs/state" },
+        "stateAfter": { "$ref": "#/$defs/state" }
+      },
+      "additionalProperties": false
+    },
+    "configuration": {
+      "type": "object",
+      "required": ["scenarioId", "actorId", "targetId", "actionId", "macroAct", "coordinateKey"],
+      "properties": {
+        "scenarioId": { "$ref": "#/$defs/id" },
+        "actorId": { "$ref": "#/$defs/id" },
+        "targetId": { "$ref": "#/$defs/id" },
+        "actionId": { "$ref": "#/$defs/id" },
+        "macroAct": { "$ref": "#/$defs/macroAct" },
+        "coordinateKey": { "type": "string", "pattern": "^(DEAL|PRESSURE|ASK)_[A-Z]{2}_(SUBTLE|BALANCED|OVERT)$" }
+      },
+      "additionalProperties": false
+    },
+    "capacity": {
+      "type": "object",
+      "required": ["theoretical", "actCompatibleTheoretical", "totalCandidateCombinations", "actIncompatible", "blocked", "duplicate", "unreachable", "validUnique", "candidatePairs", "blockedCandidates", "duplicateCandidates", "validUniqueSemanticConfigurations", "validConfigurations", "classificationTotals", "notes"],
+      "properties": {
+        "theoretical": { "type": "integer", "minimum": 0 },
+        "actCompatibleTheoretical": { "type": "integer", "minimum": 0 },
+        "totalCandidateCombinations": { "type": "integer", "minimum": 0 },
+        "actIncompatible": { "type": "integer", "minimum": 0 },
+        "blocked": { "type": "integer", "minimum": 0 },
+        "duplicate": { "type": "integer", "minimum": 0 },
+        "unreachable": { "type": "integer", "minimum": 0 },
+        "validUnique": { "type": "integer", "minimum": 0 },
+        "candidatePairs": { "type": "integer", "minimum": 0 },
+        "blockedCandidates": { "type": "integer", "minimum": 0 },
+        "duplicateCandidates": { "type": "integer", "minimum": 0 },
+        "validUniqueSemanticConfigurations": { "type": "integer", "minimum": 0 },
+        "validConfigurations": { "type": "array", "items": { "$ref": "#/$defs/configuration" } },
+        "classificationTotals": { "type": "object", "required": ["theoretical", "actIncompatible", "blocked", "duplicate", "unreachable", "validUnique"], "additionalProperties": { "type": "integer", "minimum": 0 } },
+        "notes": { "type": "array", "items": { "type": "string" } }
+      },
+      "additionalProperties": false
+    }
+  }
 }

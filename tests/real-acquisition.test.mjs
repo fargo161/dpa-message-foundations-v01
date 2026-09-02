@@ -58,7 +58,7 @@ test("real acquisition receipts, ignored cache, indexing, and source statuses ar
     }
     assert.ok(source.counts.raw > 0);
     assert.equal(source.counts.raw, source.counts.accepted + source.counts.rejected);
-    assert.equal(source.counts.accepted, source.counts.normalized + source.counts.duplicate);
+    assert.equal(source.counts.accepted, source.counts.normalized + source.counts.duplicate + (source.counts.aggregatedAnnotationRows ?? 0));
     assert.equal(source.counts.normalized, source.counts.indexed);
     assert.equal(source.indexSnapshot.recordCount, source.counts.indexed);
     assert.equal(source.indexSnapshot.persistedTokenCount, source.indexSnapshot.tokenCount);

@@ -3,14 +3,162 @@
   "$id": "https://dpa-message-foundations.invalid/schemas/based-tpl.schema.json",
   "title": "DPA BASED and TPL foundation artifacts",
   "type": "object",
-  "required": ["schemaVersion", "cues", "vibes", "matrix", "tplFamilies"],
+  "required": ["schemaVersion", "cues", "vibes", "speechActs", "deliveryIntensities", "matrix", "tplFamilies", "atoms", "constructions", "protocols", "semanticInvarianceBoundary", "fallbackPolicy"],
   "properties": {
     "schemaVersion": { "const": "dpa-keyword-foundation@0.1" },
-    "cues": { "type": "array", "minItems": 5, "maxItems": 5 },
-    "vibes": { "type": "array", "minItems": 20, "maxItems": 20 },
-    "matrix": { "type": "array", "minItems": 180, "maxItems": 180 },
-    "tplFamilies": { "type": "array", "const": ["VOICE_QUALITY", "VOCALIZATION", "TACTILE_KINESIC", "VISUAL_KINESIC", "ARTIFACT"] },
-    "semanticInvariance": { "type": "object" }
+    "cues": { "type": "array", "minItems": 5, "maxItems": 5, "items": { "$ref": "#/$defs/cue" } },
+    "vibes": { "type": "array", "minItems": 20, "maxItems": 20, "items": { "$ref": "#/$defs/vibe" } },
+    "speechActs": { "const": ["DEAL", "PRESSURE", "ASK"] },
+    "deliveryIntensities": { "const": ["SUBTLE", "BALANCED", "OVERT"] },
+    "matrix": { "type": "array", "minItems": 180, "maxItems": 180, "items": { "$ref": "#/$defs/matrixCell" } },
+    "tplFamilies": { "const": ["VOICE_QUALITY", "VOCALIZATION", "TACTILE_KINESIC", "VISUAL_KINESIC", "ARTIFACT"] },
+    "atoms": { "type": "array", "items": { "$ref": "#/$defs/atom" } },
+    "constructions": { "type": "array", "items": { "$ref": "#/$defs/construction" } },
+    "protocols": { "type": "array", "items": { "$ref": "#/$defs/protocol" } },
+    "semanticInvarianceBoundary": { "$ref": "#/$defs/faceBoundary" },
+    "fallbackPolicy": { "$ref": "#/$defs/fallbackPolicy" }
   },
-  "additionalProperties": true
+  "additionalProperties": false,
+  "$defs": {
+    "cue": {
+      "type": "object",
+      "required": ["cueId", "name", "governingForce"],
+      "properties": {
+        "cueId": { "enum": ["B", "A", "S", "E", "D"] },
+        "name": { "type": "string", "minLength": 1 },
+        "governingForce": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    },
+    "vibe": {
+      "type": "object",
+      "required": ["vibeId", "name", "primaryCue", "secondaryCue", "fusionLogic", "provenance"],
+      "properties": {
+        "vibeId": { "pattern": "^[A-Z][A-Z]$" },
+        "name": { "type": "string", "minLength": 1 },
+        "primaryCue": { "enum": ["B", "A", "S", "E", "D"] },
+        "secondaryCue": { "enum": ["B", "A", "S", "E", "D"] },
+        "fusionLogic": { "type": "string", "minLength": 1 },
+        "provenance": {
+          "type": "object",
+          "required": ["source", "status"],
+          "properties": { "source": { "type": "string", "minLength": 1 }, "status": { "const": "PROJECT_AUTHORED" } },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "matrixCell": {
+      "type": "object",
+      "required": ["key", "vibeId", "speechAct", "deliveryIntensity", "actionInvariant", "candidateAnchorIds", "universalFallbackId", "allowedProtocolIds", "preferredProtocolIds", "excludedProtocolIds", "requiredContextOrLoreFacts", "forbiddenSemanticAdditions", "reviewStatus", "provenance"],
+      "properties": {
+        "key": { "pattern": "^(DEAL|PRESSURE|ASK)_[A-Z]{2}_(SUBTLE|BALANCED|OVERT)$" },
+        "vibeId": { "pattern": "^[A-Z][A-Z]$" },
+        "speechAct": { "enum": ["DEAL", "PRESSURE", "ASK"] },
+        "deliveryIntensity": { "enum": ["SUBTLE", "BALANCED", "OVERT"] },
+        "actionInvariant": {
+          "oneOf": [
+            { "const": ["OFFER", "RETURN"] },
+            { "const": ["DEMAND", "CONSEQUENCE"] },
+            { "const": ["REQUEST"] }
+          ]
+        },
+        "candidateAnchorIds": { "type": "array", "items": { "pattern": "^ANCHOR_(DEAL|PRESSURE|ASK)_[A-Z]{2}$" } },
+        "universalFallbackId": { "type": ["string", "null"] },
+        "allowedProtocolIds": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "preferredProtocolIds": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "excludedProtocolIds": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "requiredContextOrLoreFacts": { "type": "array", "items": { "$ref": "#/$defs/factGate" } },
+        "forbiddenSemanticAdditions": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 } },
+        "reviewStatus": { "const": "UNMAPPED" },
+        "provenance": {
+          "type": "object",
+          "required": ["source", "schemaVersion"],
+          "properties": { "source": { "type": "string", "minLength": 1 }, "schemaVersion": { "const": "dpa-keyword-foundation@0.1" } },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "factGate": {
+      "type": "object",
+      "required": ["requiredFact", "reason", "sourceAnchorId"],
+      "properties": {
+        "requiredFact": { "enum": ["AUDIENCE_OR_PUBLIC_CONTEXT", "FRIENDSHIP_OR_RELATIONSHIP", "TIME_OR_DEADLINE", "SPEAKER_KNOWLEDGE_OR_PERSPECTIVE", "PROTECTION_OR_CARE", "LEVERAGE_OR_CONSEQUENCE", "NORM_OR_JUDGMENT", "POSSIBLE_ASK_TO_PRESSURE_DRIFT"] },
+        "reason": { "type": "string", "minLength": 1 },
+        "sourceAnchorId": { "pattern": "^ANCHOR_(DEAL|PRESSURE|ASK)_[A-Z]{2}$" }
+      },
+      "additionalProperties": false
+    },
+    "atom": {
+      "type": "object",
+      "required": ["atomId", "family", "subtype", "operation", "maxOccurrences", "status", "provenance"],
+      "properties": {
+        "atomId": { "pattern": "^ATOM_[A-Z0-9_]+$" },
+        "family": { "enum": ["VOICE_QUALITY", "VOCALIZATION", "TACTILE_KINESIC", "VISUAL_KINESIC", "ARTIFACT"] },
+        "subtype": { "type": "string", "minLength": 1 },
+        "operation": { "type": "string", "minLength": 1 },
+        "maxOccurrences": { "type": "integer", "minimum": 1 },
+        "status": { "enum": ["UNMAPPED", "CANDIDATE", "REVIEWED", "APPROVED", "BLOCKED"] },
+        "statusReason": { "type": "string", "minLength": 1 },
+        "provenance": { "const": "PROJECT_AUTHORED" }
+      },
+      "additionalProperties": false
+    },
+    "construction": {
+      "type": "object",
+      "required": ["constructionId", "speechActs", "requiredSlots", "status", "provenance"],
+      "properties": {
+        "constructionId": { "pattern": "^CONSTRUCTION_[A-Z0-9_]+$" },
+        "speechActs": { "type": "array", "minItems": 1, "items": { "enum": ["DEAL", "PRESSURE", "ASK"] } },
+        "requiredSlots": { "type": "array", "minItems": 1, "items": { "enum": ["REQUEST", "OFFER", "RETURN", "DEMAND", "CONSEQUENCE"] } },
+        "status": { "enum": ["UNMAPPED", "CANDIDATE", "REVIEWED", "APPROVED", "BLOCKED"] },
+        "provenance": { "const": "PROJECT_AUTHORED" }
+      },
+      "additionalProperties": false
+    },
+    "protocol": {
+      "type": "object",
+      "required": ["tplProtocolId", "speechActs", "constructionIds", "requiredAtomIds", "optionalAtomIds", "excludedAtomIds", "intensityProfiles", "semanticInvarianceRequired", "reviewStatus", "provenance"],
+      "properties": {
+        "tplProtocolId": { "pattern": "^PROTOCOL_[A-Z0-9_]+$" },
+        "speechActs": { "type": "array", "minItems": 1, "items": { "enum": ["DEAL", "PRESSURE", "ASK"] } },
+        "constructionIds": { "type": "array", "minItems": 1, "items": { "pattern": "^CONSTRUCTION_[A-Z0-9_]+$" } },
+        "requiredAtomIds": { "type": "array", "items": { "pattern": "^ATOM_[A-Z0-9_]+$" } },
+        "optionalAtomIds": { "type": "array", "items": { "pattern": "^ATOM_[A-Z0-9_]+$" } },
+        "excludedAtomIds": { "type": "array", "items": { "pattern": "^ATOM_[A-Z0-9_]+$" } },
+        "intensityProfiles": { "const": ["SUBTLE", "BALANCED", "OVERT"] },
+        "semanticInvarianceRequired": { "const": true },
+        "reviewStatus": { "enum": ["UNMAPPED", "CANDIDATE", "REVIEWED", "APPROVED", "BLOCKED"] },
+        "provenance": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 } }
+      },
+      "additionalProperties": false
+    },
+    "faceBoundary": {
+      "type": "object",
+      "required": ["system", "relation", "reactionFaceField", "replyFaceField", "rendererMayMutateFaceSlots"],
+      "properties": {
+        "system": { "const": "SEPARATE_FACE_EVIDENCE" },
+        "relation": { "const": "MANY_TO_MANY" },
+        "reactionFaceField": { "const": "reactionFaceId" },
+        "replyFaceField": { "const": "replyFaceId" },
+        "rendererMayMutateFaceSlots": { "const": false }
+      },
+      "additionalProperties": false
+    },
+    "fallbackPolicy": {
+      "type": "object",
+      "required": ["status", "formsPerAct", "totalActIntensityForms", "vibeAffectsWording", "vibeAffects", "dynamicDialoguePopulation", "approvedProtocolCount"],
+      "properties": {
+        "status": { "const": "FOUNDATION_ONLY" },
+        "formsPerAct": { "const": 3 },
+        "totalActIntensityForms": { "const": 9 },
+        "vibeAffectsWording": { "const": false },
+        "vibeAffects": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 } },
+        "dynamicDialoguePopulation": { "const": "DEFERRED_TO_PHASE_2" },
+        "approvedProtocolCount": { "const": 0 }
+      },
+      "additionalProperties": false
+    }
+  }
 }

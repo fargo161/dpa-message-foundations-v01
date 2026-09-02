@@ -4,12 +4,12 @@ Verified on 2026-09-02 against primary or project-maintainer sources. The acquis
 
 ## Source-by-source acquisition register
 
-Counts are `raw / accepted / rejected / duplicate / normalized / indexed`. `Accepted` is the number of importer records that passed field validation; `normalized` excludes duplicate source record identities. The local policy for every external source is `REFERENCE_ONLY`, and raw artifacts plus normalized records remain in the Git-ignored `.cache/external-data/` tree.
+Counts are `raw / accepted / rejected / duplicate / aggregated annotation rows / normalized / indexed`. `Accepted` is the number of importer records that passed field validation; repeated Social Chemistry `rot-id` rows with distinct worker annotations are aggregated evidence rather than discarded duplicates. The local policy for every external source is `REFERENCE_ONLY`, and raw artifacts plus normalized records remain in the Git-ignored `.cache/external-data/` tree.
 
 | Source | Status | Version | Artifact and ignored cache path | Retrieved | Bytes | SHA-256 | Counts |
 | --- | --- | --- | --- | --- | ---: | --- | --- |
 | ATOMIC 2020 | `ACQUIRED_AND_INDEXED` | `atomic2020_data-feb2021` | `atomic2020_data-feb2021.zip` — `.cache/external-data/atomic-2020/atomic2020_data-feb2021.zip` | 2026-09-02T14:22:09.220Z | 12,580,048 | `47c5f362ab4a3ea58c4962eebfdfd1c5420d3780e74cd3fe09efeef64f941c2b` | 1,331,113 / 1,243,208 / 87,905 / 0 / 1,243,208 / 1,243,208 |
-| Social Chemistry 101 | `ACQUIRED_AND_INDEXED` | `v1.0` | `social-chem-101.zip` — `.cache/external-data/social-chemistry-101/social-chem-101.zip` | 2026-09-02T14:22:09.220Z | 27,610,699 | `ebaa524280c53aa3dbfb2b73502b120eeb71d03523a557c659275aebb2afd95a` | 355,922 / 348,769 / 7,153 / 63,255 / 285,514 / 285,514 |
+| Social Chemistry 101 | `ACQUIRED_AND_INDEXED` | `v1.0` | `social-chem-101.zip` — `.cache/external-data/social-chemistry-101/social-chem-101.zip` | 2026-09-02T14:22:09.220Z | 27,610,699 | `ebaa524280c53aa3dbfb2b73502b120eeb71d03523a557c659275aebb2afd95a` | 355,922 / 348,769 / 7,153 / 223 / 63,032 / 285,514 / 285,514 |
 | Moral Stories | `ACQUIRED_AND_INDEXED` | `main@329b83476b07d389ea035b98dddd876540519207` | `moral_stories_full.jsonl` — `.cache/external-data/moral-stories/moral_stories_full.jsonl` | 2026-09-02T14:22:09.220Z | 8,015,650 | `98a62d4a083e02ba234ca3d4f2312df6c337ef10cd3f12dcf917a2957ba59c10` | 12,000 / 12,000 / 0 / 0 / 12,000 / 12,000 |
 | Stanford Politeness — Wikipedia | `ACQUIRED_AND_INDEXED` | `ConvoKit@1` | `wikipedia-politeness-corpus.zip` — `.cache/external-data/stanford-politeness-wikipedia/wikipedia-politeness-corpus.zip` | 2026-09-02T14:22:09.220Z | 1,737,651 | `90ec6c2c6e05d064a805d2e4be4a8d442f370b31f0025798e8eaf62d0014ba48` | 4,353 / 4,353 / 0 / 0 / 4,353 / 4,353 |
 | Stanford Politeness — Stack Exchange | `ACQUIRED_AND_INDEXED` | `ConvoKit@1` | `stack-exchange-politeness-corpus.zip` — `.cache/external-data/stanford-politeness-stack-exchange/stack-exchange-politeness-corpus.zip` | 2026-09-02T14:22:09.220Z | 2,264,294 | `d5be7586c3f4224cffdb45cf87af17b5ad17c0ed4d2d5f6560bcb201703681a3` | 6,603 / 6,603 / 0 / 0 / 6,603 / 6,603 |
@@ -18,7 +18,7 @@ Counts are `raw / accepted / rejected / duplicate / normalized / indexed`. `Acce
 | Luangrath–Peck–Barger manuscript | `ACQUIRED_NOT_INDEXED` | `arXiv:1605.06799` | `1605.06799.pdf` — `.cache/external-data/tpl-ontology-luangrath-peck-barger/1605.06799.pdf` | 2026-09-02T14:28:33.491Z | 1,306,437 | `4174eb89805e2e4a4fa3409f2cdc45f5313bc538f1e561f8d21a103ef3904104` | 0 / 0 / 0 / 0 / 0 / 0 |
 | Project role core | `FIXTURE_ONLY` | project v0.1 | no external artifact | — | — | — | not applicable |
 
-Totals across the seven indexed datasets are 1,745,220 raw, 1,650,162 accepted, 95,058 rejected, 63,255 duplicate, 1,586,907 normalized, and 1,586,907 indexed records. The manuscript is authority metadata only and intentionally contributes no corpus records.
+Totals across the seven indexed datasets are 1,745,220 raw, 1,650,162 accepted, 95,058 rejected, 223 exact duplicate annotations, 63,032 aggregated annotation rows, 1,586,907 normalized, and 1,586,907 indexed records. The manuscript is authority metadata only and intentionally contributes no corpus records.
 
 No source is `MANIFEST_ONLY`, `BLOCKED`, or `EXCLUDED` in this pass. Excluded materials—GLUCOSE, EmpatheticDialogues, unlicensed community lorebooks, scraped dialogue, copyrighted franchise material, and other excluded/noncommercial sources—were not acquired or ingested.
 

@@ -26,6 +26,7 @@
         "accepted": 1243208,
         "rejected": 87905,
         "duplicate": 0,
+        "aggregatedAnnotationRows": 0,
         "normalized": 1243208,
         "indexed": 1243208
       },
@@ -60,7 +61,8 @@
         "raw": 355922,
         "accepted": 348769,
         "rejected": 7153,
-        "duplicate": 63255,
+        "duplicate": 223,
+        "aggregatedAnnotationRows": 63032,
         "normalized": 285514,
         "indexed": 285514
       },
@@ -96,6 +98,7 @@
         "accepted": 14297,
         "rejected": 0,
         "duplicate": 0,
+        "aggregatedAnnotationRows": 0,
         "normalized": 14297,
         "indexed": 14297
       },
@@ -131,6 +134,7 @@
         "accepted": 20932,
         "rejected": 0,
         "duplicate": 0,
+        "aggregatedAnnotationRows": 0,
         "normalized": 20932,
         "indexed": 20932
       },
@@ -166,6 +170,7 @@
         "accepted": 4353,
         "rejected": 0,
         "duplicate": 0,
+        "aggregatedAnnotationRows": 0,
         "normalized": 4353,
         "indexed": 4353
       },
@@ -201,6 +206,7 @@
         "accepted": 6603,
         "rejected": 0,
         "duplicate": 0,
+        "aggregatedAnnotationRows": 0,
         "normalized": 6603,
         "indexed": 6603
       },
@@ -236,6 +242,7 @@
         "accepted": 12000,
         "rejected": 0,
         "duplicate": 0,
+        "aggregatedAnnotationRows": 0,
         "normalized": 12000,
         "indexed": 12000
       },

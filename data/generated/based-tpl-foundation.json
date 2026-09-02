@@ -276,7 +276,13 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "TIME_OR_DEADLINE",
+          "reason": "The anchor asserts urgency, timing, or a deadline.",
+          "sourceAnchorId": "ANCHOR_DEAL_BA"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -306,7 +312,13 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "TIME_OR_DEADLINE",
+          "reason": "The anchor asserts urgency, timing, or a deadline.",
+          "sourceAnchorId": "ANCHOR_DEAL_BA"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -336,7 +348,13 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "TIME_OR_DEADLINE",
+          "reason": "The anchor asserts urgency, timing, or a deadline.",
+          "sourceAnchorId": "ANCHOR_DEAL_BA"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -366,7 +384,18 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "AUDIENCE_OR_PUBLIC_CONTEXT",
+          "reason": "The anchor implies an audience or public visibility.",
+          "sourceAnchorId": "ANCHOR_DEAL_BS"
+        },
+        {
+          "requiredFact": "SPEAKER_KNOWLEDGE_OR_PERSPECTIVE",
+          "reason": "The anchor asserts knowledge, evidence, or perspective.",
+          "sourceAnchorId": "ANCHOR_DEAL_BS"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -396,7 +425,18 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "AUDIENCE_OR_PUBLIC_CONTEXT",
+          "reason": "The anchor implies an audience or public visibility.",
+          "sourceAnchorId": "ANCHOR_DEAL_BS"
+        },
+        {
+          "requiredFact": "SPEAKER_KNOWLEDGE_OR_PERSPECTIVE",
+          "reason": "The anchor asserts knowledge, evidence, or perspective.",
+          "sourceAnchorId": "ANCHOR_DEAL_BS"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -426,7 +466,18 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "AUDIENCE_OR_PUBLIC_CONTEXT",
+          "reason": "The anchor implies an audience or public visibility.",
+          "sourceAnchorId": "ANCHOR_DEAL_BS"
+        },
+        {
+          "requiredFact": "SPEAKER_KNOWLEDGE_OR_PERSPECTIVE",
+          "reason": "The anchor asserts knowledge, evidence, or perspective.",
+          "sourceAnchorId": "ANCHOR_DEAL_BS"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -456,7 +507,23 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "TIME_OR_DEADLINE",
+          "reason": "The anchor asserts urgency, timing, or a deadline.",
+          "sourceAnchorId": "ANCHOR_DEAL_BE"
+        },
+        {
+          "requiredFact": "SPEAKER_KNOWLEDGE_OR_PERSPECTIVE",
+          "reason": "The anchor asserts knowledge, evidence, or perspective.",
+          "sourceAnchorId": "ANCHOR_DEAL_BE"
+        },
+        {
+          "requiredFact": "NORM_OR_JUDGMENT",
+          "reason": "The anchor asserts a norm, judgment, or accusation.",
+          "sourceAnchorId": "ANCHOR_DEAL_BE"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -486,7 +553,23 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "TIME_OR_DEADLINE",
+          "reason": "The anchor asserts urgency, timing, or a deadline.",
+          "sourceAnchorId": "ANCHOR_DEAL_BE"
+        },
+        {
+          "requiredFact": "SPEAKER_KNOWLEDGE_OR_PERSPECTIVE",
+          "reason": "The anchor asserts knowledge, evidence, or perspective.",
+          "sourceAnchorId": "ANCHOR_DEAL_BE"
+        },
+        {
+          "requiredFact": "NORM_OR_JUDGMENT",
+          "reason": "The anchor asserts a norm, judgment, or accusation.",
+          "sourceAnchorId": "ANCHOR_DEAL_BE"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -516,7 +599,23 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "TIME_OR_DEADLINE",
+          "reason": "The anchor asserts urgency, timing, or a deadline.",
+          "sourceAnchorId": "ANCHOR_DEAL_BE"
+        },
+        {
+          "requiredFact": "SPEAKER_KNOWLEDGE_OR_PERSPECTIVE",
+          "reason": "The anchor asserts knowledge, evidence, or perspective.",
+          "sourceAnchorId": "ANCHOR_DEAL_BE"
+        },
+        {
+          "requiredFact": "NORM_OR_JUDGMENT",
+          "reason": "The anchor asserts a norm, judgment, or accusation.",
+          "sourceAnchorId": "ANCHOR_DEAL_BE"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -546,7 +645,13 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "LEVERAGE_OR_CONSEQUENCE",
+          "reason": "The anchor asserts leverage, vulnerability, secrecy, or consequence.",
+          "sourceAnchorId": "ANCHOR_DEAL_BD"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -576,7 +681,13 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "LEVERAGE_OR_CONSEQUENCE",
+          "reason": "The anchor asserts leverage, vulnerability, secrecy, or consequence.",
+          "sourceAnchorId": "ANCHOR_DEAL_BD"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -606,7 +717,13 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "LEVERAGE_OR_CONSEQUENCE",
+          "reason": "The anchor asserts leverage, vulnerability, secrecy, or consequence.",
+          "sourceAnchorId": "ANCHOR_DEAL_BD"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -636,7 +753,13 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "NORM_OR_JUDGMENT",
+          "reason": "The anchor asserts a norm, judgment, or accusation.",
+          "sourceAnchorId": "ANCHOR_DEAL_AB"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -666,7 +789,13 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "NORM_OR_JUDGMENT",
+          "reason": "The anchor asserts a norm, judgment, or accusation.",
+          "sourceAnchorId": "ANCHOR_DEAL_AB"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -696,7 +825,13 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "NORM_OR_JUDGMENT",
+          "reason": "The anchor asserts a norm, judgment, or accusation.",
+          "sourceAnchorId": "ANCHOR_DEAL_AB"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -726,7 +861,13 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "TIME_OR_DEADLINE",
+          "reason": "The anchor asserts urgency, timing, or a deadline.",
+          "sourceAnchorId": "ANCHOR_DEAL_AS"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -756,7 +897,13 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "TIME_OR_DEADLINE",
+          "reason": "The anchor asserts urgency, timing, or a deadline.",
+          "sourceAnchorId": "ANCHOR_DEAL_AS"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -786,7 +933,13 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "TIME_OR_DEADLINE",
+          "reason": "The anchor asserts urgency, timing, or a deadline.",
+          "sourceAnchorId": "ANCHOR_DEAL_AS"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -816,7 +969,18 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "TIME_OR_DEADLINE",
+          "reason": "The anchor asserts urgency, timing, or a deadline.",
+          "sourceAnchorId": "ANCHOR_DEAL_AE"
+        },
+        {
+          "requiredFact": "SPEAKER_KNOWLEDGE_OR_PERSPECTIVE",
+          "reason": "The anchor asserts knowledge, evidence, or perspective.",
+          "sourceAnchorId": "ANCHOR_DEAL_AE"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -846,7 +1010,18 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "TIME_OR_DEADLINE",
+          "reason": "The anchor asserts urgency, timing, or a deadline.",
+          "sourceAnchorId": "ANCHOR_DEAL_AE"
+        },
+        {
+          "requiredFact": "SPEAKER_KNOWLEDGE_OR_PERSPECTIVE",
+          "reason": "The anchor asserts knowledge, evidence, or perspective.",
+          "sourceAnchorId": "ANCHOR_DEAL_AE"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -876,7 +1051,18 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "TIME_OR_DEADLINE",
+          "reason": "The anchor asserts urgency, timing, or a deadline.",
+          "sourceAnchorId": "ANCHOR_DEAL_AE"
+        },
+        {
+          "requiredFact": "SPEAKER_KNOWLEDGE_OR_PERSPECTIVE",
+          "reason": "The anchor asserts knowledge, evidence, or perspective.",
+          "sourceAnchorId": "ANCHOR_DEAL_AE"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -906,7 +1092,13 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "TIME_OR_DEADLINE",
+          "reason": "The anchor asserts urgency, timing, or a deadline.",
+          "sourceAnchorId": "ANCHOR_DEAL_AD"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -936,7 +1128,13 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "TIME_OR_DEADLINE",
+          "reason": "The anchor asserts urgency, timing, or a deadline.",
+          "sourceAnchorId": "ANCHOR_DEAL_AD"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -966,7 +1164,13 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "TIME_OR_DEADLINE",
+          "reason": "The anchor asserts urgency, timing, or a deadline.",
+          "sourceAnchorId": "ANCHOR_DEAL_AD"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -1176,7 +1380,18 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "SPEAKER_KNOWLEDGE_OR_PERSPECTIVE",
+          "reason": "The anchor asserts knowledge, evidence, or perspective.",
+          "sourceAnchorId": "ANCHOR_DEAL_SE"
+        },
+        {
+          "requiredFact": "PROTECTION_OR_CARE",
+          "reason": "The anchor asserts protection, care, or harm.",
+          "sourceAnchorId": "ANCHOR_DEAL_SE"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -1206,7 +1421,18 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "SPEAKER_KNOWLEDGE_OR_PERSPECTIVE",
+          "reason": "The anchor asserts knowledge, evidence, or perspective.",
+          "sourceAnchorId": "ANCHOR_DEAL_SE"
+        },
+        {
+          "requiredFact": "PROTECTION_OR_CARE",
+          "reason": "The anchor asserts protection, care, or harm.",
+          "sourceAnchorId": "ANCHOR_DEAL_SE"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -1236,7 +1462,18 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "SPEAKER_KNOWLEDGE_OR_PERSPECTIVE",
+          "reason": "The anchor asserts knowledge, evidence, or perspective.",
+          "sourceAnchorId": "ANCHOR_DEAL_SE"
+        },
+        {
+          "requiredFact": "PROTECTION_OR_CARE",
+          "reason": "The anchor asserts protection, care, or harm.",
+          "sourceAnchorId": "ANCHOR_DEAL_SE"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -1356,7 +1593,13 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "SPEAKER_KNOWLEDGE_OR_PERSPECTIVE",
+          "reason": "The anchor asserts knowledge, evidence, or perspective.",
+          "sourceAnchorId": "ANCHOR_DEAL_EB"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -1386,7 +1629,13 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "SPEAKER_KNOWLEDGE_OR_PERSPECTIVE",
+          "reason": "The anchor asserts knowledge, evidence, or perspective.",
+          "sourceAnchorId": "ANCHOR_DEAL_EB"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -1416,7 +1665,13 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "SPEAKER_KNOWLEDGE_OR_PERSPECTIVE",
+          "reason": "The anchor asserts knowledge, evidence, or perspective.",
+          "sourceAnchorId": "ANCHOR_DEAL_EB"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -1446,7 +1701,13 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "SPEAKER_KNOWLEDGE_OR_PERSPECTIVE",
+          "reason": "The anchor asserts knowledge, evidence, or perspective.",
+          "sourceAnchorId": "ANCHOR_DEAL_EA"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -1476,7 +1737,13 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "SPEAKER_KNOWLEDGE_OR_PERSPECTIVE",
+          "reason": "The anchor asserts knowledge, evidence, or perspective.",
+          "sourceAnchorId": "ANCHOR_DEAL_EA"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -1506,7 +1773,13 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "SPEAKER_KNOWLEDGE_OR_PERSPECTIVE",
+          "reason": "The anchor asserts knowledge, evidence, or perspective.",
+          "sourceAnchorId": "ANCHOR_DEAL_EA"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -1626,7 +1899,18 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "TIME_OR_DEADLINE",
+          "reason": "The anchor asserts urgency, timing, or a deadline.",
+          "sourceAnchorId": "ANCHOR_DEAL_ED"
+        },
+        {
+          "requiredFact": "SPEAKER_KNOWLEDGE_OR_PERSPECTIVE",
+          "reason": "The anchor asserts knowledge, evidence, or perspective.",
+          "sourceAnchorId": "ANCHOR_DEAL_ED"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -1656,7 +1940,18 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "TIME_OR_DEADLINE",
+          "reason": "The anchor asserts urgency, timing, or a deadline.",
+          "sourceAnchorId": "ANCHOR_DEAL_ED"
+        },
+        {
+          "requiredFact": "SPEAKER_KNOWLEDGE_OR_PERSPECTIVE",
+          "reason": "The anchor asserts knowledge, evidence, or perspective.",
+          "sourceAnchorId": "ANCHOR_DEAL_ED"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -1686,7 +1981,18 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "TIME_OR_DEADLINE",
+          "reason": "The anchor asserts urgency, timing, or a deadline.",
+          "sourceAnchorId": "ANCHOR_DEAL_ED"
+        },
+        {
+          "requiredFact": "SPEAKER_KNOWLEDGE_OR_PERSPECTIVE",
+          "reason": "The anchor asserts knowledge, evidence, or perspective.",
+          "sourceAnchorId": "ANCHOR_DEAL_ED"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -1716,7 +2022,18 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "TIME_OR_DEADLINE",
+          "reason": "The anchor asserts urgency, timing, or a deadline.",
+          "sourceAnchorId": "ANCHOR_DEAL_DB"
+        },
+        {
+          "requiredFact": "LEVERAGE_OR_CONSEQUENCE",
+          "reason": "The anchor asserts leverage, vulnerability, secrecy, or consequence.",
+          "sourceAnchorId": "ANCHOR_DEAL_DB"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -1746,7 +2063,18 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "TIME_OR_DEADLINE",
+          "reason": "The anchor asserts urgency, timing, or a deadline.",
+          "sourceAnchorId": "ANCHOR_DEAL_DB"
+        },
+        {
+          "requiredFact": "LEVERAGE_OR_CONSEQUENCE",
+          "reason": "The anchor asserts leverage, vulnerability, secrecy, or consequence.",
+          "sourceAnchorId": "ANCHOR_DEAL_DB"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -1776,7 +2104,18 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "TIME_OR_DEADLINE",
+          "reason": "The anchor asserts urgency, timing, or a deadline.",
+          "sourceAnchorId": "ANCHOR_DEAL_DB"
+        },
+        {
+          "requiredFact": "LEVERAGE_OR_CONSEQUENCE",
+          "reason": "The anchor asserts leverage, vulnerability, secrecy, or consequence.",
+          "sourceAnchorId": "ANCHOR_DEAL_DB"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -1806,7 +2145,23 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "TIME_OR_DEADLINE",
+          "reason": "The anchor asserts urgency, timing, or a deadline.",
+          "sourceAnchorId": "ANCHOR_DEAL_DA"
+        },
+        {
+          "requiredFact": "SPEAKER_KNOWLEDGE_OR_PERSPECTIVE",
+          "reason": "The anchor asserts knowledge, evidence, or perspective.",
+          "sourceAnchorId": "ANCHOR_DEAL_DA"
+        },
+        {
+          "requiredFact": "LEVERAGE_OR_CONSEQUENCE",
+          "reason": "The anchor asserts leverage, vulnerability, secrecy, or consequence.",
+          "sourceAnchorId": "ANCHOR_DEAL_DA"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -1836,7 +2191,23 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "TIME_OR_DEADLINE",
+          "reason": "The anchor asserts urgency, timing, or a deadline.",
+          "sourceAnchorId": "ANCHOR_DEAL_DA"
+        },
+        {
+          "requiredFact": "SPEAKER_KNOWLEDGE_OR_PERSPECTIVE",
+          "reason": "The anchor asserts knowledge, evidence, or perspective.",
+          "sourceAnchorId": "ANCHOR_DEAL_DA"
+        },
+        {
+          "requiredFact": "LEVERAGE_OR_CONSEQUENCE",
+          "reason": "The anchor asserts leverage, vulnerability, secrecy, or consequence.",
+          "sourceAnchorId": "ANCHOR_DEAL_DA"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -1866,7 +2237,23 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "TIME_OR_DEADLINE",
+          "reason": "The anchor asserts urgency, timing, or a deadline.",
+          "sourceAnchorId": "ANCHOR_DEAL_DA"
+        },
+        {
+          "requiredFact": "SPEAKER_KNOWLEDGE_OR_PERSPECTIVE",
+          "reason": "The anchor asserts knowledge, evidence, or perspective.",
+          "sourceAnchorId": "ANCHOR_DEAL_DA"
+        },
+        {
+          "requiredFact": "LEVERAGE_OR_CONSEQUENCE",
+          "reason": "The anchor asserts leverage, vulnerability, secrecy, or consequence.",
+          "sourceAnchorId": "ANCHOR_DEAL_DA"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -1896,7 +2283,13 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "FRIENDSHIP_OR_RELATIONSHIP",
+          "reason": "The anchor asserts friendship or a social bond.",
+          "sourceAnchorId": "ANCHOR_DEAL_DS"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -1926,7 +2319,13 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "FRIENDSHIP_OR_RELATIONSHIP",
+          "reason": "The anchor asserts friendship or a social bond.",
+          "sourceAnchorId": "ANCHOR_DEAL_DS"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -1956,7 +2355,13 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "FRIENDSHIP_OR_RELATIONSHIP",
+          "reason": "The anchor asserts friendship or a social bond.",
+          "sourceAnchorId": "ANCHOR_DEAL_DS"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -1986,7 +2391,23 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "TIME_OR_DEADLINE",
+          "reason": "The anchor asserts urgency, timing, or a deadline.",
+          "sourceAnchorId": "ANCHOR_DEAL_DE"
+        },
+        {
+          "requiredFact": "SPEAKER_KNOWLEDGE_OR_PERSPECTIVE",
+          "reason": "The anchor asserts knowledge, evidence, or perspective.",
+          "sourceAnchorId": "ANCHOR_DEAL_DE"
+        },
+        {
+          "requiredFact": "PROTECTION_OR_CARE",
+          "reason": "The anchor asserts protection, care, or harm.",
+          "sourceAnchorId": "ANCHOR_DEAL_DE"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -2016,7 +2437,23 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "TIME_OR_DEADLINE",
+          "reason": "The anchor asserts urgency, timing, or a deadline.",
+          "sourceAnchorId": "ANCHOR_DEAL_DE"
+        },
+        {
+          "requiredFact": "SPEAKER_KNOWLEDGE_OR_PERSPECTIVE",
+          "reason": "The anchor asserts knowledge, evidence, or perspective.",
+          "sourceAnchorId": "ANCHOR_DEAL_DE"
+        },
+        {
+          "requiredFact": "PROTECTION_OR_CARE",
+          "reason": "The anchor asserts protection, care, or harm.",
+          "sourceAnchorId": "ANCHOR_DEAL_DE"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -2046,7 +2483,23 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "TIME_OR_DEADLINE",
+          "reason": "The anchor asserts urgency, timing, or a deadline.",
+          "sourceAnchorId": "ANCHOR_DEAL_DE"
+        },
+        {
+          "requiredFact": "SPEAKER_KNOWLEDGE_OR_PERSPECTIVE",
+          "reason": "The anchor asserts knowledge, evidence, or perspective.",
+          "sourceAnchorId": "ANCHOR_DEAL_DE"
+        },
+        {
+          "requiredFact": "PROTECTION_OR_CARE",
+          "reason": "The anchor asserts protection, care, or harm.",
+          "sourceAnchorId": "ANCHOR_DEAL_DE"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -2076,7 +2529,23 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "TIME_OR_DEADLINE",
+          "reason": "The anchor asserts urgency, timing, or a deadline.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_BA"
+        },
+        {
+          "requiredFact": "PROTECTION_OR_CARE",
+          "reason": "The anchor asserts protection, care, or harm.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_BA"
+        },
+        {
+          "requiredFact": "LEVERAGE_OR_CONSEQUENCE",
+          "reason": "The anchor asserts leverage, vulnerability, secrecy, or consequence.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_BA"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -2106,7 +2575,23 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "TIME_OR_DEADLINE",
+          "reason": "The anchor asserts urgency, timing, or a deadline.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_BA"
+        },
+        {
+          "requiredFact": "PROTECTION_OR_CARE",
+          "reason": "The anchor asserts protection, care, or harm.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_BA"
+        },
+        {
+          "requiredFact": "LEVERAGE_OR_CONSEQUENCE",
+          "reason": "The anchor asserts leverage, vulnerability, secrecy, or consequence.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_BA"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -2136,7 +2621,23 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "TIME_OR_DEADLINE",
+          "reason": "The anchor asserts urgency, timing, or a deadline.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_BA"
+        },
+        {
+          "requiredFact": "PROTECTION_OR_CARE",
+          "reason": "The anchor asserts protection, care, or harm.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_BA"
+        },
+        {
+          "requiredFact": "LEVERAGE_OR_CONSEQUENCE",
+          "reason": "The anchor asserts leverage, vulnerability, secrecy, or consequence.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_BA"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -2166,7 +2667,23 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "AUDIENCE_OR_PUBLIC_CONTEXT",
+          "reason": "The anchor implies an audience or public visibility.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_BS"
+        },
+        {
+          "requiredFact": "SPEAKER_KNOWLEDGE_OR_PERSPECTIVE",
+          "reason": "The anchor asserts knowledge, evidence, or perspective.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_BS"
+        },
+        {
+          "requiredFact": "LEVERAGE_OR_CONSEQUENCE",
+          "reason": "The anchor asserts leverage, vulnerability, secrecy, or consequence.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_BS"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -2196,7 +2713,23 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "AUDIENCE_OR_PUBLIC_CONTEXT",
+          "reason": "The anchor implies an audience or public visibility.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_BS"
+        },
+        {
+          "requiredFact": "SPEAKER_KNOWLEDGE_OR_PERSPECTIVE",
+          "reason": "The anchor asserts knowledge, evidence, or perspective.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_BS"
+        },
+        {
+          "requiredFact": "LEVERAGE_OR_CONSEQUENCE",
+          "reason": "The anchor asserts leverage, vulnerability, secrecy, or consequence.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_BS"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -2226,7 +2759,23 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "AUDIENCE_OR_PUBLIC_CONTEXT",
+          "reason": "The anchor implies an audience or public visibility.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_BS"
+        },
+        {
+          "requiredFact": "SPEAKER_KNOWLEDGE_OR_PERSPECTIVE",
+          "reason": "The anchor asserts knowledge, evidence, or perspective.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_BS"
+        },
+        {
+          "requiredFact": "LEVERAGE_OR_CONSEQUENCE",
+          "reason": "The anchor asserts leverage, vulnerability, secrecy, or consequence.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_BS"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -2256,7 +2805,33 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "AUDIENCE_OR_PUBLIC_CONTEXT",
+          "reason": "The anchor implies an audience or public visibility.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_BE"
+        },
+        {
+          "requiredFact": "TIME_OR_DEADLINE",
+          "reason": "The anchor asserts urgency, timing, or a deadline.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_BE"
+        },
+        {
+          "requiredFact": "SPEAKER_KNOWLEDGE_OR_PERSPECTIVE",
+          "reason": "The anchor asserts knowledge, evidence, or perspective.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_BE"
+        },
+        {
+          "requiredFact": "PROTECTION_OR_CARE",
+          "reason": "The anchor asserts protection, care, or harm.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_BE"
+        },
+        {
+          "requiredFact": "LEVERAGE_OR_CONSEQUENCE",
+          "reason": "The anchor asserts leverage, vulnerability, secrecy, or consequence.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_BE"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -2286,7 +2861,33 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "AUDIENCE_OR_PUBLIC_CONTEXT",
+          "reason": "The anchor implies an audience or public visibility.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_BE"
+        },
+        {
+          "requiredFact": "TIME_OR_DEADLINE",
+          "reason": "The anchor asserts urgency, timing, or a deadline.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_BE"
+        },
+        {
+          "requiredFact": "SPEAKER_KNOWLEDGE_OR_PERSPECTIVE",
+          "reason": "The anchor asserts knowledge, evidence, or perspective.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_BE"
+        },
+        {
+          "requiredFact": "PROTECTION_OR_CARE",
+          "reason": "The anchor asserts protection, care, or harm.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_BE"
+        },
+        {
+          "requiredFact": "LEVERAGE_OR_CONSEQUENCE",
+          "reason": "The anchor asserts leverage, vulnerability, secrecy, or consequence.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_BE"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -2316,7 +2917,33 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "AUDIENCE_OR_PUBLIC_CONTEXT",
+          "reason": "The anchor implies an audience or public visibility.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_BE"
+        },
+        {
+          "requiredFact": "TIME_OR_DEADLINE",
+          "reason": "The anchor asserts urgency, timing, or a deadline.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_BE"
+        },
+        {
+          "requiredFact": "SPEAKER_KNOWLEDGE_OR_PERSPECTIVE",
+          "reason": "The anchor asserts knowledge, evidence, or perspective.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_BE"
+        },
+        {
+          "requiredFact": "PROTECTION_OR_CARE",
+          "reason": "The anchor asserts protection, care, or harm.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_BE"
+        },
+        {
+          "requiredFact": "LEVERAGE_OR_CONSEQUENCE",
+          "reason": "The anchor asserts leverage, vulnerability, secrecy, or consequence.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_BE"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -2346,7 +2973,18 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "AUDIENCE_OR_PUBLIC_CONTEXT",
+          "reason": "The anchor implies an audience or public visibility.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_BD"
+        },
+        {
+          "requiredFact": "LEVERAGE_OR_CONSEQUENCE",
+          "reason": "The anchor asserts leverage, vulnerability, secrecy, or consequence.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_BD"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -2376,7 +3014,18 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "AUDIENCE_OR_PUBLIC_CONTEXT",
+          "reason": "The anchor implies an audience or public visibility.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_BD"
+        },
+        {
+          "requiredFact": "LEVERAGE_OR_CONSEQUENCE",
+          "reason": "The anchor asserts leverage, vulnerability, secrecy, or consequence.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_BD"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -2406,7 +3055,18 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "AUDIENCE_OR_PUBLIC_CONTEXT",
+          "reason": "The anchor implies an audience or public visibility.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_BD"
+        },
+        {
+          "requiredFact": "LEVERAGE_OR_CONSEQUENCE",
+          "reason": "The anchor asserts leverage, vulnerability, secrecy, or consequence.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_BD"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -2436,7 +3096,18 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "TIME_OR_DEADLINE",
+          "reason": "The anchor asserts urgency, timing, or a deadline.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_AB"
+        },
+        {
+          "requiredFact": "LEVERAGE_OR_CONSEQUENCE",
+          "reason": "The anchor asserts leverage, vulnerability, secrecy, or consequence.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_AB"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -2466,7 +3137,18 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "TIME_OR_DEADLINE",
+          "reason": "The anchor asserts urgency, timing, or a deadline.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_AB"
+        },
+        {
+          "requiredFact": "LEVERAGE_OR_CONSEQUENCE",
+          "reason": "The anchor asserts leverage, vulnerability, secrecy, or consequence.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_AB"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -2496,7 +3178,18 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "TIME_OR_DEADLINE",
+          "reason": "The anchor asserts urgency, timing, or a deadline.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_AB"
+        },
+        {
+          "requiredFact": "LEVERAGE_OR_CONSEQUENCE",
+          "reason": "The anchor asserts leverage, vulnerability, secrecy, or consequence.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_AB"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -2526,7 +3219,28 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "TIME_OR_DEADLINE",
+          "reason": "The anchor asserts urgency, timing, or a deadline.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_AS"
+        },
+        {
+          "requiredFact": "SPEAKER_KNOWLEDGE_OR_PERSPECTIVE",
+          "reason": "The anchor asserts knowledge, evidence, or perspective.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_AS"
+        },
+        {
+          "requiredFact": "PROTECTION_OR_CARE",
+          "reason": "The anchor asserts protection, care, or harm.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_AS"
+        },
+        {
+          "requiredFact": "LEVERAGE_OR_CONSEQUENCE",
+          "reason": "The anchor asserts leverage, vulnerability, secrecy, or consequence.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_AS"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -2556,7 +3270,28 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "TIME_OR_DEADLINE",
+          "reason": "The anchor asserts urgency, timing, or a deadline.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_AS"
+        },
+        {
+          "requiredFact": "SPEAKER_KNOWLEDGE_OR_PERSPECTIVE",
+          "reason": "The anchor asserts knowledge, evidence, or perspective.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_AS"
+        },
+        {
+          "requiredFact": "PROTECTION_OR_CARE",
+          "reason": "The anchor asserts protection, care, or harm.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_AS"
+        },
+        {
+          "requiredFact": "LEVERAGE_OR_CONSEQUENCE",
+          "reason": "The anchor asserts leverage, vulnerability, secrecy, or consequence.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_AS"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -2586,7 +3321,28 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "TIME_OR_DEADLINE",
+          "reason": "The anchor asserts urgency, timing, or a deadline.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_AS"
+        },
+        {
+          "requiredFact": "SPEAKER_KNOWLEDGE_OR_PERSPECTIVE",
+          "reason": "The anchor asserts knowledge, evidence, or perspective.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_AS"
+        },
+        {
+          "requiredFact": "PROTECTION_OR_CARE",
+          "reason": "The anchor asserts protection, care, or harm.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_AS"
+        },
+        {
+          "requiredFact": "LEVERAGE_OR_CONSEQUENCE",
+          "reason": "The anchor asserts leverage, vulnerability, secrecy, or consequence.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_AS"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -2616,7 +3372,23 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "TIME_OR_DEADLINE",
+          "reason": "The anchor asserts urgency, timing, or a deadline.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_AE"
+        },
+        {
+          "requiredFact": "SPEAKER_KNOWLEDGE_OR_PERSPECTIVE",
+          "reason": "The anchor asserts knowledge, evidence, or perspective.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_AE"
+        },
+        {
+          "requiredFact": "LEVERAGE_OR_CONSEQUENCE",
+          "reason": "The anchor asserts leverage, vulnerability, secrecy, or consequence.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_AE"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -2646,7 +3418,23 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "TIME_OR_DEADLINE",
+          "reason": "The anchor asserts urgency, timing, or a deadline.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_AE"
+        },
+        {
+          "requiredFact": "SPEAKER_KNOWLEDGE_OR_PERSPECTIVE",
+          "reason": "The anchor asserts knowledge, evidence, or perspective.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_AE"
+        },
+        {
+          "requiredFact": "LEVERAGE_OR_CONSEQUENCE",
+          "reason": "The anchor asserts leverage, vulnerability, secrecy, or consequence.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_AE"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -2676,7 +3464,23 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "TIME_OR_DEADLINE",
+          "reason": "The anchor asserts urgency, timing, or a deadline.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_AE"
+        },
+        {
+          "requiredFact": "SPEAKER_KNOWLEDGE_OR_PERSPECTIVE",
+          "reason": "The anchor asserts knowledge, evidence, or perspective.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_AE"
+        },
+        {
+          "requiredFact": "LEVERAGE_OR_CONSEQUENCE",
+          "reason": "The anchor asserts leverage, vulnerability, secrecy, or consequence.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_AE"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -2706,7 +3510,18 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "TIME_OR_DEADLINE",
+          "reason": "The anchor asserts urgency, timing, or a deadline.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_AD"
+        },
+        {
+          "requiredFact": "LEVERAGE_OR_CONSEQUENCE",
+          "reason": "The anchor asserts leverage, vulnerability, secrecy, or consequence.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_AD"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -2736,7 +3551,18 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "TIME_OR_DEADLINE",
+          "reason": "The anchor asserts urgency, timing, or a deadline.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_AD"
+        },
+        {
+          "requiredFact": "LEVERAGE_OR_CONSEQUENCE",
+          "reason": "The anchor asserts leverage, vulnerability, secrecy, or consequence.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_AD"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -2766,7 +3592,18 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "TIME_OR_DEADLINE",
+          "reason": "The anchor asserts urgency, timing, or a deadline.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_AD"
+        },
+        {
+          "requiredFact": "LEVERAGE_OR_CONSEQUENCE",
+          "reason": "The anchor asserts leverage, vulnerability, secrecy, or consequence.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_AD"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -2796,7 +3633,23 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "AUDIENCE_OR_PUBLIC_CONTEXT",
+          "reason": "The anchor implies an audience or public visibility.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_SB"
+        },
+        {
+          "requiredFact": "PROTECTION_OR_CARE",
+          "reason": "The anchor asserts protection, care, or harm.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_SB"
+        },
+        {
+          "requiredFact": "LEVERAGE_OR_CONSEQUENCE",
+          "reason": "The anchor asserts leverage, vulnerability, secrecy, or consequence.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_SB"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -2826,7 +3679,23 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "AUDIENCE_OR_PUBLIC_CONTEXT",
+          "reason": "The anchor implies an audience or public visibility.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_SB"
+        },
+        {
+          "requiredFact": "PROTECTION_OR_CARE",
+          "reason": "The anchor asserts protection, care, or harm.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_SB"
+        },
+        {
+          "requiredFact": "LEVERAGE_OR_CONSEQUENCE",
+          "reason": "The anchor asserts leverage, vulnerability, secrecy, or consequence.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_SB"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -2856,7 +3725,23 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "AUDIENCE_OR_PUBLIC_CONTEXT",
+          "reason": "The anchor implies an audience or public visibility.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_SB"
+        },
+        {
+          "requiredFact": "PROTECTION_OR_CARE",
+          "reason": "The anchor asserts protection, care, or harm.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_SB"
+        },
+        {
+          "requiredFact": "LEVERAGE_OR_CONSEQUENCE",
+          "reason": "The anchor asserts leverage, vulnerability, secrecy, or consequence.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_SB"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -2886,7 +3771,28 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "FRIENDSHIP_OR_RELATIONSHIP",
+          "reason": "The anchor asserts friendship or a social bond.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_SA"
+        },
+        {
+          "requiredFact": "TIME_OR_DEADLINE",
+          "reason": "The anchor asserts urgency, timing, or a deadline.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_SA"
+        },
+        {
+          "requiredFact": "SPEAKER_KNOWLEDGE_OR_PERSPECTIVE",
+          "reason": "The anchor asserts knowledge, evidence, or perspective.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_SA"
+        },
+        {
+          "requiredFact": "LEVERAGE_OR_CONSEQUENCE",
+          "reason": "The anchor asserts leverage, vulnerability, secrecy, or consequence.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_SA"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -2916,7 +3822,28 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "FRIENDSHIP_OR_RELATIONSHIP",
+          "reason": "The anchor asserts friendship or a social bond.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_SA"
+        },
+        {
+          "requiredFact": "TIME_OR_DEADLINE",
+          "reason": "The anchor asserts urgency, timing, or a deadline.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_SA"
+        },
+        {
+          "requiredFact": "SPEAKER_KNOWLEDGE_OR_PERSPECTIVE",
+          "reason": "The anchor asserts knowledge, evidence, or perspective.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_SA"
+        },
+        {
+          "requiredFact": "LEVERAGE_OR_CONSEQUENCE",
+          "reason": "The anchor asserts leverage, vulnerability, secrecy, or consequence.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_SA"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -2946,7 +3873,28 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "FRIENDSHIP_OR_RELATIONSHIP",
+          "reason": "The anchor asserts friendship or a social bond.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_SA"
+        },
+        {
+          "requiredFact": "TIME_OR_DEADLINE",
+          "reason": "The anchor asserts urgency, timing, or a deadline.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_SA"
+        },
+        {
+          "requiredFact": "SPEAKER_KNOWLEDGE_OR_PERSPECTIVE",
+          "reason": "The anchor asserts knowledge, evidence, or perspective.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_SA"
+        },
+        {
+          "requiredFact": "LEVERAGE_OR_CONSEQUENCE",
+          "reason": "The anchor asserts leverage, vulnerability, secrecy, or consequence.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_SA"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -2976,7 +3924,28 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "TIME_OR_DEADLINE",
+          "reason": "The anchor asserts urgency, timing, or a deadline.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_SE"
+        },
+        {
+          "requiredFact": "SPEAKER_KNOWLEDGE_OR_PERSPECTIVE",
+          "reason": "The anchor asserts knowledge, evidence, or perspective.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_SE"
+        },
+        {
+          "requiredFact": "PROTECTION_OR_CARE",
+          "reason": "The anchor asserts protection, care, or harm.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_SE"
+        },
+        {
+          "requiredFact": "LEVERAGE_OR_CONSEQUENCE",
+          "reason": "The anchor asserts leverage, vulnerability, secrecy, or consequence.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_SE"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -3006,7 +3975,28 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "TIME_OR_DEADLINE",
+          "reason": "The anchor asserts urgency, timing, or a deadline.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_SE"
+        },
+        {
+          "requiredFact": "SPEAKER_KNOWLEDGE_OR_PERSPECTIVE",
+          "reason": "The anchor asserts knowledge, evidence, or perspective.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_SE"
+        },
+        {
+          "requiredFact": "PROTECTION_OR_CARE",
+          "reason": "The anchor asserts protection, care, or harm.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_SE"
+        },
+        {
+          "requiredFact": "LEVERAGE_OR_CONSEQUENCE",
+          "reason": "The anchor asserts leverage, vulnerability, secrecy, or consequence.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_SE"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -3036,7 +4026,28 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "TIME_OR_DEADLINE",
+          "reason": "The anchor asserts urgency, timing, or a deadline.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_SE"
+        },
+        {
+          "requiredFact": "SPEAKER_KNOWLEDGE_OR_PERSPECTIVE",
+          "reason": "The anchor asserts knowledge, evidence, or perspective.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_SE"
+        },
+        {
+          "requiredFact": "PROTECTION_OR_CARE",
+          "reason": "The anchor asserts protection, care, or harm.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_SE"
+        },
+        {
+          "requiredFact": "LEVERAGE_OR_CONSEQUENCE",
+          "reason": "The anchor asserts leverage, vulnerability, secrecy, or consequence.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_SE"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -3066,7 +4077,13 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "LEVERAGE_OR_CONSEQUENCE",
+          "reason": "The anchor asserts leverage, vulnerability, secrecy, or consequence.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_SD"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -3096,7 +4113,13 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "LEVERAGE_OR_CONSEQUENCE",
+          "reason": "The anchor asserts leverage, vulnerability, secrecy, or consequence.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_SD"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -3126,7 +4149,13 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "LEVERAGE_OR_CONSEQUENCE",
+          "reason": "The anchor asserts leverage, vulnerability, secrecy, or consequence.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_SD"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -3156,7 +4185,18 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "SPEAKER_KNOWLEDGE_OR_PERSPECTIVE",
+          "reason": "The anchor asserts knowledge, evidence, or perspective.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_EB"
+        },
+        {
+          "requiredFact": "LEVERAGE_OR_CONSEQUENCE",
+          "reason": "The anchor asserts leverage, vulnerability, secrecy, or consequence.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_EB"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -3186,7 +4226,18 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "SPEAKER_KNOWLEDGE_OR_PERSPECTIVE",
+          "reason": "The anchor asserts knowledge, evidence, or perspective.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_EB"
+        },
+        {
+          "requiredFact": "LEVERAGE_OR_CONSEQUENCE",
+          "reason": "The anchor asserts leverage, vulnerability, secrecy, or consequence.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_EB"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -3216,7 +4267,18 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "SPEAKER_KNOWLEDGE_OR_PERSPECTIVE",
+          "reason": "The anchor asserts knowledge, evidence, or perspective.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_EB"
+        },
+        {
+          "requiredFact": "LEVERAGE_OR_CONSEQUENCE",
+          "reason": "The anchor asserts leverage, vulnerability, secrecy, or consequence.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_EB"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -3246,7 +4308,18 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "SPEAKER_KNOWLEDGE_OR_PERSPECTIVE",
+          "reason": "The anchor asserts knowledge, evidence, or perspective.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_EA"
+        },
+        {
+          "requiredFact": "LEVERAGE_OR_CONSEQUENCE",
+          "reason": "The anchor asserts leverage, vulnerability, secrecy, or consequence.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_EA"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -3276,7 +4349,18 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "SPEAKER_KNOWLEDGE_OR_PERSPECTIVE",
+          "reason": "The anchor asserts knowledge, evidence, or perspective.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_EA"
+        },
+        {
+          "requiredFact": "LEVERAGE_OR_CONSEQUENCE",
+          "reason": "The anchor asserts leverage, vulnerability, secrecy, or consequence.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_EA"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -3306,7 +4390,18 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "SPEAKER_KNOWLEDGE_OR_PERSPECTIVE",
+          "reason": "The anchor asserts knowledge, evidence, or perspective.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_EA"
+        },
+        {
+          "requiredFact": "LEVERAGE_OR_CONSEQUENCE",
+          "reason": "The anchor asserts leverage, vulnerability, secrecy, or consequence.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_EA"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -3336,7 +4431,23 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "AUDIENCE_OR_PUBLIC_CONTEXT",
+          "reason": "The anchor implies an audience or public visibility.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_ES"
+        },
+        {
+          "requiredFact": "TIME_OR_DEADLINE",
+          "reason": "The anchor asserts urgency, timing, or a deadline.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_ES"
+        },
+        {
+          "requiredFact": "LEVERAGE_OR_CONSEQUENCE",
+          "reason": "The anchor asserts leverage, vulnerability, secrecy, or consequence.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_ES"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -3366,7 +4477,23 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "AUDIENCE_OR_PUBLIC_CONTEXT",
+          "reason": "The anchor implies an audience or public visibility.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_ES"
+        },
+        {
+          "requiredFact": "TIME_OR_DEADLINE",
+          "reason": "The anchor asserts urgency, timing, or a deadline.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_ES"
+        },
+        {
+          "requiredFact": "LEVERAGE_OR_CONSEQUENCE",
+          "reason": "The anchor asserts leverage, vulnerability, secrecy, or consequence.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_ES"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -3396,7 +4523,23 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "AUDIENCE_OR_PUBLIC_CONTEXT",
+          "reason": "The anchor implies an audience or public visibility.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_ES"
+        },
+        {
+          "requiredFact": "TIME_OR_DEADLINE",
+          "reason": "The anchor asserts urgency, timing, or a deadline.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_ES"
+        },
+        {
+          "requiredFact": "LEVERAGE_OR_CONSEQUENCE",
+          "reason": "The anchor asserts leverage, vulnerability, secrecy, or consequence.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_ES"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -3426,7 +4569,23 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "TIME_OR_DEADLINE",
+          "reason": "The anchor asserts urgency, timing, or a deadline.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_ED"
+        },
+        {
+          "requiredFact": "SPEAKER_KNOWLEDGE_OR_PERSPECTIVE",
+          "reason": "The anchor asserts knowledge, evidence, or perspective.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_ED"
+        },
+        {
+          "requiredFact": "LEVERAGE_OR_CONSEQUENCE",
+          "reason": "The anchor asserts leverage, vulnerability, secrecy, or consequence.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_ED"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -3456,7 +4615,23 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "TIME_OR_DEADLINE",
+          "reason": "The anchor asserts urgency, timing, or a deadline.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_ED"
+        },
+        {
+          "requiredFact": "SPEAKER_KNOWLEDGE_OR_PERSPECTIVE",
+          "reason": "The anchor asserts knowledge, evidence, or perspective.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_ED"
+        },
+        {
+          "requiredFact": "LEVERAGE_OR_CONSEQUENCE",
+          "reason": "The anchor asserts leverage, vulnerability, secrecy, or consequence.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_ED"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -3486,7 +4661,23 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "TIME_OR_DEADLINE",
+          "reason": "The anchor asserts urgency, timing, or a deadline.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_ED"
+        },
+        {
+          "requiredFact": "SPEAKER_KNOWLEDGE_OR_PERSPECTIVE",
+          "reason": "The anchor asserts knowledge, evidence, or perspective.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_ED"
+        },
+        {
+          "requiredFact": "LEVERAGE_OR_CONSEQUENCE",
+          "reason": "The anchor asserts leverage, vulnerability, secrecy, or consequence.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_ED"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -3516,7 +4707,18 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "AUDIENCE_OR_PUBLIC_CONTEXT",
+          "reason": "The anchor implies an audience or public visibility.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_DB"
+        },
+        {
+          "requiredFact": "LEVERAGE_OR_CONSEQUENCE",
+          "reason": "The anchor asserts leverage, vulnerability, secrecy, or consequence.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_DB"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -3546,7 +4748,18 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "AUDIENCE_OR_PUBLIC_CONTEXT",
+          "reason": "The anchor implies an audience or public visibility.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_DB"
+        },
+        {
+          "requiredFact": "LEVERAGE_OR_CONSEQUENCE",
+          "reason": "The anchor asserts leverage, vulnerability, secrecy, or consequence.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_DB"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -3576,7 +4789,18 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "AUDIENCE_OR_PUBLIC_CONTEXT",
+          "reason": "The anchor implies an audience or public visibility.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_DB"
+        },
+        {
+          "requiredFact": "LEVERAGE_OR_CONSEQUENCE",
+          "reason": "The anchor asserts leverage, vulnerability, secrecy, or consequence.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_DB"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -3606,7 +4830,23 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "TIME_OR_DEADLINE",
+          "reason": "The anchor asserts urgency, timing, or a deadline.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_DA"
+        },
+        {
+          "requiredFact": "SPEAKER_KNOWLEDGE_OR_PERSPECTIVE",
+          "reason": "The anchor asserts knowledge, evidence, or perspective.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_DA"
+        },
+        {
+          "requiredFact": "LEVERAGE_OR_CONSEQUENCE",
+          "reason": "The anchor asserts leverage, vulnerability, secrecy, or consequence.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_DA"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -3636,7 +4876,23 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "TIME_OR_DEADLINE",
+          "reason": "The anchor asserts urgency, timing, or a deadline.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_DA"
+        },
+        {
+          "requiredFact": "SPEAKER_KNOWLEDGE_OR_PERSPECTIVE",
+          "reason": "The anchor asserts knowledge, evidence, or perspective.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_DA"
+        },
+        {
+          "requiredFact": "LEVERAGE_OR_CONSEQUENCE",
+          "reason": "The anchor asserts leverage, vulnerability, secrecy, or consequence.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_DA"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -3666,7 +4922,23 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "TIME_OR_DEADLINE",
+          "reason": "The anchor asserts urgency, timing, or a deadline.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_DA"
+        },
+        {
+          "requiredFact": "SPEAKER_KNOWLEDGE_OR_PERSPECTIVE",
+          "reason": "The anchor asserts knowledge, evidence, or perspective.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_DA"
+        },
+        {
+          "requiredFact": "LEVERAGE_OR_CONSEQUENCE",
+          "reason": "The anchor asserts leverage, vulnerability, secrecy, or consequence.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_DA"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -3696,7 +4968,28 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "AUDIENCE_OR_PUBLIC_CONTEXT",
+          "reason": "The anchor implies an audience or public visibility.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_DS"
+        },
+        {
+          "requiredFact": "FRIENDSHIP_OR_RELATIONSHIP",
+          "reason": "The anchor asserts friendship or a social bond.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_DS"
+        },
+        {
+          "requiredFact": "SPEAKER_KNOWLEDGE_OR_PERSPECTIVE",
+          "reason": "The anchor asserts knowledge, evidence, or perspective.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_DS"
+        },
+        {
+          "requiredFact": "LEVERAGE_OR_CONSEQUENCE",
+          "reason": "The anchor asserts leverage, vulnerability, secrecy, or consequence.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_DS"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -3726,7 +5019,28 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "AUDIENCE_OR_PUBLIC_CONTEXT",
+          "reason": "The anchor implies an audience or public visibility.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_DS"
+        },
+        {
+          "requiredFact": "FRIENDSHIP_OR_RELATIONSHIP",
+          "reason": "The anchor asserts friendship or a social bond.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_DS"
+        },
+        {
+          "requiredFact": "SPEAKER_KNOWLEDGE_OR_PERSPECTIVE",
+          "reason": "The anchor asserts knowledge, evidence, or perspective.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_DS"
+        },
+        {
+          "requiredFact": "LEVERAGE_OR_CONSEQUENCE",
+          "reason": "The anchor asserts leverage, vulnerability, secrecy, or consequence.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_DS"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -3756,7 +5070,28 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "AUDIENCE_OR_PUBLIC_CONTEXT",
+          "reason": "The anchor implies an audience or public visibility.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_DS"
+        },
+        {
+          "requiredFact": "FRIENDSHIP_OR_RELATIONSHIP",
+          "reason": "The anchor asserts friendship or a social bond.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_DS"
+        },
+        {
+          "requiredFact": "SPEAKER_KNOWLEDGE_OR_PERSPECTIVE",
+          "reason": "The anchor asserts knowledge, evidence, or perspective.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_DS"
+        },
+        {
+          "requiredFact": "LEVERAGE_OR_CONSEQUENCE",
+          "reason": "The anchor asserts leverage, vulnerability, secrecy, or consequence.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_DS"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -3786,7 +5121,33 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "TIME_OR_DEADLINE",
+          "reason": "The anchor asserts urgency, timing, or a deadline.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_DE"
+        },
+        {
+          "requiredFact": "SPEAKER_KNOWLEDGE_OR_PERSPECTIVE",
+          "reason": "The anchor asserts knowledge, evidence, or perspective.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_DE"
+        },
+        {
+          "requiredFact": "PROTECTION_OR_CARE",
+          "reason": "The anchor asserts protection, care, or harm.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_DE"
+        },
+        {
+          "requiredFact": "LEVERAGE_OR_CONSEQUENCE",
+          "reason": "The anchor asserts leverage, vulnerability, secrecy, or consequence.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_DE"
+        },
+        {
+          "requiredFact": "NORM_OR_JUDGMENT",
+          "reason": "The anchor asserts a norm, judgment, or accusation.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_DE"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -3816,7 +5177,33 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "TIME_OR_DEADLINE",
+          "reason": "The anchor asserts urgency, timing, or a deadline.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_DE"
+        },
+        {
+          "requiredFact": "SPEAKER_KNOWLEDGE_OR_PERSPECTIVE",
+          "reason": "The anchor asserts knowledge, evidence, or perspective.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_DE"
+        },
+        {
+          "requiredFact": "PROTECTION_OR_CARE",
+          "reason": "The anchor asserts protection, care, or harm.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_DE"
+        },
+        {
+          "requiredFact": "LEVERAGE_OR_CONSEQUENCE",
+          "reason": "The anchor asserts leverage, vulnerability, secrecy, or consequence.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_DE"
+        },
+        {
+          "requiredFact": "NORM_OR_JUDGMENT",
+          "reason": "The anchor asserts a norm, judgment, or accusation.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_DE"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -3846,7 +5233,33 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "TIME_OR_DEADLINE",
+          "reason": "The anchor asserts urgency, timing, or a deadline.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_DE"
+        },
+        {
+          "requiredFact": "SPEAKER_KNOWLEDGE_OR_PERSPECTIVE",
+          "reason": "The anchor asserts knowledge, evidence, or perspective.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_DE"
+        },
+        {
+          "requiredFact": "PROTECTION_OR_CARE",
+          "reason": "The anchor asserts protection, care, or harm.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_DE"
+        },
+        {
+          "requiredFact": "LEVERAGE_OR_CONSEQUENCE",
+          "reason": "The anchor asserts leverage, vulnerability, secrecy, or consequence.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_DE"
+        },
+        {
+          "requiredFact": "NORM_OR_JUDGMENT",
+          "reason": "The anchor asserts a norm, judgment, or accusation.",
+          "sourceAnchorId": "ANCHOR_PRESSURE_DE"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -3875,7 +5288,18 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "TIME_OR_DEADLINE",
+          "reason": "The anchor asserts urgency, timing, or a deadline.",
+          "sourceAnchorId": "ANCHOR_ASK_BA"
+        },
+        {
+          "requiredFact": "POSSIBLE_ASK_TO_PRESSURE_DRIFT",
+          "reason": "The ASK wording may remove refusal space or introduce social pressure.",
+          "sourceAnchorId": "ANCHOR_ASK_BA"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -3904,7 +5328,18 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "TIME_OR_DEADLINE",
+          "reason": "The anchor asserts urgency, timing, or a deadline.",
+          "sourceAnchorId": "ANCHOR_ASK_BA"
+        },
+        {
+          "requiredFact": "POSSIBLE_ASK_TO_PRESSURE_DRIFT",
+          "reason": "The ASK wording may remove refusal space or introduce social pressure.",
+          "sourceAnchorId": "ANCHOR_ASK_BA"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -3933,7 +5368,18 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "TIME_OR_DEADLINE",
+          "reason": "The anchor asserts urgency, timing, or a deadline.",
+          "sourceAnchorId": "ANCHOR_ASK_BA"
+        },
+        {
+          "requiredFact": "POSSIBLE_ASK_TO_PRESSURE_DRIFT",
+          "reason": "The ASK wording may remove refusal space or introduce social pressure.",
+          "sourceAnchorId": "ANCHOR_ASK_BA"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -3962,7 +5408,28 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "AUDIENCE_OR_PUBLIC_CONTEXT",
+          "reason": "The anchor implies an audience or public visibility.",
+          "sourceAnchorId": "ANCHOR_ASK_BS"
+        },
+        {
+          "requiredFact": "TIME_OR_DEADLINE",
+          "reason": "The anchor asserts urgency, timing, or a deadline.",
+          "sourceAnchorId": "ANCHOR_ASK_BS"
+        },
+        {
+          "requiredFact": "SPEAKER_KNOWLEDGE_OR_PERSPECTIVE",
+          "reason": "The anchor asserts knowledge, evidence, or perspective.",
+          "sourceAnchorId": "ANCHOR_ASK_BS"
+        },
+        {
+          "requiredFact": "POSSIBLE_ASK_TO_PRESSURE_DRIFT",
+          "reason": "The ASK wording may remove refusal space or introduce social pressure.",
+          "sourceAnchorId": "ANCHOR_ASK_BS"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -3991,7 +5458,28 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "AUDIENCE_OR_PUBLIC_CONTEXT",
+          "reason": "The anchor implies an audience or public visibility.",
+          "sourceAnchorId": "ANCHOR_ASK_BS"
+        },
+        {
+          "requiredFact": "TIME_OR_DEADLINE",
+          "reason": "The anchor asserts urgency, timing, or a deadline.",
+          "sourceAnchorId": "ANCHOR_ASK_BS"
+        },
+        {
+          "requiredFact": "SPEAKER_KNOWLEDGE_OR_PERSPECTIVE",
+          "reason": "The anchor asserts knowledge, evidence, or perspective.",
+          "sourceAnchorId": "ANCHOR_ASK_BS"
+        },
+        {
+          "requiredFact": "POSSIBLE_ASK_TO_PRESSURE_DRIFT",
+          "reason": "The ASK wording may remove refusal space or introduce social pressure.",
+          "sourceAnchorId": "ANCHOR_ASK_BS"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -4020,7 +5508,28 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "AUDIENCE_OR_PUBLIC_CONTEXT",
+          "reason": "The anchor implies an audience or public visibility.",
+          "sourceAnchorId": "ANCHOR_ASK_BS"
+        },
+        {
+          "requiredFact": "TIME_OR_DEADLINE",
+          "reason": "The anchor asserts urgency, timing, or a deadline.",
+          "sourceAnchorId": "ANCHOR_ASK_BS"
+        },
+        {
+          "requiredFact": "SPEAKER_KNOWLEDGE_OR_PERSPECTIVE",
+          "reason": "The anchor asserts knowledge, evidence, or perspective.",
+          "sourceAnchorId": "ANCHOR_ASK_BS"
+        },
+        {
+          "requiredFact": "POSSIBLE_ASK_TO_PRESSURE_DRIFT",
+          "reason": "The ASK wording may remove refusal space or introduce social pressure.",
+          "sourceAnchorId": "ANCHOR_ASK_BS"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -4049,7 +5558,23 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "AUDIENCE_OR_PUBLIC_CONTEXT",
+          "reason": "The anchor implies an audience or public visibility.",
+          "sourceAnchorId": "ANCHOR_ASK_BE"
+        },
+        {
+          "requiredFact": "TIME_OR_DEADLINE",
+          "reason": "The anchor asserts urgency, timing, or a deadline.",
+          "sourceAnchorId": "ANCHOR_ASK_BE"
+        },
+        {
+          "requiredFact": "SPEAKER_KNOWLEDGE_OR_PERSPECTIVE",
+          "reason": "The anchor asserts knowledge, evidence, or perspective.",
+          "sourceAnchorId": "ANCHOR_ASK_BE"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -4078,7 +5603,23 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "AUDIENCE_OR_PUBLIC_CONTEXT",
+          "reason": "The anchor implies an audience or public visibility.",
+          "sourceAnchorId": "ANCHOR_ASK_BE"
+        },
+        {
+          "requiredFact": "TIME_OR_DEADLINE",
+          "reason": "The anchor asserts urgency, timing, or a deadline.",
+          "sourceAnchorId": "ANCHOR_ASK_BE"
+        },
+        {
+          "requiredFact": "SPEAKER_KNOWLEDGE_OR_PERSPECTIVE",
+          "reason": "The anchor asserts knowledge, evidence, or perspective.",
+          "sourceAnchorId": "ANCHOR_ASK_BE"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -4107,7 +5648,23 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "AUDIENCE_OR_PUBLIC_CONTEXT",
+          "reason": "The anchor implies an audience or public visibility.",
+          "sourceAnchorId": "ANCHOR_ASK_BE"
+        },
+        {
+          "requiredFact": "TIME_OR_DEADLINE",
+          "reason": "The anchor asserts urgency, timing, or a deadline.",
+          "sourceAnchorId": "ANCHOR_ASK_BE"
+        },
+        {
+          "requiredFact": "SPEAKER_KNOWLEDGE_OR_PERSPECTIVE",
+          "reason": "The anchor asserts knowledge, evidence, or perspective.",
+          "sourceAnchorId": "ANCHOR_ASK_BE"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -4136,7 +5693,18 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "LEVERAGE_OR_CONSEQUENCE",
+          "reason": "The anchor asserts leverage, vulnerability, secrecy, or consequence.",
+          "sourceAnchorId": "ANCHOR_ASK_BD"
+        },
+        {
+          "requiredFact": "POSSIBLE_ASK_TO_PRESSURE_DRIFT",
+          "reason": "The ASK wording may remove refusal space or introduce social pressure.",
+          "sourceAnchorId": "ANCHOR_ASK_BD"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -4165,7 +5733,18 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "LEVERAGE_OR_CONSEQUENCE",
+          "reason": "The anchor asserts leverage, vulnerability, secrecy, or consequence.",
+          "sourceAnchorId": "ANCHOR_ASK_BD"
+        },
+        {
+          "requiredFact": "POSSIBLE_ASK_TO_PRESSURE_DRIFT",
+          "reason": "The ASK wording may remove refusal space or introduce social pressure.",
+          "sourceAnchorId": "ANCHOR_ASK_BD"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -4194,7 +5773,18 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "LEVERAGE_OR_CONSEQUENCE",
+          "reason": "The anchor asserts leverage, vulnerability, secrecy, or consequence.",
+          "sourceAnchorId": "ANCHOR_ASK_BD"
+        },
+        {
+          "requiredFact": "POSSIBLE_ASK_TO_PRESSURE_DRIFT",
+          "reason": "The ASK wording may remove refusal space or introduce social pressure.",
+          "sourceAnchorId": "ANCHOR_ASK_BD"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -4223,7 +5813,13 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "POSSIBLE_ASK_TO_PRESSURE_DRIFT",
+          "reason": "The ASK wording may remove refusal space or introduce social pressure.",
+          "sourceAnchorId": "ANCHOR_ASK_AB"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -4252,7 +5848,13 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "POSSIBLE_ASK_TO_PRESSURE_DRIFT",
+          "reason": "The ASK wording may remove refusal space or introduce social pressure.",
+          "sourceAnchorId": "ANCHOR_ASK_AB"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -4281,7 +5883,13 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "POSSIBLE_ASK_TO_PRESSURE_DRIFT",
+          "reason": "The ASK wording may remove refusal space or introduce social pressure.",
+          "sourceAnchorId": "ANCHOR_ASK_AB"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -4397,7 +6005,23 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "TIME_OR_DEADLINE",
+          "reason": "The anchor asserts urgency, timing, or a deadline.",
+          "sourceAnchorId": "ANCHOR_ASK_AE"
+        },
+        {
+          "requiredFact": "SPEAKER_KNOWLEDGE_OR_PERSPECTIVE",
+          "reason": "The anchor asserts knowledge, evidence, or perspective.",
+          "sourceAnchorId": "ANCHOR_ASK_AE"
+        },
+        {
+          "requiredFact": "POSSIBLE_ASK_TO_PRESSURE_DRIFT",
+          "reason": "The ASK wording may remove refusal space or introduce social pressure.",
+          "sourceAnchorId": "ANCHOR_ASK_AE"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -4426,7 +6050,23 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "TIME_OR_DEADLINE",
+          "reason": "The anchor asserts urgency, timing, or a deadline.",
+          "sourceAnchorId": "ANCHOR_ASK_AE"
+        },
+        {
+          "requiredFact": "SPEAKER_KNOWLEDGE_OR_PERSPECTIVE",
+          "reason": "The anchor asserts knowledge, evidence, or perspective.",
+          "sourceAnchorId": "ANCHOR_ASK_AE"
+        },
+        {
+          "requiredFact": "POSSIBLE_ASK_TO_PRESSURE_DRIFT",
+          "reason": "The ASK wording may remove refusal space or introduce social pressure.",
+          "sourceAnchorId": "ANCHOR_ASK_AE"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -4455,7 +6095,23 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "TIME_OR_DEADLINE",
+          "reason": "The anchor asserts urgency, timing, or a deadline.",
+          "sourceAnchorId": "ANCHOR_ASK_AE"
+        },
+        {
+          "requiredFact": "SPEAKER_KNOWLEDGE_OR_PERSPECTIVE",
+          "reason": "The anchor asserts knowledge, evidence, or perspective.",
+          "sourceAnchorId": "ANCHOR_ASK_AE"
+        },
+        {
+          "requiredFact": "POSSIBLE_ASK_TO_PRESSURE_DRIFT",
+          "reason": "The ASK wording may remove refusal space or introduce social pressure.",
+          "sourceAnchorId": "ANCHOR_ASK_AE"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -4484,7 +6140,18 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "TIME_OR_DEADLINE",
+          "reason": "The anchor asserts urgency, timing, or a deadline.",
+          "sourceAnchorId": "ANCHOR_ASK_AD"
+        },
+        {
+          "requiredFact": "POSSIBLE_ASK_TO_PRESSURE_DRIFT",
+          "reason": "The ASK wording may remove refusal space or introduce social pressure.",
+          "sourceAnchorId": "ANCHOR_ASK_AD"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -4513,7 +6180,18 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "TIME_OR_DEADLINE",
+          "reason": "The anchor asserts urgency, timing, or a deadline.",
+          "sourceAnchorId": "ANCHOR_ASK_AD"
+        },
+        {
+          "requiredFact": "POSSIBLE_ASK_TO_PRESSURE_DRIFT",
+          "reason": "The ASK wording may remove refusal space or introduce social pressure.",
+          "sourceAnchorId": "ANCHOR_ASK_AD"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -4542,7 +6220,18 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "TIME_OR_DEADLINE",
+          "reason": "The anchor asserts urgency, timing, or a deadline.",
+          "sourceAnchorId": "ANCHOR_ASK_AD"
+        },
+        {
+          "requiredFact": "POSSIBLE_ASK_TO_PRESSURE_DRIFT",
+          "reason": "The ASK wording may remove refusal space or introduce social pressure.",
+          "sourceAnchorId": "ANCHOR_ASK_AD"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -4571,7 +6260,13 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "POSSIBLE_ASK_TO_PRESSURE_DRIFT",
+          "reason": "The ASK wording may remove refusal space or introduce social pressure.",
+          "sourceAnchorId": "ANCHOR_ASK_SB"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -4600,7 +6295,13 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "POSSIBLE_ASK_TO_PRESSURE_DRIFT",
+          "reason": "The ASK wording may remove refusal space or introduce social pressure.",
+          "sourceAnchorId": "ANCHOR_ASK_SB"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -4629,7 +6330,13 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "POSSIBLE_ASK_TO_PRESSURE_DRIFT",
+          "reason": "The ASK wording may remove refusal space or introduce social pressure.",
+          "sourceAnchorId": "ANCHOR_ASK_SB"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -4658,7 +6365,23 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "TIME_OR_DEADLINE",
+          "reason": "The anchor asserts urgency, timing, or a deadline.",
+          "sourceAnchorId": "ANCHOR_ASK_SA"
+        },
+        {
+          "requiredFact": "SPEAKER_KNOWLEDGE_OR_PERSPECTIVE",
+          "reason": "The anchor asserts knowledge, evidence, or perspective.",
+          "sourceAnchorId": "ANCHOR_ASK_SA"
+        },
+        {
+          "requiredFact": "POSSIBLE_ASK_TO_PRESSURE_DRIFT",
+          "reason": "The ASK wording may remove refusal space or introduce social pressure.",
+          "sourceAnchorId": "ANCHOR_ASK_SA"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -4687,7 +6410,23 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "TIME_OR_DEADLINE",
+          "reason": "The anchor asserts urgency, timing, or a deadline.",
+          "sourceAnchorId": "ANCHOR_ASK_SA"
+        },
+        {
+          "requiredFact": "SPEAKER_KNOWLEDGE_OR_PERSPECTIVE",
+          "reason": "The anchor asserts knowledge, evidence, or perspective.",
+          "sourceAnchorId": "ANCHOR_ASK_SA"
+        },
+        {
+          "requiredFact": "POSSIBLE_ASK_TO_PRESSURE_DRIFT",
+          "reason": "The ASK wording may remove refusal space or introduce social pressure.",
+          "sourceAnchorId": "ANCHOR_ASK_SA"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -4716,7 +6455,23 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "TIME_OR_DEADLINE",
+          "reason": "The anchor asserts urgency, timing, or a deadline.",
+          "sourceAnchorId": "ANCHOR_ASK_SA"
+        },
+        {
+          "requiredFact": "SPEAKER_KNOWLEDGE_OR_PERSPECTIVE",
+          "reason": "The anchor asserts knowledge, evidence, or perspective.",
+          "sourceAnchorId": "ANCHOR_ASK_SA"
+        },
+        {
+          "requiredFact": "POSSIBLE_ASK_TO_PRESSURE_DRIFT",
+          "reason": "The ASK wording may remove refusal space or introduce social pressure.",
+          "sourceAnchorId": "ANCHOR_ASK_SA"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -4745,7 +6500,13 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "SPEAKER_KNOWLEDGE_OR_PERSPECTIVE",
+          "reason": "The anchor asserts knowledge, evidence, or perspective.",
+          "sourceAnchorId": "ANCHOR_ASK_SE"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -4774,7 +6535,13 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "SPEAKER_KNOWLEDGE_OR_PERSPECTIVE",
+          "reason": "The anchor asserts knowledge, evidence, or perspective.",
+          "sourceAnchorId": "ANCHOR_ASK_SE"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -4803,7 +6570,13 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "SPEAKER_KNOWLEDGE_OR_PERSPECTIVE",
+          "reason": "The anchor asserts knowledge, evidence, or perspective.",
+          "sourceAnchorId": "ANCHOR_ASK_SE"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -4832,7 +6605,28 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "FRIENDSHIP_OR_RELATIONSHIP",
+          "reason": "The anchor asserts friendship or a social bond.",
+          "sourceAnchorId": "ANCHOR_ASK_SD"
+        },
+        {
+          "requiredFact": "TIME_OR_DEADLINE",
+          "reason": "The anchor asserts urgency, timing, or a deadline.",
+          "sourceAnchorId": "ANCHOR_ASK_SD"
+        },
+        {
+          "requiredFact": "SPEAKER_KNOWLEDGE_OR_PERSPECTIVE",
+          "reason": "The anchor asserts knowledge, evidence, or perspective.",
+          "sourceAnchorId": "ANCHOR_ASK_SD"
+        },
+        {
+          "requiredFact": "POSSIBLE_ASK_TO_PRESSURE_DRIFT",
+          "reason": "The ASK wording may remove refusal space or introduce social pressure.",
+          "sourceAnchorId": "ANCHOR_ASK_SD"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -4861,7 +6655,28 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "FRIENDSHIP_OR_RELATIONSHIP",
+          "reason": "The anchor asserts friendship or a social bond.",
+          "sourceAnchorId": "ANCHOR_ASK_SD"
+        },
+        {
+          "requiredFact": "TIME_OR_DEADLINE",
+          "reason": "The anchor asserts urgency, timing, or a deadline.",
+          "sourceAnchorId": "ANCHOR_ASK_SD"
+        },
+        {
+          "requiredFact": "SPEAKER_KNOWLEDGE_OR_PERSPECTIVE",
+          "reason": "The anchor asserts knowledge, evidence, or perspective.",
+          "sourceAnchorId": "ANCHOR_ASK_SD"
+        },
+        {
+          "requiredFact": "POSSIBLE_ASK_TO_PRESSURE_DRIFT",
+          "reason": "The ASK wording may remove refusal space or introduce social pressure.",
+          "sourceAnchorId": "ANCHOR_ASK_SD"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -4890,7 +6705,28 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "FRIENDSHIP_OR_RELATIONSHIP",
+          "reason": "The anchor asserts friendship or a social bond.",
+          "sourceAnchorId": "ANCHOR_ASK_SD"
+        },
+        {
+          "requiredFact": "TIME_OR_DEADLINE",
+          "reason": "The anchor asserts urgency, timing, or a deadline.",
+          "sourceAnchorId": "ANCHOR_ASK_SD"
+        },
+        {
+          "requiredFact": "SPEAKER_KNOWLEDGE_OR_PERSPECTIVE",
+          "reason": "The anchor asserts knowledge, evidence, or perspective.",
+          "sourceAnchorId": "ANCHOR_ASK_SD"
+        },
+        {
+          "requiredFact": "POSSIBLE_ASK_TO_PRESSURE_DRIFT",
+          "reason": "The ASK wording may remove refusal space or introduce social pressure.",
+          "sourceAnchorId": "ANCHOR_ASK_SD"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -4919,7 +6755,13 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "SPEAKER_KNOWLEDGE_OR_PERSPECTIVE",
+          "reason": "The anchor asserts knowledge, evidence, or perspective.",
+          "sourceAnchorId": "ANCHOR_ASK_EB"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -4948,7 +6790,13 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "SPEAKER_KNOWLEDGE_OR_PERSPECTIVE",
+          "reason": "The anchor asserts knowledge, evidence, or perspective.",
+          "sourceAnchorId": "ANCHOR_ASK_EB"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -4977,7 +6825,13 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "SPEAKER_KNOWLEDGE_OR_PERSPECTIVE",
+          "reason": "The anchor asserts knowledge, evidence, or perspective.",
+          "sourceAnchorId": "ANCHOR_ASK_EB"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -5006,7 +6860,18 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "SPEAKER_KNOWLEDGE_OR_PERSPECTIVE",
+          "reason": "The anchor asserts knowledge, evidence, or perspective.",
+          "sourceAnchorId": "ANCHOR_ASK_EA"
+        },
+        {
+          "requiredFact": "POSSIBLE_ASK_TO_PRESSURE_DRIFT",
+          "reason": "The ASK wording may remove refusal space or introduce social pressure.",
+          "sourceAnchorId": "ANCHOR_ASK_EA"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -5035,7 +6900,18 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "SPEAKER_KNOWLEDGE_OR_PERSPECTIVE",
+          "reason": "The anchor asserts knowledge, evidence, or perspective.",
+          "sourceAnchorId": "ANCHOR_ASK_EA"
+        },
+        {
+          "requiredFact": "POSSIBLE_ASK_TO_PRESSURE_DRIFT",
+          "reason": "The ASK wording may remove refusal space or introduce social pressure.",
+          "sourceAnchorId": "ANCHOR_ASK_EA"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -5064,7 +6940,18 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "SPEAKER_KNOWLEDGE_OR_PERSPECTIVE",
+          "reason": "The anchor asserts knowledge, evidence, or perspective.",
+          "sourceAnchorId": "ANCHOR_ASK_EA"
+        },
+        {
+          "requiredFact": "POSSIBLE_ASK_TO_PRESSURE_DRIFT",
+          "reason": "The ASK wording may remove refusal space or introduce social pressure.",
+          "sourceAnchorId": "ANCHOR_ASK_EA"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -5093,7 +6980,23 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "AUDIENCE_OR_PUBLIC_CONTEXT",
+          "reason": "The anchor implies an audience or public visibility.",
+          "sourceAnchorId": "ANCHOR_ASK_ES"
+        },
+        {
+          "requiredFact": "NORM_OR_JUDGMENT",
+          "reason": "The anchor asserts a norm, judgment, or accusation.",
+          "sourceAnchorId": "ANCHOR_ASK_ES"
+        },
+        {
+          "requiredFact": "POSSIBLE_ASK_TO_PRESSURE_DRIFT",
+          "reason": "The ASK wording may remove refusal space or introduce social pressure.",
+          "sourceAnchorId": "ANCHOR_ASK_ES"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -5122,7 +7025,23 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "AUDIENCE_OR_PUBLIC_CONTEXT",
+          "reason": "The anchor implies an audience or public visibility.",
+          "sourceAnchorId": "ANCHOR_ASK_ES"
+        },
+        {
+          "requiredFact": "NORM_OR_JUDGMENT",
+          "reason": "The anchor asserts a norm, judgment, or accusation.",
+          "sourceAnchorId": "ANCHOR_ASK_ES"
+        },
+        {
+          "requiredFact": "POSSIBLE_ASK_TO_PRESSURE_DRIFT",
+          "reason": "The ASK wording may remove refusal space or introduce social pressure.",
+          "sourceAnchorId": "ANCHOR_ASK_ES"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -5151,7 +7070,23 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "AUDIENCE_OR_PUBLIC_CONTEXT",
+          "reason": "The anchor implies an audience or public visibility.",
+          "sourceAnchorId": "ANCHOR_ASK_ES"
+        },
+        {
+          "requiredFact": "NORM_OR_JUDGMENT",
+          "reason": "The anchor asserts a norm, judgment, or accusation.",
+          "sourceAnchorId": "ANCHOR_ASK_ES"
+        },
+        {
+          "requiredFact": "POSSIBLE_ASK_TO_PRESSURE_DRIFT",
+          "reason": "The ASK wording may remove refusal space or introduce social pressure.",
+          "sourceAnchorId": "ANCHOR_ASK_ES"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -5180,7 +7115,23 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "TIME_OR_DEADLINE",
+          "reason": "The anchor asserts urgency, timing, or a deadline.",
+          "sourceAnchorId": "ANCHOR_ASK_ED"
+        },
+        {
+          "requiredFact": "SPEAKER_KNOWLEDGE_OR_PERSPECTIVE",
+          "reason": "The anchor asserts knowledge, evidence, or perspective.",
+          "sourceAnchorId": "ANCHOR_ASK_ED"
+        },
+        {
+          "requiredFact": "POSSIBLE_ASK_TO_PRESSURE_DRIFT",
+          "reason": "The ASK wording may remove refusal space or introduce social pressure.",
+          "sourceAnchorId": "ANCHOR_ASK_ED"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -5209,7 +7160,23 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "TIME_OR_DEADLINE",
+          "reason": "The anchor asserts urgency, timing, or a deadline.",
+          "sourceAnchorId": "ANCHOR_ASK_ED"
+        },
+        {
+          "requiredFact": "SPEAKER_KNOWLEDGE_OR_PERSPECTIVE",
+          "reason": "The anchor asserts knowledge, evidence, or perspective.",
+          "sourceAnchorId": "ANCHOR_ASK_ED"
+        },
+        {
+          "requiredFact": "POSSIBLE_ASK_TO_PRESSURE_DRIFT",
+          "reason": "The ASK wording may remove refusal space or introduce social pressure.",
+          "sourceAnchorId": "ANCHOR_ASK_ED"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -5238,7 +7205,23 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "TIME_OR_DEADLINE",
+          "reason": "The anchor asserts urgency, timing, or a deadline.",
+          "sourceAnchorId": "ANCHOR_ASK_ED"
+        },
+        {
+          "requiredFact": "SPEAKER_KNOWLEDGE_OR_PERSPECTIVE",
+          "reason": "The anchor asserts knowledge, evidence, or perspective.",
+          "sourceAnchorId": "ANCHOR_ASK_ED"
+        },
+        {
+          "requiredFact": "POSSIBLE_ASK_TO_PRESSURE_DRIFT",
+          "reason": "The ASK wording may remove refusal space or introduce social pressure.",
+          "sourceAnchorId": "ANCHOR_ASK_ED"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -5267,7 +7250,18 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "SPEAKER_KNOWLEDGE_OR_PERSPECTIVE",
+          "reason": "The anchor asserts knowledge, evidence, or perspective.",
+          "sourceAnchorId": "ANCHOR_ASK_DB"
+        },
+        {
+          "requiredFact": "POSSIBLE_ASK_TO_PRESSURE_DRIFT",
+          "reason": "The ASK wording may remove refusal space or introduce social pressure.",
+          "sourceAnchorId": "ANCHOR_ASK_DB"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -5296,7 +7290,18 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "SPEAKER_KNOWLEDGE_OR_PERSPECTIVE",
+          "reason": "The anchor asserts knowledge, evidence, or perspective.",
+          "sourceAnchorId": "ANCHOR_ASK_DB"
+        },
+        {
+          "requiredFact": "POSSIBLE_ASK_TO_PRESSURE_DRIFT",
+          "reason": "The ASK wording may remove refusal space or introduce social pressure.",
+          "sourceAnchorId": "ANCHOR_ASK_DB"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -5325,7 +7330,18 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "SPEAKER_KNOWLEDGE_OR_PERSPECTIVE",
+          "reason": "The anchor asserts knowledge, evidence, or perspective.",
+          "sourceAnchorId": "ANCHOR_ASK_DB"
+        },
+        {
+          "requiredFact": "POSSIBLE_ASK_TO_PRESSURE_DRIFT",
+          "reason": "The ASK wording may remove refusal space or introduce social pressure.",
+          "sourceAnchorId": "ANCHOR_ASK_DB"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -5354,7 +7370,28 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "AUDIENCE_OR_PUBLIC_CONTEXT",
+          "reason": "The anchor implies an audience or public visibility.",
+          "sourceAnchorId": "ANCHOR_ASK_DA"
+        },
+        {
+          "requiredFact": "TIME_OR_DEADLINE",
+          "reason": "The anchor asserts urgency, timing, or a deadline.",
+          "sourceAnchorId": "ANCHOR_ASK_DA"
+        },
+        {
+          "requiredFact": "SPEAKER_KNOWLEDGE_OR_PERSPECTIVE",
+          "reason": "The anchor asserts knowledge, evidence, or perspective.",
+          "sourceAnchorId": "ANCHOR_ASK_DA"
+        },
+        {
+          "requiredFact": "POSSIBLE_ASK_TO_PRESSURE_DRIFT",
+          "reason": "The ASK wording may remove refusal space or introduce social pressure.",
+          "sourceAnchorId": "ANCHOR_ASK_DA"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -5383,7 +7420,28 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "AUDIENCE_OR_PUBLIC_CONTEXT",
+          "reason": "The anchor implies an audience or public visibility.",
+          "sourceAnchorId": "ANCHOR_ASK_DA"
+        },
+        {
+          "requiredFact": "TIME_OR_DEADLINE",
+          "reason": "The anchor asserts urgency, timing, or a deadline.",
+          "sourceAnchorId": "ANCHOR_ASK_DA"
+        },
+        {
+          "requiredFact": "SPEAKER_KNOWLEDGE_OR_PERSPECTIVE",
+          "reason": "The anchor asserts knowledge, evidence, or perspective.",
+          "sourceAnchorId": "ANCHOR_ASK_DA"
+        },
+        {
+          "requiredFact": "POSSIBLE_ASK_TO_PRESSURE_DRIFT",
+          "reason": "The ASK wording may remove refusal space or introduce social pressure.",
+          "sourceAnchorId": "ANCHOR_ASK_DA"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -5412,7 +7470,28 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "AUDIENCE_OR_PUBLIC_CONTEXT",
+          "reason": "The anchor implies an audience or public visibility.",
+          "sourceAnchorId": "ANCHOR_ASK_DA"
+        },
+        {
+          "requiredFact": "TIME_OR_DEADLINE",
+          "reason": "The anchor asserts urgency, timing, or a deadline.",
+          "sourceAnchorId": "ANCHOR_ASK_DA"
+        },
+        {
+          "requiredFact": "SPEAKER_KNOWLEDGE_OR_PERSPECTIVE",
+          "reason": "The anchor asserts knowledge, evidence, or perspective.",
+          "sourceAnchorId": "ANCHOR_ASK_DA"
+        },
+        {
+          "requiredFact": "POSSIBLE_ASK_TO_PRESSURE_DRIFT",
+          "reason": "The ASK wording may remove refusal space or introduce social pressure.",
+          "sourceAnchorId": "ANCHOR_ASK_DA"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -5441,7 +7520,28 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "FRIENDSHIP_OR_RELATIONSHIP",
+          "reason": "The anchor asserts friendship or a social bond.",
+          "sourceAnchorId": "ANCHOR_ASK_DS"
+        },
+        {
+          "requiredFact": "TIME_OR_DEADLINE",
+          "reason": "The anchor asserts urgency, timing, or a deadline.",
+          "sourceAnchorId": "ANCHOR_ASK_DS"
+        },
+        {
+          "requiredFact": "SPEAKER_KNOWLEDGE_OR_PERSPECTIVE",
+          "reason": "The anchor asserts knowledge, evidence, or perspective.",
+          "sourceAnchorId": "ANCHOR_ASK_DS"
+        },
+        {
+          "requiredFact": "POSSIBLE_ASK_TO_PRESSURE_DRIFT",
+          "reason": "The ASK wording may remove refusal space or introduce social pressure.",
+          "sourceAnchorId": "ANCHOR_ASK_DS"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -5470,7 +7570,28 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "FRIENDSHIP_OR_RELATIONSHIP",
+          "reason": "The anchor asserts friendship or a social bond.",
+          "sourceAnchorId": "ANCHOR_ASK_DS"
+        },
+        {
+          "requiredFact": "TIME_OR_DEADLINE",
+          "reason": "The anchor asserts urgency, timing, or a deadline.",
+          "sourceAnchorId": "ANCHOR_ASK_DS"
+        },
+        {
+          "requiredFact": "SPEAKER_KNOWLEDGE_OR_PERSPECTIVE",
+          "reason": "The anchor asserts knowledge, evidence, or perspective.",
+          "sourceAnchorId": "ANCHOR_ASK_DS"
+        },
+        {
+          "requiredFact": "POSSIBLE_ASK_TO_PRESSURE_DRIFT",
+          "reason": "The ASK wording may remove refusal space or introduce social pressure.",
+          "sourceAnchorId": "ANCHOR_ASK_DS"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -5499,7 +7620,28 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "FRIENDSHIP_OR_RELATIONSHIP",
+          "reason": "The anchor asserts friendship or a social bond.",
+          "sourceAnchorId": "ANCHOR_ASK_DS"
+        },
+        {
+          "requiredFact": "TIME_OR_DEADLINE",
+          "reason": "The anchor asserts urgency, timing, or a deadline.",
+          "sourceAnchorId": "ANCHOR_ASK_DS"
+        },
+        {
+          "requiredFact": "SPEAKER_KNOWLEDGE_OR_PERSPECTIVE",
+          "reason": "The anchor asserts knowledge, evidence, or perspective.",
+          "sourceAnchorId": "ANCHOR_ASK_DS"
+        },
+        {
+          "requiredFact": "POSSIBLE_ASK_TO_PRESSURE_DRIFT",
+          "reason": "The ASK wording may remove refusal space or introduce social pressure.",
+          "sourceAnchorId": "ANCHOR_ASK_DS"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -5528,7 +7670,18 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "SPEAKER_KNOWLEDGE_OR_PERSPECTIVE",
+          "reason": "The anchor asserts knowledge, evidence, or perspective.",
+          "sourceAnchorId": "ANCHOR_ASK_DE"
+        },
+        {
+          "requiredFact": "POSSIBLE_ASK_TO_PRESSURE_DRIFT",
+          "reason": "The ASK wording may remove refusal space or introduce social pressure.",
+          "sourceAnchorId": "ANCHOR_ASK_DE"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -5557,7 +7710,18 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "SPEAKER_KNOWLEDGE_OR_PERSPECTIVE",
+          "reason": "The anchor asserts knowledge, evidence, or perspective.",
+          "sourceAnchorId": "ANCHOR_ASK_DE"
+        },
+        {
+          "requiredFact": "POSSIBLE_ASK_TO_PRESSURE_DRIFT",
+          "reason": "The ASK wording may remove refusal space or introduce social pressure.",
+          "sourceAnchorId": "ANCHOR_ASK_DE"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -5586,7 +7750,18 @@
       "allowedProtocolIds": [],
       "preferredProtocolIds": [],
       "excludedProtocolIds": [],
-      "requiredContextOrLoreFacts": [],
+      "requiredContextOrLoreFacts": [
+        {
+          "requiredFact": "SPEAKER_KNOWLEDGE_OR_PERSPECTIVE",
+          "reason": "The anchor asserts knowledge, evidence, or perspective.",
+          "sourceAnchorId": "ANCHOR_ASK_DE"
+        },
+        {
+          "requiredFact": "POSSIBLE_ASK_TO_PRESSURE_DRIFT",
+          "reason": "The ASK wording may remove refusal space or introduce social pressure.",
+          "sourceAnchorId": "ANCHOR_ASK_DE"
+        }
+      ],
       "forbiddenSemanticAdditions": [
         "unauthored_threat",
         "unauthored_promise",
@@ -5786,5 +7961,18 @@
     "reactionFaceField": "reactionFaceId",
     "replyFaceField": "replyFaceId",
     "rendererMayMutateFaceSlots": false
+  },
+  "fallbackPolicy": {
+    "status": "FOUNDATION_ONLY",
+    "formsPerAct": 3,
+    "totalActIntensityForms": 9,
+    "vibeAffectsWording": false,
+    "vibeAffects": [
+      "coordinate identity",
+      "deterministic seed",
+      "future protocol selection"
+    ],
+    "dynamicDialoguePopulation": "DEFERRED_TO_PHASE_2",
+    "approvedProtocolCount": 0
   }
 }

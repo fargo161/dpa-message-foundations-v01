@@ -37,13 +37,19 @@ export const BASED_VIBES = Object.freeze([
 export const DELIVERY_INTENSITIES = Object.freeze(["SUBTLE", "BALANCED", "OVERT"]);
 export const SPEECH_ACTS = Object.freeze(["DEAL", "PRESSURE", "ASK"]);
 
+export const ACTION_INVARIANTS = Object.freeze({
+  DEAL: Object.freeze(["OFFER", "RETURN"]),
+  PRESSURE: Object.freeze(["DEMAND", "CONSEQUENCE"]),
+  ASK: Object.freeze(["REQUEST"]),
+});
+
 export function generateMatrix() {
   return SPEECH_ACTS.flatMap((speechAct) => BASED_VIBES.flatMap((entry) => DELIVERY_INTENSITIES.map((deliveryIntensity) => ({
     key: `${speechAct}_${entry.vibeId}_${deliveryIntensity}`,
     vibeId: entry.vibeId,
     speechAct,
     deliveryIntensity,
-    actionInvariant: speechAct === "DEAL" ? ["OFFER", "RETURN"] : speechAct === "PRESSURE" ? ["DEMAND", "CONSEQUENCE"] : ["REQUEST"],
+    actionInvariant: [...ACTION_INVARIANTS[speechAct]],
     candidateAnchorIds: [],
     universalFallbackId: null,
     allowedProtocolIds: [],
@@ -108,7 +114,19 @@ export function buildMatrixWithAnchors() {
   const matrix = generateMatrix();
   const anchors = loadAuthoredAnchors();
   const anchorByActVibe = new Map(anchors.map((anchor) => [`${anchor.speechAct}_${anchor.vibeId}`, anchor]));
-  return matrix.map((cell) => ({ ...cell, candidateAnchorIds: [anchorByActVibe.get(`${cell.speechAct}_${cell.vibeId}`)?.anchorId].filter(Boolean) }));
+  return matrix.map((cell) => {
+    const anchor = anchorByActVibe.get(`${cell.speechAct}_${cell.vibeId}`);
+    const requiredContextOrLoreFacts = (anchor?.audit.claimRequirements ?? []).map(({ requiredFact, reason }) => ({
+      requiredFact,
+      reason,
+      sourceAnchorId: anchor.anchorId,
+    }));
+    return {
+      ...cell,
+      candidateAnchorIds: [anchor?.anchorId].filter(Boolean),
+      requiredContextOrLoreFacts,
+    };
+  });
 }
 
 export function validateBased() {
@@ -119,7 +137,11 @@ export function validateBased() {
   const matrix = generateMatrix();
   if (matrix.length !== 180 || new Set(matrix.map((entry) => entry.key)).size !== 180) errors.push("matrix_count");
   if (matrix.some((entry) => entry.reviewStatus !== "UNMAPPED")) errors.push("matrix_not_unmapped");
+  if (matrix.some((entry) => JSON.stringify(entry.actionInvariant) !== JSON.stringify(ACTION_INVARIANTS[entry.speechAct]))) errors.push("action_invariant");
   if (matrix.some((entry) => "lead_weight" in entry || "secondary_weight" in entry || "cueShare" in entry)) errors.push("numeric_cue_authority");
   if (DELIVERY_INTENSITIES.some((entry) => !["SUBTLE", "BALANCED", "OVERT"].includes(entry))) errors.push("intensity_alias");
+  const anchored = buildMatrixWithAnchors();
+  if (anchored.some((entry) => entry.candidateAnchorIds.length !== 1)) errors.push("anchor_coverage");
+  if (anchored.some((entry) => entry.requiredContextOrLoreFacts.some((gate) => !gate.requiredFact || !gate.reason || !gate.sourceAnchorId))) errors.push("anchor_fact_gate_shape");
   return errors;
 }

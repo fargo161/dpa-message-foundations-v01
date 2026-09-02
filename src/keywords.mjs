@@ -11,6 +11,19 @@ export const KEYWORD_CATEGORIES = Object.freeze([
   "LEVERAGE",
 ]);
 
+export const KEYWORD_ASSERTION_SCOPES = Object.freeze(["ACTUAL", "BELIEF", "KNOWLEDGE", "DISPUTED", "HYPOTHETICAL"]);
+export const KEYWORD_ASSERTION_POLARITIES = Object.freeze(["ASSERTED", "NEGATED"]);
+export const KEYWORD_ASSERTION_STATUSES = Object.freeze(["ACTIVE", "INACTIVE", "SUPERSEDED", "DEFEATED"]);
+export const KEYWORD_DIRECTIONS = Object.freeze(["DIRECTED", "UNDIRECTED"]);
+export const KEYWORD_SYMMETRIES = Object.freeze(["ASYMMETRIC", "SYMMETRIC"]);
+export const KEYWORD_RECIPROCITIES = Object.freeze(["NOT_IMPLIED", "MUTUAL_BY_DEFINITION"]);
+export const KEYWORD_ARGUMENT_KEYS = Object.freeze(["subject", "object", "term", "proposition", "secret", "basis"]);
+export const KEYWORD_PROVENANCE_FIELDS = Object.freeze(["sourceId", "sourceVersion", "sourceRecordId", "transformVersion", "licenseId"]);
+
+const stableUpperId = /^[A-Z][A-Z0-9_]+$/;
+const stableLowerId = /^[a-z][a-z0-9_]+$/;
+const nonEmptyString = (value) => typeof value === "string" && value.trim().length > 0;
+
 const projectProvenance = (keywordId) => ({
   sourceId: "project-keyword-core",
   sourceVersion: "0.1",
@@ -19,23 +32,62 @@ const projectProvenance = (keywordId) => ({
   licenseId: "PROJECT_AUTHORED",
 });
 
-const keyword = (spec) => ({
-  schemaVersion: SCHEMA_VERSION,
-  inverseOrReciprocalRule: "No automatic inverse beyond the declared rule.",
-  allowedEntityAndResourceTypes: ["ACTOR", "RESOURCE", "OBJECT", "LOCATION", "ACTION", "PROPOSITION", "SECRET", "OBLIGATION"],
-  temporalityAndHistoryBehavior: "Active assertions are time-scoped; transitions emit history and never rewrite prior history.",
-  negationDisputeAndBeliefHandling: "Negated, disputed, and belief-scoped assertions are distinct from actual asserted facts.",
-  requiredAndForbiddenContexts: { required: [], forbidden: [] },
-  relatedStats: [],
-  compatibleKeywords: [],
-  conflictingKeywords: [],
-  possibleAffordances: { DEAL: [], PRESSURE: [], ASK: [] },
-  blockersAndDefeaters: [],
-  possibleHistoryEmissions: [],
-  sourceAndProjectProvenance: [projectProvenance(spec.keywordId)],
-  reviewStatus: "APPROVED",
-  ...spec,
-});
+const keyword = (spec) => {
+  const argumentKeys = Object.keys(spec.typedArgumentRoles ?? {});
+  const optionalArgumentKeys = [...(spec.optionalArgumentKeys ?? [])];
+  const conflictingKeywords = [...(spec.conflictingKeywords ?? [])];
+  const blockersAndDefeaters = [...(spec.blockersAndDefeaters ?? [])];
+  return Object.freeze({
+    schemaVersion: SCHEMA_VERSION,
+    inverseOrReciprocalRule: "No automatic inverse beyond the declared rule.",
+    allowedEntityAndResourceTypes: ["ACTOR", "RESOURCE", "OBJECT", "LOCATION", "ACTION", "PROPOSITION", "SECRET", "OBLIGATION"],
+    temporalityAndHistoryBehavior: "Active assertions are time-scoped; transitions emit history and never rewrite prior history.",
+    negationDisputeAndBeliefHandling: "Negated, disputed, and belief-scoped assertions are distinct from actual asserted facts.",
+    requiredAndForbiddenContexts: { required: [], forbidden: [] },
+    truthAndKnowledge: {
+      defaultAssertionScope: "ACTUAL",
+      allowedAssertionScopes: ["ACTUAL", "DISPUTED"],
+      knowledgeBoundary: "NONE",
+    },
+    temporalValidity: {
+      validFrom: "INCLUSIVE",
+      validUntil: "EXCLUSIVE_OR_NULL",
+      requiresActiveStatus: true,
+      historyMode: "APPEND_ONLY",
+    },
+    contradictionPolicy: {
+      mode: conflictingKeywords.length ? "PAIRWISE_CONFLICT" : "NONE",
+      sameCanonicalBindings: true,
+      overlappingActiveTime: true,
+      resolution: conflictingKeywords.length ? "REQUIRES_EXPLICIT_AUTHORED_RESOLUTION" : "NO_AUTOMATIC_CONTRADICTION",
+    },
+    relatedStats: [],
+    compatibleKeywords: [],
+    conflictingKeywords,
+    possibleAffordances: { DEAL: [], PRESSURE: [], ASK: [] },
+    blockersAndDefeaters,
+    blockerPolicy: {
+      blockerIds: blockersAndDefeaters,
+      requiresAuthoredEvidence: true,
+      effect: "BLOCK_OR_DEFEAT",
+      checkedBeforeAvailability: true,
+    },
+    possibleHistoryEmissions: [],
+    sourceAndProjectProvenance: [projectProvenance(spec.keywordId)],
+    provenancePolicy: {
+      requiredFields: [...KEYWORD_PROVENANCE_FIELDS],
+      evidenceClass: "PROJECT_AUTHORED",
+      runtimeEligible: false,
+    },
+    reviewStatus: "APPROVED",
+    directionality: "DIRECTED",
+    symmetry: "ASYMMETRIC",
+    reciprocity: "NOT_IMPLIED",
+    ...spec,
+    argumentKeys,
+    optionalArgumentKeys,
+  });
+};
 
 export const KEYWORDS = Object.freeze([
   keyword({
@@ -46,12 +98,13 @@ export const KEYWORDS = Object.freeze([
     category: "MATERIAL",
     arity: 2,
     typedArgumentRoles: { subject: "OWNER", object: "ASSET_OR_RESOURCE" },
+    optionalArgumentKeys: ["quantity", "unit"],
     directionality: "DIRECTED",
     inverseOrReciprocalRule: "OWNED_BY reverses subject and object; it is not symmetric.",
     allowedEntityAndResourceTypes: ["ACTOR", "RESOURCE", "OBJECT", "LOCATION"],
     relatedStats: ["control", "obligation"],
     compatibleKeywords: ["CONTROLS", "PERMITTED", "NEEDS"],
-    conflictingKeywords: ["PROHIBITED"],
+    conflictingKeywords: [],
     possibleAffordances: { DEAL: ["OFFER_PARTIAL_PAYMENT"], PRESSURE: [], ASK: ["REQUEST_ACCESS"] },
     blockersAndDefeaters: ["ownership_expired", "explicit_transfer"],
     possibleHistoryEmissions: ["OWNERSHIP_TRANSFERRED"],
@@ -67,13 +120,14 @@ export const KEYWORDS = Object.freeze([
     category: "OBLIGATION",
     arity: 3,
     typedArgumentRoles: { subject: "DEBTOR", object: "CREDITOR", term: "OBLIGATION" },
+    optionalArgumentKeys: ["amount", "unit", "due", "status"],
     directionality: "DIRECTED",
     inverseOrReciprocalRule: "IS_OWED_BY reverses debtor and creditor; the term remains time-scoped.",
     allowedEntityAndResourceTypes: ["ACTOR", "OBLIGATION", "RESOURCE"],
     temporalityAndHistoryBehavior: "Requires amount/unit/due condition; accepted, fulfilled, broken, and superseded transitions emit history.",
     relatedStats: ["obligation", "trust", "resentment", "leverage"],
     compatibleKeywords: ["NEEDS", "PROMISED_TO", "BELIEVES", "HAS_LEVERAGE_OVER"],
-    conflictingKeywords: ["OWNS"],
+    conflictingKeywords: [],
     possibleAffordances: { DEAL: ["OFFER_PARTIAL_PAYMENT", "OFFER_CASH_FOR_EXTENSION"], PRESSURE: ["INVOKE_CONSEQUENCE"], ASK: ["REQUEST_EXTENSION", "CHALLENGE_DEBT_VALIDITY"] },
     blockersAndDefeaters: ["debt_fulfilled", "debt_expired", "debt_disputed_without_evidence"],
     possibleHistoryEmissions: ["DEBT_PROPOSED", "DEBT_RENEGOTIATED", "DEBT_FULFILLED", "DEBT_BROKEN"],
@@ -94,7 +148,7 @@ export const KEYWORDS = Object.freeze([
     allowedEntityAndResourceTypes: ["ACTOR", "RESOURCE", "PROPOSITION", "OBLIGATION"],
     relatedStats: ["dependence", "urgency_context"],
     compatibleKeywords: ["OWES", "DEPENDS_ON", "TRUSTS", "CONTROLS"],
-    conflictingKeywords: ["OWNS"],
+    conflictingKeywords: [],
     possibleAffordances: { DEAL: ["OFFER_PARTIAL_PAYMENT"], PRESSURE: [], ASK: ["REQUEST_EXTENSION", "REQUEST_ACCESS"] },
     blockersAndDefeaters: ["need_satisfied", "resource_unavailable"],
     possibleHistoryEmissions: ["NEED_RECOGNIZED", "NEED_SATISFIED"],
@@ -131,6 +185,7 @@ export const KEYWORDS = Object.freeze([
     category: "OBLIGATION",
     arity: 3,
     typedArgumentRoles: { subject: "PROMISOR", object: "RECIPIENT", term: "COMMITMENT" },
+    optionalArgumentKeys: ["status"],
     directionality: "DIRECTED",
     inverseOrReciprocalRule: "HAS_PROMISE_FROM reverses the people but not the commitment's status.",
     allowedEntityAndResourceTypes: ["ACTOR", "RESOURCE", "ACTION", "OBLIGATION"],
@@ -215,7 +270,8 @@ export const KEYWORDS = Object.freeze([
     explicitNonMeanings: ["Does not mean the secret is true unless actual evidence says so.", "Does not authorize disclosure."],
     category: "KNOWLEDGE",
     arity: 3,
-    typedArgumentRoles: { subject: "KNOWER", object: "SECRET_SUBJECT", term: "SECRET" },
+    typedArgumentRoles: { subject: "KNOWER", object: "SECRET_SUBJECT", secret: "SECRET" },
+    truthAndKnowledge: { defaultAssertionScope: "ACTUAL", allowedAssertionScopes: ["ACTUAL", "KNOWLEDGE", "DISPUTED"], knowledgeBoundary: "SUBJECT_SCOPED" },
     directionality: "DIRECTED",
     inverseOrReciprocalRule: "No naïve inverse; the subject need not know the knower has the secret.",
     allowedEntityAndResourceTypes: ["ACTOR", "SECRET", "PROPOSITION"],
@@ -238,7 +294,9 @@ export const KEYWORDS = Object.freeze([
     explicitNonMeanings: ["Does not rewrite actual world facts.", "Does not grant knowledge or certainty."],
     category: "BELIEF",
     arity: 2,
-    typedArgumentRoles: { subject: "BELIEVER", object: "PROPOSITION" },
+    typedArgumentRoles: { subject: "BELIEVER", proposition: "PROPOSITION" },
+    optionalArgumentKeys: ["confidence"],
+    truthAndKnowledge: { defaultAssertionScope: "ACTUAL", allowedAssertionScopes: ["ACTUAL", "BELIEF", "DISPUTED"], knowledgeBoundary: "PROPOSITION_SCOPED" },
     directionality: "DIRECTED",
     inverseOrReciprocalRule: "BELIEVED_BY reverses the belief holder and proposition; it is not truth evidence by itself.",
     allowedEntityAndResourceTypes: ["ACTOR", "PROPOSITION", "OBLIGATION", "SECRET"],
@@ -324,7 +382,7 @@ export const KEYWORDS = Object.freeze([
     explicitNonMeanings: ["Does not mean coercion is legal or effective.", "Does not exist without a cited basis such as debt, control, or secret."],
     category: "LEVERAGE",
     arity: 3,
-    typedArgumentRoles: { subject: "LEVERAGE_HOLDER", object: "TARGET", term: "LEVERAGE_BASIS" },
+    typedArgumentRoles: { subject: "LEVERAGE_HOLDER", object: "TARGET", basis: "LEVERAGE_BASIS" },
     directionality: "DIRECTED",
     inverseOrReciprocalRule: "LEVERAGED_BY reverses holder and target but not the basis or strength.",
     allowedEntityAndResourceTypes: ["ACTOR", "OBLIGATION", "SECRET", "RESOURCE", "PROPOSITION"],
@@ -360,33 +418,146 @@ export const CROSS_KEYWORD_RULES = Object.freeze([
   { ruleId: "RULE_OWNER_ACCESS", keywords: ["OWNS", "CONTROLS", "PERMITTED"], result: "REQUEST_ACCESS_WITH_AUTHORITY" },
 ]);
 
+export const CONTRADICTION_RULES = Object.freeze([
+  {
+    ruleId: "CONFLICT_PERMISSION_PROHIBITION",
+    leftKeywordId: "PERMITTED",
+    rightKeywordId: "PROHIBITED",
+    sameCanonicalArgumentKeys: ["subject", "object", "term"],
+    requiresOverlappingActiveTime: true,
+    resolution: "BLOCK_UNTIL_EXPLICIT_AUTHORED_RESOLUTION",
+  },
+  {
+    ruleId: "TENSION_TRUST_RESENTMENT",
+    leftKeywordId: "TRUSTS",
+    rightKeywordId: "RESENTS",
+    sameCanonicalArgumentKeys: ["subject", "object"],
+    requiresOverlappingActiveTime: true,
+    resolution: "FLAG_TENSION_WITHOUT_AUTOMATIC_NEGATION",
+  },
+]);
+
+const isRecord = (value) => value !== null && typeof value === "object" && !Array.isArray(value);
+const isIsoDate = (value) => nonEmptyString(value) && !Number.isNaN(new Date(value).getTime());
+const arrayOfStrings = (value) => Array.isArray(value) && value.every(nonEmptyString);
+
+function validateProvenanceRecord(provenance) {
+  if (!isRecord(provenance)) return ["provenance_not_object"];
+  return KEYWORD_PROVENANCE_FIELDS.filter((field) => !nonEmptyString(provenance[field])).map((field) => `provenance.${field}`);
+}
+
 export function validateKeywordDefinition(entry) {
+  if (!isRecord(entry)) return ["definition_not_object"];
   const required = [
     "keywordId", "displayName", "definition", "explicitNonMeanings", "category", "arity",
     "typedArgumentRoles", "directionality", "inverseOrReciprocalRule", "allowedEntityAndResourceTypes",
     "temporalityAndHistoryBehavior", "negationDisputeAndBeliefHandling", "requiredAndForbiddenContexts",
     "relatedStats", "compatibleKeywords", "conflictingKeywords", "possibleAffordances",
     "blockersAndDefeaters", "possibleHistoryEmissions", "sourceAndProjectProvenance", "positiveExamples",
-    "boundaryExamples", "counterexamples", "schemaVersion", "reviewStatus",
+    "boundaryExamples", "counterexamples", "schemaVersion", "reviewStatus", "argumentKeys",
+    "optionalArgumentKeys", "symmetry", "reciprocity", "truthAndKnowledge", "temporalValidity",
+    "contradictionPolicy", "blockerPolicy", "provenancePolicy",
   ];
   const errors = required.filter((key) => !(key in entry));
+  if (!stableUpperId.test(entry.keywordId ?? "")) errors.push("keywordId");
+  for (const field of ["displayName", "definition", "inverseOrReciprocalRule", "temporalityAndHistoryBehavior", "negationDisputeAndBeliefHandling"]) {
+    if (!nonEmptyString(entry[field])) errors.push(field);
+  }
   if (!Number.isInteger(entry.arity) || entry.arity < 2 || entry.arity > 3) errors.push("arity");
   if (!KEYWORD_CATEGORIES.includes(entry.category)) errors.push("category");
-  if (!entry.typedArgumentRoles || Object.keys(entry.typedArgumentRoles).length !== entry.arity) errors.push("typedArgumentRoles");
-  for (const act of ["DEAL", "PRESSURE", "ASK"]) {
-    if (!Array.isArray(entry.possibleAffordances?.[act])) errors.push(`possibleAffordances.${act}`);
+  if (!isRecord(entry.typedArgumentRoles) || Object.keys(entry.typedArgumentRoles).length !== entry.arity) errors.push("typedArgumentRoles");
+  if (isRecord(entry.typedArgumentRoles)) {
+    const argumentKeys = Object.keys(entry.typedArgumentRoles);
+    if (argumentKeys.some((key) => !KEYWORD_ARGUMENT_KEYS.includes(key))) errors.push("typedArgumentRoles.key");
+    if (Object.values(entry.typedArgumentRoles).some((role) => !stableUpperId.test(role ?? ""))) errors.push("typedArgumentRoles.value");
+    if (entry.argumentKeys && JSON.stringify(entry.argumentKeys) !== JSON.stringify(argumentKeys)) errors.push("argumentKeys");
   }
+  if (!arrayOfStrings(entry.argumentKeys) || entry.argumentKeys.length !== entry.arity) errors.push("argumentKeys");
+  if (!arrayOfStrings(entry.optionalArgumentKeys) || new Set(entry.optionalArgumentKeys).size !== entry.optionalArgumentKeys.length) errors.push("optionalArgumentKeys");
+  if (arrayOfStrings(entry.argumentKeys) && arrayOfStrings(entry.optionalArgumentKeys) && entry.argumentKeys.some((key) => entry.optionalArgumentKeys.includes(key))) errors.push("argumentKeys_overlap");
+  if (!KEYWORD_DIRECTIONS.includes(entry.directionality)) errors.push("directionality");
+  if (!KEYWORD_SYMMETRIES.includes(entry.symmetry)) errors.push("symmetry");
+  if (!KEYWORD_RECIPROCITIES.includes(entry.reciprocity)) errors.push("reciprocity");
+  if (entry.directionality === "DIRECTED" && (entry.symmetry !== "ASYMMETRIC" || entry.reciprocity !== "NOT_IMPLIED")) errors.push("directionality_policy");
+  if (!arrayOfStrings(entry.explicitNonMeanings) || !arrayOfStrings(entry.positiveExamples) || !arrayOfStrings(entry.boundaryExamples) || !arrayOfStrings(entry.counterexamples)) errors.push("examples");
+  if (!arrayOfStrings(entry.allowedEntityAndResourceTypes) || entry.allowedEntityAndResourceTypes.some((type) => !stableUpperId.test(type))) errors.push("allowedEntityAndResourceTypes");
+  if (!arrayOfStrings(entry.relatedStats) || !arrayOfStrings(entry.blockersAndDefeaters) || entry.blockersAndDefeaters.some((id) => !stableLowerId.test(id))) errors.push("blockersAndDefeaters");
+  if (!arrayOfStrings(entry.possibleHistoryEmissions) || entry.possibleHistoryEmissions.some((id) => !stableUpperId.test(id))) errors.push("possibleHistoryEmissions");
+  if (!arrayOfStrings(entry.compatibleKeywords) || !arrayOfStrings(entry.conflictingKeywords)) errors.push("keyword_connections");
+  for (const act of ["DEAL", "PRESSURE", "ASK"]) {
+    if (!arrayOfStrings(entry.possibleAffordances?.[act])) errors.push(`possibleAffordances.${act}`);
+  }
+  const contextPolicy = entry.requiredAndForbiddenContexts;
+  if (!isRecord(contextPolicy) || !arrayOfStrings(contextPolicy.required) || !arrayOfStrings(contextPolicy.forbidden)) errors.push("requiredAndForbiddenContexts");
+  else if (contextPolicy.required.some((id) => contextPolicy.forbidden.includes(id))) errors.push("context_overlap");
+  const scopePolicy = entry.truthAndKnowledge;
+  if (!isRecord(scopePolicy) || !KEYWORD_ASSERTION_SCOPES.includes(scopePolicy.defaultAssertionScope) || !arrayOfStrings(scopePolicy.allowedAssertionScopes) || !scopePolicy.allowedAssertionScopes.every((scope) => KEYWORD_ASSERTION_SCOPES.includes(scope)) || !scopePolicy.allowedAssertionScopes.includes(scopePolicy.defaultAssertionScope) || !["NONE", "SUBJECT_SCOPED", "PROPOSITION_SCOPED"].includes(scopePolicy.knowledgeBoundary)) errors.push("truthAndKnowledge");
+  const temporalPolicy = entry.temporalValidity;
+  if (!isRecord(temporalPolicy) || temporalPolicy.validFrom !== "INCLUSIVE" || temporalPolicy.validUntil !== "EXCLUSIVE_OR_NULL" || temporalPolicy.requiresActiveStatus !== true || temporalPolicy.historyMode !== "APPEND_ONLY") errors.push("temporalValidity");
+  const contradictionPolicy = entry.contradictionPolicy;
+  if (!isRecord(contradictionPolicy) || !["NONE", "PAIRWISE_CONFLICT", "TENSION"].includes(contradictionPolicy.mode) || contradictionPolicy.sameCanonicalBindings !== true || contradictionPolicy.overlappingActiveTime !== true || !nonEmptyString(contradictionPolicy.resolution)) errors.push("contradictionPolicy");
+  if (entry.conflictingKeywords.length && contradictionPolicy?.mode === "NONE") errors.push("contradictionPolicy_conflict_mode");
+  const blockerPolicy = entry.blockerPolicy;
+  if (!isRecord(blockerPolicy) || !Array.isArray(blockerPolicy.blockerIds) || JSON.stringify(blockerPolicy.blockerIds) !== JSON.stringify(entry.blockersAndDefeaters) || blockerPolicy.requiresAuthoredEvidence !== true || blockerPolicy.effect !== "BLOCK_OR_DEFEAT" || blockerPolicy.checkedBeforeAvailability !== true) errors.push("blockerPolicy");
+  const provenancePolicy = entry.provenancePolicy;
+  if (!isRecord(provenancePolicy) || JSON.stringify(provenancePolicy.requiredFields) !== JSON.stringify([...KEYWORD_PROVENANCE_FIELDS]) || provenancePolicy.evidenceClass !== "PROJECT_AUTHORED" || provenancePolicy.runtimeEligible !== false) errors.push("provenancePolicy");
+  if (!Array.isArray(entry.sourceAndProjectProvenance) || entry.sourceAndProjectProvenance.length < 1) errors.push("sourceAndProjectProvenance");
+  else entry.sourceAndProjectProvenance.forEach((provenance) => validateProvenanceRecord(provenance).forEach((error) => errors.push(error)));
+  if (entry.schemaVersion !== SCHEMA_VERSION) errors.push("schemaVersion");
   if (entry.reviewStatus !== "APPROVED") errors.push("reviewStatus");
   return errors;
 }
 
+export function validateKeywordAssertion(assertion) {
+  if (!isRecord(assertion)) return ["assertion_not_object"];
+  const errors = ["assertionId", "keywordId", "args", "scope", "polarity", "status", "contextIds", "validFrom", "validUntil", "provenance"]
+    .filter((field) => !(field in assertion));
+  const definition = KEYWORD_BY_ID.get(assertion.keywordId);
+  if (!definition) errors.push("keywordId");
+  if (!nonEmptyString(assertion.assertionId)) errors.push("assertionId");
+  if (definition && isRecord(assertion.args)) {
+    for (const key of definition.argumentKeys) if (!(key in assertion.args)) errors.push(`args.${key}`);
+    for (const key of Object.keys(assertion.args)) if (![...definition.argumentKeys, ...definition.optionalArgumentKeys].includes(key)) errors.push(`args.${key}`);
+  } else if (!isRecord(assertion.args)) errors.push("args");
+  if (definition && !definition.truthAndKnowledge.allowedAssertionScopes.includes(assertion.scope)) errors.push("scope");
+  if (!KEYWORD_ASSERTION_POLARITIES.includes(assertion.polarity)) errors.push("polarity");
+  if (!KEYWORD_ASSERTION_STATUSES.includes(assertion.status)) errors.push("status");
+  if (!Array.isArray(assertion.contextIds) || assertion.contextIds.some((id) => !nonEmptyString(id)) || new Set(assertion.contextIds).size !== assertion.contextIds.length) errors.push("contextIds");
+  if (!isIsoDate(assertion.validFrom)) errors.push("validFrom");
+  if (assertion.validUntil !== null && !isIsoDate(assertion.validUntil)) errors.push("validUntil");
+  if (isIsoDate(assertion.validFrom) && isIsoDate(assertion.validUntil) && new Date(assertion.validUntil).getTime() <= new Date(assertion.validFrom).getTime()) errors.push("validity_order");
+  validateProvenanceRecord(assertion.provenance).forEach((error) => errors.push(error));
+  return [...new Set(errors)];
+}
+
+export function isKeywordAssertionActive(assertion, now, contextId = null) {
+  if (validateKeywordAssertion(assertion).length) return false;
+  const timestamp = new Date(now).getTime();
+  if (Number.isNaN(timestamp) || assertion.polarity !== "ASSERTED" || assertion.status !== "ACTIVE") return false;
+  if (new Date(assertion.validFrom).getTime() > timestamp) return false;
+  if (assertion.validUntil !== null && timestamp >= new Date(assertion.validUntil).getTime()) return false;
+  return contextId === null || assertion.contextIds.length === 0 || assertion.contextIds.includes(contextId);
+}
+
 export function validateKeywordSet(entries = KEYWORDS) {
   const errors = [];
+  if (!Array.isArray(entries)) return ["keyword_set_not_array"];
   if (entries.length < 10 || entries.length > 20) errors.push("keyword_count_out_of_range");
   const ids = entries.map((entry) => entry.keywordId);
   if (new Set(ids).size !== ids.length) errors.push("duplicate_keyword_id");
   entries.forEach((entry) => validateKeywordDefinition(entry).forEach((error) => errors.push(`${entry.keywordId}:${error}`)));
+  const idSet = new Set(ids);
+  entries.forEach((entry) => {
+    for (const relatedId of [...(entry.compatibleKeywords ?? []), ...(entry.conflictingKeywords ?? [])]) if (!idSet.has(relatedId)) errors.push(`${entry.keywordId}:unknown_keyword_reference:${relatedId}`);
+    for (const relatedId of entry.conflictingKeywords ?? []) {
+      if (!idSet.has(relatedId) || !(entries.find((candidate) => candidate.keywordId === relatedId)?.conflictingKeywords ?? []).includes(entry.keywordId)) errors.push(`${entry.keywordId}:non_symmetric_conflict:${relatedId}`);
+    }
+  });
   const connectionCounts = Object.fromEntries(entries.map((entry) => [entry.keywordId, CROSS_KEYWORD_RULES.filter((rule) => rule.keywords.includes(entry.keywordId)).length]));
   Object.entries(connectionCounts).forEach(([id, count]) => { if (count < 2) errors.push(`${id}:insufficient_cross_keyword_connections`); });
+  for (const rule of [...CROSS_KEYWORD_RULES, ...CONTRADICTION_RULES]) {
+    const idsInRule = rule.keywords ?? [rule.leftKeywordId, rule.rightKeywordId];
+    if (!stableUpperId.test(rule.ruleId) || idsInRule.some((id) => !idSet.has(id))) errors.push(`${rule.ruleId}:unknown_or_invalid_keyword_reference`);
+  }
   return errors;
 }

@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dpa-message-foundations.invalid/schemas/semantic-request.schema.json",
+  "title": "DPA semantic request contract",
+  "type": "object",
+  "required": ["schemaVersion", "adapterVersion", "semanticRequestId", "actionId", "actorId", "targetId", "contextId", "speechAct", "outcome", "slots", "mandatorySemanticFacts", "forbiddenSemanticAdditions", "provenance"],
+  "properties": {
+    "schemaVersion": { "const": "dpa-keyword-foundation@0.1" },
+    "adapterVersion": { "type": "string", "minLength": 1 },
+    "semanticRequestId": { "type": "string", "minLength": 1 },
+    "actionId": { "type": "string", "pattern": "^[A-Z][A-Z0-9_]+$" },
+    "actorId": { "type": "string", "minLength": 1 },
+    "targetId": { "type": "string", "minLength": 1 },
+    "contextId": { "type": "string", "minLength": 1 },
+    "actor": { "type": "string", "minLength": 1 },
+    "target": { "type": "string", "minLength": 1 },
+    "action": { "type": "string", "minLength": 1 },
+    "speechAct": { "enum": ["DEAL", "PRESSURE", "ASK"] },
+    "outcome": { "const": "PROPOSED" },
+    "slots": { "type": "object", "minProperties": 1 },
+    "mandatorySemanticFacts": { "type": "array" },
+    "forbiddenSemanticAdditions": { "type": "array" },
+    "provenance": { "type": "array", "minItems": 1, "items": { "type": "object", "required": ["sourceId", "sourceRecordId", "transformVersion", "licenseId"], "additionalProperties": true } }
+  },
+  "additionalProperties": false
+}

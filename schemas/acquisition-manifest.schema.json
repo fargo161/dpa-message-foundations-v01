@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dpa-message-foundations.invalid/schemas/acquisition-manifest.schema.json",
+  "title": "DPA real acquisition receipt manifest",
+  "type": "object",
+  "required": ["generatedAt", "sources"],
+  "properties": {
+    "generatedAt": { "type": "string", "format": "date-time" },
+    "sources": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["sourceId", "status", "sourceVersion", "licenseId", "artifactFilename", "artifactCachePath", "retrievedAt", "byteSize", "sha256", "counts", "probes", "evidenceBoundary"],
+        "properties": {
+          "sourceId": { "type": "string", "minLength": 1 },
+          "status": { "enum": ["ACQUIRED_AND_INDEXED", "ACQUIRED_NOT_INDEXED", "FIXTURE_ONLY", "MANIFEST_ONLY", "BLOCKED", "EXCLUDED"] },
+          "sourceVersion": { "type": "string", "minLength": 1 },
+          "licenseId": { "type": "string", "minLength": 1 },
+          "artifactFilename": { "type": "string", "minLength": 1 },
+          "artifactCachePath": { "type": "string", "minLength": 1 },
+          "retrievedAt": { "type": "string", "format": "date-time" },
+          "byteSize": { "type": "integer", "minimum": 1 },
+          "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+          "counts": { "type": "object", "required": ["raw", "accepted", "rejected", "duplicate", "normalized", "indexed"], "properties": { "raw": { "type": "integer", "minimum": 0 }, "accepted": { "type": "integer", "minimum": 0 }, "rejected": { "type": "integer", "minimum": 0 }, "duplicate": { "type": "integer", "minimum": 0 }, "aggregatedAnnotationRows": { "type": "integer", "minimum": 0 }, "normalized": { "type": "integer", "minimum": 0 }, "indexed": { "type": "integer", "minimum": 0 } }, "additionalProperties": true },
+          "probes": { "type": "array" },
+          "evidenceBoundary": { "type": "string", "minLength": 1 }
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": true
+}

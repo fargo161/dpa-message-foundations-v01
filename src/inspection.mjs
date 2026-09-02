@@ -1,18 +1,78 @@
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { KEYWORDS, CROSS_KEYWORD_RULES, validateKeywordSet } from "./keywords.mjs";
-import { ACTION_DEFINITIONS, DEMO_SCENARIOS, enumerateSemanticConfigurations, scenarioActionSummary } from "./mechanics.mjs";
+import { ACTION_DEFINITIONS, DEMO_SCENARIOS, enumerateSemanticConfigurations, evaluateAvailableActions, resolveAction, scenarioActionSummary } from "./mechanics.mjs";
 import { BASED_CUES, BASED_VIBES, DELIVERY_INTENSITIES, SPEECH_ACTS, buildMatrixWithAnchors, loadAuthoredAnchors, validateBased } from "./based.mjs";
 import { RELATIONSHIP_ROLE_CORE, validateRoleCore } from "./roles.mjs";
 import { SOURCE_MANIFESTS, validateAllSourceManifests } from "./sources.mjs";
 import { FoundationStore } from "./store.mjs";
-import { FACE_COMPATIBILITY_BOUNDARY, TPL_ATOMS, TPL_CONSTRUCTIONS, TPL_FAMILIES, TPL_PROTOCOLS, TPL_STATUSES, tplStatusSummary } from "./tpl.mjs";
+import { FACE_COMPATIBILITY_BOUNDARY, TPL_ATOMS, TPL_CONSTRUCTIONS, TPL_FAMILIES, TPL_PROTOCOLS, TPL_STATUSES, resolveMatrixCell, tplStatusSummary } from "./tpl.mjs";
+import { adaptResolvedActionToSemanticRequest } from "./action-tpl-adapter.mjs";
 
 const countBy = (items, selector) => Object.fromEntries(TPL_STATUSES.map((status) => [status, items.filter((item) => selector(item) === status).length]));
 const acquisitionManifestPath = fileURLToPath(new URL("../data/acquisition-manifest.json", import.meta.url));
 
 function loadAcquisitionManifest() {
   try { return JSON.parse(readFileSync(acquisitionManifestPath, "utf8")); } catch { return { generatedAt: null, sources: [] }; }
+}
+
+export function buildAuthoringPipelineTrace({ state = DEMO_SCENARIOS[0], vibeId = "AS", deliveryIntensity = "BALANCED" } = {}) {
+  const pair = state.recommendedPairs[0];
+  const evaluations = evaluateAvailableActions(state, pair.actorId, pair.targetId, pair.contextId);
+  const availableEvaluations = evaluations.filter((entry) => entry.status === "AVAILABLE");
+  const attempts = availableEvaluations.map((evaluation) => {
+    const resolvedAction = resolveAction(state, evaluation.actionId, pair.actorId, pair.targetId, pair.contextId);
+    const adapterInput = Object.prototype.hasOwnProperty.call(resolvedAction, "contextId")
+      ? resolvedAction
+      : { ...resolvedAction, contextId: pair.contextId };
+    return { evaluation, resolvedAction, adapted: adaptResolvedActionToSemanticRequest(adapterInput) };
+  });
+  const selected = attempts.find((attempt) => attempt.adapted.ok);
+  if (!selected) throw new Error("AUTHORING_PIPELINE_NO_RENDERABLE_ACTION");
+
+  const matrix = buildMatrixWithAnchors();
+  const coordinate = matrix.find((entry) => entry.speechAct === selected.resolvedAction.macroAct && entry.vibeId === vibeId && entry.deliveryIntensity === deliveryIntensity);
+  if (!coordinate) throw new Error(`AUTHORING_PIPELINE_COORDINATE_NOT_FOUND:${selected.resolvedAction.macroAct}_${vibeId}_${deliveryIntensity}`);
+  const safeRender = resolveMatrixCell(matrix, selected.adapted.semanticRequest, vibeId, deliveryIntensity);
+
+  return {
+    authoredFacts: {
+      count: state.facts.length,
+      activeCount: state.facts.filter((fact) => fact.status === "ACTIVE").length,
+      sourceIds: [...new Set(state.facts.map((fact) => fact.provenance?.sourceId).filter(Boolean))],
+    },
+    pair,
+    availableActions: evaluations.filter((entry) => entry.status === "AVAILABLE").map(({ actionId, displayName, macroAct, status }) => ({ actionId, displayName, macroAct, status })),
+    blockedActionCount: evaluations.filter((entry) => entry.status === "BLOCKED").length,
+    adapterAttempts: attempts.map(({ evaluation, adapted }) => ({
+      actionId: evaluation.actionId,
+      displayName: evaluation.displayName,
+      status: adapted.status,
+      failureCodes: (adapted.failures ?? []).map((failure) => failure.code),
+    })),
+    resolvedAction: {
+      actionId: selected.resolvedAction.actionId,
+      displayName: selected.evaluation.displayName,
+      macroAct: selected.resolvedAction.macroAct,
+      outcome: selected.resolvedAction.outcome,
+      payload: selected.resolvedAction.payload,
+      emittedHistory: selected.resolvedAction.emittedHistory,
+      trace: selected.resolvedAction.trace,
+    },
+    semanticRequest: selected.adapted.semanticRequest,
+    based: {
+      matrixKey: coordinate.key,
+      speechAct: coordinate.speechAct,
+      vibeId: coordinate.vibeId,
+      vibeName: BASED_VIBES.find((entry) => entry.vibeId === coordinate.vibeId)?.name ?? coordinate.vibeId,
+      deliveryIntensity: coordinate.deliveryIntensity,
+      reviewStatus: coordinate.reviewStatus,
+      candidateAnchorIds: coordinate.candidateAnchorIds,
+    },
+    safeRender,
+    matrixCells: matrix.length,
+    anchoredMatrixCells: matrix.filter((entry) => entry.candidateAnchorIds.length > 0).length,
+  };
 }
 
 export function buildInspectionReport() {
@@ -66,7 +126,9 @@ export function buildInspectionReport() {
           targetId: pair.targetId,
           contextId: pair.contextId,
           availableActionIds: pair.actions.filter((action) => action.status === "AVAILABLE").map((action) => action.actionId),
+          availableActions: pair.actions.filter((action) => action.status === "AVAILABLE").map(({ actionId, displayName, macroAct, status }) => ({ actionId, displayName, macroAct, status })),
           blockedActionIds: pair.actions.filter((action) => action.status === "BLOCKED").map((action) => action.actionId),
+          blockedActions: pair.actions.filter((action) => action.status === "BLOCKED").map(({ actionId, displayName, macroAct, status, blockers }) => ({ actionId, displayName, macroAct, status, blockers })),
           blockerCodes: [...new Set(pair.actions.flatMap((action) => action.blockers.map((blocker) => blocker.code)))],
         })),
       })),

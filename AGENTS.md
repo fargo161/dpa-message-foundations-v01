@@ -16,7 +16,7 @@ This isolated repository implements the Phase 1 semantic keyword, mechanics, BAS
 
 ## Data and provenance
 
-- Raw corpora belong only in ignored `.cache/emp-lore-packs/` subdirectories.
+- Raw corpora belong only in ignored `.cache/external-data/` subdirectories.
 - A manifest-only or fixture-only source is never described as downloaded, imported, approved, or runtime-ready.
 - Never invent checksums, counts, versions, or license terms. Real receipts are created only from validated bytes.
 - Keep source evidence, normalized candidates, review records, approved content, and runtime-safe content distinct.

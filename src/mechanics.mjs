@@ -2,13 +2,28 @@ import { KEYWORD_BY_ID } from "./keywords.mjs";
 
 export const MACRO_ACTS = Object.freeze(["DEAL", "PRESSURE", "ASK"]);
 export const ACTION_STATUS = Object.freeze(["AVAILABLE", "BLOCKED"]);
+export const FACT_SCOPES = Object.freeze(["ACTUAL", "BELIEF"]);
+export const FACT_POLARITIES = Object.freeze(["ASSERTED", "DENIED", "DISPUTED"]);
 
 const iso = (value) => new Date(value).toISOString();
+const timeOf = (value) => {
+  const time = new Date(value).getTime();
+  return Number.isNaN(time) ? null : time;
+};
+
+const stableValue = (value) => {
+  if (value === null || typeof value !== "object") return value;
+  if (Array.isArray(value)) return value.map(stableValue);
+  return Object.fromEntries(Object.keys(value).sort().map((key) => [key, stableValue(value[key])]));
+};
+
+const stableKey = (value) => JSON.stringify(stableValue(value));
 
 export function fact(keywordId, args, options = {}) {
   if (!KEYWORD_BY_ID.has(keywordId)) throw new Error(`Unknown keyword: ${keywordId}`);
+  const defaultAssertionId = `${keywordId}_${Object.entries(stableValue(args)).map(([key, value]) => `${key}_${String(value)}`).join("_").toLowerCase()}`;
   return {
-    assertionId: options.assertionId ?? `${keywordId}_${Object.values(args).join("_").toLowerCase()}`,
+    assertionId: options.assertionId ?? defaultAssertionId,
     keywordId,
     args: structuredClone(args),
     scope: options.scope ?? "ACTUAL",
@@ -173,15 +188,23 @@ export const DEMO_SCENARIOS = Object.freeze([
 ]);
 
 function matchesArgs(actual, expected) {
-  return Object.entries(expected).every(([key, value]) => actual[key] === value);
+  return Object.entries(expected).every(([key, value]) => stableKey(actual[key]) === stableKey(value));
+}
+
+export function contextIsActive(state, contextId) {
+  return Boolean(contextId && state.contexts?.some((context) => context.id === contextId && context.active === true));
 }
 
 export function activeFacts(state, keywordId, options = {}) {
-  const now = new Date(state.now).getTime();
+  const now = timeOf(state.now);
+  const scope = options.scope ?? "ACTUAL";
+  if (now === null || (options.contextId && !contextIsActive(state, options.contextId))) return [];
   return state.facts.filter((candidate) => {
     if (candidate.keywordId !== keywordId || candidate.polarity !== "ASSERTED" || candidate.status !== "ACTIVE") return false;
-    if (options.scope && candidate.scope !== options.scope) return false;
-    if (candidate.validUntil && new Date(candidate.validUntil).getTime() <= now) return false;
+    if (scope !== "ANY" && (candidate.scope ?? "ACTUAL") !== scope) return false;
+    const validFrom = timeOf(candidate.validFrom);
+    const validUntil = candidate.validUntil == null ? null : timeOf(candidate.validUntil);
+    if (validFrom === null || validFrom > now || (candidate.validUntil != null && (validUntil === null || now >= validUntil))) return false;
     if (options.contextId && candidate.contextIds.length && !candidate.contextIds.includes(options.contextId)) return false;
     return !options.args || matchesArgs(candidate.args, options.args);
   });
@@ -216,26 +239,88 @@ const checkNoFact = (keywordId, args, code, message) => (state, actorId, targetI
   return matches.length ? fail(code, message, matches.map((entry) => entry.assertionId)) : pass(code, `No ${keywordId} defeater is active.`);
 };
 
-const checkContext = (expected) => (state, _actorId, _targetId, contextId) => contextId === expected ? pass("CONTEXT_MATCH", `Context ${expected} is active.`) : fail("CONTEXT_REQUIRED", `Action requires context ${expected}.`);
+const activeBlockers = (state, action, actorId, targetId, contextId) => {
+  const now = timeOf(state.now);
+  if (now === null) return [];
+  return (state.blockers ?? []).filter((blocker) => {
+    if (blocker.status && blocker.status !== "ACTIVE") return false;
+    if (blocker.scope && blocker.scope !== "ACTUAL") return false;
+    const validFrom = blocker.validFrom == null ? null : timeOf(blocker.validFrom);
+    const validUntil = blocker.validUntil == null ? null : timeOf(blocker.validUntil);
+    if (validFrom === null && blocker.validFrom != null) return false;
+    if (validUntil === null && blocker.validUntil != null) return false;
+    if (validFrom !== null && validFrom > now) return false;
+    if (validUntil !== null && now >= validUntil) return false;
+    if (blocker.contextId && blocker.contextId !== contextId) return false;
+    if (Array.isArray(blocker.contextIds) && blocker.contextIds.length && !blocker.contextIds.includes(contextId)) return false;
+    if (blocker.actionId && blocker.actionId !== action.actionId) return false;
+    if (Array.isArray(blocker.actionIds) && blocker.actionIds.length && !blocker.actionIds.includes(action.actionId)) return false;
+    if (blocker.id && action.blockerIds?.length && !action.blockerIds.includes(blocker.id) && !blocker.actionId && !blocker.actionIds) return false;
+    if (blocker.id && !blocker.actor && !blocker.target && !blocker.actionId && !blocker.actionIds && !action.blockerIds?.includes(blocker.id)) return false;
+    if (blocker.actor && blocker.actor !== actorId) return false;
+    if (blocker.target && blocker.target !== targetId) return false;
+    return true;
+  });
+};
+
+const checkStateBlockers = (action) => (state, actorId, targetId, contextId) => {
+  const matches = activeBlockers(state, action, actorId, targetId, contextId);
+  return matches.length
+    ? fail("STATE_BLOCKER", "An authored state blocker prevents this action.", matches.map((entry) => entry.id))
+    : pass("NO_STATE_BLOCKER", "No authored state blocker is active for this action.");
+};
+
+const checkAuthorityContradiction = (state, actorId, targetId, contextId) => {
+  const permitted = activeFacts(state, "PERMITTED", { args: { subject: targetId, object: actorId }, contextId });
+  const prohibited = activeFacts(state, "PROHIBITED", { args: { subject: targetId, object: actorId }, contextId });
+  const sameTerm = permitted.filter((permission) => prohibited.some((ban) => stableKey(permission.args.term) === stableKey(ban.args.term)));
+  return sameTerm.length
+    ? fail("CONTRADICTORY_AUTHORITY", "PERMITTED and PROHIBITED are both authored for the same actor, target, and term; prohibition wins.", [...sameTerm.flatMap((entry) => [entry.assertionId]), ...prohibited.filter((entry) => sameTerm.some((permission) => stableKey(permission.args.term) === stableKey(entry.args.term))).map((entry) => entry.assertionId)])
+    : pass("NO_CONTRADICTORY_AUTHORITY", "No contradictory permission and prohibition are active.");
+};
+
+const relationshipTension = (state, actorId, targetId, contextId) => {
+  const trusts = activeFacts(state, "TRUSTS", { args: { subject: actorId, object: targetId }, contextId });
+  const resents = activeFacts(state, "RESENTS", { args: { subject: actorId, object: targetId }, contextId });
+  return trusts.length && resents.length
+    ? pass("TRUST_RESENTMENT_TENSION", "TRUSTS and RESENTS coexist as authored relationship tension; neither fact is silently discarded.", [...trusts, ...resents].map((entry) => entry.assertionId))
+    : pass("NO_TRUST_RESENTMENT_TENSION", "No authored trust/resentment tension is active.");
+};
+
+const contextChecks = new WeakSet();
+
+const checkContext = (expected) => {
+  const check = (state, _actorId, _targetId, contextId) => {
+    if (!contextIsActive(state, contextId)) return fail(contextId ? "CONTEXT_NOT_ACTIVE" : "CONTEXT_REQUIRED", contextId ? `Context ${contextId} does not exist or is inactive.` : `Action requires context ${expected}.`);
+    return contextId === expected ? pass("CONTEXT_MATCH", `Context ${expected} is active.`) : fail("CONTEXT_REQUIRED", `Action requires context ${expected}.`);
+  };
+  contextChecks.add(check);
+  return check;
+};
+
+const checkActiveContext = (state, _actorId, _targetId, contextId) => contextIsActive(state, contextId)
+  ? pass("CONTEXT_ACTIVE", `Context ${contextId} is active.`)
+  : fail(contextId ? "CONTEXT_NOT_ACTIVE" : "CONTEXT_REQUIRED", contextId ? `Context ${contextId} does not exist or is inactive.` : "An active context is required.");
+contextChecks.add(checkActiveContext);
 
 export const ACTION_DEFINITIONS = Object.freeze([
   {
     actionId: "REQUEST_EXTENSION", displayName: "Request a repayment extension", macroAct: "ASK",
-    requiredChecks: [checkContext("PRIVATE_NEGOTIATION"), checkAnyFact("OWES", "An active debt"), checkFact("NEEDS", { subject: "$ACTOR", object: "debt_relief" }, "The actor needs debt relief")],
+    requiredChecks: [checkContext("PRIVATE_NEGOTIATION"), checkFact("OWES", { subject: "$ACTOR", object: "$TARGET" }, "An active debt connects the actor and target"), checkFact("NEEDS", { subject: "$ACTOR", object: "debt_relief" }, "The actor needs debt relief")],
     forbiddenChecks: [],
     payload: (actorId, targetId) => ({ actor: actorId, target: targetId, action: "REQUEST_EXTENSION", object: "debt_relief" }),
     history: "EXTENSION_REQUESTED",
   },
   {
     actionId: "OFFER_PARTIAL_PAYMENT", displayName: "Offer a partial payment", macroAct: "DEAL",
-    requiredChecks: [checkContext("PRIVATE_NEGOTIATION"), checkAnyFact("OWES", "An active debt"), checkFact("OWNS", { subject: "$ACTOR", object: "cash_80_usd" }, "The actor owns a cash resource"), checkFact("NEEDS", { subject: "$ACTOR", object: "debt_relief" }, "The actor needs debt relief")],
+    requiredChecks: [checkContext("PRIVATE_NEGOTIATION"), checkFact("OWES", { subject: "$ACTOR", object: "$TARGET" }, "An active debt connects the actor and target"), checkFact("OWNS", { subject: "$ACTOR", object: "cash_80_usd" }, "The actor owns a cash resource"), checkFact("NEEDS", { subject: "$ACTOR", object: "debt_relief" }, "The actor needs debt relief")],
     forbiddenChecks: [],
     payload: (actorId, targetId) => ({ actor: actorId, target: targetId, action: "OFFER_PARTIAL_PAYMENT", offer: { object: "cash_80_usd", quantity: 80, unit: "USD" }, return: { object: "debt_250_usd", status: "partial_satisfaction" } }),
     history: "PARTIAL_PAYMENT_OFFERED",
   },
   {
     actionId: "OFFER_CASH_FOR_EXTENSION", displayName: "Offer cash for an extension", macroAct: "DEAL",
-    requiredChecks: [checkContext("PRIVATE_NEGOTIATION"), checkAnyFact("OWES", "An active debt"), checkFact("OWNS", { subject: "$ACTOR", object: "cash_80_usd" }, "The actor owns a cash resource"), checkFact("PROMISED_TO", { subject: "$ACTOR", object: "$TARGET" }, "A commitment connects the parties")],
+    requiredChecks: [checkContext("PRIVATE_NEGOTIATION"), checkFact("OWES", { subject: "$ACTOR", object: "$TARGET" }, "An active debt connects the actor and target"), checkFact("OWNS", { subject: "$ACTOR", object: "cash_80_usd" }, "The actor owns a cash resource"), checkFact("PROMISED_TO", { subject: "$ACTOR", object: "$TARGET" }, "A commitment connects the parties")],
     forbiddenChecks: [],
     payload: (actorId, targetId) => ({ actor: actorId, target: targetId, action: "OFFER_CASH_FOR_EXTENSION", offer: { object: "cash_80_usd", quantity: 80, unit: "USD" }, return: { object: "repayment_deadline", change: "extension" } }),
     history: "CASH_FOR_EXTENSION_OFFERED",
@@ -244,6 +329,7 @@ export const ACTION_DEFINITIONS = Object.freeze([
     actionId: "REQUEST_ACCESS", displayName: "Request controlled access", macroAct: "ASK",
     requiredChecks: [checkContext("ACCESS_REVIEW"), checkFact("CONTROLS", { subject: "$TARGET", object: "archive_door" }, "The target controls the access channel"), checkFact("PERMITTED", { subject: "$TARGET", object: "$ACTOR", term: "archive_door" }, "The target has authored permission"), checkFact("DEPENDS_ON", { subject: "$ACTOR", object: "archive_room" }, "The actor depends on the resource")],
     forbiddenChecks: [checkNoFact("PROHIBITED", { subject: "$TARGET", object: "$ACTOR", term: "archive_door" }, "SPECIFIC_PROHIBITION", "A specific prohibition defeats this access request.")],
+    blockerIds: ["active_lock", "door_lock"],
     payload: (actorId, targetId) => ({ actor: actorId, target: targetId, action: "REQUEST_ACCESS", object: "archive_door", permission: "requested" }),
     history: "ACCESS_REQUESTED",
   },
@@ -293,10 +379,15 @@ function runChecks(checks, state, actorId, targetId, contextId) {
 export function evaluateAction(state, actionId, actorId, targetId, contextId) {
   const action = ACTION_BY_ID.get(actionId);
   if (!action) throw new Error(`Unknown action: ${actionId}`);
-  const required = runChecks(action.requiredChecks, state, actorId, targetId, contextId);
-  const forbidden = runChecks(action.forbiddenChecks, state, actorId, targetId, contextId);
+  const hasContextCheck = action.requiredChecks.some((check) => contextChecks.has(check));
+  const required = runChecks(hasContextCheck ? action.requiredChecks : [checkActiveContext, ...action.requiredChecks], state, actorId, targetId, contextId);
+  const consistencyChecks = [relationshipTension];
+  const stateBlockerCheck = checkStateBlockers(action);
+  const contradictionChecks = actionId === "REQUEST_ACCESS" ? [checkAuthorityContradiction] : [];
+  const forbidden = runChecks([...action.forbiddenChecks, stateBlockerCheck, ...contradictionChecks], state, actorId, targetId, contextId);
   const failed = [...required.filter((entry) => !entry.passed), ...forbidden.filter((entry) => !entry.passed)];
   const available = failed.length === 0;
+  const consistency = runChecks(consistencyChecks, state, actorId, targetId, contextId);
   return {
     actionId,
     displayName: action.displayName,
@@ -307,11 +398,13 @@ export function evaluateAction(state, actionId, actorId, targetId, contextId) {
     status: available ? "AVAILABLE" : "BLOCKED",
     requiredChecks: required,
     forbiddenChecks: forbidden,
+    consistencyChecks: consistency,
     blockers: failed.map((entry) => ({ code: entry.code, message: entry.message, matchedFacts: entry.matchedFacts })),
     trace: [
       { step: "ACTION_SELECTED", detail: `${actionId} selected for ${actorId} → ${targetId}.` },
       ...required.map((entry) => ({ step: "REQUIRED_ASSERTION", code: entry.code, passed: entry.passed, detail: entry.message, matchedFacts: entry.matchedFacts })),
       ...forbidden.map((entry) => ({ step: "DEFEATER_CHECK", code: entry.code, passed: entry.passed, detail: entry.message, matchedFacts: entry.matchedFacts })),
+      ...consistency.map((entry) => ({ step: "CONSISTENCY_CHECK", code: entry.code, passed: entry.passed, detail: entry.message, matchedFacts: entry.matchedFacts })),
       { step: "AVAILABILITY_RESOLVED", status: available ? "AVAILABLE" : "BLOCKED", detail: available ? "All authored preconditions passed." : "At least one authored precondition or defeater failed." },
     ],
   };
@@ -326,10 +419,19 @@ export function evaluateAvailableActions(state, actorId, targetId, contextId, ma
 export function resolveAction(state, actionId, actorId, targetId, contextId) {
   const evaluation = evaluateAction(state, actionId, actorId, targetId, contextId);
   const action = ACTION_BY_ID.get(actionId);
-  const payload = action.payload(actorId, targetId, state);
   const nextState = structuredClone(state);
+  const available = evaluation.status === "AVAILABLE";
+  const payload = available ? action.payload(actorId, targetId, state) : null;
+  const existingHistoryIds = new Set((state.history ?? []).map((event) => event.historyId));
+  const priorOccurrences = (state.history ?? []).filter((event) => event.actionId === actionId && event.actorId === actorId && event.targetId === targetId && event.contextId === contextId).length;
+  let occurrence = priorOccurrences + 1;
+  let historyId = `${state.scenarioId}:${action.history}:${actorId}:${targetId}:${contextId}:${occurrence}`;
+  while (existingHistoryIds.has(historyId)) {
+    occurrence += 1;
+    historyId = `${state.scenarioId}:${action.history}:${actorId}:${targetId}:${contextId}:${occurrence}`;
+  }
   const historyEvent = {
-    historyId: `${state.scenarioId}:${action.history}`,
+    historyId,
     eventType: action.history,
     actorId,
     targetId,
@@ -338,7 +440,7 @@ export function resolveAction(state, actionId, actorId, targetId, contextId) {
     createdAt: iso(state.now),
     provenance: projectProv(`${state.scenarioId}:${action.history}`),
   };
-  if (evaluation.status === "AVAILABLE") nextState.history.push(historyEvent);
+  if (available) nextState.history.push(historyEvent);
   return {
     actionId,
     actorId,
@@ -346,13 +448,14 @@ export function resolveAction(state, actionId, actorId, targetId, contextId) {
     macroAct: action.macroAct,
     payload,
     preconditionEvaluations: { required: evaluation.requiredChecks, forbidden: evaluation.forbiddenChecks },
-    outcome: evaluation.status === "AVAILABLE" ? "PROPOSED" : "BLOCKED",
-    deterministicEffects: evaluation.status === "AVAILABLE" ? [{ kind: "EMIT_HISTORY", historyId: historyEvent.historyId }] : [],
-    emittedHistory: evaluation.status === "AVAILABLE" ? [historyEvent] : [],
-    mandatorySemanticFacts: Object.keys(payload),
+    outcome: available ? "PROPOSED" : "BLOCKED",
+    deterministicEffects: available ? [{ kind: "EMIT_HISTORY", historyId: historyEvent.historyId }] : [],
+    emittedHistory: available ? [historyEvent] : [],
+    mandatorySemanticFacts: available ? Object.keys(payload) : [],
     forbiddenSemanticAdditions: ["unauthored_deadline", "unauthored_threat", "unauthored_promise", "unauthored_knowledge"],
-    trace: evaluation.trace,
-    stateBefore: state,
+    quarantine: available ? null : { status: "QUARANTINED", actionId, reason: "BLOCKED_ACTION_HAS_NO_RENDERABLE_SEMANTIC_PAYLOAD", blockers: evaluation.blockers },
+    trace: [...evaluation.trace, ...(available ? [] : [{ step: "BLOCKED_ACTION_QUARANTINED", status: "QUARANTINED", detail: "No semantic payload or history effect is exposed for a blocked action." }])],
+    stateBefore: structuredClone(state),
     stateAfter: nextState,
   };
 }
@@ -373,29 +476,58 @@ export function scenarioActionSummary(state) {
 
 export function enumerateSemanticConfigurations(states, coordinates) {
   const valid = [];
-  const blocked = [];
+  const seen = new Set();
+  let actCompatibleTheoretical = 0;
+  let actIncompatible = 0;
+  let blocked = 0;
+  let duplicate = 0;
+  let unreachable = 0;
+  const coordinateList = [...coordinates];
   for (const state of states) {
     for (const pair of state.recommendedPairs) {
       const evaluations = evaluateAvailableActions(state, pair.actorId, pair.targetId, pair.contextId);
       for (const evaluation of evaluations) {
-        for (const coordinate of coordinates) {
+        for (const coordinate of coordinateList) {
           const row = { scenarioId: state.scenarioId, actorId: pair.actorId, targetId: pair.targetId, actionId: evaluation.actionId, macroAct: evaluation.macroAct, coordinateKey: coordinate.key };
-          (evaluation.status === "AVAILABLE" ? valid : blocked).push(row);
+          const coordinateIsValid = typeof coordinate.key === "string" && MACRO_ACTS.includes(coordinate.speechAct);
+          if (!coordinateIsValid || pair.reachable === false || coordinate.reachable === false) {
+            unreachable += 1;
+          } else if (coordinate.speechAct !== evaluation.macroAct) {
+            actIncompatible += 1;
+          } else {
+            actCompatibleTheoretical += 1;
+            if (evaluation.status === "BLOCKED") {
+              blocked += 1;
+            } else {
+              const candidateKey = stableKey(row);
+              if (seen.has(candidateKey)) duplicate += 1;
+              else {
+                seen.add(candidateKey);
+                valid.push(row);
+              }
+            }
+          }
         }
       }
     }
   }
-  const unique = new Map(valid.map((entry) => [`${entry.scenarioId}|${entry.actorId}|${entry.targetId}|${entry.actionId}|${entry.coordinateKey}`, entry]));
-  const duplicateCount = valid.length - unique.size;
   const candidatePairs = states.reduce((sum, state) => sum + state.recommendedPairs.length, 0);
-  const theoretical = candidatePairs * ACTION_DEFINITIONS.length * coordinates.length;
+  const totalCandidateCombinations = candidatePairs * ACTION_DEFINITIONS.length * coordinateList.length;
   return {
-    theoretical,
+    theoretical: actCompatibleTheoretical,
+    actCompatibleTheoretical,
+    totalCandidateCombinations,
+    actIncompatible,
+    blocked,
+    duplicate,
+    unreachable,
+    validUnique: valid.length,
     candidatePairs,
-    blockedCandidates: blocked.length,
-    duplicateCandidates: duplicateCount,
-    validUniqueSemanticConfigurations: unique.size,
-    validConfigurations: [...unique.values()],
-    notes: ["Semantic capacity includes only authored action availability crossed with structural performance coordinates.", "It does not claim runtime TPL render capacity; all matrix cells are currently UNMAPPED."],
+    blockedCandidates: blocked,
+    duplicateCandidates: duplicate,
+    validUniqueSemanticConfigurations: valid.length,
+    validConfigurations: valid,
+    classificationTotals: { theoretical: actCompatibleTheoretical, actIncompatible, blocked, duplicate, unreachable, validUnique: valid.length },
+    notes: ["Theoretical is the act-compatible action/coordinate cross-product; act-incompatible combinations are excluded before availability evaluation.", "Blocked is an act-compatible action whose authored mechanics evaluation is BLOCKED; duplicate and unreachable candidates are retained as explicit exclusion classes.", "It does not claim runtime TPL render capacity; all matrix cells are currently UNMAPPED."],
   };
 }

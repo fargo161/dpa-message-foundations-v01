@@ -1,4 +1,4 @@
-import { BASED_VIBES, buildMatrixWithAnchors, generateMatrix } from "./based.mjs";
+import { ACTION_INVARIANTS, BASED_VIBES, DELIVERY_INTENSITIES, SPEECH_ACTS, buildMatrixWithAnchors, generateMatrix } from "./based.mjs";
 
 export const TPL_FAMILIES = Object.freeze(["VOICE_QUALITY", "VOCALIZATION", "TACTILE_KINESIC", "VISUAL_KINESIC", "ARTIFACT"]);
 export const TPL_STATUSES = Object.freeze(["UNMAPPED", "CANDIDATE", "REVIEWED", "APPROVED", "BLOCKED"]);
@@ -32,36 +32,126 @@ export const FACE_COMPATIBILITY_BOUNDARY = Object.freeze({
   rendererMayMutateFaceSlots: false,
 });
 
-const protectedSlots = ["actor", "target", "recipient", "action", "object", "quantity", "price", "deadline", "location", "ownership", "permission", "prohibition", "condition", "leverage", "consequence", "speechAct", "outcome"];
-const allowedSlotNames = new Set([...protectedSlots, "OFFER", "RETURN", "DEMAND", "CONSEQUENCE", "REQUEST"]);
+export const SEMANTIC_SLOTS_BY_ACT = Object.freeze({
+  DEAL: Object.freeze([...ACTION_INVARIANTS.DEAL]),
+  PRESSURE: Object.freeze([...ACTION_INVARIANTS.PRESSURE]),
+  ASK: Object.freeze([...ACTION_INVARIANTS.ASK]),
+});
+
+export const TPL_FALLBACK_POLICY = Object.freeze({
+  status: "FOUNDATION_ONLY",
+  formsPerAct: DELIVERY_INTENSITIES.length,
+  totalActIntensityForms: SPEECH_ACTS.length * DELIVERY_INTENSITIES.length,
+  vibeAffectsWording: false,
+  vibeAffects: ["coordinate identity", "deterministic seed", "future protocol selection"],
+  dynamicDialoguePopulation: "DEFERRED_TO_PHASE_2",
+  approvedProtocolCount: 0,
+});
+
+const protectedSlots = [
+  "actor", "target", "recipient", "action", "object", "quantity", "price", "deadline", "location", "ownership",
+  "permission", "prohibition", "condition", "leverage", "consequence", "speechAct", "outcome", "offer", "return",
+  "demand", "request", "information", "knowledge", "authorOnlyReveal", "stateDelta", "contextId", "actorId", "targetId", "actionId",
+];
+const semanticSlots = ["OFFER", "RETURN", "DEMAND", "CONSEQUENCE", "REQUEST"];
+const allowedSlotNames = new Set([...protectedSlots, ...semanticSlots]);
+const topLevelProtectedFields = [
+  "actor", "target", "recipient", "action", "object", "quantity", "price", "deadline", "location", "ownership", "permission",
+  "prohibition", "condition", "leverage", "consequence", "outcome", "knowledge", "authorOnlyReveal", "stateDelta", "contextId",
+  "actorId", "targetId", "actionId",
+];
+
+const hasOwn = (value, key) => Object.prototype.hasOwnProperty.call(value ?? {}, key);
+const isObject = (value) => value !== null && typeof value === "object" && !Array.isArray(value);
+const isPresent = (value) => value !== undefined && value !== null && (!(typeof value === "string") || value.trim().length > 0);
+
+function canonicalJson(value) {
+  if (value === undefined) return "undefined";
+  if (value === null || typeof value !== "object") return JSON.stringify(value);
+  if (Array.isArray(value)) return `[${value.map(canonicalJson).join(",")}]`;
+  return `{${Object.keys(value).sort().map((key) => `${JSON.stringify(key)}:${canonicalJson(value[key])}`).join(",")}}`;
+}
+
+function valuesEqual(left, right) {
+  return canonicalJson(left) === canonicalJson(right);
+}
+
+function rejection(code, message, extra = {}) {
+  return { code, message, ...extra };
+}
+
+export function validateSemanticPayload(payload) {
+  const reasons = [];
+  if (!isObject(payload)) return { passed: false, reasons: [rejection("REJECT_PAYLOAD_NOT_OBJECT", "The semantic request must be an object.")] };
+  if (!isPresent(payload.semanticRequestId)) reasons.push(rejection("REJECT_REQUEST_ID_MISSING", "The semantic request identity is required."));
+  if (!SPEECH_ACTS.includes(payload.speechAct)) reasons.push(rejection("REJECT_SPEECH_ACT_INVALID", `Unsupported macro speech act: ${payload.speechAct}.`));
+  if (!isObject(payload.slots)) {
+    reasons.push(rejection("REJECT_SLOTS_NOT_OBJECT", "The semantic request slots must be an object."));
+    return { passed: reasons.length === 0, reasons };
+  }
+  for (const slot of Object.keys(payload.slots)) {
+    if (!allowedSlotNames.has(slot)) reasons.push(rejection("REJECT_UNAUTHORIZED_SLOT", `Slot ${slot} is not in the semantic payload contract.`, { slot }));
+  }
+  const requiredSlots = SEMANTIC_SLOTS_BY_ACT[payload.speechAct] ?? [];
+  for (const slot of requiredSlots) {
+    if (!isPresent(payload.slots[slot])) reasons.push(rejection("REJECT_REQUIRED_SLOT_MISSING", `Required ${payload.speechAct} slot ${slot} is missing.`, { slot }));
+  }
+  for (const slot of semanticSlots) {
+    if (hasOwn(payload.slots, slot) && !requiredSlots.includes(slot)) reasons.push(rejection("REJECT_CROSS_ACT_SLOT", `Slot ${slot} is not valid for ${payload.speechAct}.`, { slot }));
+  }
+  return { passed: reasons.length === 0, reasons };
+}
 
 export function validateSemanticInvariance(payloadBefore, payloadAfter, evidence = {}) {
   const reasons = [];
   if (payloadBefore.semanticRequestId !== payloadAfter.semanticRequestId) reasons.push({ code: "REJECT_REQUEST_ID_CHANGED", message: "The semantic request identity changed." });
   if (payloadBefore.speechAct !== payloadAfter.speechAct) reasons.push({ code: "REJECT_SPEECH_ACT_DRIFT", message: "The macro speech act changed." });
+  reasons.push(...validateSemanticPayload(payloadBefore).reasons, ...validateSemanticPayload(payloadAfter).reasons);
   const beforeSlots = payloadBefore.slots ?? {};
   const afterSlots = payloadAfter.slots ?? {};
-  for (const slot of Object.keys(afterSlots)) {
-    if (!allowedSlotNames.has(slot)) reasons.push({ code: "REJECT_UNAUTHORIZED_SLOT", slot, message: `Slot ${slot} is not in the semantic payload contract.` });
+  const slotNames = new Set([...Object.keys(beforeSlots), ...Object.keys(afterSlots)]);
+  for (const slot of slotNames) {
+    if (!allowedSlotNames.has(slot)) {
+      reasons.push(rejection("REJECT_UNAUTHORIZED_SLOT", `Slot ${slot} is not in the semantic payload contract.`, { slot }));
+      continue;
+    }
+    const beforePresent = hasOwn(beforeSlots, slot);
+    const afterPresent = hasOwn(afterSlots, slot);
+    if (!beforePresent && afterPresent) {
+      reasons.push(rejection("REJECT_SLOT_ADDED", `Protected semantic slot ${slot} was added by realization.`, { slot }));
+    } else if (beforePresent && !afterPresent) {
+      const code = SEMANTIC_SLOTS_BY_ACT[payloadBefore.speechAct]?.includes(slot) ? "REJECT_REQUIRED_SLOT_REMOVED" : "REJECT_SLOT_REMOVED";
+      reasons.push(rejection(code, `Protected semantic slot ${slot} was removed by realization.`, { slot }));
+    } else if (beforePresent && !valuesEqual(beforeSlots[slot], afterSlots[slot])) {
+      reasons.push(rejection(slot === "deadline" ? "REJECT_DEADLINE_DRIFT" : "REJECT_SLOT_VALUE_CHANGED", `Protected slot ${slot} changed.`, { slot }));
+    }
   }
-  for (const slot of protectedSlots) {
-    const before = slot === "speechAct" ? payloadBefore.speechAct : slot === "outcome" ? payloadBefore.outcome : beforeSlots[slot];
-    const after = slot === "speechAct" ? payloadAfter.speechAct : slot === "outcome" ? payloadAfter.outcome : afterSlots[slot];
-    if (JSON.stringify(before) !== JSON.stringify(after)) reasons.push({ code: slot === "deadline" ? "REJECT_DEADLINE_DRIFT" : "REJECT_SLOT_VALUE_CHANGED", slot, message: `Protected slot ${slot} changed.` });
+  for (const field of topLevelProtectedFields) {
+    const beforePresent = hasOwn(payloadBefore, field);
+    const afterPresent = hasOwn(payloadAfter, field);
+    if (!beforePresent && afterPresent) reasons.push(rejection("REJECT_SEMANTIC_FIELD_ADDED", `Protected semantic field ${field} was added by realization.`, { field }));
+    else if (beforePresent && !afterPresent) reasons.push(rejection("REJECT_SEMANTIC_FIELD_REMOVED", `Protected semantic field ${field} was removed by realization.`, { field }));
+    else if (beforePresent && !valuesEqual(payloadBefore[field], payloadAfter[field])) reasons.push(rejection(field === "deadline" ? "REJECT_DEADLINE_DRIFT" : "REJECT_SEMANTIC_FIELD_CHANGED", `Protected semantic field ${field} changed.`, { field }));
   }
-  for (const addition of evidence.unauthorizedAdditions ?? []) reasons.push({ code: addition.code ?? "REJECT_ADDED_PROPOSITION", message: addition.message ?? "An unauthorized semantic addition was detected." });
-  if ((evidence.speakerKnowledgeClaims ?? []).some((claim) => claim.available === false)) reasons.push({ code: "REJECT_UNAVAILABLE_SPEAKER_KNOWLEDGE", message: "The realization asserts knowledge unavailable to the speaker." });
-  if ((evidence.authorOnlyReveals ?? []).length) reasons.push({ code: "REJECT_AUTHOR_ONLY_REVEAL", message: "The realization reveals author-only information." });
+  for (const addition of evidence.unauthorizedAdditions ?? []) reasons.push(rejection(addition.code ?? "REJECT_ADDED_PROPOSITION", addition.message ?? "An unauthorized semantic addition was detected."));
+  if ((evidence.speakerKnowledgeClaims ?? []).some((claim) => claim.available === false)) reasons.push(rejection("REJECT_UNAVAILABLE_SPEAKER_KNOWLEDGE", "The realization asserts knowledge unavailable to the speaker."));
+  if ((evidence.authorOnlyReveals ?? []).length) reasons.push(rejection("REJECT_AUTHOR_ONLY_REVEAL", "The realization reveals author-only information."));
   return { passed: reasons.length === 0, reasons };
 }
 
-const slotText = (payload, name, fallback) => String(payload.slots?.[name] ?? fallback);
+const slotText = (payload, name, fallback) => {
+  const value = payload.slots?.[name];
+  if (value === undefined || value === null) return fallback;
+  return typeof value === "object" ? canonicalJson(value) : String(value);
+};
 
 export function renderSafeFallback(payload, vibeId, deliveryIntensity) {
   const speechAct = payload.speechAct;
-  if (!["DEAL", "PRESSURE", "ASK"].includes(speechAct)) throw new Error(`SPEECH_ACT_NOT_ALLOWED:${speechAct}`);
-  if (!["SUBTLE", "BALANCED", "OVERT"].includes(deliveryIntensity)) throw new Error(`DELIVERY_INTENSITY_NOT_ALLOWED:${deliveryIntensity}`);
+  if (!SPEECH_ACTS.includes(speechAct)) throw new Error(`SPEECH_ACT_NOT_ALLOWED:${speechAct}`);
+  if (!DELIVERY_INTENSITIES.includes(deliveryIntensity)) throw new Error(`DELIVERY_INTENSITY_NOT_ALLOWED:${deliveryIntensity}`);
   if (!BASED_VIBES.some((entry) => entry.vibeId === vibeId)) throw new Error(`VIBE_NOT_ALLOWED:${vibeId}`);
+  const payloadValidation = validateSemanticPayload(payload);
+  if (!payloadValidation.passed) throw new Error(`SEMANTIC_PAYLOAD_INVALID:${payloadValidation.reasons.map((reason) => reason.code).join(",")}`);
   const text = speechAct === "DEAL"
     ? deliveryIntensity === "SUBTLE" ? `${slotText(payload, "OFFER", "[OFFER]")} for ${slotText(payload, "RETURN", "[RETURN]")}.`
       : deliveryIntensity === "BALANCED" ? `Here is the exchange: ${slotText(payload, "OFFER", "[OFFER]")} for ${slotText(payload, "RETURN", "[RETURN]")}.`
@@ -91,6 +181,7 @@ export function renderSafeFallback(payload, vibeId, deliveryIntensity) {
     provenance: [{ sourceId: "project-safe-fallback", sourceRecordId: `fallback_${speechAct}`, licenseId: "PROJECT_AUTHORED" }],
     rejectionReasons: invariant.reasons,
     fallbackUsed: true,
+    fallbackPolicy: TPL_FALLBACK_POLICY,
   };
 }
 
@@ -117,6 +208,7 @@ export function buildTplScaffold() {
     anchorCount: new Set(anchors).size,
     matrixStatusCounts: Object.fromEntries(TPL_STATUSES.map((status) => [status, matrix.filter((cell) => cell.reviewStatus === status).length])),
     faceBoundary: FACE_COMPATIBILITY_BOUNDARY,
+    fallbackPolicy: TPL_FALLBACK_POLICY,
   };
 }
 
