@@ -13,6 +13,7 @@ const portableTests = [
   "tests/schema-validation.test.mjs",
   "tests/generated-freshness.test.mjs",
   "tests/adversarial.test.mjs",
+  "tests/lorebook.test.mjs",
 ];
 
 const schema = spawnSync(process.execPath, ["scripts/validate-schemas.mjs"], { stdio: "inherit" });

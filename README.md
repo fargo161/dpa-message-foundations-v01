@@ -94,6 +94,20 @@ node scripts/check-generated.mjs
 
 `npm test` is the clean-clone portable suite. `npm run test:real` requires the separately acquired, Git-ignored cache and is never represented as a CI corpus. `node scripts/check-generated.mjs` must pass after `npm run build`; it fails when a tracked generated artifact is missing, untracked, staged-different, or different in the worktree.
 
+## Trapstar keyword lorebook
+
+The repository also builds **THE TRAPSTAR FIELD GUIDE TO HUMAN LOGIC**, a static nonlinear document over the 14 canonical keyword IDs. Its structured source is `src/lorebook/content.mjs`; the relationship graph, backlinks, search index, reading trails, route manifest, and 14 original accessible SVG illustrations are derived from that source and the canonical keyword implementation. External records remain visibly labeled evidence priors, not runtime facts or dialogue. Commentary is separated from canonical definitions.
+
+From a fresh Windows PowerShell window in the repository root:
+
+```powershell
+npm ci
+npm run lorebook:check
+npm run lorebook:dev
+```
+
+The development command builds `dist/lorebook` and serves it at `http://127.0.0.1:4173/`. Press `Ctrl+C` to stop it. For a one-shot static build, run `npm run lorebook:build`; direct article routes are physical directory indexes and `404.html` supplies a static-host fallback. See `docs/architecture/TRAPSTAR_LOREBOOK_V01.md` before adding content.
+
 ## Phase-2 extension points and current statuses
 
 The exact extension procedure is documented in `docs/architecture/PHASE_2_EXTENSION_POINTS_V01.md`. The current boundary is:

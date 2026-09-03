@@ -25,3 +25,5 @@ jobs:
       - run: npm run build
       - run: git diff --exit-code -- data/generated data/source-manifest
       - run: node scripts/check-generated.mjs
+      - run: npm run lorebook:check
+      - run: npm run lorebook:build
