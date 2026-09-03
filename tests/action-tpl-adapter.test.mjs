@@ -1,7 +1,8 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { adaptResolvedActionToSemanticRequest } from "../src/action-tpl-adapter.mjs";
-import { createMarcusScenario, resolveAction } from "../src/mechanics.mjs";
+import { DEMO_SCENARIOS, createMarcusScenario, evaluateAvailableActions, resolveAction } from "../src/mechanics.mjs";
+import { renderSafeFallback } from "../src/tpl.mjs";
 
 const actionArgs = ["REQUEST_EXTENSION", "player", "marcus_broker_hill", "PRIVATE_NEGOTIATION"];
 
@@ -100,4 +101,73 @@ test("blocked resolutions remain quarantined and cannot produce a semantic reque
   assert.equal(adapted.quarantined, true);
   assert.equal(adapted.semanticRequest, null);
   assert.ok(adapted.failures.some((entry) => entry.code === "BLOCKED_ACTION_NOT_RENDERABLE"));
+});
+
+function recommendedResolutions() {
+  return DEMO_SCENARIOS.flatMap((scenario) => scenario.recommendedPairs.flatMap((pair) => evaluateAvailableActions(scenario, pair.actorId, pair.targetId, pair.contextId)
+    .filter((evaluation) => evaluation.status === "AVAILABLE")
+    .map((evaluation) => ({ scenario, pair, resolution: resolveAction(scenario, evaluation.actionId, pair.actorId, pair.targetId, pair.contextId) }))));
+}
+
+test("every proposed demo action adapts and renders safely without inventing dialogue", () => {
+  const proposed = recommendedResolutions();
+  assert.equal(proposed.length, 10);
+  assert.ok(proposed.some(({ resolution }) => resolution.actionId === "TRADE_INFORMATION"));
+
+  for (const { resolution } of proposed) {
+    const adapted = adaptResolvedActionToSemanticRequest(resolution);
+    assert.equal(adapted.ok, true, `${resolution.actionId} should adapt`);
+    assert.equal(adapted.semanticRequest.outcome, "PROPOSED");
+    assert.equal(adapted.semanticRequest.provenance[0].sourceRecordId, resolution.emittedHistory[0].historyId);
+
+    for (const deliveryIntensity of ["SUBTLE", "BALANCED", "OVERT"]) {
+      const rendered = renderSafeFallback(adapted.semanticRequest, "BA", deliveryIntensity);
+      assert.equal(rendered.semanticInvariancePassed, true, `${resolution.actionId} ${deliveryIntensity} fallback drifted`);
+      assert.equal(rendered.semanticRequestId, adapted.semanticRequest.semanticRequestId);
+    }
+  }
+});
+
+test("TRADE_INFORMATION carries an authored DEAL offer and return through the adapter", () => {
+  const scenario = DEMO_SCENARIOS.find((entry) => entry.scenarioId === "fixture-secret-leverage");
+  const first = resolveAction(scenario, "TRADE_INFORMATION", "imani_intermediary", "player", "PRIVATE_DISCLOSURE");
+  const second = resolveAction(first.stateAfter, "TRADE_INFORMATION", "imani_intermediary", "player", "PRIVATE_DISCLOSURE");
+  const firstAdapted = adaptResolvedActionToSemanticRequest(first);
+  const secondAdapted = adaptResolvedActionToSemanticRequest(second);
+
+  assert.equal(first.outcome, "PROPOSED");
+  assert.deepEqual(first.payload.offer, { information: "scoped_secret" });
+  assert.deepEqual(first.payload.return, { object: "confidentiality_or_action" });
+  assert.equal(firstAdapted.ok, true);
+  assert.equal(firstAdapted.semanticRequest.speechAct, "DEAL");
+  assert.deepEqual(firstAdapted.semanticRequest.slots.OFFER, { information: "scoped_secret" });
+  assert.deepEqual(firstAdapted.semanticRequest.slots.offer, firstAdapted.semanticRequest.slots.OFFER);
+  assert.deepEqual(firstAdapted.semanticRequest.slots.RETURN, { object: "confidentiality_or_action" });
+  assert.deepEqual(firstAdapted.semanticRequest.slots.return, firstAdapted.semanticRequest.slots.RETURN);
+  assert.equal(firstAdapted.semanticRequest.provenance[0].sourceRecordId, first.emittedHistory[0].historyId);
+  assert.equal(secondAdapted.ok, true);
+  assert.notEqual(firstAdapted.semanticRequest.semanticRequestId, secondAdapted.semanticRequest.semanticRequestId);
+  assert.equal(secondAdapted.semanticRequest.provenance[0].sourceRecordId, second.emittedHistory[0].historyId);
+});
+
+test("every blocked recommended action remains quarantined at the adapter boundary", () => {
+  let blockedCount = 0;
+  for (const scenario of DEMO_SCENARIOS) {
+    for (const pair of scenario.recommendedPairs) {
+      for (const evaluation of evaluateAvailableActions(scenario, pair.actorId, pair.targetId, pair.contextId)) {
+        if (evaluation.status !== "BLOCKED") continue;
+        blockedCount += 1;
+        const blocked = resolveAction(scenario, evaluation.actionId, pair.actorId, pair.targetId, pair.contextId);
+        const adapted = adaptResolvedActionToSemanticRequest(blocked);
+        assert.equal(blocked.outcome, "BLOCKED");
+        assert.equal(blocked.payload, null);
+        assert.equal(blocked.emittedHistory.length, 0);
+        assert.equal(adapted.ok, false, `${blocked.actionId} crossed the adapter boundary`);
+        assert.equal(adapted.quarantined, true);
+        assert.equal(adapted.semanticRequest, null);
+        assert.ok(adapted.failures.some((entry) => entry.code === "BLOCKED_ACTION_NOT_RENDERABLE"));
+      }
+    }
+  }
+  assert.ok(blockedCount > 0);
 });

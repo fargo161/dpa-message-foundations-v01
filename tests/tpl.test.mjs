@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { createMarcusScenario, resolveAction } from "../src/mechanics.mjs";
 import { BASED_VIBES, buildMatrixWithAnchors, generateMatrix } from "../src/based.mjs";
 import { adaptResolvedActionToSemanticRequest } from "../src/action-tpl-adapter.mjs";
-import { FACE_COMPATIBILITY_BOUNDARY, TPL_ATOMS, TPL_CONSTRUCTIONS, TPL_FALLBACK_POLICY, TPL_FAMILIES, TPL_PROTOCOLS, renderSafeFallback, resolveMatrixCell, validateSemanticInvariance, validateSemanticPayload } from "../src/tpl.mjs";
+import { FACE_COMPATIBILITY_BOUNDARY, FALLBACK_CONSTRUCTION_BY_ACT, TPL_ATOMS, TPL_CONSTRUCTIONS, TPL_FALLBACK_POLICY, TPL_FAMILIES, TPL_PROTOCOLS, renderSafeFallback, resolveMatrixCell, validateSemanticInvariance, validateSemanticPayload } from "../src/tpl.mjs";
 
 const makeSemanticRequest = (speechAct, semanticSlots, overrides = {}) => {
   const slots = {
@@ -180,25 +180,72 @@ test("required semantic slots reject empty and malformed shapes", () => {
   assert.equal(validateSemanticPayload(emptyPolicy).passed, false);
 });
 
+test("the runtime boundary rejects incomplete and contradictory semantic envelopes", () => {
+  const canonical = canonicalAsk();
+  const invalidCases = [
+    ["missing schemaVersion", (payload) => delete payload.schemaVersion],
+    ["wrong schemaVersion", (payload) => { payload.schemaVersion = "dpa-keyword-foundation@9.9"; }],
+    ["missing adapterVersion", (payload) => delete payload.adapterVersion],
+    ["wrong adapterVersion", (payload) => { payload.adapterVersion = "other-adapter@9"; }],
+    ["missing outcome", (payload) => delete payload.outcome],
+    ["blocked outcome", (payload) => { payload.outcome = "BLOCKED"; }],
+    ["missing provenance", (payload) => delete payload.provenance],
+    ["empty provenance", (payload) => { payload.provenance = []; }],
+    ["extra provenance property", (payload) => { payload.provenance[0].privatePath = "C:\\private"; }],
+    ["missing mandatory facts", (payload) => delete payload.mandatorySemanticFacts],
+    ["empty mandatory facts", (payload) => { payload.mandatorySemanticFacts = []; }],
+    ["duplicate mandatory facts", (payload) => { payload.mandatorySemanticFacts = ["actor", "actor"]; }],
+    ["missing forbidden additions", (payload) => delete payload.forbiddenSemanticAdditions],
+    ["empty forbidden additions", (payload) => { payload.forbiddenSemanticAdditions = []; }],
+    ["duplicate forbidden additions", (payload) => { payload.forbiddenSemanticAdditions = ["unauthored_threat", "unauthored_threat"]; }],
+    ["unauthorized top-level field", (payload) => { payload.privateNote = "not semantic"; }],
+    ["uppercase/lowercase contradiction", (payload) => { payload.slots.request = { action: "PAY_NOW" }; }],
+    ["identity disagreement", (payload) => { payload.slots.actor = "other-actor"; }],
+  ];
+  for (const [label, mutate] of invalidCases) {
+    const payload = structuredClone(canonical);
+    mutate(payload);
+    assert.equal(validateSemanticPayload(payload).passed, false, `${label} was accepted`);
+    assert.throws(() => renderSafeFallback(payload, "AS", "OVERT"), /SEMANTIC_PAYLOAD_INVALID/, `${label} reached rendering`);
+    assert.throws(() => resolveMatrixCell(generateMatrix(), payload, "AS", "OVERT"), /SEMANTIC_PAYLOAD_INVALID/, `${label} reached matrix resolution`);
+  }
+  for (const speechAct of ["ASK", "DEAL", "PRESSURE"]) {
+    const minimal = { semanticRequestId: `legacy-${speechAct}`, speechAct, slots: {} };
+    assert.equal(validateSemanticPayload(minimal).passed, false, `legacy ${speechAct} payload was accepted`);
+    assert.throws(() => renderSafeFallback(minimal, "AS", "OVERT"), /SEMANTIC_PAYLOAD_INVALID/);
+    assert.throws(() => resolveMatrixCell(generateMatrix(), minimal, "AS", "OVERT"), /SEMANTIC_PAYLOAD_INVALID/);
+  }
+});
+
 test("safe fallback preserves the selected act and records unmapped-cell deferment", () => {
   for (const speechAct of ["DEAL", "PRESSURE", "ASK"]) {
-    const slots = speechAct === "DEAL" ? { OFFER: "80 USD", RETURN: "an extension" } : speechAct === "PRESSURE" ? { DEMAND: "pay today", CONSEQUENCE: "report the debt" } : { REQUEST: "review the ledger" };
-    const result = renderSafeFallback({ semanticRequestId: `r-${speechAct}`, speechAct, slots }, "AS", "OVERT");
+    const slots = speechAct === "DEAL" ? { OFFER: { object: "cash", quantity: 80, unit: "USD" }, offer: { object: "cash", quantity: 80, unit: "USD" }, RETURN: { object: "extension" }, return: { object: "extension" } } : speechAct === "PRESSURE" ? { DEMAND: "pay today", demand: "pay today", CONSEQUENCE: "report the debt", consequence: "report the debt" } : { REQUEST: "review the ledger", request: "review the ledger" };
+    const payload = makeSemanticRequest(speechAct, slots, { semanticRequestId: `r-${speechAct}` });
+    const result = renderSafeFallback(payload, "AS", "OVERT");
     assert.equal(result.semanticInvariancePassed, true);
     assert.equal(result.fallbackUsed, true);
     assert.equal(result.speechAct, speechAct);
-    const resolved = resolveMatrixCell(generateMatrix(), { semanticRequestId: `r-${speechAct}`, speechAct, slots }, "AS", "OVERT");
+    assert.equal(result.constructionId, FALLBACK_CONSTRUCTION_BY_ACT[speechAct]);
+    const construction = TPL_CONSTRUCTIONS.find((entry) => entry.constructionId === result.constructionId);
+    assert.ok(construction, `${speechAct} fallback references an unregistered construction`);
+    assert.ok(construction.speechActs.includes(speechAct), `${speechAct} fallback references an incompatible construction`);
+    for (const requiredSlot of construction.requiredSlots) assert.ok(Object.hasOwn(payload.slots, requiredSlot), `${speechAct} fallback lacks ${requiredSlot}`);
+    assert.equal(result.tplProtocolId, null);
+    assert.deepEqual(result.appliedAtomIds, []);
+    const resolved = resolveMatrixCell(generateMatrix(), payload, "AS", "OVERT");
     assert.equal(resolved.matrixKey, `${speechAct}_AS_OVERT`);
     assert.equal(resolved.rejectionReasons[0].code, "MATRIX_CELL_UNMAPPED");
+    assert.equal(resolved.constructionId, result.constructionId);
   }
-  assert.throws(() => renderSafeFallback({ semanticRequestId: "bad", speechAct: "UNKNOWN", slots: {} }, "AS", "OVERT"), /SPEECH_ACT_NOT_ALLOWED/);
-  assert.throws(() => renderSafeFallback({ semanticRequestId: "bad", speechAct: "ASK", slots: {} }, "ZZ", "OVERT"), /VIBE_NOT_ALLOWED/);
-  assert.throws(() => renderSafeFallback({ semanticRequestId: "bad", speechAct: "ASK", slots: {} }, "AS", "LOUD"), /DELIVERY_INTENSITY_NOT_ALLOWED/);
+  assert.throws(() => renderSafeFallback({ semanticRequestId: "bad", speechAct: "UNKNOWN", slots: {} }, "AS", "OVERT"), /SEMANTIC_PAYLOAD_INVALID/);
+  assert.throws(() => renderSafeFallback(canonicalAsk(), "ZZ", "OVERT"), /VIBE_NOT_ALLOWED/);
+  assert.throws(() => renderSafeFallback(canonicalAsk(), "AS", "LOUD"), /DELIVERY_INTENSITY_NOT_ALLOWED/);
   assert.equal(FACE_COMPATIBILITY_BOUNDARY.rendererMayMutateFaceSlots, false);
   assert.equal(TPL_FALLBACK_POLICY.totalActIntensityForms, 9);
   assert.equal(TPL_FALLBACK_POLICY.vibeAffectsWording, false);
-  const subtle = renderSafeFallback({ semanticRequestId: "vibe-wording", speechAct: "ASK", slots: { REQUEST: "review the ledger" } }, "AS", "SUBTLE");
-  const otherVibe = renderSafeFallback({ semanticRequestId: "vibe-wording", speechAct: "ASK", slots: { REQUEST: "review the ledger" } }, "BA", "SUBTLE");
+  const wordingPayload = makeSemanticRequest("ASK", { REQUEST: "review the ledger", request: "review the ledger" }, { semanticRequestId: "vibe-wording" });
+  const subtle = renderSafeFallback(wordingPayload, "AS", "SUBTLE");
+  const otherVibe = renderSafeFallback(wordingPayload, "BA", "SUBTLE");
   assert.equal(subtle.renderedText, otherVibe.renderedText);
   assert.notEqual(subtle.stableSeed, otherVibe.stableSeed);
 });

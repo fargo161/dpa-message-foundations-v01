@@ -1,7 +1,7 @@
 import { SPEECH_ACTS } from "./based.mjs";
-import { SEMANTIC_SLOTS_BY_ACT, validateSemanticPayload } from "./tpl.mjs";
+import { SEMANTIC_ADAPTER_VERSION, SEMANTIC_OUTCOME, SEMANTIC_SCHEMA_VERSION, SEMANTIC_SLOTS_BY_ACT, validateSemanticPayload } from "./tpl.mjs";
 
-export const ADAPTER_VERSION = "action-tpl-adapter@0.1";
+export const ADAPTER_VERSION = SEMANTIC_ADAPTER_VERSION;
 const REQUIRED_RESOLUTION_FIELDS = ["actionId", "actorId", "targetId", "macroAct", "outcome", "payload"];
 
 const isObject = (value) => value !== null && typeof value === "object" && !Array.isArray(value);
@@ -147,7 +147,14 @@ export function adaptResolvedActionToSemanticRequest(resolvedAction) {
     if (!hasOwn(resolvedAction, field)) failures.push(failure("RESOLUTION_FIELD_MISSING", `Resolved action field ${field} is required.`, { field }));
   }
   if (failures.length) return rejected(failures);
-  if (resolvedAction.outcome !== "PROPOSED") return rejected([failure("BLOCKED_ACTION_NOT_RENDERABLE", "Only a PROPOSED action may cross the mechanics-to-TPL boundary.", { outcome: resolvedAction.outcome })], [{ step: "ACTION_BOUNDARY_CHECK", passed: false }]);
+  if (resolvedAction.outcome !== SEMANTIC_OUTCOME) return rejected([failure("BLOCKED_ACTION_NOT_RENDERABLE", "Only a PROPOSED action may cross the mechanics-to-TPL boundary.", { outcome: resolvedAction.outcome })], [{ step: "ACTION_BOUNDARY_CHECK", passed: false }]);
+  if (resolvedAction.quarantine !== null) return rejected([failure("RESOLUTION_QUARANTINED", "A quarantined mechanics resolution cannot cross the TPL boundary.")], [{ step: "ACTION_BOUNDARY_CHECK", passed: false }]);
+  const preconditionEvaluations = resolvedAction.preconditionEvaluations;
+  if (!isObject(preconditionEvaluations) || !Array.isArray(preconditionEvaluations.required) || !Array.isArray(preconditionEvaluations.forbidden)) {
+    return rejected([failure("RESOLUTION_PRECONDITION_EVIDENCE_MISSING", "A proposed resolution must carry required and forbidden precondition evaluations.")], [{ step: "ACTION_BOUNDARY_CHECK", passed: false }]);
+  }
+  const failedPreconditions = [...preconditionEvaluations.required, ...preconditionEvaluations.forbidden].filter((entry) => !isObject(entry) || entry.passed !== true);
+  if (failedPreconditions.length) return rejected([failure("RESOLUTION_PRECONDITION_FAILED", "A proposed resolution contains a failed or malformed precondition evaluation.", { count: failedPreconditions.length })], [{ step: "ACTION_BOUNDARY_CHECK", passed: false }]);
   if (!SPEECH_ACTS.includes(resolvedAction.macroAct)) return rejected([failure("UNSUPPORTED_MACRO_ACT", `Cannot adapt unsupported macro act ${resolvedAction.macroAct}.`)]);
   if (!isObject(resolvedAction.payload)) return rejected([failure("RESOLUTION_PAYLOAD_NOT_OBJECT", "The resolved action payload must be an object.")]);
 
@@ -180,7 +187,7 @@ export function adaptResolvedActionToSemanticRequest(resolvedAction) {
   }
 
   const semanticRequest = {
-    schemaVersion: "dpa-keyword-foundation@0.1",
+    schemaVersion: SEMANTIC_SCHEMA_VERSION,
     adapterVersion: ADAPTER_VERSION,
     semanticRequestId: expectedSemanticRequestId,
     actionId: resolvedAction.actionId,

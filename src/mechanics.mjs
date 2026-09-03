@@ -622,7 +622,7 @@ export const ACTION_DEFINITIONS = Object.freeze([
     actionId: "TRADE_INFORMATION", displayName: "Trade authored information", macroAct: "DEAL",
     requiredChecks: [checkContext("PRIVATE_DISCLOSURE"), checkFact("KNOWS_SECRET_ABOUT", { subject: "$ACTOR", object: "$TARGET" }, "The actor has scoped secret knowledge"), checkFact("HAS_LEVERAGE_OVER", { subject: "$ACTOR", object: "$TARGET" }, "The actor has an authored leverage basis")],
     forbiddenChecks: [],
-    payload: (actorId, targetId) => ({ actor: actorId, target: targetId, action: "TRADE_INFORMATION", information: "scoped_secret", return: { object: "confidentiality_or_action" } }),
+    payload: (actorId, targetId) => ({ actor: actorId, target: targetId, action: "TRADE_INFORMATION", offer: { information: "scoped_secret" }, return: { object: "confidentiality_or_action" } }),
     history: "INFORMATION_TRADE_PROPOSED",
   },
   {
