@@ -1,11 +1,13 @@
 import { ACTION_INVARIANTS, BASED_VIBES, DELIVERY_INTENSITIES, SPEECH_ACTS, buildMatrixWithAnchors } from "./based.mjs";
-import { ACTION_DEFINITIONS } from "./mechanics.mjs";
+import { ACTION_DEFINITIONS, getRecordedResolutionPayload } from "./mechanics.mjs";
 
 export const TPL_FAMILIES = Object.freeze(["VOICE_QUALITY", "VOCALIZATION", "TACTILE_KINESIC", "VISUAL_KINESIC", "ARTIFACT"]);
 export const TPL_STATUSES = Object.freeze(["UNMAPPED", "CANDIDATE", "REVIEWED", "APPROVED", "BLOCKED"]);
 export const TPL_READINESS_STATES = Object.freeze(["PREVIEW_READY", "REVIEWED", "APPROVED", "PRODUCTION_ELIGIBLE", "BLOCKED"]);
 export const SEMANTIC_SCHEMA_VERSION = "dpa-keyword-foundation@0.1";
 export const SEMANTIC_ADAPTER_VERSION = "action-tpl-adapter@0.1";
+export const SEMANTIC_BINDING_VERSION = "mechanics-tpl-binding@0.1";
+export const SEMANTIC_BINDING_SOURCES = Object.freeze(["MECHANICS_RESOLUTION", "AUTHORED_SEMANTIC_CONTRACT"]);
 export const SEMANTIC_OUTCOME = "PROPOSED";
 
 export const TPL_ATOMS = Object.freeze([
@@ -140,9 +142,25 @@ const protectedSlots = [
 ];
 const semanticSlots = ["OFFER", "RETURN", "DEMAND", "CONSEQUENCE", "REQUEST"];
 const allowedSlotNames = new Set([...protectedSlots, ...semanticSlots]);
+const contextOnlySlots = new Set(["actor", "target", "action", "contextId", "actorId", "targetId", "actionId", "speechAct", "outcome"]);
+const renderedMacroSlots = new Set([...semanticSlots, ...semanticSlots.map((slot) => slot.toLowerCase())]);
+const unsupportedSemanticSlots = new Set(["recipient", "object", "quantity", "price", "deadline", "location", "ownership", "permission", "prohibition", "condition", "information", "knowledge", "authorOnlyReveal", "stateDelta"]);
+
+/**
+ * Every accepted slot has a declared disposition. Context-only fields are
+ * carried as reviewed metadata; macro slots are realized and evidenced;
+ * unsupported semantic-bearing fields fail before any renderer is called.
+ */
+export const SEMANTIC_SLOT_DISPOSITIONS = Object.freeze(Object.fromEntries([
+  ...[...contextOnlySlots].map((slot) => [slot, "CONTEXT_ONLY"]),
+  ...[...renderedMacroSlots].map((slot) => [slot, "REALIZED_MACRO_SLOT"]),
+  ["leverage", "REALIZED_OPTIONAL_SLOT"],
+  ...[...unsupportedSemanticSlots].map((slot) => [slot, "UNSUPPORTED"]),
+]));
 const canonicalEnvelopeFields = [
   "schemaVersion", "adapterVersion", "semanticRequestId", "actionId", "actorId", "targetId", "contextId",
   "actor", "target", "action", "speechAct", "outcome", "slots", "mandatorySemanticFacts", "forbiddenSemanticAdditions", "provenance",
+  "semanticBinding",
 ];
 const canonicalEnvelopeFieldSet = new Set(canonicalEnvelopeFields);
 const identityFields = ["actor", "target", "action", "contextId", "actorId", "targetId", "actionId"];
@@ -215,6 +233,95 @@ function validateCanonicalProvenance(provenance) {
   return reasons;
 }
 
+function semanticProjectionFromPayload(boundPayload, speechAct) {
+  if (speechAct === "ASK") {
+    const request = {};
+    for (const field of ["action", "object", "permission", "information", "condition", "leverage", "request"]) {
+      if (hasOwn(boundPayload, field)) request[field] = structuredClone(boundPayload[field]);
+    }
+    return Object.keys(request).length ? { REQUEST: request } : null;
+  }
+  if (speechAct === "DEAL") {
+    const offer = boundPayload.offer ?? boundPayload.OFFER;
+    const returned = boundPayload.return ?? boundPayload.RETURN;
+    return isObject(offer) && isObject(returned)
+      ? { OFFER: structuredClone(offer), RETURN: structuredClone(returned) }
+      : null;
+  }
+  const demand = boundPayload.demand ?? boundPayload.DEMAND;
+  const consequence = boundPayload.consequence ?? boundPayload.CONSEQUENCE;
+  return isObject(demand) && isObject(consequence) && isObject(boundPayload.leverage)
+    ? { DEMAND: structuredClone(demand), CONSEQUENCE: structuredClone(consequence), leverage: structuredClone(boundPayload.leverage) }
+    : null;
+}
+
+function canonicalActionSemanticProjection(payload) {
+  if (payload.speechAct === "PRESSURE") return null;
+  const action = ACTION_DEFINITIONS.find((entry) => entry.actionId === payload.actionId && entry.macroAct === payload.speechAct);
+  if (!action) return null;
+  try {
+    return semanticProjectionFromPayload(action.payload(payload.actorId, payload.targetId), payload.speechAct);
+  } catch {
+    return null;
+  }
+}
+
+function validateSemanticBinding(payload, reasons) {
+  const binding = payload.semanticBinding;
+  if (!isObject(binding)) {
+    reasons.push(rejection("REJECT_SEMANTIC_BINDING_MISSING", "semanticBinding must identify the trusted mechanics resolution."));
+    return;
+  }
+  for (const field of ["bindingVersion", "source", "sourceRecordId", "actionId", "actorId", "targetId", "contextId", "payload", "semanticSlots"]) {
+    if (!hasOwn(binding, field)) reasons.push(rejection("REJECT_SEMANTIC_BINDING_FIELD_MISSING", `semanticBinding.${field} is required.`, { field }));
+  }
+  if (binding.bindingVersion !== SEMANTIC_BINDING_VERSION) reasons.push(rejection("REJECT_SEMANTIC_BINDING_VERSION_INVALID", "semanticBinding.bindingVersion is not the registered mechanics binding version."));
+  if (!SEMANTIC_BINDING_SOURCES.includes(binding.source)) reasons.push(rejection("REJECT_SEMANTIC_BINDING_SOURCE_INVALID", "semanticBinding.source must identify a registered mechanics resolution or an authored semantic contract."));
+  for (const field of ["sourceRecordId", "actionId", "actorId", "targetId", "contextId"]) {
+    if (typeof binding[field] !== "string" || !binding[field].trim()) reasons.push(rejection("REJECT_SEMANTIC_BINDING_FIELD_INVALID", `semanticBinding.${field} must be a non-empty string.`, { field }));
+  }
+  if (binding.actionId !== payload.actionId || binding.actorId !== payload.actorId || binding.targetId !== payload.targetId || binding.contextId !== payload.contextId) {
+    reasons.push(rejection("REJECT_SEMANTIC_BINDING_IDENTITY_DRIFT", "semanticBinding identity must match the canonical semantic envelope."));
+  }
+  if (typeof binding.sourceRecordId === "string" && payload.provenance?.[0]?.sourceRecordId !== binding.sourceRecordId) {
+    reasons.push(rejection("REJECT_SEMANTIC_BINDING_PROVENANCE_DRIFT", "semanticBinding.sourceRecordId must match the primary semantic provenance record."));
+  }
+  if (!isObject(binding.payload)) reasons.push(rejection("REJECT_SEMANTIC_BINDING_PAYLOAD_INVALID", "semanticBinding.payload must be the structured mechanics payload."));
+  if (!isObject(binding.semanticSlots)) reasons.push(rejection("REJECT_SEMANTIC_BINDING_SLOTS_INVALID", "semanticBinding.semanticSlots must be the canonical semantic projection."));
+  if (!isObject(binding.payload) || !isObject(binding.semanticSlots)) return;
+  if (binding.source === "MECHANICS_RESOLUTION") {
+    const record = getRecordedResolutionPayload(binding.sourceRecordId);
+    if (!record) reasons.push(rejection("REJECT_SEMANTIC_BINDING_RECORD_UNAVAILABLE", "The mechanics resolution record is not available for semantic binding verification."));
+    else {
+      if (record.actionId !== payload.actionId || record.actorId !== payload.actorId || record.targetId !== payload.targetId || record.contextId !== payload.contextId) reasons.push(rejection("REJECT_SEMANTIC_BINDING_RECORD_IDENTITY_DRIFT", "The mechanics resolution record identity does not match the semantic envelope."));
+      if (!valuesEqual(binding.payload, record.payload)) reasons.push(rejection("REJECT_SEMANTIC_BINDING_RECORD_PAYLOAD_DRIFT", "The semantic binding payload does not match the mechanics resolution record."));
+      const recordedProjection = semanticProjectionFromPayload(record.payload, payload.speechAct);
+      if (!recordedProjection || !valuesEqual(binding.semanticSlots, recordedProjection)) reasons.push(rejection("REJECT_SEMANTIC_BINDING_RECORD_SLOTS_DRIFT", "The semantic binding slots do not match the mechanics resolution record."));
+    }
+  }
+  if (binding.payload.action !== payload.actionId || binding.payload.actor !== payload.actorId || binding.payload.target !== payload.targetId) {
+    reasons.push(rejection("REJECT_SEMANTIC_BINDING_PAYLOAD_IDENTITY_DRIFT", "semanticBinding.payload does not agree with the canonical action identity."));
+  }
+  const expectedSlots = SEMANTIC_SLOTS_BY_ACT[payload.speechAct] ?? [];
+  const allowedProjection = new Set([...expectedSlots, "leverage"]);
+  for (const key of Object.keys(binding.semanticSlots)) if (!allowedProjection.has(key)) reasons.push(rejection("REJECT_SEMANTIC_BINDING_SLOT_UNSUPPORTED", `semanticBinding.semanticSlots.${key} is not authorized for ${payload.speechAct}.`, { key }));
+  for (const upperSlot of expectedSlots) {
+    if (!hasOwn(binding.semanticSlots, upperSlot)) reasons.push(rejection("REJECT_SEMANTIC_BINDING_SLOT_MISSING", `semanticBinding.semanticSlots.${upperSlot} is required.`, { slot: upperSlot }));
+    const lowerSlot = upperSlot.toLowerCase();
+    for (const slot of [upperSlot, lowerSlot]) if (hasOwn(payload.slots ?? {}, slot) && (!hasOwn(binding.semanticSlots, upperSlot) || !valuesEqual(payload.slots[slot], binding.semanticSlots[upperSlot]))) {
+      reasons.push(rejection("REJECT_SEMANTIC_BINDING_SLOT_DRIFT", `slots.${slot} does not match the trusted semantic projection.`, { slot }));
+    }
+  }
+  const expectedActionProjection = canonicalActionSemanticProjection(payload);
+  if (expectedActionProjection && !valuesEqual(binding.semanticSlots, expectedActionProjection)) {
+    reasons.push(rejection("REJECT_ACTION_SEMANTIC_VALUE_UNAUTHORIZED", "The semantic slot values do not match the canonical authored action payload."));
+  }
+  if (payload.speechAct === "PRESSURE") {
+    if (!hasOwn(binding.semanticSlots, "leverage")) reasons.push(rejection("REJECT_SEMANTIC_BINDING_SLOT_MISSING", "semanticBinding.semanticSlots.leverage is required for PRESSURE.", { slot: "leverage" }));
+    if (hasOwn(payload.slots ?? {}, "leverage") && (!hasOwn(binding.semanticSlots, "leverage") || !valuesEqual(payload.slots.leverage, binding.semanticSlots.leverage))) reasons.push(rejection("REJECT_SEMANTIC_BINDING_SLOT_DRIFT", "slots.leverage does not match the trusted semantic projection.", { slot: "leverage" }));
+  }
+}
+
 function validateCanonicalEnvelope(payload, reasons) {
   for (const field of requiredCanonicalFields) {
     if (!hasOwn(payload, field)) reasons.push(rejection("REJECT_ENVELOPE_FIELD_MISSING", `Canonical semantic field ${field} is required.`, { field }));
@@ -232,7 +339,7 @@ function validateCanonicalEnvelope(payload, reasons) {
     if (typeof payload[field] === "string" && !identifierPattern.test(payload[field])) reasons.push(rejection("REJECT_IDENTIFIER_INVALID", `${field} must use the canonical identifier format.`, { field }));
   }
   if (typeof payload.actionId === "string" && !/^[A-Z][A-Z0-9_]+$/.test(payload.actionId)) reasons.push(rejection("REJECT_ACTION_ID_INVALID", "actionId must be a stable uppercase action identifier."));
-  if (typeof payload.actionId === "string" && !ACTION_DISPLAY_NAMES[payload.actionId]) reasons.push(rejection("REJECT_ACTION_LABEL_UNAVAILABLE", "actionId does not have a reviewed authored action label.", { actionId: payload.actionId }));
+  if (typeof payload.actionId === "string" && !ACTION_PRESENTATION_LABELS[payload.actionId]) reasons.push(rejection("REJECT_ACTION_LABEL_UNAVAILABLE", "actionId does not have a reviewed authored action label.", { actionId: payload.actionId }));
   if (ACTION_MACRO_ACT_BY_ID[payload.actionId] && payload.speechAct !== ACTION_MACRO_ACT_BY_ID[payload.actionId]) reasons.push(rejection("REJECT_ACTION_MACRO_ACT_MISMATCH", "The action is not registered for the declared macro speech act.", { actionId: payload.actionId, speechAct: payload.speechAct, registeredSpeechAct: ACTION_MACRO_ACT_BY_ID[payload.actionId] }));
   if (payload.actor !== payload.actorId) reasons.push(rejection("REJECT_ACTOR_ID_MISMATCH", "actor must equal actorId."));
   if (payload.target !== payload.targetId) reasons.push(rejection("REJECT_TARGET_ID_MISMATCH", "target must equal targetId."));
@@ -252,6 +359,7 @@ function validateCanonicalEnvelope(payload, reasons) {
     }
   }
   reasons.push(...validateCanonicalProvenance(payload.provenance));
+  validateSemanticBinding(payload, reasons);
 }
 
 function validateSlotPairs(payload, reasons, strictCanonical) {
@@ -296,6 +404,10 @@ function validateSlotPairs(payload, reasons, strictCanonical) {
   }
   for (const [slot, value] of Object.entries(slots)) {
     if (!allowedSlotNames.has(slot)) reasons.push(rejection("REJECT_UNAUTHORIZED_SLOT", `Slot ${slot} is not in the semantic payload contract.`, { slot }));
+    const disposition = SEMANTIC_SLOT_DISPOSITIONS[slot];
+    if (!disposition && allowedSlotNames.has(slot)) reasons.push(rejection("REJECT_SLOT_DISPOSITION_MISSING", `Slot ${slot} has no reviewed semantic disposition.`, { slot }));
+    if (disposition === "UNSUPPORTED") reasons.push(rejection("REJECT_SEMANTIC_SLOT_UNSUPPORTED", `Semantic slot ${slot} is unsupported by the current reviewed protocol.`, { slot }));
+    if (disposition === "REALIZED_OPTIONAL_SLOT" && payload.speechAct !== "PRESSURE") reasons.push(rejection("REJECT_CROSS_ACT_SEMANTIC_SLOT", `Semantic slot ${slot} is only authorized for PRESSURE.`, { slot, speechAct: payload.speechAct }));
     if (semanticSlots.includes(slot)) continue;
     const reason = meaningfulValue(value, `slots.${slot}`);
     if (reason) reasons.push(reason);
@@ -307,14 +419,12 @@ function validateSlotPairs(payload, reasons, strictCanonical) {
 
 function validateTypedSemanticSlot(payload, slotName, value, reasons) {
   if (typeof value === "string") {
-    if (payload.speechAct === "ASK" && slotName === "REQUEST" && ASK_PRESSURE_INDICATOR_PATTERN.test(value)) {
-      reasons.push(rejection("REJECT_ASK_PRESSURE_CONTENT", "ASK request text contains pressure, coercion, or refusal-removing language.", { slot: slotName }));
-    }
+    reasons.push(rejection("REJECT_UNTRUSTED_FREEFORM_SLOT", `slots.${slotName} must be a structured, trusted semantic value.`, { slot: slotName }));
     return;
   }
   if (!isObject(value)) return;
   const allowed = slotName === "REQUEST"
-    ? ["action", "object", "permission", "information", "condition", "leverage"]
+    ? ["action", "object", "permission", "information", "condition", "leverage", "request"]
     : slotName === "OFFER" || slotName === "RETURN"
       ? ["object", "quantity", "unit", "status", "change", "information"]
       : slotName === "DEMAND"
@@ -325,10 +435,10 @@ function validateTypedSemanticSlot(payload, slotName, value, reasons) {
     const authorizedFields = authoredRequestFieldsForAction(payload.actionId);
     for (const key of Object.keys(value)) if (!authorizedFields.has(key)) reasons.push(rejection("REJECT_ACTION_SEMANTIC_FIELD_UNAUTHORIZED", `slots.${slotName}.${key} is not authorized by the authored action contract.`, { slot: slotName, key, actionId: payload.actionId }));
     if (value.action !== undefined) {
-      if (!ACTION_DISPLAY_NAMES[value.action]) reasons.push(rejection("REJECT_ACTION_LABEL_UNAVAILABLE", `slots.${slotName}.action has no reviewed action label.`, { actionId: value.action }));
+      if (!ACTION_PRESENTATION_LABELS[value.action]) reasons.push(rejection("REJECT_ACTION_LABEL_UNAVAILABLE", `slots.${slotName}.action has no reviewed action label.`, { actionId: value.action }));
       if (value.action !== payload.actionId) reasons.push(rejection("REJECT_REQUEST_ACTION_MISMATCH", `slots.${slotName}.action must match the canonical envelope action.`, { expected: payload.actionId, actual: value.action }));
     }
-    for (const key of ["object", "permission", "information", "condition"]) if (typeof value[key] === "string" && ASK_PRESSURE_INDICATOR_PATTERN.test(value[key])) reasons.push(rejection("REJECT_ASK_PRESSURE_CONTENT", `slots.${slotName}.${key} contains pressure, coercion, or refusal-removing language.`, { slot: slotName, key }));
+    for (const key of ["object", "permission", "information", "request"]) if (typeof value[key] === "string" && !identifierPattern.test(value[key])) reasons.push(rejection("REJECT_UNTRUSTED_FREEFORM_SLOT", `slots.${slotName}.${key} must be a canonical identifier.`, { slot: slotName, key }));
   }
 }
 
@@ -423,19 +533,24 @@ const REVIEWED_LABELS = Object.freeze({
   cash: "cash",
   debt: "the debt",
   report_the_debt: "the authored debt report",
+  review_authored_ledger: "a review of the authored ledger",
+  show_knowledge_evidence: "evidence for the knowledge claim",
+  provide_dependency_support: "the depended-on support",
 });
 
-const ACTION_DISPLAY_NAMES = Object.freeze({
-  REQUEST_EXTENSION: "a repayment extension",
-  REQUEST_ACCESS: "controlled access",
-  CHALLENGE_DEBT_VALIDITY: "a review of the debt ledger",
-  REQUEST_EVIDENCE: "evidence for the knowledge claim",
-  REQUEST_SUPPORT: "dependency support",
-  OFFER_PARTIAL_PAYMENT: "a partial payment",
-  OFFER_CASH_FOR_EXTENSION: "cash for an extension",
-  TRADE_INFORMATION: "an information exchange",
-  INVOKE_CONSEQUENCE: "the authored consequence",
-});
+export function deriveActionPresentationLabels(actionDefinitions = ACTION_DEFINITIONS) {
+  const labels = {};
+  for (const entry of actionDefinitions) {
+    if (!entry || typeof entry.actionId !== "string" || !entry.actionId.trim()) throw new Error("ACTION_PRESENTATION_ACTION_ID_INVALID");
+    if (Object.hasOwn(labels, entry.actionId)) throw new Error(`ACTION_PRESENTATION_ACTION_DUPLICATE:${entry.actionId}`);
+    const label = entry.tplPresentation?.label ?? entry.displayName;
+    if (typeof label !== "string" || !label.trim()) throw new Error(`ACTION_PRESENTATION_LABEL_MISSING:${entry.actionId}`);
+    labels[entry.actionId] = label;
+  }
+  return Object.freeze(labels);
+}
+
+export const ACTION_PRESENTATION_LABELS = deriveActionPresentationLabels();
 
 const RUNTIME_LABEL_PATTERN = /\b[A-Za-z][A-Za-z0-9]*(?:(?:_[A-Za-z0-9]+)+|:[A-Za-z0-9][A-Za-z0-9_-]*)\b/;
 const ASK_PRESSURE_INDICATOR_PATTERN = /\b(?:or else|otherwise|if you refuse|if you do not|if you don't|punish|expose|threat|no choice|cannot refuse|can't refuse|must|have to|unless)\b/i;
@@ -461,6 +576,12 @@ function requireNonEmptyText(value, path) {
   return value.trim();
 }
 
+function canonicalIdentifier(value, path) {
+  const identifier = requireNonEmptyText(value, path);
+  if (!identifierPattern.test(identifier)) renderFailure("TPL_SLOT_IDENTIFIER_INVALID", `${path} must be a canonical identifier, not free-form prose.`, { path });
+  return identifier;
+}
+
 function lexicalizeText(value, path) {
   const text = requireNonEmptyText(value, path);
   const result = text.replace(RUNTIME_LABEL_PATTERN, (identifier) => REVIEWED_LABELS[identifier] ?? identifier);
@@ -471,8 +592,8 @@ function lexicalizeText(value, path) {
 
 function reviewedActionLabel(value, path) {
   const actionId = requireNonEmptyText(value, path);
-  if (!ACTION_DISPLAY_NAMES[actionId]) renderFailure("TPL_ACTION_LABEL_UNAVAILABLE", `${path} has no reviewed action label.`, { path, actionId });
-  return ACTION_DISPLAY_NAMES[actionId];
+  if (!ACTION_PRESENTATION_LABELS[actionId]) renderFailure("TPL_ACTION_LABEL_UNAVAILABLE", `${path} has no reviewed action label.`, { path, actionId });
+  return ACTION_PRESENTATION_LABELS[actionId];
 }
 
 function assertAllowedKeys(value, allowed, path) {
@@ -495,7 +616,7 @@ function authoredRequestFieldsForAction(actionId) {
   if (!action || action.macroAct !== "ASK") return new Set(["action"]);
   let authoredPayload;
   try { authoredPayload = action.payload("actor", "target", "PRIVATE_CONTEXT"); } catch { authoredPayload = {}; }
-  return new Set(["action", ...Object.keys(authoredPayload).filter((field) => ["object", "permission", "information", "condition", "leverage"].includes(field))]);
+  return new Set(["action", ...Object.keys(authoredPayload).filter((field) => ["object", "permission", "information", "condition", "leverage", "request"].includes(field))]);
 }
 
 function assertAuthorizedRequestFields(value, payload, path) {
@@ -506,7 +627,7 @@ function assertAuthorizedRequestFields(value, payload, path) {
 function formatRequest(value, path = "slots.REQUEST", payload = null) {
   if (typeof value === "string") return assertAskSafeText(value, path);
   if (!isObject(value)) renderFailure("TPL_REQUEST_REALIZATION_INVALID", `${path} must be a string or typed request frame.`, { path });
-  assertAllowedKeys(value, ["action", "object", "permission", "information", "condition", "leverage"], path);
+  assertAllowedKeys(value, ["action", "object", "permission", "information", "condition", "leverage", "request"], path);
   if (payload) assertAuthorizedRequestFields(value, payload, path);
   const parts = [];
   if (value.action !== undefined) {
@@ -515,9 +636,10 @@ function formatRequest(value, path = "slots.REQUEST", payload = null) {
     parts.push(`request ${action}`);
   }
   else parts.push("make the stated request");
-  if (value.object !== undefined) parts.push(`concerning ${assertAskSafeText(value.object, `${path}.object`)}`);
-  if (value.information !== undefined) parts.push(`about ${assertAskSafeText(value.information, `${path}.information`)}`);
-  if (value.permission !== undefined) parts.push(`with ${assertAskSafeText(value.permission, `${path}.permission`)} permission`);
+  if (value.request !== undefined) parts.push(`to ${lexicalizeText(canonicalIdentifier(value.request, `${path}.request`), `${path}.request`)}`);
+  if (value.object !== undefined) parts.push(`concerning ${lexicalizeText(canonicalIdentifier(value.object, `${path}.object`), `${path}.object`)}`);
+  if (value.information !== undefined) parts.push(`about ${lexicalizeText(canonicalIdentifier(value.information, `${path}.information`), `${path}.information`)}`);
+  if (value.permission !== undefined) parts.push(`with ${lexicalizeText(canonicalIdentifier(value.permission, `${path}.permission`), `${path}.permission`)} permission`);
   if (value.condition !== undefined) parts.push(`under ${assertAskSafeText(value.condition, `${path}.condition`)}`);
   if (value.leverage !== undefined) parts.push("on the stated basis");
   return parts.join(" ");
@@ -528,22 +650,22 @@ function formatExchange(value, path) {
   if (!isObject(value)) renderFailure("TPL_EXCHANGE_REALIZATION_INVALID", `${path} must be a typed exchange slot.`, { path });
   assertAllowedKeys(value, ["object", "quantity", "unit", "status", "change", "information"], path);
   if (value.information !== undefined) {
-    const label = lexicalizeText(value.information, `${path}.information`);
+    const label = lexicalizeText(canonicalIdentifier(value.information, `${path}.information`), `${path}.information`);
     return /^the /i.test(label) ? label : `the ${label}`;
   }
   if (value.change !== undefined) {
     if (value.change === "extension") return "an extension to the repayment deadline";
-    return `the stated ${lexicalizeText(value.change, `${path}.change`)}`;
+    return `the stated ${lexicalizeText(canonicalIdentifier(value.change, `${path}.change`), `${path}.change`)}`;
   }
   if (value.object === undefined) renderFailure("TPL_EXCHANGE_OBJECT_MISSING", `${path}.object or ${path}.information is required.`, { path });
-  const objectLabel = lexicalizeText(value.object, `${path}.object`);
+  const objectLabel = lexicalizeText(canonicalIdentifier(value.object, `${path}.object`), `${path}.object`);
   let text = objectLabel;
   if (value.quantity !== undefined) {
     if (typeof value.quantity !== "number" || !Number.isFinite(value.quantity) || value.quantity <= 0) renderFailure("TPL_EXCHANGE_QUANTITY_INVALID", `${path}.quantity must be a positive finite number.`, { path });
-    const unit = value.unit === undefined ? "units" : lexicalizeText(value.unit, `${path}.unit`);
+    const unit = value.unit === undefined ? "units" : lexicalizeText(canonicalIdentifier(value.unit, `${path}.unit`), `${path}.unit`);
     text = `${value.quantity} ${unit} of ${objectLabel.replace(/^the /, "")}`;
   }
-  if (value.status !== undefined) text = `${lexicalizeText(value.status, `${path}.status`)} of ${text}`;
+  if (value.status !== undefined) text = `${lexicalizeText(canonicalIdentifier(value.status, `${path}.status`), `${path}.status`)} of ${text}`;
   return text;
 }
 
@@ -745,7 +867,7 @@ export function renderStyleProfile({ payload, styleProfileId = "CANONICAL_NEUTRA
   speechAct = payload.speechAct;
   actionId = payload.actionId;
   semanticRequestId = payload.semanticRequestId;
-  const expectedActionDisplayName = ACTION_DISPLAY_NAMES[actionId];
+  const expectedActionDisplayName = ACTION_PRESENTATION_LABELS[actionId];
   if (actionDisplayName !== undefined && actionDisplayName !== expectedActionDisplayName) renderFailure("TPL_ACTION_LABEL_DRIFT", "The style profile input action label does not match the reviewed action label.");
   actionDisplayName = expectedActionDisplayName;
   const expectedRealizedSlots = realizeSemanticSlots(payload, { requireAuthoredPressure: speechAct === "PRESSURE", evaluationTime });
@@ -985,6 +1107,32 @@ function removeAllLiteral(text, fragment) {
   return text.replace(new RegExp(escaped, "giu"), " ");
 }
 
+function semanticSlotDispositionEvidence(payload, evidenceSlots, reasons) {
+  const entries = [];
+  for (const [slot, value] of Object.entries(payload?.slots ?? {})) {
+    const disposition = SEMANTIC_SLOT_DISPOSITIONS[slot];
+    if (!disposition) {
+      reasons.push(rejection("REJECT_SLOT_DISPOSITION_MISSING", `Slot ${slot} has no reviewed semantic disposition.`, { slot }));
+      continue;
+    }
+    if (disposition === "CONTEXT_ONLY") {
+      entries.push({ slot, disposition, accounted: true, basis: "validated-semantic-envelope" });
+      continue;
+    }
+    if (disposition === "REALIZED_OPTIONAL_SLOT" || disposition === "REALIZED_MACRO_SLOT") {
+      const upperSlot = disposition === "REALIZED_OPTIONAL_SLOT" ? "LEVERAGE" : slot.toUpperCase();
+      const realized = evidenceSlots?.[upperSlot];
+      const accounted = typeof realized === "string" && realized.trim().length > 0;
+      if (!accounted) reasons.push(rejection("REJECT_SEMANTIC_SLOT_UNACCOUNTED", `Semantic slot ${slot} has no deterministic realization or reviewed disposition.`, { slot }));
+      entries.push({ slot, disposition, accounted, basis: accounted ? `realizedSlots.${upperSlot}` : null });
+      continue;
+    }
+    reasons.push(rejection("REJECT_SEMANTIC_SLOT_UNSUPPORTED", `Semantic slot ${slot} is unsupported by the current reviewed protocol.`, { slot, value }));
+    entries.push({ slot, disposition, accounted: false, basis: null });
+  }
+  return entries;
+}
+
 export function validateRenderedTextSemanticEvidence({ payload, renderedText, realizedSlots, presentationOnlyAtoms = [], requireAuthoredPressure = payload?.speechAct === "PRESSURE", evaluationTime = DEFAULT_EVALUATION_TIME, vibeId, deliveryIntensity, allowLegacyDealFrame = false }) {
   const reasons = [];
   const payloadValidation = validateSemanticPayload(payload);
@@ -999,6 +1147,7 @@ export function validateRenderedTextSemanticEvidence({ payload, renderedText, re
   }
   if (expectedRealizedSlots && (!isObject(realizedSlots) || !valuesEqual(realizedSlots, expectedRealizedSlots))) reasons.push(rejection("REJECT_REALIZED_SLOTS_DRIFT", "Evidence must use the deterministic realization of the supplied semantic payload."));
   const evidenceSlots = expectedRealizedSlots ?? (isObject(realizedSlots) ? realizedSlots : {});
+  const slotDispositions = semanticSlotDispositionEvidence(payload, evidenceSlots, reasons);
   const requiredSlots = SEMANTIC_SLOTS_BY_ACT[payload?.speechAct] ?? [];
   const requiredFragments = requiredSlots.map((slot) => {
     const text = evidenceSlots?.[slot];
@@ -1047,6 +1196,7 @@ export function validateRenderedTextSemanticEvidence({ payload, renderedText, re
     requiredFragments,
     semanticFragments,
     mandatoryFacts,
+    slotDispositions,
     presentationOnlyAtoms: structuredClone(suppliedPresentationOnlyAtoms),
     unauthorizedFragments: unauthorizedText ? [unauthorizedText] : [],
     reasons,
@@ -1055,7 +1205,7 @@ export function validateRenderedTextSemanticEvidence({ payload, renderedText, re
 
 function renderResult({ payload, vibeId, deliveryIntensity, matrixKey, cell, realizedSlots, rendered, gateResult, executionMode, evaluationTime = DEFAULT_EVALUATION_TIME, fallbackUsed = false, rejectionReasons = [], faceRequest = { reactionFaceId: null, replyFaceId: null }, presentationOnlyAtoms = rendered.presentationOnlyAtoms ?? [] }) {
   const renderedText = assertCleanRenderedText(rendered.renderedText);
-  const semanticEvidence = validateRenderedTextSemanticEvidence({ payload, renderedText, realizedSlots, presentationOnlyAtoms, requireAuthoredPressure: payload.speechAct === "PRESSURE" && executionMode !== "PRODUCTION_SAFETY_FALLBACK", evaluationTime, vibeId, deliveryIntensity, allowLegacyDealFrame: fallbackUsed });
+  const semanticEvidence = validateRenderedTextSemanticEvidence({ payload, renderedText, realizedSlots, presentationOnlyAtoms, requireAuthoredPressure: payload.speechAct === "PRESSURE", evaluationTime, vibeId, deliveryIntensity, allowLegacyDealFrame: fallbackUsed });
   if (!semanticEvidence.passed) renderFailure("TPL_SEMANTIC_INVARIANCE_FAILED", semanticEvidence.reasons.map((reason) => reason.code).join(","), { reasons: semanticEvidence.reasons });
   return {
     semanticRequestId: payload.semanticRequestId,
@@ -1103,7 +1253,7 @@ export function renderSafeFallback(payload, vibeId, deliveryIntensity) {
   if (!SPEECH_ACTS.includes(payload.speechAct)) renderFailure("SPEECH_ACT_NOT_ALLOWED", `Unknown speech act ${payload.speechAct}.`);
   validateDeliveryIntensity(deliveryIntensity);
   const vibe = vibeFor(vibeId);
-  const realizedSlots = realizeSemanticSlots(payload);
+  const realizedSlots = realizeSemanticSlots(payload, { requireAuthoredPressure: payload.speechAct === "PRESSURE" });
   const pressurePrefix = realizedSlots.LEVERAGE ? `${realizedSlots.LEVERAGE}; ` : "";
   const text = payload.speechAct === "ASK"
     ? deliveryIntensity === "SUBTLE" ? `Could you ${realizedSlots.REQUEST}?` : deliveryIntensity === "BALANCED" ? `Please ${realizedSlots.REQUEST}.` : `I am asking directly: ${realizedSlots.REQUEST}.`
@@ -1160,7 +1310,7 @@ export function resolveMatrixCell(matrix, payload, vibeId, deliveryIntensity, op
   const availableContextFacts = options.availableContextFacts ?? options.contextFacts ?? [];
   const gateResult = gateResultFor(cell, availableContextFacts);
   if (options.requireExactContext === true && !gateResult.exactFactsSatisfied) renderFailure("TPL_CONTEXT_GATE_UNSATISFIED", `${key} has unavailable candidate context facts; neutral rewrite was disabled by the caller.`, { key, requiredFacts: gateResult.requiredFacts });
-  const rendered = renderStyleProfile({ payload, styleProfileId, speechAct: payload.speechAct, deliveryIntensity, vibeId, coordinateKey: key, semanticRequestId: payload.semanticRequestId, actionId: payload.actionId, actionDisplayName: ACTION_DISPLAY_NAMES[payload.actionId] ?? payload.actionId, realizedSlots, availableContextFacts: gateResult.authorizedFacts, evaluationTime });
+  const rendered = renderStyleProfile({ payload, styleProfileId, speechAct: payload.speechAct, deliveryIntensity, vibeId, coordinateKey: key, semanticRequestId: payload.semanticRequestId, actionId: payload.actionId, actionDisplayName: ACTION_PRESENTATION_LABELS[payload.actionId] ?? payload.actionId, realizedSlots, availableContextFacts: gateResult.authorizedFacts, evaluationTime });
   return renderResult({ payload, vibeId, deliveryIntensity, matrixKey: key, cell, realizedSlots, rendered, gateResult, executionMode, evaluationTime, faceRequest: { reactionFaceId: options.reactionFaceId ?? null, replyFaceId: options.replyFaceId ?? null } });
 }
 

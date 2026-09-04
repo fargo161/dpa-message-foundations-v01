@@ -1,9 +1,9 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { createMarcusScenario, resolveAction } from "../src/mechanics.mjs";
+import { ACTION_DEFINITIONS, createMarcusScenario, resolveAction } from "../src/mechanics.mjs";
 import { BASED_VIBES, buildMatrixWithAnchors, generateMatrix } from "../src/based.mjs";
 import { adaptResolvedActionToSemanticRequest } from "../src/action-tpl-adapter.mjs";
-import { FACE_COMPATIBILITY_BOUNDARY, FALLBACK_CONSTRUCTION_BY_ACT, TPL_ATOMS, TPL_CONSTRUCTIONS, TPL_FALLBACK_POLICY, TPL_FAMILIES, TPL_PROTOCOLS, TPL_TEMPLATES, TPL_STYLE_PROFILES, buildRuntimeMatrix, renderSafeFallback, resolveMatrixCell, validateSemanticInvariance, validateSemanticPayload } from "../src/tpl.mjs";
+import { ACTION_PRESENTATION_LABELS, FACE_COMPATIBILITY_BOUNDARY, FALLBACK_CONSTRUCTION_BY_ACT, TPL_ATOMS, TPL_CONSTRUCTIONS, TPL_FALLBACK_POLICY, TPL_FAMILIES, TPL_PROTOCOLS, TPL_TEMPLATES, TPL_STYLE_PROFILES, buildRuntimeMatrix, deriveActionPresentationLabels, renderSafeFallback, resolveMatrixCell, validateSemanticInvariance, validateSemanticPayload } from "../src/tpl.mjs";
 
 const makeSemanticRequest = (speechAct, semanticSlots, overrides = {}) => {
   const slots = {
@@ -11,11 +11,9 @@ const makeSemanticRequest = (speechAct, semanticSlots, overrides = {}) => {
     target: "marcus_broker_hill",
     action: speechAct === "ASK" ? "REQUEST_EXTENSION" : speechAct === "DEAL" ? "OFFER_PARTIAL_PAYMENT" : "INVOKE_CONSEQUENCE",
     contextId: "PRIVATE_NEGOTIATION",
-    object: "debt_relief",
-    deadline: "2026-09-03T09:00:00.000Z",
     ...semanticSlots,
   };
-  return {
+  const request = {
     schemaVersion: "dpa-keyword-foundation@0.1",
     adapterVersion: "action-tpl-adapter@0.1",
     semanticRequestId: `semantic:test:${speechAct.toLowerCase()}`,
@@ -34,6 +32,23 @@ const makeSemanticRequest = (speechAct, semanticSlots, overrides = {}) => {
     provenance: [{ sourceId: "project-authored-test", sourceRecordId: "history:test:1", transformVersion: "tpl-test@1", licenseId: "PROJECT_AUTHORED" }],
     ...overrides,
   };
+  const projection = speechAct === "PRESSURE"
+    ? { DEMAND: request.slots.DEMAND, CONSEQUENCE: request.slots.CONSEQUENCE, leverage: request.slots.leverage }
+    : speechAct === "DEAL"
+      ? { OFFER: request.slots.OFFER, RETURN: request.slots.RETURN }
+      : { REQUEST: request.slots.REQUEST };
+  request.semanticBinding = {
+    bindingVersion: "mechanics-tpl-binding@0.1",
+    source: "AUTHORED_SEMANTIC_CONTRACT",
+    sourceRecordId: request.provenance[0].sourceRecordId,
+    actionId: request.actionId,
+    actorId: request.actorId,
+    targetId: request.targetId,
+    contextId: request.contextId,
+    payload: { actor: request.actorId, target: request.targetId, action: request.actionId, ...projection },
+    semanticSlots: projection,
+  };
+  return request;
 };
 
 const canonicalAsk = () => makeSemanticRequest("ASK", {
@@ -109,24 +124,24 @@ test("semantic invariance blocks drift and unsupported knowledge", () => {
   assert.equal(validateSemanticInvariance(before, structuredClone(before)).passed, true);
   const changedDeadline = structuredClone(before);
   changedDeadline.slots.deadline = "2026-09-10";
-  assert.equal(validateSemanticInvariance(before, changedDeadline).reasons[0].code, "REJECT_DEADLINE_DRIFT");
+  assert.equal(validateSemanticInvariance(before, changedDeadline).passed, false);
   assert.equal(validateSemanticInvariance(before, before, { speakerKnowledgeClaims: [{ claim: "ledger", available: false }] }).passed, false);
   assert.equal(validateSemanticInvariance(before, before, { authorOnlyReveals: ["secret"] }).passed, false);
   assert.equal(validateSemanticInvariance(before, { ...before, speechAct: "PRESSURE" }).passed, false);
   assert.equal(validateSemanticInvariance(before, { ...before, slots: { ...before.slots, UNLISTED: "new proposition" } }).reasons[0].code, "REJECT_UNAUTHORIZED_SLOT");
 
   const changedRequest = structuredClone(before);
-  changedRequest.slots.REQUEST = "pay now";
+  changedRequest.slots.REQUEST.object = "different_object";
   assert.equal(validateSemanticInvariance(before, changedRequest).reasons.some((reason) => reason.code === "REJECT_SLOT_VALUE_CHANGED" && reason.slot === "REQUEST"), true);
   const renamedRequest = { ...structuredClone(before), slots: { request: "review the ledger", deadline: "2026-09-03" } };
   assert.equal(validateSemanticInvariance(before, renamedRequest).passed, false);
   assert.ok(validateSemanticInvariance(before, renamedRequest).reasons.some((reason) => reason.code === "REJECT_REQUIRED_SLOT_REMOVED"));
 
   const deal = makeSemanticRequest("DEAL", {
-    OFFER: { object: "cash", quantity: 80, unit: "USD" },
-    offer: { object: "cash", quantity: 80, unit: "USD" },
-    RETURN: { object: "extension" },
-    return: { object: "extension" },
+    OFFER: { object: "cash_80_usd", quantity: 80, unit: "USD" },
+    offer: { object: "cash_80_usd", quantity: 80, unit: "USD" },
+    RETURN: { object: "debt_250_usd", status: "partial_satisfaction" },
+    return: { object: "debt_250_usd", status: "partial_satisfaction" },
   });
   const changedOffer = structuredClone(deal);
   changedOffer.slots.OFFER.quantity = 800;
@@ -136,14 +151,10 @@ test("semantic invariance blocks drift and unsupported knowledge", () => {
   changedReturn.slots.RETURN = { object: "ownership_transfer" };
   assert.equal(validateSemanticInvariance(deal, changedReturn).passed, false);
 
-  const pressure = makeSemanticRequest("PRESSURE", {
-    DEMAND: "pay today",
-    demand: "pay today",
-    CONSEQUENCE: "report the debt",
-    consequence: "report the debt",
-  });
+  const pressure = completePressure();
   const inventedThreat = structuredClone(pressure);
-  inventedThreat.slots.CONSEQUENCE = "destroy the building";
+  inventedThreat.slots.CONSEQUENCE.text = "destroy the building";
+  inventedThreat.slots.consequence = structuredClone(inventedThreat.slots.CONSEQUENCE);
   assert.equal(validateSemanticInvariance(pressure, inventedThreat).passed, false);
   const lowercaseActorDrift = structuredClone(before);
   lowercaseActorDrift.slots.actor = "different-actor";
@@ -188,9 +199,9 @@ test("canonical envelope protects every top-level field and preserves nested typ
 
 test("macro acts require exact uppercase/lowercase semantic slot pairs", () => {
   for (const payload of [
-    makeSemanticRequest("ASK", { REQUEST: "review the ledger", request: "review the ledger" }),
-    makeSemanticRequest("DEAL", { OFFER: { object: "cash", quantity: 80 }, offer: { object: "cash", quantity: 80 }, RETURN: { object: "extension" }, return: { object: "extension" } }),
-    makeSemanticRequest("PRESSURE", { DEMAND: "pay today", demand: "pay today", CONSEQUENCE: "report the debt", consequence: "report the debt" }),
+    makeSemanticRequest("ASK", { REQUEST: { action: "REQUEST_EXTENSION", object: "debt_relief" }, request: { action: "REQUEST_EXTENSION", object: "debt_relief" } }),
+    makeSemanticRequest("DEAL", { OFFER: { object: "cash_80_usd", quantity: 80, unit: "USD" }, offer: { object: "cash_80_usd", quantity: 80, unit: "USD" }, RETURN: { object: "debt_250_usd", status: "partial_satisfaction" }, return: { object: "debt_250_usd", status: "partial_satisfaction" } }),
+    completePressure(),
   ]) assert.equal(validateSemanticPayload(payload).passed, true);
 
   const contradictory = canonicalAsk();
@@ -265,8 +276,8 @@ test("the runtime boundary rejects incomplete and contradictory semantic envelop
 
 test("legacy fallback remains safe while mapped preview preserves the selected act", () => {
   for (const speechAct of ["DEAL", "PRESSURE", "ASK"]) {
-    const slots = speechAct === "DEAL" ? { OFFER: { object: "cash", quantity: 80, unit: "USD" }, offer: { object: "cash", quantity: 80, unit: "USD" }, RETURN: { object: "extension" }, return: { object: "extension" } } : speechAct === "PRESSURE" ? { DEMAND: "pay today", demand: "pay today", CONSEQUENCE: "report the debt", consequence: "report the debt" } : { REQUEST: "review the ledger", request: "review the ledger" };
-    const payload = makeSemanticRequest(speechAct, slots, { semanticRequestId: `r-${speechAct}` });
+    const slots = speechAct === "DEAL" ? { OFFER: { object: "cash_80_usd", quantity: 80, unit: "USD" }, offer: { object: "cash_80_usd", quantity: 80, unit: "USD" }, RETURN: { object: "debt_250_usd", status: "partial_satisfaction" }, return: { object: "debt_250_usd", status: "partial_satisfaction" } } : { REQUEST: { action: "REQUEST_EXTENSION", object: "debt_relief" }, request: { action: "REQUEST_EXTENSION", object: "debt_relief" } };
+    const payload = speechAct === "PRESSURE" ? completePressure() : makeSemanticRequest(speechAct, slots, { semanticRequestId: `r-${speechAct}` });
     const result = renderSafeFallback(payload, "AS", "OVERT");
     assert.equal(result.semanticInvariancePassed, true);
     assert.equal(result.fallbackUsed, true);
@@ -291,7 +302,7 @@ test("legacy fallback remains safe while mapped preview preserves the selected a
   assert.equal(FACE_COMPATIBILITY_BOUNDARY.rendererMayMutateFaceSlots, false);
   assert.equal(TPL_FALLBACK_POLICY.totalActIntensityForms, 9);
   assert.equal(TPL_FALLBACK_POLICY.vibeAffectsWording, true);
-  const wordingPayload = makeSemanticRequest("ASK", { REQUEST: "review the ledger", request: "review the ledger" }, { semanticRequestId: "vibe-wording" });
+  const wordingPayload = makeSemanticRequest("ASK", { REQUEST: { action: "REQUEST_EXTENSION", object: "debt_relief" }, request: { action: "REQUEST_EXTENSION", object: "debt_relief" } }, { semanticRequestId: "vibe-wording" });
   const subtle = renderSafeFallback(wordingPayload, "AS", "SUBTLE");
   const otherVibe = renderSafeFallback(wordingPayload, "BA", "SUBTLE");
   assert.equal(subtle.renderedText, otherVibe.renderedText);
@@ -317,7 +328,7 @@ test("resolved actions cross the TPL boundary through a canonical adapter", () =
   };
   const contradictory = adaptResolvedActionToSemanticRequest(contradictoryPayload);
   assert.equal(contradictory.ok, false);
-  assert.ok(contradictory.failures.some((failure) => failure.code === "RESOLUTION_UPPERCASE_LOWERCASE_MISMATCH"));
+  assert.ok(contradictory.failures.some((failure) => failure.code === "RESOLUTION_PAYLOAD_PROVENANCE_MISMATCH"));
 
   const blocked = resolveAction(state, "REQUEST_EXTENSION", "player", "apartment_305_entry", "PRIVATE_NEGOTIATION");
   const rejected = adaptResolvedActionToSemanticRequest(blocked);
@@ -328,5 +339,31 @@ test("resolved actions cross the TPL boundary through a canonical adapter", () =
 
   const incomplete = adaptResolvedActionToSemanticRequest({ ...resolved, payload: { actor: "player", target: "marcus_broker_hill", action: "REQUEST_SUPPORT" } });
   assert.equal(incomplete.ok, false);
-  assert.equal(incomplete.failures[0].code, "ACTION_PAYLOAD_IDENTITY_DRIFT");
+  assert.equal(incomplete.failures[0].code, "RESOLUTION_PAYLOAD_PROVENANCE_MISMATCH");
+});
+
+test("TPL action presentation metadata is derived from the canonical action registry", () => {
+  const registryIds = ACTION_DEFINITIONS.map((entry) => entry.actionId).sort();
+  assert.deepEqual(Object.keys(ACTION_PRESENTATION_LABELS).sort(), registryIds);
+  for (const entry of ACTION_DEFINITIONS) {
+    assert.equal(typeof entry.tplPresentation?.label, "string", `${entry.actionId} lacks reviewed TPL presentation metadata`);
+    assert.equal(ACTION_PRESENTATION_LABELS[entry.actionId], entry.tplPresentation.label, `${entry.actionId} has a duplicated or divergent label registry`);
+  }
+  assert.deepEqual(new Set(ACTION_DEFINITIONS.map((entry) => entry.macroAct)), new Set(["ASK", "DEAL", "PRESSURE"]));
+});
+
+test("documented action extension derives a label without a second registry", () => {
+  const extension = {
+    actionId: "REQUEST_ARCHIVE_REVIEW",
+    displayName: "Request an archive review",
+    tplPresentation: { label: "an archive review" },
+    macroAct: "ASK",
+    requiredChecks: [],
+    forbiddenChecks: [],
+    payload: (actorId, targetId) => ({ actor: actorId, target: targetId, action: "REQUEST_ARCHIVE_REVIEW", object: "archive_review" }),
+    history: "ARCHIVE_REVIEW_REQUESTED",
+  };
+  const labels = deriveActionPresentationLabels([...ACTION_DEFINITIONS, extension]);
+  assert.equal(labels.REQUEST_ARCHIVE_REVIEW, "an archive review");
+  assert.throws(() => deriveActionPresentationLabels([...ACTION_DEFINITIONS, extension, extension]), /ACTION_PRESENTATION_ACTION_DUPLICATE/);
 });

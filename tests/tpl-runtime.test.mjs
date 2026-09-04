@@ -15,6 +15,7 @@ import {
   renderSafeFallback,
   resolveMatrixCell,
   validateRenderedTextSemanticEvidence,
+  validateSemanticPayload,
   validateSemanticInvariance,
 } from "../src/tpl.mjs";
 
@@ -77,7 +78,7 @@ function nonDemoPressurePayload() {
     CONSEQUENCE: consequence,
     consequence,
   };
-  return {
+  const request = {
     schemaVersion: "dpa-keyword-foundation@0.1",
     adapterVersion: "action-tpl-adapter@0.1",
     semanticRequestId: "semantic:alt-pressure-occurrence",
@@ -95,7 +96,158 @@ function nonDemoPressurePayload() {
     forbiddenSemanticAdditions: ["unauthored_deadline", "unauthored_threat", "unauthored_promise", "unauthored_knowledge"],
     provenance: [{ sourceId: "project-authored-test", sourceRecordId: "alt-pressure-history", transformVersion: "tpl-runtime-test@1", licenseId: "PROJECT_AUTHORED" }],
   };
+  request.semanticBinding = {
+    bindingVersion: "mechanics-tpl-binding@0.1",
+    source: "AUTHORED_SEMANTIC_CONTRACT",
+    sourceRecordId: request.provenance[0].sourceRecordId,
+    actionId: request.actionId,
+    actorId: request.actorId,
+    targetId: request.targetId,
+    contextId: request.contextId,
+    payload: { actor: request.actorId, target: request.targetId, action: request.actionId, leverage: request.slots.leverage, demand: request.slots.demand, consequence: request.slots.consequence },
+    semanticSlots: { DEMAND: request.slots.DEMAND, CONSEQUENCE: request.slots.CONSEQUENCE, leverage: request.slots.leverage },
+  };
+  return request;
 }
+
+test("semantic-bearing slots are either realized, accounted for, or rejected", () => {
+  const ask = adapted("REQUEST_EXTENSION", "player", "marcus_broker_hill");
+  const askResult = resolveMatrixCell(matrix, ask, "AS", "BALANCED");
+  const askDispositions = Object.fromEntries(askResult.semanticEvidence.slotDispositions.map((entry) => [entry.slot, entry]));
+  assert.equal(askDispositions.actor.disposition, "CONTEXT_ONLY");
+  assert.equal(askDispositions.target.disposition, "CONTEXT_ONLY");
+  assert.equal(askDispositions.REQUEST.accounted, true);
+  assert.match(askResult.realizedSlots.REQUEST, /debt relief/i);
+
+  const deal = adapted("OFFER_PARTIAL_PAYMENT", "player", "marcus_broker_hill");
+  const dealResult = resolveMatrixCell(matrix, deal, "AS", "BALANCED");
+  assert.equal(dealResult.semanticEvidence.slotDispositions.find((entry) => entry.slot === "OFFER").accounted, true);
+  assert.match(dealResult.realizedSlots.OFFER, /80 USD.*cash/i);
+  assert.match(dealResult.realizedSlots.RETURN, /250 USD debt/i);
+  assert.equal(deal.slots.OFFER.quantity, 80);
+  assert.equal(deal.slots.OFFER.object, "cash_80_usd");
+
+  const pressure = adapted("INVOKE_CONSEQUENCE", "marcus_broker_hill", "player");
+  const pressureResult = resolveMatrixCell(matrix, pressure, "AS", "BALANCED");
+  assert.equal(pressureResult.semanticEvidence.slotDispositions.find((entry) => entry.slot === "DEMAND").accounted, true);
+  assert.equal(pressureResult.semanticEvidence.slotDispositions.find((entry) => entry.slot === "CONSEQUENCE").accounted, true);
+  assert.ok(pressure.slots.DEMAND.due, "the authoritative deadline remains bound in the pressure demand record");
+  assert.equal(pressure.slots.CONSEQUENCE.text, "Marcus reports the active debt to the building owner.");
+
+  const unsupported = [
+    ["deadline", "2026-09-10T00:00:00.000Z"],
+    ["condition", { conditionId: "if_refused" }],
+    ["knowledge", "sealed_bid_secret"],
+    ["urgency", "urgent"],
+    ["relationship", "trusted_partner"],
+    ["promise", "deliver_tomorrow"],
+  ];
+  for (const [slot, value] of unsupported) {
+    const candidate = structuredClone(ask);
+    candidate.slots[slot] = value;
+    const validation = validateSemanticPayload(candidate);
+    assert.equal(validation.passed, false, `${slot} was accepted without a reviewed disposition`);
+    assert.ok(validation.reasons.some((reason) => ["REJECT_SEMANTIC_SLOT_UNSUPPORTED", "REJECT_UNAUTHORIZED_SLOT"].includes(reason.code)), `${slot} lacked an explicit rejection reason`);
+    assert.throws(() => renderSafeFallback(candidate, "AS", "BALANCED"), /SEMANTIC_PAYLOAD_INVALID/);
+  }
+
+  const quantityMutation = structuredClone(deal);
+  quantityMutation.slots.OFFER.quantity = 0;
+  quantityMutation.slots.offer = structuredClone(quantityMutation.slots.OFFER);
+  assert.equal(validateSemanticPayload(quantityMutation).passed, false);
+  assert.throws(() => renderSafeFallback(quantityMutation, "AS", "BALANCED"), /SEMANTIC_PAYLOAD_INVALID/);
+
+  const actorMutation = structuredClone(ask);
+  actorMutation.slots.actor = "other_actor";
+  assert.equal(validateSemanticPayload(actorMutation).passed, false);
+  assert.throws(() => renderSafeFallback(actorMutation, "AS", "BALANCED"), /SEMANTIC_PAYLOAD_INVALID/);
+  const targetMutation = structuredClone(ask);
+  targetMutation.targetId = "other_target";
+  assert.equal(validateSemanticPayload(targetMutation).passed, false);
+  assert.throws(() => renderSafeFallback(targetMutation, "AS", "BALANCED"), /SEMANTIC_PAYLOAD_INVALID/);
+});
+
+test("free-form claims, delimiter tricks, casing changes, and nested binding mutation fail closed", () => {
+  const askAttacks = [
+    "I will harm you",
+    "PROMISE delivery by tomorrow; otherwise comply",
+    "request: [threat]",
+    "If You Refuse, I will expose you",
+  ];
+  for (const attack of askAttacks) {
+    const candidate = structuredClone(adapted("REQUEST_EXTENSION", "player", "marcus_broker_hill"));
+    candidate.slots.REQUEST = attack;
+    candidate.slots.request = attack;
+    assert.throws(() => renderSafeFallback(candidate, "AS", "BALANCED"), /SEMANTIC_PAYLOAD_INVALID/);
+  }
+
+  const deal = structuredClone(adapted("OFFER_PARTIAL_PAYMENT", "player", "marcus_broker_hill"));
+  deal.slots.OFFER.object = "cash, and I promise delivery by tomorrow";
+  deal.slots.offer = structuredClone(deal.slots.OFFER);
+  assert.throws(() => renderSafeFallback(deal, "AS", "BALANCED"), /SEMANTIC_PAYLOAD_INVALID/);
+
+  const pressure = structuredClone(adapted("INVOKE_CONSEQUENCE", "marcus_broker_hill", "player"));
+  const unsafeDemand = "pay today; otherwise I will harm you";
+  const unsafeConsequence = "I promise delivery by tomorrow [CONSEQUENCE]";
+  pressure.slots.DEMAND.authoredDemand = unsafeDemand;
+  pressure.slots.demand = structuredClone(pressure.slots.DEMAND);
+  pressure.slots.CONSEQUENCE.text = unsafeConsequence;
+  pressure.slots.consequence = structuredClone(pressure.slots.CONSEQUENCE);
+  assert.throws(() => renderSafeFallback(pressure, "AS", "OVERT"), /SEMANTIC_PAYLOAD_INVALID/);
+  assert.throws(() => renderSafeFallback(pressure, "AS", "OVERT"), (error) => !String(error.message).includes(unsafeDemand) && !String(error.message).includes(unsafeConsequence));
+});
+
+test("canonical action values cannot be replaced by a matching forged semantic binding", () => {
+  const ask = structuredClone(adapted("REQUEST_EXTENSION", "player", "marcus_broker_hill"));
+  ask.slots.REQUEST.object = "gold";
+  ask.slots.request = structuredClone(ask.slots.REQUEST);
+  ask.semanticBinding.semanticSlots.REQUEST = structuredClone(ask.slots.REQUEST);
+  const askValidation = validateSemanticPayload(ask);
+  assert.equal(askValidation.passed, false);
+  assert.ok(askValidation.reasons.some((reason) => reason.code === "REJECT_ACTION_SEMANTIC_VALUE_UNAUTHORIZED"));
+  assert.throws(() => renderSafeFallback(ask, "AS", "BALANCED"), /SEMANTIC_PAYLOAD_INVALID/);
+
+  const deal = structuredClone(adapted("OFFER_PARTIAL_PAYMENT", "player", "marcus_broker_hill"));
+  deal.slots.OFFER.quantity = 999;
+  deal.slots.offer = structuredClone(deal.slots.OFFER);
+  deal.semanticBinding.semanticSlots.OFFER = structuredClone(deal.slots.OFFER);
+  const dealValidation = validateSemanticPayload(deal);
+  assert.equal(dealValidation.passed, false);
+  assert.ok(dealValidation.reasons.some((reason) => reason.code === "REJECT_ACTION_SEMANTIC_VALUE_UNAUTHORIZED"));
+  assert.throws(() => renderSafeFallback(deal, "AS", "BALANCED"), /SEMANTIC_PAYLOAD_INVALID/);
+
+  const pressure = structuredClone(adapted("INVOKE_CONSEQUENCE", "marcus_broker_hill", "player"));
+  pressure.slots.DEMAND.amount = 999;
+  pressure.slots.demand = structuredClone(pressure.slots.DEMAND);
+  pressure.semanticBinding.semanticSlots.DEMAND = structuredClone(pressure.slots.DEMAND);
+  const pressureValidation = validateSemanticPayload(pressure);
+  assert.equal(pressureValidation.passed, false);
+  assert.ok(pressureValidation.reasons.some((reason) => reason.code === "REJECT_SEMANTIC_BINDING_RECORD_SLOTS_DRIFT"));
+  assert.throws(() => renderSafeFallback(pressure, "AS", "BALANCED"), /SEMANTIC_PAYLOAD_INVALID/);
+});
+
+test("authored PRESSURE threats remain valid when the full contract is bound", () => {
+  const payload = nonDemoPressurePayload();
+  payload.slots.CONSEQUENCE.text = "The broker will expose the sealed record.";
+  payload.slots.consequence = structuredClone(payload.slots.CONSEQUENCE);
+  payload.semanticBinding.semanticSlots.CONSEQUENCE = structuredClone(payload.slots.CONSEQUENCE);
+  const result = resolveMatrixCell(matrix, payload, "AS", "BALANCED");
+  assert.match(result.renderedText, /expose the sealed record/i);
+});
+
+test("safe PRESSURE fallback cannot bypass authored authorization", () => {
+  const candidate = structuredClone(adapted("INVOKE_CONSEQUENCE", "marcus_broker_hill", "player"));
+  const unsafeDemand = "demand anything; or else";
+  const unsafeConsequence = "unreviewed consequence; promise tomorrow";
+  candidate.slots.DEMAND.authoredDemand = unsafeDemand;
+  candidate.slots.demand = structuredClone(candidate.slots.DEMAND);
+  candidate.slots.CONSEQUENCE.text = unsafeConsequence;
+  candidate.slots.consequence = structuredClone(candidate.slots.CONSEQUENCE);
+  assert.throws(() => renderSafeFallback(candidate, "BA", "BALANCED"), /SEMANTIC_PAYLOAD_INVALID/);
+  try { renderSafeFallback(candidate, "BA", "BALANCED"); } catch (error) {
+    assert.doesNotMatch(String(error.message), /demand anything|unreviewed consequence/i);
+  }
+});
 
 function invalidPressureActionPayload() {
   const payload = nonDemoPressurePayload();
@@ -201,7 +353,7 @@ test("ASK gates, payload safety, and execution modes fail closed", () => {
   const coercive = structuredClone(payload);
   coercive.slots.REQUEST = "pay now or else I will report you";
   coercive.slots.request = coercive.slots.REQUEST;
-  assert.throws(() => resolveMatrixCell(matrix, coercive, "BA", "BALANCED"), /REJECT_ASK_PRESSURE_CONTENT/);
+  assert.throws(() => resolveMatrixCell(matrix, coercive, "BA", "BALANCED"), /REJECT_UNTRUSTED_FREEFORM_SLOT/);
 
   const mismatched = structuredClone(payload);
   mismatched.slots.REQUEST = { action: "REQUEST_ACCESS", object: "debt_relief" };
@@ -275,7 +427,7 @@ test("DEAL realizes the alternate authored information exchange and rejects malf
   const unknownLabel = structuredClone(adaptedTrade.semanticRequest);
   unknownLabel.slots.OFFER = { information: "unreviewed_information" };
   unknownLabel.slots.offer = structuredClone(unknownLabel.slots.OFFER);
-  assert.throws(() => resolveMatrixCell(matrix, unknownLabel, "AS", "BALANCED"), /TPL_SLOT_LABEL_UNAVAILABLE/);
+  assert.throws(() => resolveMatrixCell(matrix, unknownLabel, "AS", "BALANCED"), /REJECT_SEMANTIC_BINDING_SLOT_DRIFT/);
 });
 
 test("PRESSURE phase gate requires and preserves the complete authored pressure contract", () => {
@@ -295,64 +447,64 @@ test("PRESSURE phase gate requires and preserves the complete authored pressure 
   const incomplete = structuredClone(payload);
   incomplete.slots.DEMAND = "pay today";
   incomplete.slots.demand = incomplete.slots.DEMAND;
-  assert.throws(() => resolveMatrixCell(matrix, incomplete, "BA", "BALANCED"), /TPL_PRESSURE_CONTRACT_REQUIRED/);
+  assert.throws(() => resolveMatrixCell(matrix, incomplete, "BA", "BALANCED"), /REJECT_UNTRUSTED_FREEFORM_SLOT/);
   const mismatched = structuredClone(payload);
   mismatched.slots.CONSEQUENCE.pressureContractId = "other_contract";
   mismatched.slots.consequence = structuredClone(mismatched.slots.CONSEQUENCE);
-  assert.throws(() => resolveMatrixCell(matrix, mismatched, "BA", "BALANCED"), /TPL_PRESSURE_CONTRACT_MISMATCH/);
+  assert.throws(() => resolveMatrixCell(matrix, mismatched, "BA", "BALANCED"), /REJECT_SEMANTIC_BINDING_SLOT_DRIFT/);
   const coupledContractMismatch = structuredClone(payload);
   coupledContractMismatch.slots.DEMAND.pressureContractId = "other_contract";
   coupledContractMismatch.slots.CONSEQUENCE.pressureContractId = "other_contract";
   coupledContractMismatch.slots.demand = structuredClone(coupledContractMismatch.slots.DEMAND);
   coupledContractMismatch.slots.consequence = structuredClone(coupledContractMismatch.slots.CONSEQUENCE);
-  assert.throws(() => resolveMatrixCell(matrix, coupledContractMismatch, "BA", "BALANCED"), /TPL_PRESSURE_CONTRACT_MISMATCH/);
+  assert.throws(() => resolveMatrixCell(matrix, coupledContractMismatch, "BA", "BALANCED"), /REJECT_SEMANTIC_BINDING_SLOT_DRIFT/);
   const demandIdentityMismatch = structuredClone(payload);
   demandIdentityMismatch.slots.DEMAND.subject = "marcus_broker_hill";
   demandIdentityMismatch.slots.demand = structuredClone(demandIdentityMismatch.slots.DEMAND);
-  assert.throws(() => resolveMatrixCell(matrix, demandIdentityMismatch, "BA", "BALANCED"), /TPL_PRESSURE_DEMAND_SUBJECT_MISMATCH/);
+  assert.throws(() => resolveMatrixCell(matrix, demandIdentityMismatch, "BA", "BALANCED"), /REJECT_SEMANTIC_BINDING_SLOT_DRIFT/);
   const demandAmountMismatch = structuredClone(payload);
   demandAmountMismatch.slots.DEMAND.amount = 999;
   demandAmountMismatch.slots.demand = structuredClone(demandAmountMismatch.slots.DEMAND);
-  assert.doesNotThrow(() => resolveMatrixCell(matrix, demandAmountMismatch, "BA", "BALANCED"));
+  assert.throws(() => resolveMatrixCell(matrix, demandAmountMismatch, "BA", "BALANCED"), /REJECT_SEMANTIC_BINDING_SLOT_DRIFT/);
   const leverageIdentityMismatch = structuredClone(payload);
   leverageIdentityMismatch.slots.leverage.actor = "player";
-  assert.throws(() => resolveMatrixCell(matrix, leverageIdentityMismatch, "BA", "BALANCED"), /TPL_PRESSURE_ACTOR_MISMATCH|TPL_PRESSURE_LEVERAGE_ACTOR_MISMATCH/);
+  assert.throws(() => resolveMatrixCell(matrix, leverageIdentityMismatch, "BA", "BALANCED"), /REJECT_SEMANTIC_BINDING_SLOT_DRIFT/);
   const fearIdentityMismatch = structuredClone(payload);
   fearIdentityMismatch.slots.CONSEQUENCE.fearedBy = "marcus_broker_hill";
   fearIdentityMismatch.slots.consequence = structuredClone(fearIdentityMismatch.slots.CONSEQUENCE);
-  assert.throws(() => resolveMatrixCell(matrix, fearIdentityMismatch, "BA", "BALANCED"), /TPL_PRESSURE_FEAR_SUBJECT_MISMATCH/);
+  assert.throws(() => resolveMatrixCell(matrix, fearIdentityMismatch, "BA", "BALANCED"), /REJECT_SEMANTIC_BINDING_SLOT_DRIFT/);
   const validityMismatch = structuredClone(payload);
   validityMismatch.slots.CONSEQUENCE.validity.validFrom = "2026-01-02T00:00:00.000Z";
   validityMismatch.slots.consequence = structuredClone(validityMismatch.slots.CONSEQUENCE);
-  assert.throws(() => resolveMatrixCell(matrix, validityMismatch, "BA", "BALANCED"), /TPL_PRESSURE_VALIDITY_TIME_MISMATCH/);
+  assert.throws(() => resolveMatrixCell(matrix, validityMismatch, "BA", "BALANCED"), /REJECT_SEMANTIC_BINDING_SLOT_DRIFT/);
   const malformedValidity = structuredClone(payload);
   malformedValidity.slots.CONSEQUENCE.validity.status = "DISPUTED";
   malformedValidity.slots.consequence = structuredClone(malformedValidity.slots.CONSEQUENCE);
-  assert.throws(() => resolveMatrixCell(matrix, malformedValidity, "BA", "BALANCED"), /TPL_SLOT_FIELD_UNSUPPORTED/);
+  assert.throws(() => resolveMatrixCell(matrix, malformedValidity, "BA", "BALANCED"), /REJECT_SEMANTIC_BINDING_SLOT_DRIFT/);
   const contradictoryValidity = structuredClone(payload);
   contradictoryValidity.slots.CONSEQUENCE.validity.validUntil = "2027-01-01T00:00:00.000Z";
   contradictoryValidity.slots.consequence = structuredClone(contradictoryValidity.slots.CONSEQUENCE);
-  assert.throws(() => resolveMatrixCell(matrix, contradictoryValidity, "BA", "BALANCED"), /TPL_PRESSURE_VALIDITY_INVALID/);
+  assert.throws(() => resolveMatrixCell(matrix, contradictoryValidity, "BA", "BALANCED"), /REJECT_SEMANTIC_BINDING_SLOT_DRIFT/);
   const beliefOnly = structuredClone(payload);
   beliefOnly.slots.DEMAND.scope = "BELIEF";
   beliefOnly.slots.demand = structuredClone(beliefOnly.slots.DEMAND);
-  assert.throws(() => resolveMatrixCell(matrix, beliefOnly, "BA", "BALANCED"), /TPL_PRESSURE_SCOPE_INVALID|SEMANTIC_PAYLOAD_INVALID/);
+  assert.throws(() => resolveMatrixCell(matrix, beliefOnly, "BA", "BALANCED"), /REJECT_SEMANTIC_BINDING_SLOT_DRIFT/);
   const disputed = structuredClone(payload);
   disputed.slots.DEMAND.status = "DISPUTED";
   disputed.slots.demand = structuredClone(disputed.slots.DEMAND);
-  assert.throws(() => resolveMatrixCell(matrix, disputed, "BA", "BALANCED"), /REJECT_TYPED_SLOT_FIELD_UNSUPPORTED|SEMANTIC_PAYLOAD_INVALID/);
+  assert.throws(() => resolveMatrixCell(matrix, disputed, "BA", "BALANCED"), /REJECT_SEMANTIC_BINDING_SLOT_DRIFT/);
   const future = structuredClone(payload);
   future.slots.DEMAND.validFrom = "2099-01-01T00:00:00.000Z";
   future.slots.demand = structuredClone(future.slots.DEMAND);
-  assert.throws(() => resolveMatrixCell(matrix, future, "BA", "BALANCED"), /TPL_PRESSURE_NOT_ACTIVE/);
+  assert.throws(() => resolveMatrixCell(matrix, future, "BA", "BALANCED"), /REJECT_SEMANTIC_BINDING_SLOT_DRIFT/);
   const expired = structuredClone(payload);
   expired.slots.CONSEQUENCE.validUntil = "2026-01-02T00:00:00.000Z";
   expired.slots.consequence = structuredClone(expired.slots.CONSEQUENCE);
-  assert.throws(() => resolveMatrixCell(matrix, expired, "BA", "BALANCED"), /TPL_PRESSURE_EXPIRED/);
+  assert.throws(() => resolveMatrixCell(matrix, expired, "BA", "BALANCED"), /REJECT_SEMANTIC_BINDING_SLOT_DRIFT/);
   const wrongContext = structuredClone(payload);
   wrongContext.slots.CONSEQUENCE.contextId = "OTHER_CONTEXT";
   wrongContext.slots.consequence = structuredClone(wrongContext.slots.CONSEQUENCE);
-  assert.throws(() => resolveMatrixCell(matrix, wrongContext, "BA", "BALANCED"), /TPL_PRESSURE_CONTEXT_INVALID/);
+  assert.throws(() => resolveMatrixCell(matrix, wrongContext, "BA", "BALANCED"), /REJECT_SEMANTIC_BINDING_SLOT_DRIFT/);
 });
 
 test("PRESSURE accepts a valid non-demo authored semantic contract", () => {
@@ -466,7 +618,7 @@ test("rendered dialogue rejects raw object and array serialization", () => {
     const candidate = structuredClone(payload);
     candidate.slots.REQUEST = rawRequest;
     candidate.slots.request = rawRequest;
-    assert.throws(() => resolveMatrixCell(matrix, candidate, "AS", "BALANCED"), /TPL_(?:RENDERED_TEXT_LEAK|SLOT_LABEL_UNAVAILABLE)/);
+    assert.throws(() => resolveMatrixCell(matrix, candidate, "AS", "BALANCED"), /REJECT_UNTRUSTED_FREEFORM_SLOT/);
   }
 });
 

@@ -59,30 +59,23 @@
       "additionalProperties": false
     },
     "requestSlot": {
-      "oneOf": [
-        { "$ref": "#/$defs/nonEmptyString" },
-        {
-          "type": "object",
-          "minProperties": 1,
-          "properties": {
-            "action": { "$ref": "#/$defs/actionIdentifier" },
-            "object": { "$ref": "#/$defs/nonEmptyString" },
-            "permission": { "$ref": "#/$defs/nonEmptyString" },
-            "information": { "$ref": "#/$defs/nonEmptyString" },
-            "condition": { "$ref": "#/$defs/semanticValue" },
-            "leverage": { "$ref": "#/$defs/semanticValue" }
-          },
-          "additionalProperties": false
-        }
-      ]
+      "type": "object",
+      "minProperties": 1,
+      "properties": {
+        "action": { "$ref": "#/$defs/actionIdentifier" },
+        "object": { "$ref": "#/$defs/identifier" },
+        "permission": { "$ref": "#/$defs/identifier" },
+        "information": { "$ref": "#/$defs/identifier" },
+        "request": { "$ref": "#/$defs/identifier" },
+        "condition": { "$ref": "#/$defs/semanticValue" },
+        "leverage": { "$ref": "#/$defs/semanticValue" }
+      },
+      "additionalProperties": false
     },
     "pressureSlot": {
-      "oneOf": [
-        { "$ref": "#/$defs/nonEmptyString" },
-        {
-          "type": "object",
-          "minProperties": 1,
-          "properties": {
+      "type": "object",
+      "minProperties": 1,
+      "properties": {
             "kind": { "$ref": "#/$defs/nonEmptyString" },
             "demandId": { "$ref": "#/$defs/nonEmptyString" },
             "subject": { "$ref": "#/$defs/nonEmptyString" },
@@ -104,10 +97,8 @@
             "fearedConsequenceSourceAssertionId": { "$ref": "#/$defs/nonEmptyString" },
             "leverageBasis": { "$ref": "#/$defs/nonEmptyString" },
             "validity": { "$ref": "#/$defs/pressureValidity" }
-          },
-          "additionalProperties": false
-        }
-      ]
+      },
+      "additionalProperties": false
     },
     "pressureValidity": {
       "type": "object",
@@ -127,27 +118,13 @@
       "properties": {
         "actor": { "$ref": "#/$defs/nonEmptyString" },
         "target": { "$ref": "#/$defs/nonEmptyString" },
-        "recipient": { "$ref": "#/$defs/nonEmptyString" },
         "action": { "$ref": "#/$defs/actionIdentifier" },
-        "object": { "$ref": "#/$defs/nonEmptyString" },
-        "quantity": { "$ref": "#/$defs/quantity" },
-        "price": { "$ref": "#/$defs/semanticValue" },
-        "deadline": { "$ref": "#/$defs/nonEmptyString" },
-        "location": { "$ref": "#/$defs/nonEmptyString" },
-        "ownership": { "$ref": "#/$defs/semanticValue" },
-        "permission": { "$ref": "#/$defs/nonEmptyString" },
-        "prohibition": { "$ref": "#/$defs/nonEmptyString" },
-        "condition": { "$ref": "#/$defs/semanticValue" },
         "leverage": { "$ref": "#/$defs/semanticValue" },
-        "consequence": { "$ref": "#/$defs/pressureSlot" },
-        "demand": { "$ref": "#/$defs/pressureSlot" },
-        "request": { "$ref": "#/$defs/requestSlot" },
         "offer": { "$ref": "#/$defs/exchangeSlot" },
         "return": { "$ref": "#/$defs/exchangeSlot" },
-        "information": { "$ref": "#/$defs/semanticValue" },
-        "knowledge": { "$ref": "#/$defs/semanticValue" },
-        "authorOnlyReveal": { "$ref": "#/$defs/semanticValue" },
-        "stateDelta": { "$ref": "#/$defs/semanticValue" },
+        "demand": { "$ref": "#/$defs/pressureSlot" },
+        "consequence": { "$ref": "#/$defs/pressureSlot" },
+        "request": { "$ref": "#/$defs/requestSlot" },
         "contextId": { "$ref": "#/$defs/identifier" },
         "actorId": { "$ref": "#/$defs/identifier" },
         "targetId": { "$ref": "#/$defs/identifier" },
@@ -173,12 +150,28 @@
       },
       "additionalProperties": false
     },
+    "semanticBinding": {
+      "type": "object",
+      "required": ["bindingVersion", "source", "sourceRecordId", "actionId", "actorId", "targetId", "contextId", "payload", "semanticSlots"],
+      "properties": {
+        "bindingVersion": { "const": "mechanics-tpl-binding@0.1" },
+        "source": { "enum": ["MECHANICS_RESOLUTION", "AUTHORED_SEMANTIC_CONTRACT"] },
+        "sourceRecordId": { "$ref": "#/$defs/nonEmptyString" },
+        "actionId": { "$ref": "#/$defs/actionIdentifier" },
+        "actorId": { "$ref": "#/$defs/identifier" },
+        "targetId": { "$ref": "#/$defs/identifier" },
+        "contextId": { "$ref": "#/$defs/identifier" },
+        "payload": { "$ref": "#/$defs/nonEmptyObject" },
+        "semanticSlots": { "$ref": "#/$defs/nonEmptyObject" }
+      },
+      "additionalProperties": false
+    },
     "baseRequest": {
       "type": "object",
       "required": [
         "schemaVersion", "adapterVersion", "semanticRequestId", "actionId", "actorId", "targetId", "contextId",
         "actor", "target", "action", "speechAct", "outcome", "slots", "mandatorySemanticFacts",
-        "forbiddenSemanticAdditions", "provenance"
+        "forbiddenSemanticAdditions", "provenance", "semanticBinding"
       ],
       "properties": {
         "schemaVersion": { "const": "dpa-keyword-foundation@0.1" },
@@ -210,7 +203,8 @@
           "type": "array",
           "minItems": 1,
           "items": { "$ref": "#/$defs/provenanceEntry" }
-        }
+        },
+        "semanticBinding": { "$ref": "#/$defs/semanticBinding" }
       },
       "additionalProperties": false
     },

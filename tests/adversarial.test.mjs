@@ -63,7 +63,7 @@ function canonicalSemanticRequest(speechAct, semanticSlots = {}, overrides = {})
     contextId: "PRIVATE_NEGOTIATION",
     ...semanticSlots,
   };
-  return {
+  const request = {
     schemaVersion: "dpa-keyword-foundation@0.1",
     adapterVersion: "action-tpl-adapter@0.1",
     semanticRequestId: `semantic:red-team:${speechAct.toLowerCase()}`,
@@ -87,6 +87,23 @@ function canonicalSemanticRequest(speechAct, semanticSlots = {}, overrides = {})
     }],
     ...overrides,
   };
+  const projection = speechAct === "PRESSURE"
+    ? { DEMAND: request.slots.DEMAND, CONSEQUENCE: request.slots.CONSEQUENCE, leverage: request.slots.leverage }
+    : speechAct === "DEAL"
+      ? { OFFER: request.slots.OFFER, RETURN: request.slots.RETURN }
+      : { REQUEST: request.slots.REQUEST };
+  request.semanticBinding = {
+    bindingVersion: "mechanics-tpl-binding@0.1",
+    source: "AUTHORED_SEMANTIC_CONTRACT",
+    sourceRecordId: request.provenance[0].sourceRecordId,
+    actionId: request.actionId,
+    actorId: request.actorId,
+    targetId: request.targetId,
+    contextId: request.contextId,
+    payload: { actor: request.actorId, target: request.targetId, action: request.actionId, ...projection },
+    semanticSlots: projection,
+  };
+  return request;
 }
 
 test("TPL syntax gate reports the exact current blocker", () => {
@@ -228,7 +245,7 @@ test("canonical-only TPL boundary rejects legacy payloads and envelope mutations
   ];
 
   for (const [label, mutate, expectedCode] of malformedCases) {
-    const payload = canonicalSemanticRequest("ASK", { REQUEST: "review the ledger", request: "review the ledger" });
+    const payload = canonicalSemanticRequest("ASK", { REQUEST: { action: "REQUEST_EXTENSION", object: "debt_relief" }, request: { action: "REQUEST_EXTENSION", object: "debt_relief" } });
     mutate(payload);
     const validation = tpl.validateSemanticPayload(payload);
     assert.equal(validation.passed, false, `${label} crossed validateSemanticPayload`);
@@ -307,7 +324,7 @@ test("TRADE_INFORMATION requires an authored OFFER and rejects uppercase/lowerca
   delete missingOffer.payload.offer;
   const missingOfferResult = adapter.adaptResolvedActionToSemanticRequest(missingOffer);
   assert.equal(missingOfferResult.ok, false, "TRADE_INFORMATION adapted without an OFFER");
-  assert.ok(missingOfferResult.failures.some((failure) => failure.code === "MISSING_DEAL_SEMANTIC_CONTENT"));
+  assert.ok(missingOfferResult.failures.some((failure) => failure.code === "RESOLUTION_PAYLOAD_PROVENANCE_MISMATCH"));
 
   for (const [label, mutate] of [
     ["OFFER", (payload) => { payload.OFFER = { information: "different_secret" }; }],
@@ -317,7 +334,7 @@ test("TRADE_INFORMATION requires an authored OFFER and rejects uppercase/lowerca
     mutate(mismatched.payload);
     const result = adapter.adaptResolvedActionToSemanticRequest(mismatched);
     assert.equal(result.ok, false, `${label}/lowercase disagreement crossed the adapter`);
-    assert.ok(result.failures.some((failure) => failure.code === "RESOLUTION_UPPERCASE_LOWERCASE_MISMATCH"), `${label} mismatch was not explicit`);
+    assert.ok(result.failures.some((failure) => failure.code === "RESOLUTION_PAYLOAD_PROVENANCE_MISMATCH"), `${label} mutation was not bound to authoritative payload provenance`);
   }
 });
 
@@ -353,19 +370,14 @@ test("legacy fallbacks stay safe while mapped preview uses reviewed protocols", 
   const tpl = requireTpl(t);
   if (!tpl) return;
   const payloads = {
-    ASK: canonicalSemanticRequest("ASK", { REQUEST: "review the ledger", request: "review the ledger" }),
+    ASK: canonicalSemanticRequest("ASK", { REQUEST: { action: "REQUEST_EXTENSION", object: "debt_relief" }, request: { action: "REQUEST_EXTENSION", object: "debt_relief" } }),
     DEAL: canonicalSemanticRequest("DEAL", {
-      OFFER: { object: "cash", quantity: 80 },
-      offer: { object: "cash", quantity: 80 },
-      RETURN: { object: "extension" },
-      return: { object: "extension" },
+      OFFER: { object: "cash_80_usd", quantity: 80, unit: "USD" },
+      offer: { object: "cash_80_usd", quantity: 80, unit: "USD" },
+      RETURN: { object: "debt_250_usd", status: "partial_satisfaction" },
+      return: { object: "debt_250_usd", status: "partial_satisfaction" },
     }),
-    PRESSURE: canonicalSemanticRequest("PRESSURE", {
-      DEMAND: "pay today",
-      demand: "pay today",
-      CONSEQUENCE: "report the debt",
-      consequence: "report the debt",
-    }),
+    PRESSURE: null,
   };
 
   assert.equal(tpl.TPL_PROTOCOLS.filter((protocol) => protocol.reviewStatus === "APPROVED").length, 0);
@@ -380,13 +392,14 @@ test("legacy fallbacks stay safe while mapped preview uses reviewed protocols", 
     consequence: { consequenceId: "public_debt_exposure", text: "Marcus reports the active debt to the building owner.", fearedBy: "player", fearedConsequenceSourceAssertionId: "player_fears_exposure", leverageBasis: "debt_250_usd", demandId: "OWES:player_owes_marcus_250", scope: "ACTUAL", contextId: "PRIVATE_NEGOTIATION", validFrom: "2026-01-01T00:00:00.000Z", validity: { scope: "ACTUAL", contextId: "PRIVATE_NEGOTIATION", validFrom: "2026-01-01T00:00:00.000Z", validUntilIsUnbounded: true }, pressureContractId: "pressure_debt_exposure" },
   }, { actorId: "marcus_broker_hill", targetId: "player", actor: "marcus_broker_hill", target: "player" });
   for (const [speechAct, payload] of Object.entries(payloads)) {
-    const fallback = tpl.renderSafeFallback(payload, "AS", "BALANCED");
+    const candidate = speechAct === "PRESSURE" ? completePressure : payload;
+    const fallback = tpl.renderSafeFallback(candidate, "AS", "BALANCED");
     const construction = tpl.TPL_CONSTRUCTIONS.find((entry) => entry.constructionId === fallback.constructionId);
     assert.ok(construction, `${speechAct} fallback references a dangling construction`);
     assert.ok(construction.speechActs.includes(speechAct), `${speechAct} fallback references the wrong construction act`);
     assert.equal(fallback.tplProtocolId, null, `${speechAct} legacy fallback claims a protocol was approved`);
 
-    const matrixResult = tpl.resolveMatrixCell(generateMatrix(), speechAct === "PRESSURE" ? completePressure : payload, "AS", "BALANCED");
+    const matrixResult = tpl.resolveMatrixCell(generateMatrix(), candidate, "AS", "BALANCED");
     assert.equal(matrixResult.constructionId, fallback.constructionId);
     assert.equal(matrixResult.matrixReviewStatus, "REVIEWED");
     assert.equal(matrixResult.fallbackUsed, false);
@@ -488,8 +501,9 @@ test("malformed foundation payloads fail executable JSON Schema validation", asy
 
 test("generated report agrees with executable capacity and documents the Vibe wording boundary", async (t) => {
   const tpl = requireTpl(t);
-  if (!tpl || inspectionLoad.error) {
+  if (!tpl || inspectionLoad.error || adapterLoad.error) {
     if (inspectionLoad.error && !tplLoad.error) t.skip(`inspection import blocker: ${inspectionLoad.error.message}`);
+    if (adapterLoad.error) t.skip(`adapter import blocker: ${adapterLoad.error.message}`);
     return;
   }
   const inspection = inspectionLoad.module;
@@ -500,24 +514,7 @@ test("generated report agrees with executable capacity and documents the Vibe wo
   }
   assert.match(inspection.formatInspectionReport(report), new RegExp(`Semantic capacity: ${derived.validUniqueSemanticConfigurations} valid unique configurations`));
   assert.equal(tpl.TPL_FALLBACK_POLICY.vibeAffectsWording, true);
-  const payload = {
-    schemaVersion: "dpa-keyword-foundation@0.1",
-    adapterVersion: "action-tpl-adapter@0.1",
-    semanticRequestId: "vibe-red-team",
-    actionId: "REQUEST_EXTENSION",
-    actorId: "player",
-    targetId: "marcus_broker_hill",
-    contextId: "PRIVATE_NEGOTIATION",
-    actor: "player",
-    target: "marcus_broker_hill",
-    action: "REQUEST_EXTENSION",
-    speechAct: "ASK",
-    outcome: "PROPOSED",
-    slots: { actor: "player", target: "marcus_broker_hill", action: "REQUEST_EXTENSION", contextId: "PRIVATE_NEGOTIATION", REQUEST: "review the ledger", request: "review the ledger" },
-    mandatorySemanticFacts: ["player_owes_marcus_250"],
-    forbiddenSemanticAdditions: ["unauthored_threat"],
-    provenance: [{ sourceId: "project-authored-test", sourceRecordId: "history:vibe-red-team", transformVersion: "adversarial-test@1", licenseId: "PROJECT_AUTHORED" }],
-  };
+  const payload = adapterLoad.module.adaptResolvedActionToSemanticRequest(resolveAction(createMarcusScenario(), "REQUEST_EXTENSION", "player", "marcus_broker_hill", "PRIVATE_NEGOTIATION")).semanticRequest;
   const subtleA = tpl.renderSafeFallback(payload, "BA", "BALANCED");
   const subtleD = tpl.renderSafeFallback(payload, "DA", "BALANCED");
   assert.equal(subtleA.renderedText, subtleD.renderedText, "Vibe selection changed fallback wording despite the foundation policy");

@@ -5,6 +5,11 @@ export const ACTION_STATUS = Object.freeze(["AVAILABLE", "BLOCKED"]);
 export const FACT_SCOPES = Object.freeze(["ACTUAL", "BELIEF"]);
 export const FACT_POLARITIES = Object.freeze(["ASSERTED", "DENIED", "DISPUTED"]);
 
+// Mechanics owns this private replay record. It is deliberately not exposed
+// as a caller-supplied hash; the adapter can compare a cloned resolution to
+// the canonical values produced at resolution time.
+const RESOLUTION_PAYLOAD_RECORDS = new Map();
+
 const iso = (value) => new Date(value).toISOString();
 const timeOf = (value) => {
   const time = new Date(value).getTime();
@@ -590,28 +595,28 @@ function pressurePayload(actorId, targetId, state, contextId) {
 
 export const ACTION_DEFINITIONS = Object.freeze([
   {
-    actionId: "REQUEST_EXTENSION", displayName: "Request a repayment extension", macroAct: "ASK",
+    actionId: "REQUEST_EXTENSION", displayName: "Request a repayment extension", tplPresentation: { label: "a repayment extension" }, macroAct: "ASK",
     requiredChecks: [checkContext("PRIVATE_NEGOTIATION"), checkFact("OWES", { subject: "$ACTOR", object: "$TARGET" }, "An active debt connects the actor and target"), checkFact("NEEDS", { subject: "$ACTOR", object: "debt_relief" }, "The actor needs debt relief")],
     forbiddenChecks: [],
     payload: (actorId, targetId) => ({ actor: actorId, target: targetId, action: "REQUEST_EXTENSION", object: "debt_relief" }),
     history: "EXTENSION_REQUESTED",
   },
   {
-    actionId: "OFFER_PARTIAL_PAYMENT", displayName: "Offer a partial payment", macroAct: "DEAL",
+    actionId: "OFFER_PARTIAL_PAYMENT", displayName: "Offer a partial payment", tplPresentation: { label: "a partial payment" }, macroAct: "DEAL",
     requiredChecks: [checkContext("PRIVATE_NEGOTIATION"), checkFact("OWES", { subject: "$ACTOR", object: "$TARGET" }, "An active debt connects the actor and target"), checkFact("OWNS", { subject: "$ACTOR", object: "cash_80_usd" }, "The actor owns a cash resource"), checkFact("NEEDS", { subject: "$ACTOR", object: "debt_relief" }, "The actor needs debt relief")],
     forbiddenChecks: [],
     payload: (actorId, targetId) => ({ actor: actorId, target: targetId, action: "OFFER_PARTIAL_PAYMENT", offer: { object: "cash_80_usd", quantity: 80, unit: "USD" }, return: { object: "debt_250_usd", status: "partial_satisfaction" } }),
     history: "PARTIAL_PAYMENT_OFFERED",
   },
   {
-    actionId: "OFFER_CASH_FOR_EXTENSION", displayName: "Offer cash for an extension", macroAct: "DEAL",
+    actionId: "OFFER_CASH_FOR_EXTENSION", displayName: "Offer cash for an extension", tplPresentation: { label: "cash for an extension" }, macroAct: "DEAL",
     requiredChecks: [checkContext("PRIVATE_NEGOTIATION"), checkFact("OWES", { subject: "$ACTOR", object: "$TARGET" }, "An active debt connects the actor and target"), checkFact("OWNS", { subject: "$ACTOR", object: "cash_80_usd" }, "The actor owns a cash resource"), checkFact("PROMISED_TO", { subject: "$ACTOR", object: "$TARGET" }, "A commitment connects the parties")],
     forbiddenChecks: [],
     payload: (actorId, targetId) => ({ actor: actorId, target: targetId, action: "OFFER_CASH_FOR_EXTENSION", offer: { object: "cash_80_usd", quantity: 80, unit: "USD" }, return: { object: "repayment_deadline", change: "extension" } }),
     history: "CASH_FOR_EXTENSION_OFFERED",
   },
   {
-    actionId: "REQUEST_ACCESS", displayName: "Request controlled access", macroAct: "ASK",
+    actionId: "REQUEST_ACCESS", displayName: "Request controlled access", tplPresentation: { label: "controlled access" }, macroAct: "ASK",
     requiredChecks: [checkContext("ACCESS_REVIEW"), checkFact("CONTROLS", { subject: "$TARGET", object: "archive_door" }, "The target controls the access channel"), checkFact("PERMITTED", { subject: "$TARGET", object: "$ACTOR", term: "archive_door" }, "The target has authored permission"), checkFact("DEPENDS_ON", { subject: "$ACTOR", object: "archive_room" }, "The actor depends on the resource")],
     forbiddenChecks: [checkNoFact("PROHIBITED", { subject: "$TARGET", object: "$ACTOR", term: "archive_door" }, "SPECIFIC_PROHIBITION", "A specific prohibition defeats this access request.")],
     blockerIds: ["active_lock", "door_lock"],
@@ -619,38 +624,38 @@ export const ACTION_DEFINITIONS = Object.freeze([
     history: "ACCESS_REQUESTED",
   },
   {
-    actionId: "TRADE_INFORMATION", displayName: "Trade authored information", macroAct: "DEAL",
+    actionId: "TRADE_INFORMATION", displayName: "Trade authored information", tplPresentation: { label: "an information exchange" }, macroAct: "DEAL",
     requiredChecks: [checkContext("PRIVATE_DISCLOSURE"), checkFact("KNOWS_SECRET_ABOUT", { subject: "$ACTOR", object: "$TARGET" }, "The actor has scoped secret knowledge"), checkFact("HAS_LEVERAGE_OVER", { subject: "$ACTOR", object: "$TARGET" }, "The actor has an authored leverage basis")],
     forbiddenChecks: [],
     payload: (actorId, targetId) => ({ actor: actorId, target: targetId, action: "TRADE_INFORMATION", offer: { information: "scoped_secret" }, return: { object: "confidentiality_or_action" } }),
     history: "INFORMATION_TRADE_PROPOSED",
   },
   {
-    actionId: "INVOKE_CONSEQUENCE", displayName: "Invoke an authored consequence", macroAct: "PRESSURE",
+    actionId: "INVOKE_CONSEQUENCE", displayName: "Invoke an authored consequence", tplPresentation: { label: "the authored consequence" }, macroAct: "PRESSURE",
     requiredChecks: [checkActiveContext, checkPressureLeverage, checkPressureDemand, checkPressureConsequence],
     forbiddenChecks: [],
     payload: pressurePayload,
     history: "CONSEQUENCE_INVOKED",
   },
   {
-    actionId: "CHALLENGE_DEBT_VALIDITY", displayName: "Challenge the debt validity", macroAct: "ASK",
+    actionId: "CHALLENGE_DEBT_VALIDITY", displayName: "Challenge the debt validity", tplPresentation: { label: "a review of the debt ledger" }, macroAct: "ASK",
     requiredChecks: [checkContext("PRIVATE_NEGOTIATION"), checkAnyFact("OWES", "A debt claim exists"), checkFact("BELIEVES", { subject: "$ACTOR", proposition: "debt_amount_300" }, "The actor has a conflicting debt belief")],
     forbiddenChecks: [],
-    payload: (actorId, targetId) => ({ actor: actorId, target: targetId, action: "CHALLENGE_DEBT_VALIDITY", object: "debt_250_usd", request: "review the authored ledger" }),
+    payload: (actorId, targetId) => ({ actor: actorId, target: targetId, action: "CHALLENGE_DEBT_VALIDITY", object: "debt_250_usd", request: "review_authored_ledger" }),
     history: "DEBT_VALIDITY_CHALLENGED",
   },
   {
-    actionId: "REQUEST_EVIDENCE", displayName: "Request evidence", macroAct: "ASK",
+    actionId: "REQUEST_EVIDENCE", displayName: "Request evidence", tplPresentation: { label: "evidence for the knowledge claim" }, macroAct: "ASK",
     requiredChecks: [checkContext("PRIVATE_DISCLOSURE"), checkFact("BELIEVES", { subject: "$ACTOR", proposition: "imani_does_not_know_bid_secret" }, "The actor holds an uncertain belief about knowledge"), checkFact("KNOWS_SECRET_ABOUT", { subject: "$TARGET", object: "$ACTOR" }, "The target's scoped knowledge can be challenged")],
     forbiddenChecks: [],
-    payload: (actorId, targetId) => ({ actor: actorId, target: targetId, action: "REQUEST_EVIDENCE", request: "show evidence for the knowledge claim" }),
+    payload: (actorId, targetId) => ({ actor: actorId, target: targetId, action: "REQUEST_EVIDENCE", request: "show_knowledge_evidence" }),
     history: "EVIDENCE_REQUESTED",
   },
   {
-    actionId: "REQUEST_SUPPORT", displayName: "Request dependency support", macroAct: "ASK",
+    actionId: "REQUEST_SUPPORT", displayName: "Request dependency support", tplPresentation: { label: "dependency support" }, macroAct: "ASK",
     requiredChecks: [checkFact("DEPENDS_ON", { subject: "$ACTOR", object: "$TARGET" }, "The actor depends on the target"), checkFact("TRUSTS", { subject: "$ACTOR", object: "$TARGET" }, "The actor has authored directional trust")],
     forbiddenChecks: [],
-    payload: (actorId, targetId) => ({ actor: actorId, target: targetId, action: "REQUEST_SUPPORT", request: "provide the depended-on support" }),
+    payload: (actorId, targetId) => ({ actor: actorId, target: targetId, action: "REQUEST_SUPPORT", request: "provide_dependency_support" }),
     history: "SUPPORT_REQUESTED",
   },
 ]);
@@ -726,6 +731,14 @@ export function resolveAction(state, actionId, actorId, targetId, contextId) {
     provenance: projectProv(`${state.scenarioId}:${action.history}`),
   };
   if (available) nextState.history.push(historyEvent);
+  if (available) RESOLUTION_PAYLOAD_RECORDS.set(historyId, {
+    actionId,
+    macroAct: action.macroAct,
+    actorId,
+    targetId,
+    contextId,
+    payload: structuredClone(payload),
+  });
   return {
     actionId,
     actorId,
@@ -743,6 +756,21 @@ export function resolveAction(state, actionId, actorId, targetId, contextId) {
     stateBefore: structuredClone(state),
     stateAfter: nextState,
   };
+}
+
+export function getAuthoritativeResolvedPayload(resolvedAction, contextId) {
+  const historyId = resolvedAction?.emittedHistory?.[0]?.historyId;
+  const record = typeof historyId === "string" ? RESOLUTION_PAYLOAD_RECORDS.get(historyId) : null;
+  if (!record) throw new Error("RESOLUTION_CANONICAL_RECORD_UNAVAILABLE");
+  if (record.actionId !== resolvedAction.actionId || record.macroAct !== resolvedAction.macroAct || record.actorId !== resolvedAction.actorId || record.targetId !== resolvedAction.targetId || record.contextId !== contextId) {
+    throw new Error("RESOLUTION_CANONICAL_RECORD_IDENTITY_MISMATCH");
+  }
+  return structuredClone(record.payload);
+}
+
+export function getRecordedResolutionPayload(historyId) {
+  const record = typeof historyId === "string" ? RESOLUTION_PAYLOAD_RECORDS.get(historyId) : null;
+  return record ? structuredClone(record) : null;
 }
 
 export function priorCannotMutateState(state, prior) {

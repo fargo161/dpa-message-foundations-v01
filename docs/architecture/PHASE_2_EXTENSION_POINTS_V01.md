@@ -27,6 +27,12 @@ Add one complete definition to `src/keywords.mjs` and preserve the 14-keyword bo
 
 Add an authored entry to `ACTION_DEFINITIONS` in `src/mechanics.mjs`. The entry must name exactly one macro act, define directional and truth-scoped checks, identify blockers and defeaters, produce an explicit payload, and emit a deterministic history event. Add a compatible action/coordinate capacity test and a blocked-path test. `PRESSURE` actions additionally require a fully linked authored pressure contract: actor, target, leverage assertion, demand/obligation, feared consequence, consequence identity, context, scope, and temporal validity must agree.
 
+The action definition is also the authoritative TPL presentation registry: include its reviewed `tplPresentation.label` on the same entry. TPL derives its presentation labels from `ACTION_DEFINITIONS`; a second synchronized action-label map is not an extension point. The player-facing macro act set remains ASK, DEAL, and PRESSURE.
+
+Every supplied semantic slot must have a reviewed disposition. Context-only metadata is explicitly accounted for, realized macro content is deterministically evidenced, and unsupported semantic-bearing content is rejected before rendering. Adapted requests carry a mechanics-resolution binding and are deeply compared against a mechanics-issued resolution record before TPL realization; a caller-supplied state snapshot, hash, or matching top-level ID is not authority. Direct non-demo pressure authoring uses the explicit `AUTHORED_SEMANTIC_CONTRACT` binding and still requires the complete typed pressure contract. ASK and DEAL bindings must match the canonical action payload values. Pressure fallback uses the same authored-contract gate as mapped rendering and fails closed when that proof is absent.
+
+Generated freshness checks build into an isolated temporary data root and compare artifact content byte-for-byte with tracked output. They do not mutate tracked files or rely on timestamps, so freshness is independent of whether `build` ran earlier in the command sequence.
+
 ### Add a semantic slot
 
 Add the slot to the canonical act contract in `src/tpl.mjs`, its uppercase and lowercase representations, `schemas/semantic-request.schema.json`, and the adapter/invariance tests. Define its type, empty-value rejection, actor/target/context relationship, knowledge boundary, and forbidden additions. Update the relevant act construction only after the semantic contract is explicit. A renderer may not use a new slot to invent a proposition.

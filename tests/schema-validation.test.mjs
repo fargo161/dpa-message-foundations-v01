@@ -2,6 +2,8 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
+import Ajv2020 from "ajv/dist/2020.js";
+import addFormats from "ajv-formats";
 import { validateDocument } from "../src/schema-validator.mjs";
 import { createMarcusScenario, resolveAction } from "../src/mechanics.mjs";
 import { adaptResolvedActionToSemanticRequest } from "../src/action-tpl-adapter.mjs";
@@ -70,6 +72,63 @@ test("pressure and semantic request schemas reject empty or malformed required c
   indexedWithoutReceipt.sources[0].indexSnapshot = null;
   indexedWithoutReceipt.sources[0].normalizedRecordsPath = null;
   assert.ok(validateDocument(indexedWithoutReceipt, acquisitionSchema).length > 0);
+});
+
+test("acquisition lifecycle evidence is enforced consistently by custom and Ajv validators", async () => {
+  const acquisitionSchema = JSON.parse(await readFile(`${root}/schemas/acquisition-manifest.schema.json`, "utf8"));
+  const manifest = JSON.parse(await readFile(`${root}/data/acquisition-manifest.json`, "utf8"));
+  const indexed = structuredClone(manifest.sources.find((source) => source.status === "ACQUIRED_AND_INDEXED"));
+  const ajv = new Ajv2020({ allErrors: true, strict: false });
+  addFormats(ajv);
+  const ajvValidate = ajv.compile(acquisitionSchema);
+  const zeroCounts = { raw: 0, accepted: 0, rejected: 0, duplicate: 0, aggregatedAnnotationRows: 0, normalized: 0, indexed: 0 };
+  const lifecycle = {
+    ACQUIRED_NOT_INDEXED: { artifact: true, extraction: indexed.extraction, normalized: null, index: null, counts: { ...indexed.counts, normalized: 0, indexed: 0 }, probes: [] },
+    ACQUIRED_AND_INDEXED: { artifact: true, extraction: indexed.extraction, normalized: indexed.normalizedRecordsPath, index: indexed.indexSnapshot, counts: indexed.counts, probes: indexed.probes },
+    FIXTURE_ONLY: { artifact: false, extraction: null, normalized: null, index: null, counts: zeroCounts, probes: [], observedSchema: {} },
+    MANIFEST_ONLY: { artifact: false, extraction: null, normalized: null, index: null, counts: zeroCounts, probes: [], observedSchema: {} },
+    BLOCKED: { artifact: false, extraction: null, normalized: null, index: null, counts: zeroCounts, probes: [], observedSchema: {} },
+    EXCLUDED: { artifact: false, extraction: null, normalized: null, index: null, counts: zeroCounts, probes: [], observedSchema: {} },
+  };
+  for (const [status, stage] of Object.entries(lifecycle)) {
+    const candidate = structuredClone(indexed);
+    candidate.status = status;
+    candidate.counts = structuredClone(stage.counts);
+    candidate.probes = structuredClone(stage.probes);
+    candidate.extraction = structuredClone(stage.extraction);
+    candidate.indexSnapshot = structuredClone(stage.index);
+    candidate.normalizedRecordsPath = stage.normalized;
+    candidate.observedSchema = structuredClone(stage.observedSchema ?? indexed.observedSchema);
+    if (!stage.artifact) {
+      for (const field of ["artifactUrl", "artifactFilename", "artifactCachePath", "retrievedAt", "byteSize", "sha256", "receiptPath"]) candidate[field] = null;
+    }
+    assert.deepEqual(validateDocument({ generatedAt: manifest.generatedAt, sources: [candidate] }, acquisitionSchema), [], `${status} custom validation failed`);
+    assert.equal(ajvValidate({ generatedAt: manifest.generatedAt, sources: [candidate] }), true, `${status} Ajv validation failed: ${JSON.stringify(ajvValidate.errors)}`);
+  }
+
+  const inventedLifecycle = structuredClone(indexed);
+  inventedLifecycle.status = "EXTRACTED";
+  assert.ok(validateDocument({ generatedAt: manifest.generatedAt, sources: [inventedLifecycle] }, acquisitionSchema).length > 0, "an unsupported lifecycle state passed custom validation");
+  assert.equal(ajvValidate({ generatedAt: manifest.generatedAt, sources: [inventedLifecycle] }), false, "an unsupported lifecycle state passed Ajv validation");
+
+  const requiredIndexedEvidence = ["artifactUrl", "artifactFilename", "artifactCachePath", "retrievedAt", "byteSize", "sha256", "receiptPath", "observedSchema", "extraction", "indexSnapshot", "normalizedRecordsPath", "probes"];
+  for (const field of requiredIndexedEvidence) {
+    const candidate = structuredClone(indexed);
+    candidate[field] = field === "probes" ? [] : field === "observedSchema" ? {} : null;
+    const document = { generatedAt: manifest.generatedAt, sources: [candidate] };
+    assert.ok(validateDocument(document, acquisitionSchema).length > 0, `indexed ${field} mutation passed custom validation`);
+    assert.equal(ajvValidate(document), false, `indexed ${field} mutation passed Ajv validation`);
+  }
+
+  const contradictoryCounts = structuredClone(indexed);
+  contradictoryCounts.counts.indexed = 0;
+  assert.ok(validateDocument({ generatedAt: manifest.generatedAt, sources: [contradictoryCounts] }, acquisitionSchema).length > 0);
+  assert.equal(ajvValidate({ generatedAt: manifest.generatedAt, sources: [contradictoryCounts] }), false);
+
+  const invalidDigest = structuredClone(indexed);
+  invalidDigest.sha256 = "not-a-digest";
+  assert.ok(validateDocument({ generatedAt: manifest.generatedAt, sources: [invalidDigest] }, acquisitionSchema).length > 0);
+  assert.equal(ajvValidate({ generatedAt: manifest.generatedAt, sources: [invalidDigest] }), false);
 });
 
 test("persisted TPL artifacts reject contradictory readiness combinations", async () => {

@@ -1,7 +1,10 @@
 #!/usr/bin/env node
-import { access, readFile, writeFile } from "node:fs/promises";
+import { access, mkdtemp, readFile, rm } from "node:fs/promises";
 import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
+import { join } from "node:path";
+import { tmpdir } from "node:os";
+import { buildArtifacts } from "./build.mjs";
 
 export const TRACKED_GENERATED_FILES = Object.freeze([
   "data/source-manifest.json",
@@ -31,24 +34,27 @@ function assertNoStagedDifference(relativePath) {
   if (result.status !== 0) throw new Error(`GENERATED_ARTIFACT_STAGED_DIFFERENCE:${relativePath}`);
 }
 
+export function normalizeGeneratedText(contents) {
+  return contents.toString("utf8").replaceAll("\r\n", "\n");
+}
+
 export async function checkGeneratedArtifacts() {
   await assertFilesExist();
   for (const relativePath of TRACKED_GENERATED_FILES) {
     assertTracked(relativePath);
   }
-  /** @type {Array<[string, Buffer]>} */
-  const snapshotEntries = await Promise.all(TRACKED_GENERATED_FILES.map(async (relativePath) => [relativePath, await readFile(`${root}/${relativePath}`)]));
-  const snapshots = new Map(snapshotEntries);
-  const result = spawnSync(process.execPath, ["scripts/build.mjs"], { cwd: root, encoding: "utf8" });
   const stale = [];
+  const temporaryDataRoot = await mkdtemp(join(tmpdir(), "dpa-generated-"));
   try {
-    if (result.status !== 0) throw new Error(`GENERATED_BUILD_FAILED:${result.stderr || result.stdout}`);
+    await buildArtifacts(temporaryDataRoot);
     for (const relativePath of TRACKED_GENERATED_FILES) {
-      const rebuilt = await readFile(`${root}/${relativePath}`);
-      if (!rebuilt.equals(snapshots.get(relativePath))) stale.push(relativePath);
+      const artifactPath = relativePath.replace(/^data\//u, "");
+      const current = normalizeGeneratedText(await readFile(`${root}/${relativePath}`));
+      const rebuilt = normalizeGeneratedText(await readFile(join(temporaryDataRoot, artifactPath)));
+      if (rebuilt !== current) stale.push(relativePath);
     }
   } finally {
-    await Promise.all([...snapshots.entries()].map(([relativePath, contents]) => writeFile(`${root}/${relativePath}`, contents)));
+    await rm(temporaryDataRoot, { recursive: true, force: true });
   }
   if (stale.length) throw new Error(`GENERATED_ARTIFACT_STALE:${stale.join(",")}`);
   for (const relativePath of TRACKED_GENERATED_FILES) assertNoStagedDifference(relativePath);

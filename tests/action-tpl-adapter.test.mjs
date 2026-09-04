@@ -40,6 +40,52 @@ test("replaying the same immutable resolution is idempotent", () => {
   assert.deepEqual(carriedIdentity.semanticRequest, adapted.semanticRequest);
 });
 
+test("nested mechanics payload mutation is rejected before TPL adaptation", () => {
+  const mutations = [
+    ["offer object", (resolution) => { resolution.payload.offer.object = "debt_250_usd"; }],
+    ["offer quantity", (resolution) => { resolution.payload.offer.quantity = 999; }],
+    ["offer unit", (resolution) => { resolution.payload.offer.unit = "EUR"; }],
+    ["return object", (resolution) => { resolution.payload.return.object = "cash_80_usd"; }],
+    ["nested alias record", (resolution) => { resolution.payload.offer.alias = { object: "cash_80_usd" }; }],
+    ["nested array", (resolution) => { resolution.payload.offer.auditTrail = ["unauthorized promise"]; }],
+    ["payload actor", (resolution) => { resolution.payload.actor = "other_actor"; }],
+    ["payload target", (resolution) => { resolution.payload.target = "other_target"; }],
+  ];
+  for (const [label, mutate] of mutations) {
+    const resolution = resolveAction(createMarcusScenario(), "OFFER_PARTIAL_PAYMENT", "player", "marcus_broker_hill", "PRIVATE_NEGOTIATION");
+    mutate(resolution);
+    const adapted = adaptResolvedActionToSemanticRequest(resolution);
+    assert.equal(adapted.ok, false, `${label} mutation crossed the adapter boundary`);
+    assert.ok(adapted.failures.some((entry) => entry.code === "RESOLUTION_PAYLOAD_PROVENANCE_MISMATCH"), `${label} did not report authoritative payload drift`);
+  }
+
+  const originalResolution = resolveAction(createMarcusScenario(), "OFFER_PARTIAL_PAYMENT", "player", "marcus_broker_hill", "PRIVATE_NEGOTIATION");
+  const first = adaptResolvedActionToSemanticRequest(originalResolution);
+  assert.equal(first.ok, true);
+  originalResolution.payload.offer.quantity = 1;
+  const mutatedOriginal = adaptResolvedActionToSemanticRequest(originalResolution);
+  assert.equal(mutatedOriginal.ok, false);
+  assert.ok(mutatedOriginal.failures.some((entry) => entry.code === "RESOLUTION_PAYLOAD_PROVENANCE_MISMATCH"));
+
+  const outcomeMutation = resolveAction(createMarcusScenario(), "OFFER_PARTIAL_PAYMENT", "player", "marcus_broker_hill", "PRIVATE_NEGOTIATION");
+  outcomeMutation.outcome = "BLOCKED";
+  const rejectedOutcome = adaptResolvedActionToSemanticRequest(outcomeMutation);
+  assert.equal(rejectedOutcome.ok, false);
+  assert.ok(rejectedOutcome.failures.some((entry) => entry.code === "BLOCKED_ACTION_NOT_RENDERABLE"));
+});
+
+test("adapter does not reconstruct authority from a caller-supplied state snapshot", () => {
+  const resolved = resolveAction(createMarcusScenario(), "INVOKE_CONSEQUENCE", "marcus_broker_hill", "player", "PRIVATE_NEGOTIATION");
+  const forged = structuredClone(resolved);
+  forged.emittedHistory[0].historyId = "forged:pressure:1";
+  forged.stateAfter.history[forged.stateAfter.history.length - 1].historyId = "forged:pressure:1";
+  forged.deterministicEffects[0].historyId = "forged:pressure:1";
+  forged.payload.demand.amount = 999;
+  const rejected = adaptResolvedActionToSemanticRequest(forged);
+  assert.equal(rejected.ok, false);
+  assert.ok(rejected.failures.some((entry) => entry.code === "RESOLUTION_PAYLOAD_RECONSTRUCTION_FAILED"));
+});
+
 test("missing or malformed history identity is rejected before semantic adaptation", () => {
   const resolved = resolveFirst();
 

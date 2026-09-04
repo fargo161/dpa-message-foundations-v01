@@ -1,5 +1,6 @@
 import { SPEECH_ACTS } from "./based.mjs";
-import { SEMANTIC_ADAPTER_VERSION, SEMANTIC_OUTCOME, SEMANTIC_SCHEMA_VERSION, SEMANTIC_SLOTS_BY_ACT, validateSemanticPayload } from "./tpl.mjs";
+import { ACTION_BY_ID, getAuthoritativeResolvedPayload } from "./mechanics.mjs";
+import { SEMANTIC_ADAPTER_VERSION, SEMANTIC_BINDING_VERSION, SEMANTIC_OUTCOME, SEMANTIC_SCHEMA_VERSION, SEMANTIC_SLOTS_BY_ACT, validateSemanticPayload } from "./tpl.mjs";
 
 export const ADAPTER_VERSION = SEMANTIC_ADAPTER_VERSION;
 const REQUIRED_RESOLUTION_FIELDS = ["actionId", "actorId", "targetId", "macroAct", "outcome", "payload"];
@@ -122,11 +123,9 @@ function mapSemanticSlots(resolvedAction, payload, failures) {
     return { DEMAND: clone(payload.demand ?? payload.DEMAND), CONSEQUENCE: clone(payload.consequence ?? payload.CONSEQUENCE) };
   }
   if (macroAct === "ASK") {
-    if ((hasOwn(payload, "request") || hasOwn(payload, "REQUEST")) && payload.request !== null && payload.request !== undefined) return { REQUEST: clone(payload.request ?? payload.REQUEST) };
-    if (hasOwn(payload, "REQUEST") && payload.REQUEST !== null && payload.REQUEST !== undefined) return { REQUEST: clone(payload.REQUEST) };
     const frame = {};
-    for (const field of ["action", "object", "permission", "information", "condition", "leverage"]) if (hasOwn(payload, field)) frame[field] = clone(payload[field]);
-    if (!hasOwn(frame, "action") && !hasOwn(frame, "object") && !hasOwn(frame, "permission") && !hasOwn(frame, "information")) {
+    for (const field of ["action", "object", "permission", "information", "condition", "leverage", "request"]) if (hasOwn(payload, field)) frame[field] = clone(payload[field]);
+    if (!hasOwn(frame, "action") && !hasOwn(frame, "object") && !hasOwn(frame, "permission") && !hasOwn(frame, "information") && !hasOwn(frame, "request")) {
       failures.push(failure("MISSING_ASK_SEMANTIC_CONTENT", "An ASK resolution must provide request content or an explicit action frame."));
       return null;
     }
@@ -134,6 +133,30 @@ function mapSemanticSlots(resolvedAction, payload, failures) {
   }
   failures.push(failure("UNSUPPORTED_MACRO_ACT", `Cannot adapt unsupported macro act ${macroAct}.`));
   return null;
+}
+
+function reconstructAuthoritativePayload(resolvedAction, contextId, failures) {
+  const action = ACTION_BY_ID.get(resolvedAction.actionId);
+  if (!action || action.macroAct !== resolvedAction.macroAct) {
+    failures.push(failure("RESOLUTION_ACTION_REGISTRY_MISMATCH", "The resolved action does not match the canonical action registry."));
+    return null;
+  }
+  if (!isObject(resolvedAction.stateBefore)) {
+    failures.push(failure("RESOLUTION_STATE_BEFORE_MISSING", "A proposed resolution must carry the authoritative state used for payload construction."));
+    return null;
+  }
+  let authoritativePayload;
+  try {
+    authoritativePayload = getAuthoritativeResolvedPayload(resolvedAction, contextId);
+  } catch (error) {
+    failures.push(failure("RESOLUTION_PAYLOAD_RECONSTRUCTION_FAILED", "The canonical action payload could not be reconstructed from the authoritative resolution state.", { cause: error?.message ?? String(error) }));
+    return null;
+  }
+  if (!isObject(authoritativePayload) || !valuesEqual(authoritativePayload, resolvedAction.payload)) {
+    failures.push(failure("RESOLUTION_PAYLOAD_PROVENANCE_MISMATCH", "Resolved payload values do not match the canonical action payload reconstructed from mechanics state."));
+    return null;
+  }
+  return authoritativePayload;
 }
 
 /**
@@ -166,15 +189,18 @@ export function adaptResolvedActionToSemanticRequest(resolvedAction) {
     return rejected([failure("RESOLUTION_SEMANTIC_REQUEST_ID_DRIFT", "The supplied semantic request identity does not match the emitted history occurrence.", { expected: expectedSemanticRequestId, actual: resolvedAction.semanticRequestId })], [{ step: "RESOLUTION_IDENTITY_VALIDATED", passed: false }]);
   }
 
-  const payload = resolvedAction.payload;
+  const authoritativePayload = reconstructAuthoritativePayload(resolvedAction, contextId, failures);
+  if (!authoritativePayload) return rejected(failures, [{ step: "RESOLUTION_PAYLOAD_BOUND", passed: false }]);
+  /** @type {any} */
+  const payload = authoritativePayload;
   addIdentityFailure(failures, payload, "actor", resolvedAction.actorId);
   addIdentityFailure(failures, payload, "target", resolvedAction.targetId);
   addIdentityFailure(failures, payload, "action", resolvedAction.actionId);
   const semanticSlots = mapSemanticSlots(resolvedAction, payload, failures);
   if (failures.length || !semanticSlots) return rejected(failures);
 
+  /** @type {any} */
   const slots = {
-    ...clone(payload),
     actor: resolvedAction.actorId,
     target: resolvedAction.targetId,
     action: resolvedAction.actionId,
@@ -185,6 +211,12 @@ export function adaptResolvedActionToSemanticRequest(resolvedAction) {
     const lowerSlot = upperSlot.toLowerCase();
     slots[lowerSlot] = clone(value);
   }
+  if (resolvedAction.macroAct === "PRESSURE") slots.leverage = clone(payload.leverage);
+
+  const semanticProjection = {
+    ...clone(semanticSlots),
+    ...(resolvedAction.macroAct === "PRESSURE" ? { leverage: clone(payload.leverage) } : {}),
+  };
 
   const semanticRequest = {
     schemaVersion: SEMANTIC_SCHEMA_VERSION,
@@ -202,6 +234,17 @@ export function adaptResolvedActionToSemanticRequest(resolvedAction) {
     slots,
     mandatorySemanticFacts: clone(resolvedAction.mandatorySemanticFacts ?? []),
     forbiddenSemanticAdditions: clone(resolvedAction.forbiddenSemanticAdditions ?? []),
+    semanticBinding: {
+      bindingVersion: SEMANTIC_BINDING_VERSION,
+      source: "MECHANICS_RESOLUTION",
+      sourceRecordId: historyEvent.historyId,
+      actionId: resolvedAction.actionId,
+      actorId: resolvedAction.actorId,
+      targetId: resolvedAction.targetId,
+      contextId,
+      payload: clone(payload),
+      semanticSlots: semanticProjection,
+    },
     provenance: [{
       sourceId: "mechanics-action-resolution",
       sourceRecordId: historyEvent.historyId,

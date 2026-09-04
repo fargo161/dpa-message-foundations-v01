@@ -136,17 +136,49 @@
         {
           "oneOf": [
             {
-              "properties": { "status": { "const": "ACQUIRED_AND_INDEXED" }, "counts": { "properties": { "indexed": { "minimum": 1 } } } },
-              "required": ["artifactUrl", "artifactFilename", "artifactCachePath", "retrievedAt", "byteSize", "sha256", "receiptPath", "extraction", "indexSnapshot", "normalizedRecordsPath", "probes"]
+              "properties": {
+                "status": { "const": "ACQUIRED_AND_INDEXED" },
+                "artifactUrl": { "type": "string", "minLength": 1 },
+                "artifactFilename": { "type": "string", "minLength": 1 },
+                "artifactCachePath": { "type": "string", "minLength": 1, "pattern": "^(?:\\.cache|data)/[^\\\\]+(?:/[^\\\\]+)*$" },
+                "retrievedAt": { "type": "string", "format": "date-time" },
+                "byteSize": { "type": "integer", "minimum": 1 },
+                "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+                "receiptPath": { "type": "string", "minLength": 1, "pattern": "^(?:\\.cache|data)/[^\\\\]+(?:/[^\\\\]+)*$" },
+                "observedSchema": { "type": "object", "minProperties": 1 },
+                "extraction": { "$ref": "#/$defs/extraction" },
+                "counts": { "allOf": [{ "$ref": "#/$defs/counts" }, { "properties": { "raw": { "minimum": 1 }, "accepted": { "minimum": 1 }, "normalized": { "minimum": 1 }, "indexed": { "minimum": 1 } } }] },
+                "indexSnapshot": { "allOf": [{ "$ref": "#/$defs/indexSnapshot" }, { "properties": { "recordCount": { "minimum": 1 }, "tokenCount": { "minimum": 1 }, "persistedTokenCount": { "minimum": 1 } } }] },
+                "normalizedRecordsPath": { "type": "string", "minLength": 1, "pattern": "^(?:\\.cache|data)/[^\\\\]+(?:/[^\\\\]+)*$" },
+                "probes": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/probe" } }
+              },
+              "required": ["artifactUrl", "artifactFilename", "artifactCachePath", "retrievedAt", "byteSize", "sha256", "receiptPath", "observedSchema", "extraction", "indexSnapshot", "normalizedRecordsPath", "probes"]
             },
             {
-              "properties": { "status": { "const": "ACQUIRED_NOT_INDEXED" }, "counts": { "properties": { "indexed": { "const": 0 } } }, "indexSnapshot": { "const": null }, "normalizedRecordsPath": { "const": null } },
-              "required": ["artifactUrl", "artifactFilename", "artifactCachePath", "retrievedAt", "byteSize", "sha256", "receiptPath", "extraction", "indexSnapshot", "normalizedRecordsPath", "probes"]
+              "properties": {
+                "status": { "const": "ACQUIRED_NOT_INDEXED" },
+                "artifactUrl": { "type": "string", "minLength": 1 },
+                "artifactFilename": { "type": "string", "minLength": 1 },
+                "artifactCachePath": { "type": "string", "minLength": 1, "pattern": "^(?:\\.cache|data)/[^\\\\]+(?:/[^\\\\]+)*$" },
+                "retrievedAt": { "type": "string", "format": "date-time" },
+                "byteSize": { "type": "integer", "minimum": 1 },
+                "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+                "receiptPath": { "type": "string", "minLength": 1, "pattern": "^(?:\\.cache|data)/[^\\\\]+(?:/[^\\\\]+)*$" },
+                "observedSchema": { "type": "object", "minProperties": 1 },
+                "counts": { "properties": { "normalized": { "const": 0 }, "indexed": { "const": 0 } } },
+                "extraction": { "oneOf": [{ "$ref": "#/$defs/extraction" }, { "const": null }] },
+                "indexSnapshot": { "const": null },
+                "normalizedRecordsPath": { "const": null },
+                "probes": { "const": [] }
+              },
+              "required": ["artifactUrl", "artifactFilename", "artifactCachePath", "retrievedAt", "byteSize", "sha256", "receiptPath", "observedSchema", "extraction", "indexSnapshot", "normalizedRecordsPath", "probes"]
             },
             {
               "properties": {
                 "status": { "enum": ["FIXTURE_ONLY", "MANIFEST_ONLY", "BLOCKED", "EXCLUDED"] },
                 "counts": { "$ref": "#/$defs/zeroCounts" },
+                "observedSchema": { "type": "object", "maxProperties": 0 },
+                "artifactUrl": { "const": null },
                 "artifactFilename": { "const": null },
                 "artifactCachePath": { "const": null },
                 "retrievedAt": { "const": null },
