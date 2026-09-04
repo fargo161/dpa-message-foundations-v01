@@ -12,7 +12,7 @@ The site deliberately keeps the following statuses visible and separate:
 - `ILLUSTRATIVE_FICTION`: a human-readable scenario or example, not a source claim.
 - `COMMENTARY_ONLY`: satirical marginalia that cannot authorize mechanics.
 
-TPL remains presentation-only. All 180 BASED matrix cells remain `UNMAPPED`, approved runtime TPL protocols remain zero, and dynamic dialogue population remains deferred to Phase 2.
+TPL remains presentation-only. All 180 BASED coordinates now have reviewed canonical-neutral authoring-preview executions; approved production TPL protocols and runtime corpus records remain zero, and dynamic dialogue population remains deferred.
 
 ## Content source and schema
 
@@ -68,7 +68,7 @@ Do not edit generated HTML as a second source of truth. Do not add external imag
 
 ## Deferred Phase 2 extension points
 
-Future work may add a keyword action only after authored state, schema, and mechanics checks exist; a semantic slot only after adapter and invariance tests; a TPL atom only after primary-source review and protocol approval; and a matrix cell only after a reviewed protocol and authored mapping exist. Dynamic dialogue population, runtime corpus selection, TPL protocol approvals, and semantic realization remain intentionally deferred.
+Future work may add a keyword action only after authored state, schema, and mechanics checks exist; a semantic slot only after adapter and invariance tests; a TPL atom only after primary-source review and protocol approval; and a production matrix cell only after owner approval and authored mapping exist. The current 180-coordinate language is canonical-neutral authoring preview; dynamic dialogue population, runtime corpus selection, TPL protocol approvals, and final ZANT language remain intentionally deferred.
 
 ## Verification commands
 

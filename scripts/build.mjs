@@ -2,8 +2,8 @@
 import { mkdir, writeFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import { buildInspectionReport } from "../src/inspection.mjs";
-import { BASED_CUES, BASED_VIBES, DELIVERY_INTENSITIES, SPEECH_ACTS, buildMatrixWithAnchors } from "../src/based.mjs";
-import { TPL_ATOMS, TPL_CONSTRUCTIONS, TPL_FAMILIES, TPL_PROTOCOLS, TPL_FALLBACK_POLICY, FACE_COMPATIBILITY_BOUNDARY } from "../src/tpl.mjs";
+import { BASED_CUES, BASED_VIBES, DELIVERY_INTENSITIES, SPEECH_ACTS } from "../src/based.mjs";
+import { TPL_ATOMS, TPL_CONSTRUCTIONS, TPL_FAMILIES, TPL_PROTOCOLS, TPL_TEMPLATES, TPL_STYLE_PROFILES, TPL_FALLBACK_POLICY, FACE_COMPATIBILITY_BOUNDARY, buildRuntimeMatrix } from "../src/tpl.mjs";
 
 const root = fileURLToPath(new URL("..", import.meta.url));
 const generated = fileURLToPath(new URL("../data/generated/", import.meta.url));
@@ -15,11 +15,13 @@ const basedTpl = {
   vibes: BASED_VIBES,
   speechActs: SPEECH_ACTS,
   deliveryIntensities: DELIVERY_INTENSITIES,
-  matrix: buildMatrixWithAnchors(),
+  matrix: buildRuntimeMatrix(),
   tplFamilies: TPL_FAMILIES,
   atoms: TPL_ATOMS,
   constructions: TPL_CONSTRUCTIONS,
   protocols: TPL_PROTOCOLS,
+  templates: TPL_TEMPLATES,
+  styleProfiles: TPL_STYLE_PROFILES,
   semanticInvarianceBoundary: FACE_COMPATIBILITY_BOUNDARY,
   fallbackPolicy: TPL_FALLBACK_POLICY,
 };

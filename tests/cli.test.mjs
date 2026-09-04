@@ -20,7 +20,9 @@ test("author-facing CLI exposes report, inspect, and demo", () => {
   assert.equal(demo.semanticRequest.speechAct, demo.resolvedAction.macroAct);
   assert.deepEqual(demo.semanticRequest.slots.REQUEST, { action: "REQUEST_EXTENSION", object: "debt_relief" });
   assert.equal(demo.based.matrixKey, "ASK_AS_BALANCED");
-  assert.equal(demo.based.reviewStatus, "UNMAPPED");
+  assert.equal(demo.based.reviewStatus, "REVIEWED");
   assert.equal(demo.safeRender.semanticInvariancePassed, true);
-  assert.equal(demo.safeRender.fallbackUsed, true);
+  assert.equal(demo.safeRender.fallbackUsed, false);
+  assert.equal(demo.safeRender.previewEligible, true);
+  assert.equal(demo.safeRender.productionEligible, false);
 });

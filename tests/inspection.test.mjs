@@ -40,7 +40,7 @@ test("blocked resolutions are rejected before the TPL boundary", () => {
   assert.equal(adapted.failures[0].code, "BLOCKED_ACTION_NOT_RENDERABLE");
 });
 
-test("authoring pipeline is independently traceable through the unmapped BASED fallback", () => {
+test("authoring pipeline is independently traceable through a reviewed neutral execution", () => {
   const trace = buildAuthoringPipelineTrace();
 
   assert.equal(trace.authoredFacts.count, 16);
@@ -54,6 +54,9 @@ test("authoring pipeline is independently traceable through the unmapped BASED f
   assert.equal(trace.resolvedAction.displayName, "Request a repayment extension");
   assert.deepEqual(trace.semanticRequest.slots.REQUEST, { action: "REQUEST_EXTENSION", object: "debt_relief" });
   assert.equal(trace.based.matrixKey, "ASK_AS_BALANCED");
-  assert.equal(trace.safeRender.rejectionReasons[0].code, "MATRIX_CELL_UNMAPPED");
+  assert.equal(trace.safeRender.matrixReviewStatus, "REVIEWED");
+  assert.equal(trace.safeRender.templateVariantId, "TPL_TEMPLATE_ASK_AS_BALANCED_CANONICAL_NEUTRAL_V01");
+  assert.equal(trace.safeRender.rejectionReasons.length, 0);
   assert.equal(trace.safeRender.semanticInvariancePassed, true);
+  assert.equal(trace.safeRender.fallbackUsed, false);
 });

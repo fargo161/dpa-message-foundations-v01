@@ -31,14 +31,14 @@ Read `docs/source-context/CODEX_DPA_KEYWORD_FOUNDATION_AGENT_TEAM_PROMPT_V01.md`
 
 The three original specifications in `docs/source-context/originals/` are domain evidence. If an older path or implementation instruction conflicts with the new-repository master prompt, the master prompt controls this pass.
 
-## Phase 1 foundation
+## Phase 1 foundation plus Phase 2 TPL preview
 
 The repository contains a deterministic Node ESM foundation:
 
 - `src/keywords.mjs`: 14 approved, interconnected semantic keywords with explicit boundaries, provenance, and cross-keyword rules.
 - `src/mechanics.mjs`: nine authored actions across `DEAL`, `PRESSURE`, and `ASK`, three inspectable demo scenarios, directional preconditions, blockers, traces, pressure contracts, and history emissions.
 - `src/based.mjs`: the five ordered BASED cues, 20 ordered Vibes, three delivery intensities, and 180 structural matrix cells.
-- `src/tpl.mjs`: five-family TPL boundary, candidate atoms, reviewed constructions, candidate protocols, semantic-invariance checks, face-evidence separation, and deterministic safe fallback.
+- `src/tpl.mjs`: five-family TPL boundary, candidate atoms, reviewed constructions, reviewed canonical-neutral preview protocols, deterministic fragment evidence, face-evidence separation, and explicit safety fallback.
 - `src/sources.mjs`, `src/ingestion.mjs`, and `src/store.mjs`: HTTPS/license/receipt gates, provenance-preserving normalizers, idempotent imports, synthetic-fixture labeling, and reset behavior.
 - `src/inspection.mjs` and `src/cli.mjs`: author-facing inspection, status report, and demo commands. No player-facing TPL selector is exposed.
 
@@ -57,9 +57,9 @@ node src/cli.mjs inspect
 node src/cli.mjs demo
 ```
 
-Current verified status: 14 keywords, 13 cross-keyword rules, 9 actions, 3 scenarios, 600 valid unique act-compatible authored action/coordinate configurations from the demo fixtures, 4,320 act-compatible theoretical combinations, 8,640 act-incompatible combinations, 3,720 act-compatible blocked combinations, 60 candidate act/Vibe anchors covering all 180 cells, zero approved runtime TPL protocols, 7 real external datasets acquired and indexed, 1 TPL authority manuscript acquired but not indexed, and zero runtime corpus records. The capacity reduction from the earlier 660 figure is the deliberate result of removing an unauthored secret-pressure branch; the remaining pressure action requires an explicit linked authored contract. The capacity number is not a count of independently realized TPL payloads. All imported records remain `EVIDENCE_PRIOR`/default-only and are not mechanics, BASED mappings, TPL protocols, or runtime dialogue. See `docs/architecture/TRACEABILITY_V01.md` and `docs/architecture/SOURCE_VERIFICATION_V01.md` for the acceptance boundary and deferments.
+Current verified status: 14 keywords, 13 cross-keyword rules, 9 actions, 3 scenarios, 600 valid unique act-compatible authored action/coordinate configurations from the demo fixtures, 4,320 act-compatible theoretical combinations, 8,640 act-incompatible combinations, 3,720 act-compatible blocked combinations, 60 candidate act/Vibe anchors covering all 180 cells, 180 reviewed authoring-preview template executions, zero approved runtime TPL protocols, 7 real external datasets acquired and indexed, 1 TPL authority manuscript acquired but not indexed, and zero runtime corpus records. The capacity reduction from the earlier 660 figure is the deliberate result of removing an unauthored secret-pressure branch; the remaining pressure action requires an explicit linked authored contract. The capacity number is not a count of independently realized TPL payloads. All imported records remain `EVIDENCE_PRIOR`/default-only and are not mechanics, BASED mappings, TPL protocols, or runtime dialogue. Canonical-neutral is a deterministic validation/preview profile, not final ZANT production language. See `docs/architecture/TPL_RUNTIME_PHASE_2_V01.md`, `docs/architecture/TRACEABILITY_V01.md`, and `docs/architecture/SOURCE_VERIFICATION_V01.md` for the acceptance boundary and deferments.
 
-## Real acquisition status
+## Recorded real acquisition status
 
 The 2026-09-02 acquisition pass downloaded the actual permitted artifacts from verified primary or maintainer sources into `.cache/external-data/`, safely extracted the archives, inspected the observed schemas, normalized records, built ignored local indexes under `data/indexes/`, and ran three retrieval probes per indexed dataset. The cache and indexes are Git-ignored; no raw corpus is tracked.
 
@@ -77,7 +77,7 @@ Counts use the same seven columns for every source: raw / accepted / rejected / 
 | Luangrath-Peck-Barger manuscript | `ACQUIRED_NOT_INDEXED` | 0 / 0 / 0 / 0 / 0 / 0 / 0 |
 | Project role core | `FIXTURE_ONLY` | not applicable |
 
-No source is currently `MANIFEST_ONLY`, `BLOCKED`, or `EXCLUDED`. Excluded sources and materials, including GLUCOSE, EmpatheticDialogues, unlicensed lorebooks, scraped dialogue, and copyrighted franchise material, were not ingested. Dynamic dialogue population remains deferred.
+No source is currently `MANIFEST_ONLY`, `BLOCKED`, or `EXCLUDED`. Excluded sources and materials, including GLUCOSE, EmpatheticDialogues, unlicensed lorebooks, scraped dialogue, and copyrighted franchise material, were not ingested. Dynamic dialogue population remains deferred; the TPL preview does not promote corpus records into runtime dialogue.
 
 To reproduce normalization and index construction from the cached artifacts:
 
@@ -93,6 +93,10 @@ node scripts/check-generated.mjs
 ```
 
 `npm test` is the clean-clone portable suite. `npm run test:real` requires the separately acquired, Git-ignored cache and is never represented as a CI corpus. `node scripts/check-generated.mjs` must pass after `npm run build`; it fails when a tracked generated artifact is missing, untracked, staged-different, or different in the worktree.
+
+The acquisition table is a recorded manifest and receipt history. The ignored
+corpus cache is not part of this checkout; this recovery pass did not download,
+ingest, or revalidate external corpus bytes.
 
 ## Trapstar keyword lorebook
 
@@ -116,9 +120,9 @@ The exact extension procedure is documented in `docs/architecture/PHASE_2_EXTENS
 | --- | --- |
 | Keyword definitions and cross-keyword graph | 14 `APPROVED` project definitions; 13 authored rules |
 | Mechanics actions | 9 authored actions; facts and transitions remain authored-state driven |
-| BASED | 5 cues, 20 ordered Vibes, 180 cells; all cells `UNMAPPED` |
-| TPL | 5 families, 6 candidate atoms, 3 reviewed constructions, 3 candidate protocols, 0 approved protocols |
+| BASED | 5 cues, 20 ordered Vibes, 180 stable coordinates; runtime mapping preserves the structural matrix |
+| TPL | 5 families, 6 candidate atoms, 3 reviewed constructions, 3 reviewed preview protocols, 180 reviewed preview templates, 0 approved protocols; canonical readiness state is `REVIEWED` for the preview and `BLOCKED` for unsupplied ZANT |
 | External research records | Evidence priors, default-only, runtime-ineligible |
 | Runtime corpus records | 0 |
-| Dynamic dialogue population | `DEFERRED_TO_PHASE_2` |
+| Dynamic dialogue population | `AUTHORING_PREVIEW_ONLY`; runtime corpus promotion remains deferred |
 | Repository license | `UNLICENSED`; project-owner decision pending |

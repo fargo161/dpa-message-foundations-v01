@@ -349,7 +349,7 @@ test("separate occurrences cannot reuse a semantic identity and immutable replay
   assert.ok(reusedResult.failures.some((failure) => ["RESOLUTION_HISTORY_ALREADY_PRESENT", "RESOLUTION_HISTORY_ID_NOT_UNIQUE"].includes(failure.code)));
 });
 
-test("safe fallbacks use registered act-compatible constructions and never approve candidate protocols", (t) => {
+test("legacy fallbacks stay safe while mapped preview uses reviewed protocols", (t) => {
   const tpl = requireTpl(t);
   if (!tpl) return;
   const payloads = {
@@ -370,16 +370,27 @@ test("safe fallbacks use registered act-compatible constructions and never appro
 
   assert.equal(tpl.TPL_PROTOCOLS.filter((protocol) => protocol.reviewStatus === "APPROVED").length, 0);
   assert.equal(generateMatrix().filter((cell) => cell.reviewStatus === "APPROVED").length, 0);
+  const completePressure = canonicalSemanticRequest("PRESSURE", {
+    actor: "marcus_broker_hill",
+    target: "player",
+    leverage: { actor: "marcus_broker_hill", target: "player", basis: "debt_250_usd", sourceAssertionId: "marcus_leverage_debt", scope: "ACTUAL", contextId: "PRIVATE_NEGOTIATION", validFrom: "2026-01-01T00:00:00.000Z", pressureContractId: "pressure_debt_exposure" },
+    DEMAND: { kind: "FULFILL_OBLIGATION", demandId: "OWES:player_owes_marcus_250", subject: "player", object: "marcus_broker_hill", term: "debt_250_usd", amount: 250, unit: "USD", due: "2026-09-03T09:00:00.000Z", sourceAssertionId: "player_owes_marcus_250", scope: "ACTUAL", contextId: "PRIVATE_NEGOTIATION", validFrom: "2026-01-01T00:00:00.000Z", pressureContractId: "pressure_debt_exposure", authoredDemand: "pay debt_250_usd" },
+    demand: { kind: "FULFILL_OBLIGATION", demandId: "OWES:player_owes_marcus_250", subject: "player", object: "marcus_broker_hill", term: "debt_250_usd", amount: 250, unit: "USD", due: "2026-09-03T09:00:00.000Z", sourceAssertionId: "player_owes_marcus_250", scope: "ACTUAL", contextId: "PRIVATE_NEGOTIATION", validFrom: "2026-01-01T00:00:00.000Z", pressureContractId: "pressure_debt_exposure", authoredDemand: "pay debt_250_usd" },
+    CONSEQUENCE: { consequenceId: "public_debt_exposure", text: "Marcus reports the active debt to the building owner.", fearedBy: "player", fearedConsequenceSourceAssertionId: "player_fears_exposure", leverageBasis: "debt_250_usd", demandId: "OWES:player_owes_marcus_250", scope: "ACTUAL", contextId: "PRIVATE_NEGOTIATION", validFrom: "2026-01-01T00:00:00.000Z", validity: { scope: "ACTUAL", contextId: "PRIVATE_NEGOTIATION", validFrom: "2026-01-01T00:00:00.000Z", validUntilIsUnbounded: true }, pressureContractId: "pressure_debt_exposure" },
+    consequence: { consequenceId: "public_debt_exposure", text: "Marcus reports the active debt to the building owner.", fearedBy: "player", fearedConsequenceSourceAssertionId: "player_fears_exposure", leverageBasis: "debt_250_usd", demandId: "OWES:player_owes_marcus_250", scope: "ACTUAL", contextId: "PRIVATE_NEGOTIATION", validFrom: "2026-01-01T00:00:00.000Z", validity: { scope: "ACTUAL", contextId: "PRIVATE_NEGOTIATION", validFrom: "2026-01-01T00:00:00.000Z", validUntilIsUnbounded: true }, pressureContractId: "pressure_debt_exposure" },
+  }, { actorId: "marcus_broker_hill", targetId: "player", actor: "marcus_broker_hill", target: "player" });
   for (const [speechAct, payload] of Object.entries(payloads)) {
     const fallback = tpl.renderSafeFallback(payload, "AS", "BALANCED");
     const construction = tpl.TPL_CONSTRUCTIONS.find((entry) => entry.constructionId === fallback.constructionId);
     assert.ok(construction, `${speechAct} fallback references a dangling construction`);
     assert.ok(construction.speechActs.includes(speechAct), `${speechAct} fallback references the wrong construction act`);
-    assert.equal(fallback.tplProtocolId, null, `${speechAct} fallback claims a protocol was approved`);
+    assert.equal(fallback.tplProtocolId, null, `${speechAct} legacy fallback claims a protocol was approved`);
 
-    const matrixResult = tpl.resolveMatrixCell(generateMatrix(), payload, "AS", "BALANCED");
+    const matrixResult = tpl.resolveMatrixCell(generateMatrix(), speechAct === "PRESSURE" ? completePressure : payload, "AS", "BALANCED");
     assert.equal(matrixResult.constructionId, fallback.constructionId);
-    assert.equal(matrixResult.tplProtocolId, null);
+    assert.equal(matrixResult.matrixReviewStatus, "REVIEWED");
+    assert.equal(matrixResult.fallbackUsed, false);
+    assert.equal(matrixResult.productionEligible, false);
   }
 });
 
@@ -488,7 +499,7 @@ test("generated report agrees with executable capacity and documents the Vibe wo
     assert.equal(report.mechanics.capacity[key], derived[key], `report/code contradiction for capacity.${key}`);
   }
   assert.match(inspection.formatInspectionReport(report), new RegExp(`Semantic capacity: ${derived.validUniqueSemanticConfigurations} valid unique configurations`));
-  assert.equal(tpl.TPL_FALLBACK_POLICY.vibeAffectsWording, false);
+  assert.equal(tpl.TPL_FALLBACK_POLICY.vibeAffectsWording, true);
   const payload = {
     schemaVersion: "dpa-keyword-foundation@0.1",
     adapterVersion: "action-tpl-adapter@0.1",
@@ -749,7 +760,7 @@ test("FoundationStore rejects non-synthetic bytes that do not match the register
 });
 
 test("TPL authority and acquisition code fail closed before receipt or extraction", () => {
-  const processor = readFileSync(`${root}/scripts/process-real-datasets.mjs`, "utf8");
+  const processor = readFileSync(`${root}/scripts/process-real-datasets.mjs`, "utf8").replace(/\r\n/g, "\n");
   const registerStart = processor.indexOf("async function registerTplAuthority");
   const registerEnd = processor.indexOf("\n}\n\nawait mkdir", registerStart);
   assert.ok(registerStart >= 0 && registerEnd > registerStart, "TPL authority registration function was not found");
@@ -812,6 +823,8 @@ test("generated tracked artifacts exactly match the current executable builders"
     atoms: tpl.TPL_ATOMS,
     constructions: tpl.TPL_CONSTRUCTIONS,
     protocols: tpl.TPL_PROTOCOLS,
+    templates: tpl.TPL_TEMPLATES,
+    styleProfiles: tpl.TPL_STYLE_PROFILES,
     semanticInvarianceBoundary: tpl.FACE_COMPATIBILITY_BOUNDARY,
     fallbackPolicy: tpl.TPL_FALLBACK_POLICY,
   };

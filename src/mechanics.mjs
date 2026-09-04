@@ -813,6 +813,6 @@ export function enumerateSemanticConfigurations(states, coordinates) {
     validUniqueSemanticConfigurations: valid.length,
     validConfigurations: valid,
     classificationTotals: { theoretical: actCompatibleTheoretical, actIncompatible, blocked, duplicate, unreachable, validUnique: valid.length },
-    notes: ["Theoretical is the act-compatible action/coordinate cross-product; act-incompatible combinations are excluded before availability evaluation.", "Blocked is an act-compatible action whose authored mechanics evaluation is BLOCKED; duplicate and unreachable candidates are retained as explicit exclusion classes.", "It does not claim runtime TPL render capacity; all matrix cells are currently UNMAPPED."],
+    notes: ["Theoretical is the act-compatible action/coordinate cross-product; act-incompatible combinations are excluded before availability evaluation.", "Blocked is an act-compatible action whose authored mechanics evaluation is BLOCKED; duplicate and unreachable candidates are retained as explicit exclusion classes.", "It does not claim runtime TPL render capacity; the 180-coordinate runtime is reviewed authoring-preview language and remains production-ineligible until owner approval."],
   };
 }

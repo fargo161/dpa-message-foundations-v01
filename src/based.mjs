@@ -84,6 +84,11 @@ export function parseAuthoredAnchors(markdown) {
       vibeName,
       lines: { SUBTLE: subtle, BALANCED: balanced, OVERT: overt },
       audit: auditAnchor(`${subtle} ${balanced} ${overt}`, currentAct),
+      auditByIntensity: {
+        SUBTLE: auditAnchor(subtle, currentAct),
+        BALANCED: auditAnchor(balanced, currentAct),
+        OVERT: auditAnchor(overt, currentAct),
+      },
       provenance: { sourceId: "project-authored-180-lines", sourceVersion: "0.1", sourceRecordId: key, transformVersion: "anchor-parser@0.1", licenseId: "PROJECT_AUTHORED" },
     });
   }
@@ -116,7 +121,8 @@ export function buildMatrixWithAnchors() {
   const anchorByActVibe = new Map(anchors.map((anchor) => [`${anchor.speechAct}_${anchor.vibeId}`, anchor]));
   return matrix.map((cell) => {
     const anchor = anchorByActVibe.get(`${cell.speechAct}_${cell.vibeId}`);
-    const requiredContextOrLoreFacts = (anchor?.audit.claimRequirements ?? []).map(({ requiredFact, reason }) => ({
+    const audit = anchor?.auditByIntensity?.[cell.deliveryIntensity] ?? anchor?.audit;
+    const requiredContextOrLoreFacts = (audit?.claimRequirements ?? []).map(({ requiredFact, reason }) => ({
       requiredFact,
       reason,
       sourceAnchorId: anchor.anchorId,
@@ -124,6 +130,7 @@ export function buildMatrixWithAnchors() {
     return {
       ...cell,
       candidateAnchorIds: [anchor?.anchorId].filter(Boolean),
+      sourceLine: anchor?.sourceLine ?? null,
       requiredContextOrLoreFacts,
     };
   });

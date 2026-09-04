@@ -54,9 +54,9 @@
         "unit": { "$ref": "#/$defs/nonEmptyString" },
         "status": { "$ref": "#/$defs/nonEmptyString" },
         "change": { "$ref": "#/$defs/nonEmptyString" },
-        "information": { "$ref": "#/$defs/nonEmptyString" }
-      },
-      "additionalProperties": true
+         "information": { "$ref": "#/$defs/nonEmptyString" }
+       },
+      "additionalProperties": false
     },
     "requestSlot": {
       "oneOf": [
@@ -64,7 +64,15 @@
         {
           "type": "object",
           "minProperties": 1,
-          "additionalProperties": true
+          "properties": {
+            "action": { "$ref": "#/$defs/actionIdentifier" },
+            "object": { "$ref": "#/$defs/nonEmptyString" },
+            "permission": { "$ref": "#/$defs/nonEmptyString" },
+            "information": { "$ref": "#/$defs/nonEmptyString" },
+            "condition": { "$ref": "#/$defs/semanticValue" },
+            "leverage": { "$ref": "#/$defs/semanticValue" }
+          },
+          "additionalProperties": false
         }
       ]
     },
@@ -74,9 +82,44 @@
         {
           "type": "object",
           "minProperties": 1,
-          "additionalProperties": true
+          "properties": {
+            "kind": { "$ref": "#/$defs/nonEmptyString" },
+            "demandId": { "$ref": "#/$defs/nonEmptyString" },
+            "subject": { "$ref": "#/$defs/nonEmptyString" },
+            "object": { "$ref": "#/$defs/nonEmptyString" },
+            "term": { "$ref": "#/$defs/nonEmptyString" },
+            "amount": { "$ref": "#/$defs/quantity" },
+            "unit": { "$ref": "#/$defs/nonEmptyString" },
+            "due": { "$ref": "#/$defs/nonEmptyString" },
+            "sourceAssertionId": { "$ref": "#/$defs/nonEmptyString" },
+            "scope": { "$ref": "#/$defs/nonEmptyString" },
+            "contextId": { "$ref": "#/$defs/identifier" },
+            "validFrom": { "$ref": "#/$defs/nonEmptyString" },
+            "validUntil": { "$ref": "#/$defs/nonEmptyString" },
+            "pressureContractId": { "$ref": "#/$defs/nonEmptyString" },
+            "authoredDemand": { "$ref": "#/$defs/nonEmptyString" },
+            "consequenceId": { "$ref": "#/$defs/nonEmptyString" },
+            "text": { "$ref": "#/$defs/nonEmptyString" },
+            "fearedBy": { "$ref": "#/$defs/nonEmptyString" },
+            "fearedConsequenceSourceAssertionId": { "$ref": "#/$defs/nonEmptyString" },
+            "leverageBasis": { "$ref": "#/$defs/nonEmptyString" },
+            "validity": { "$ref": "#/$defs/pressureValidity" }
+          },
+          "additionalProperties": false
         }
       ]
+    },
+    "pressureValidity": {
+      "type": "object",
+      "required": ["scope", "contextId", "validFrom", "validUntilIsUnbounded"],
+      "properties": {
+        "scope": { "const": "ACTUAL" },
+        "contextId": { "$ref": "#/$defs/identifier" },
+        "validFrom": { "$ref": "#/$defs/nonEmptyString" },
+        "validUntil": { "$ref": "#/$defs/nonEmptyString" },
+        "validUntilIsUnbounded": { "type": "boolean" }
+      },
+      "additionalProperties": false
     },
     "slots": {
       "type": "object",
@@ -175,6 +218,7 @@
       "type": "object",
       "properties": {
         "speechAct": { "const": "DEAL" },
+        "actionId": { "enum": ["OFFER_PARTIAL_PAYMENT", "OFFER_CASH_FOR_EXTENSION", "TRADE_INFORMATION"] },
         "slots": {
           "allOf": [
             { "$ref": "#/$defs/slots" },
@@ -196,6 +240,7 @@
       "type": "object",
       "properties": {
         "speechAct": { "const": "PRESSURE" },
+        "actionId": { "const": "INVOKE_CONSEQUENCE" },
         "slots": {
           "allOf": [
             { "$ref": "#/$defs/slots" },
@@ -217,6 +262,7 @@
       "type": "object",
       "properties": {
         "speechAct": { "const": "ASK" },
+        "actionId": { "enum": ["REQUEST_EXTENSION", "REQUEST_ACCESS", "CHALLENGE_DEBT_VALIDITY", "REQUEST_EVIDENCE", "REQUEST_SUPPORT"] },
         "slots": {
           "allOf": [
             { "$ref": "#/$defs/slots" },

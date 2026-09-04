@@ -2,11 +2,11 @@ import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { KEYWORDS, CROSS_KEYWORD_RULES, validateKeywordSet } from "./keywords.mjs";
 import { ACTION_DEFINITIONS, DEMO_SCENARIOS, enumerateSemanticConfigurations, evaluateAvailableActions, resolveAction, scenarioActionSummary } from "./mechanics.mjs";
-import { BASED_CUES, BASED_VIBES, DELIVERY_INTENSITIES, SPEECH_ACTS, buildMatrixWithAnchors, loadAuthoredAnchors, validateBased } from "./based.mjs";
+import { BASED_CUES, BASED_VIBES, DELIVERY_INTENSITIES, SPEECH_ACTS, loadAuthoredAnchors, validateBased } from "./based.mjs";
 import { RELATIONSHIP_ROLE_CORE, validateRoleCore } from "./roles.mjs";
 import { SOURCE_MANIFESTS, validateAllSourceManifests } from "./sources.mjs";
 import { FoundationStore } from "./store.mjs";
-import { FACE_COMPATIBILITY_BOUNDARY, TPL_ATOMS, TPL_CONSTRUCTIONS, TPL_FAMILIES, TPL_PROTOCOLS, TPL_STATUSES, resolveMatrixCell, tplStatusSummary } from "./tpl.mjs";
+import { FACE_COMPATIBILITY_BOUNDARY, TPL_ATOMS, TPL_CONSTRUCTIONS, TPL_FAMILIES, TPL_PROTOCOLS, TPL_STYLE_PROFILES, TPL_TEMPLATES, TPL_STATUSES, buildRuntimeMatrix, resolveMatrixCell, tplStatusSummary } from "./tpl.mjs";
 import { adaptResolvedActionToSemanticRequest } from "./action-tpl-adapter.mjs";
 
 const countBy = (items, selector) => Object.fromEntries(TPL_STATUSES.map((status) => [status, items.filter((item) => selector(item) === status).length]));
@@ -30,7 +30,7 @@ export function buildAuthoringPipelineTrace({ state = DEMO_SCENARIOS[0], vibeId 
   const selected = attempts.find((attempt) => attempt.adapted.ok);
   if (!selected) throw new Error("AUTHORING_PIPELINE_NO_RENDERABLE_ACTION");
 
-  const matrix = buildMatrixWithAnchors();
+  const matrix = buildRuntimeMatrix();
   const coordinate = matrix.find((entry) => entry.speechAct === selected.resolvedAction.macroAct && entry.vibeId === vibeId && entry.deliveryIntensity === deliveryIntensity);
   if (!coordinate) throw new Error(`AUTHORING_PIPELINE_COORDINATE_NOT_FOUND:${selected.resolvedAction.macroAct}_${vibeId}_${deliveryIntensity}`);
   const safeRender = resolveMatrixCell(matrix, selected.adapted.semanticRequest, vibeId, deliveryIntensity);
@@ -75,8 +75,90 @@ export function buildAuthoringPipelineTrace({ state = DEMO_SCENARIOS[0], vibeId 
   };
 }
 
-export function buildInspectionReport() {
-  const matrix = buildMatrixWithAnchors();
+function representativeSemanticRequests() {
+  const representatives = new Map();
+  for (const state of DEMO_SCENARIOS) {
+    for (const pair of state.recommendedPairs) {
+      for (const evaluation of evaluateAvailableActions(state, pair.actorId, pair.targetId, pair.contextId)) {
+        if (evaluation.status !== "AVAILABLE" || representatives.has(evaluation.macroAct)) continue;
+        const resolved = resolveAction(state, evaluation.actionId, pair.actorId, pair.targetId, pair.contextId);
+        const adapted = adaptResolvedActionToSemanticRequest(resolved);
+        if (adapted.ok) representatives.set(evaluation.macroAct, adapted.semanticRequest);
+      }
+    }
+  }
+  for (const speechAct of SPEECH_ACTS) if (!representatives.has(speechAct)) throw new Error(`TPL_REPRESENTATIVE_MISSING:${speechAct}`);
+  return representatives;
+}
+
+export function buildTplCoverage({ matrix = buildRuntimeMatrix(), representatives = representativeSemanticRequests() } = {}) {
+  return matrix.map((cell) => {
+    const payload = representatives.get(cell.speechAct);
+    const rendered = resolveMatrixCell(matrix, payload, cell.vibeId, cell.deliveryIntensity);
+    const replay = resolveMatrixCell(matrix, payload, cell.vibeId, cell.deliveryIntensity);
+    const vibe = BASED_VIBES.find((entry) => entry.vibeId === cell.vibeId);
+    const construction = TPL_CONSTRUCTIONS.find((entry) => entry.constructionId === rendered.constructionId);
+    const protocol = TPL_PROTOCOLS.find((entry) => entry.tplProtocolId === rendered.tplProtocolId);
+    const styleProfile = TPL_STYLE_PROFILES.find((entry) => entry.profileId === rendered.styleProfileId);
+    const semanticEvidenceSummary = {
+      method: rendered.semanticEvidence.method,
+      passed: rendered.semanticEvidence.passed,
+      requiredFragments: rendered.semanticEvidence.requiredFragments.map(({ slot, preserved }) => ({ slot, preserved })),
+      unauthorizedFragmentCount: rendered.semanticEvidence.unauthorizedFragments.length,
+      presentationOnlyAtomIds: rendered.semanticEvidence.presentationOnlyAtoms.map((atom) => atom.atomId),
+    };
+    return {
+      coordinateKey: cell.key,
+      speechAct: cell.speechAct,
+      vibeId: cell.vibeId,
+      vibeName: vibe?.name ?? cell.vibeId,
+      primaryCue: vibe?.primaryCue,
+      secondaryCue: vibe?.secondaryCue,
+      deliveryIntensity: cell.deliveryIntensity,
+      actionInvariant: [...cell.actionInvariant],
+      actionInvariantNames: [...cell.actionInvariant],
+      matrixReviewStatus: rendered.matrixReviewStatus,
+      executionMode: rendered.executionMode,
+      templateVariantId: rendered.templateVariantId,
+      constructionId: rendered.constructionId,
+      constructionName: construction?.constructionId === rendered.constructionId ? construction.constructionId.replace(/^CONSTRUCTION_/, "").toLowerCase().replaceAll("_", " ") : null,
+      tplProtocolId: rendered.tplProtocolId,
+      protocolName: protocol?.tplProtocolId === rendered.tplProtocolId ? protocol.tplProtocolId.replace(/^PROTOCOL_/, "").toLowerCase().replaceAll("_", " ") : null,
+      styleProfileId: rendered.styleProfileId,
+      styleProfileName: styleProfile?.name ?? null,
+      readiness: structuredClone(rendered.readiness),
+      sourceLine: rendered.sourceLine,
+      gateDisposition: rendered.gateResult.disposition,
+      candidateAnchorIds: [...rendered.candidateAnchorIds],
+      requiredContextOrLoreFacts: structuredClone(rendered.requiredContextOrLoreFacts),
+      provenance: structuredClone(rendered.provenance),
+      gateResult: structuredClone(rendered.gateResult),
+      previewEligible: rendered.previewEligible,
+      productionEligible: rendered.productionEligible,
+      renderedText: rendered.renderedText,
+      styleProfileInput: structuredClone(rendered.styleProfileInput),
+      semanticInvariancePassed: rendered.semanticInvariancePassed,
+      invarianceResult: semanticEvidenceSummary,
+      leakDiagnostics: rendered.rejectionReasons.filter((reason) => reason.code.includes("LEAK")),
+      deterministic: JSON.stringify(rendered) === JSON.stringify(replay),
+    };
+  });
+}
+
+function tplCoverageSummary(coverage) {
+  return {
+    rowCount: coverage.length,
+    coordinateCountByAct: Object.fromEntries(SPEECH_ACTS.map((speechAct) => [speechAct, coverage.filter((row) => row.speechAct === speechAct).length])),
+    uniqueRenderedCountByAct: Object.fromEntries(SPEECH_ACTS.map((speechAct) => [speechAct, new Set(coverage.filter((row) => row.speechAct === speechAct).map((row) => row.renderedText)).size])),
+    previewEligibleCount: coverage.filter((row) => row.previewEligible).length,
+    productionEligibleCount: coverage.filter((row) => row.productionEligible).length,
+    invariancePassCount: coverage.filter((row) => row.semanticInvariancePassed).length,
+    deterministicCount: coverage.filter((row) => row.deterministic).length,
+  };
+}
+
+export function buildInspectionReport({ includeCoverage = true } = {}) {
+  const matrix = buildRuntimeMatrix();
   const anchors = loadAuthoredAnchors();
   const keywordConnections = Object.fromEntries(KEYWORDS.map((entry) => [entry.keywordId, CROSS_KEYWORD_RULES.filter((rule) => rule.keywords.includes(entry.keywordId)).length]));
   const capacity = enumerateSemanticConfigurations(DEMO_SCENARIOS, matrix);
@@ -84,6 +166,7 @@ export function buildInspectionReport() {
   const acquisitionManifest = loadAcquisitionManifest();
   const actualAcquisitionStatuses = Object.fromEntries([...new Set(acquisitionManifest.sources.map((entry) => entry.status))].sort().map((status) => [status, acquisitionManifest.sources.filter((entry) => entry.status === status).length]));
   const foundationStoreStatus = new FoundationStore().statusSummary();
+  const tplCoverage = buildTplCoverage({ matrix });
   return {
     schemaVersion: "dpa-keyword-foundation@0.1",
     generatedAt: "2026-09-02T12:00:00.000Z",
@@ -145,9 +228,13 @@ export function buildInspectionReport() {
       atomsByFamily: Object.fromEntries(TPL_FAMILIES.map((family) => [family, TPL_ATOMS.filter((atom) => atom.family === family).length])),
       constructionCount: TPL_CONSTRUCTIONS.length,
       protocolCount: TPL_PROTOCOLS.length,
+      templateCount: TPL_TEMPLATES.length,
+      styleProfileCount: TPL_STYLE_PROFILES.length,
       statuses: tplStatusSummary(),
       faceBoundary: FACE_COMPATIBILITY_BOUNDARY,
       runtimeApprovedProtocolCount: TPL_PROTOCOLS.filter((protocol) => protocol.reviewStatus === "APPROVED").length,
+      coverageSummary: tplCoverageSummary(tplCoverage),
+      coverage: includeCoverage ? tplCoverage : undefined,
     },
     sources: {
       manifestCount: SOURCE_MANIFESTS.length,
@@ -175,10 +262,10 @@ export function formatInspectionReport(report) {
     `Validation: keywords=${report.validation.keywordErrors.length === 0 ? "PASS" : "FAIL"}, BASED=${report.validation.basedErrors.length === 0 ? "PASS" : "FAIL"}, roles=${report.validation.roleErrors.length === 0 ? "PASS" : "FAIL"}, sources=${report.validation.sourceManifestErrors.length === 0 ? "PASS" : "FAIL"}`,
     `Keywords: ${report.keywords.count}; cross-keyword rules: ${report.keywords.crossKeywordRuleCount}; minimum connections: ${Math.min(...Object.values(report.keywords.connectionCounts))}`,
     `BASED: ${report.based.cueCount} cues, ${report.based.vibeCount} ordered Vibes, ${report.based.speechActs.length} macro acts, ${report.based.deliveryIntensities.length} intensities, ${report.based.matrixCellCount} matrix cells`,
-    `Anchors: ${report.based.authoredAnchorCount} candidate act/Vibe anchors; ${report.based.gatedAnchorCount} require fact/context gates; ${report.based.matrixStatusCounts.UNMAPPED} matrix cells remain UNMAPPED`,
+    `Anchors: ${report.based.authoredAnchorCount} candidate act/Vibe anchors; ${report.based.gatedAnchorCount} require fact/context gates; mapped reviewed cells=${report.based.matrixStatusCounts.REVIEWED ?? 0}; unmapped=${report.based.matrixStatusCounts.UNMAPPED ?? 0}`,
     `Mechanics: ${report.mechanics.actionCount} actions across ${report.mechanics.scenarios.length} authored demo scenarios`,
     `Semantic capacity: ${report.mechanics.capacity.validUniqueSemanticConfigurations} valid unique configurations; theoretical coordinate cross-product ${report.mechanics.capacity.theoretical}; blocked candidates ${report.mechanics.capacity.blockedCandidates}`,
-    `TPL: ${report.tpl.families.length} families, ${report.tpl.atomCount} candidate atoms, ${report.tpl.constructionCount} reviewed constructions, ${report.tpl.protocolCount} candidate protocols, approved runtime protocols ${report.tpl.runtimeApprovedProtocolCount}`,
+    `TPL: ${report.tpl.families.length} families, ${report.tpl.atomCount} candidate atoms, ${report.tpl.constructionCount} reviewed constructions, ${report.tpl.templateCount} reviewed templates, ${report.tpl.coverageSummary.rowCount} executable preview rows (ASK/DEAL/PRESSURE=${SPEECH_ACTS.map((act) => report.tpl.coverageSummary.coordinateCountByAct[act]).join("/")}, unique=${SPEECH_ACTS.map((act) => report.tpl.coverageSummary.uniqueRenderedCountByAct[act]).join("/")}, invariance=${report.tpl.coverageSummary.invariancePassCount}, deterministic=${report.tpl.coverageSummary.deterministicCount}, preview=${report.tpl.coverageSummary.previewEligibleCount}, production=${report.tpl.coverageSummary.productionEligibleCount}), approved runtime protocols ${report.tpl.runtimeApprovedProtocolCount}`,
     `Sources: ${report.sources.manifestCount} manifests; actual acquisitions=${report.sources.realAcquiredSourceCount} (${report.sources.indexedExternalSourceCount} indexed, ${report.sources.acquiredNotIndexedSourceCount} authority-only); runtime records=${report.sources.runtimeRecordCount}`,
   ];
   return lines.join("\n");

@@ -8,6 +8,7 @@ const portableTests = [
   "tests/store.test.mjs",
   "tests/structural.test.mjs",
   "tests/tpl.test.mjs",
+  "tests/tpl-runtime.test.mjs",
   "tests/action-tpl-adapter.test.mjs",
   "tests/inspection.test.mjs",
   "tests/schema-validation.test.mjs",

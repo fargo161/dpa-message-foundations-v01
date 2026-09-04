@@ -1,6 +1,6 @@
 # Phase 2 extension points and status boundary
 
-This document is the handoff contract for extending the Phase 1 foundation. It describes where an authored change belongs, which validation must accompany it, and which approval boundary must remain closed. It does not authorize runtime dialogue population.
+This document is the handoff contract for extending the Phase 1 foundation. It describes where an authored change belongs, which validation must accompany it, and which approval boundary must remain closed. Phase 2 currently has a deterministic, reviewed, authoring-preview TPL execution; it does not authorize owner-approved production language or runtime corpus promotion.
 
 ## Current status
 
@@ -9,12 +9,12 @@ This document is the handoff contract for extending the Phase 1 foundation. It d
 | Semantic keywords | 14 `APPROVED` project-authored definitions; 13 cross-keyword rules | A new keyword needs explicit definition, non-meanings, typed arguments, truth/temporal policy, provenance, graph connections, and negative tests. |
 | Mechanics actions | 9 authored actions across `DEAL`, `PRESSURE`, and `ASK` | Actions require authored facts, one macro act, deterministic effects, history identity, blockers/defeaters, and capacity coverage. |
 | BASED cues and Vibes | 5 cues and 20 ordered two-cue Vibes | Cue order is authoritative; no numeric mixture or semantic 70/30 weighting may be added. |
-| BASED matrix | 180 cells, all `UNMAPPED`; 60 candidate act/Vibe anchors | A cell is not a renderer or protocol until independently reviewed and explicitly approved. |
+| BASED matrix | 180 stable coordinates; 60 candidate act/Vibe anchors; 180 reviewed preview executions | Preview execution is derived neutral language with per-intensity gates; it is not production approval. |
 | TPL atoms | 6 `CANDIDATE` atoms across 5 families | An atom changes written presentation only and cannot add semantic content or face evidence. |
 | TPL constructions | 3 `REVIEWED` constructions | Required slots must remain aligned with the macro act. |
-| TPL protocols | 3 `CANDIDATE` safe-fallback protocol records; 0 approved runtime protocols | No protocol is runtime-eligible during this handoff. |
+| TPL protocols | 3 `REVIEWED` canonical-neutral preview protocols; 0 approved runtime protocols | Mapped protocols are authoring-preview only and fail closed in production mode. |
 | External research records | Acquired records are `EVIDENCE_PRIOR`, `defaultOnly: true`, `runtimeEligible: false` | Corpus evidence cannot mutate mechanics, define BASED, approve a protocol, or become dialogue automatically. |
-| Runtime corpus records | 0 | Dynamic dialogue population is deferred. |
+| Runtime corpus records | 0 | Dynamic dialogue population and corpus promotion remain deferred. |
 | Package license | `UNLICENSED` | License selection remains a project-owner decision. |
 
 ## Extension procedures
@@ -37,11 +37,11 @@ Add a project-authored atom to `TPL_ATOMS` with one of the five approved familie
 
 ### Add or approve a TPL protocol
 
-Add a protocol only with an explicit construction, act list, atom policy, intensity profile, semantic-invariance requirement, provenance, and review record. Approval is a separate human decision. Before approval, the protocol remains `CANDIDATE` and cannot populate a matrix cell or runtime dialogue. The current safe fallback is the only exercised presentation path and has nine act/intensity forms; Vibe identity and deterministic seed do not currently alter wording.
+Add a protocol only with an explicit construction, act list, atom policy, intensity profile, semantic-invariance requirement, provenance, and review record. Approval is a separate human decision. The current three protocols are `REVIEWED` canonical-neutral authoring-preview protocols; they are preview-eligible, not approved for production, and do not populate runtime corpus dialogue. The legacy safe fallback remains an explicit nine-form production safety path. Vibe identity changes reviewed wording, while intensity changes presentation only.
 
 ### Populate a matrix cell
 
-The generator must continue to produce all 180 `{ACT}_{VIBE}_{INTENSITY}` cells. A cell starts `UNMAPPED`, may carry a candidate anchor and fact gate, and must not be represented as an approved mapping by the presence of a fallback. Moving a cell to `REVIEWED` or `APPROVED` requires explicit authority, act-compatible required slots, protocol review, and tests proving semantic invariance.
+The generator must continue to produce all 180 `{ACT}_{VIBE}_{INTENSITY}` cells. A source cell starts `UNMAPPED`, may carry a candidate anchor and per-intensity fact gate, and is derived into a `REVIEWED` authoring-preview execution only through the canonical-neutral runtime transform. That preview must not be represented as `APPROVED`; owner approval remains a separate production decision. Any future production mapping requires explicit authority, act-compatible required slots, protocol review, and tests proving semantic invariance.
 
 ### Add research evidence
 

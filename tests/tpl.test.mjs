@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { createMarcusScenario, resolveAction } from "../src/mechanics.mjs";
 import { BASED_VIBES, buildMatrixWithAnchors, generateMatrix } from "../src/based.mjs";
 import { adaptResolvedActionToSemanticRequest } from "../src/action-tpl-adapter.mjs";
-import { FACE_COMPATIBILITY_BOUNDARY, FALLBACK_CONSTRUCTION_BY_ACT, TPL_ATOMS, TPL_CONSTRUCTIONS, TPL_FALLBACK_POLICY, TPL_FAMILIES, TPL_PROTOCOLS, renderSafeFallback, resolveMatrixCell, validateSemanticInvariance, validateSemanticPayload } from "../src/tpl.mjs";
+import { FACE_COMPATIBILITY_BOUNDARY, FALLBACK_CONSTRUCTION_BY_ACT, TPL_ATOMS, TPL_CONSTRUCTIONS, TPL_FALLBACK_POLICY, TPL_FAMILIES, TPL_PROTOCOLS, TPL_TEMPLATES, TPL_STYLE_PROFILES, buildRuntimeMatrix, renderSafeFallback, resolveMatrixCell, validateSemanticInvariance, validateSemanticPayload } from "../src/tpl.mjs";
 
 const makeSemanticRequest = (speechAct, semanticSlots, overrides = {}) => {
   const slots = {
@@ -41,12 +41,53 @@ const canonicalAsk = () => makeSemanticRequest("ASK", {
   request: { action: "REQUEST_EXTENSION", object: "debt_relief" },
 });
 
-test("TPL scaffold covers each family while remaining unapproved", () => {
+const completePressure = () => {
+  const demand = {
+    kind: "FULFILL_OBLIGATION",
+    demandId: "OWES:player_owes_marcus_250",
+    subject: "player",
+    object: "marcus_broker_hill",
+    term: "debt_250_usd",
+    amount: 250,
+    unit: "USD",
+    due: "2026-09-03T09:00:00.000Z",
+    sourceAssertionId: "player_owes_marcus_250",
+    scope: "ACTUAL",
+    contextId: "PRIVATE_NEGOTIATION",
+    validFrom: "2026-01-01T00:00:00.000Z",
+    pressureContractId: "pressure_debt_exposure",
+    authoredDemand: "pay debt_250_usd",
+  };
+  const consequence = {
+    consequenceId: "public_debt_exposure",
+    text: "Marcus reports the active debt to the building owner.",
+    fearedBy: "player",
+    fearedConsequenceSourceAssertionId: "player_fears_exposure",
+    leverageBasis: "debt_250_usd",
+    demandId: demand.demandId,
+    scope: "ACTUAL",
+    contextId: "PRIVATE_NEGOTIATION",
+    validFrom: "2026-01-01T00:00:00.000Z",
+    validity: { scope: "ACTUAL", contextId: "PRIVATE_NEGOTIATION", validFrom: "2026-01-01T00:00:00.000Z", validUntilIsUnbounded: true },
+    pressureContractId: "pressure_debt_exposure",
+  };
+  return makeSemanticRequest("PRESSURE", {
+    actor: "marcus_broker_hill",
+    target: "player",
+    leverage: { actor: "marcus_broker_hill", target: "player", basis: "debt_250_usd", sourceAssertionId: "marcus_leverage_debt", scope: "ACTUAL", contextId: "PRIVATE_NEGOTIATION", validFrom: "2026-01-01T00:00:00.000Z", pressureContractId: "pressure_debt_exposure" },
+    DEMAND: demand,
+    demand,
+    CONSEQUENCE: consequence,
+    consequence,
+  }, { actorId: "marcus_broker_hill", targetId: "player", actor: "marcus_broker_hill", target: "player" });
+};
+
+test("TPL scaffold covers each family with reviewed preview mappings", () => {
   assert.deepEqual(TPL_FAMILIES, ["VOICE_QUALITY", "VOCALIZATION", "TACTILE_KINESIC", "VISUAL_KINESIC", "ARTIFACT"]);
   for (const family of TPL_FAMILIES) assert.ok(TPL_ATOMS.some((atom) => atom.family === family));
   assert.equal(TPL_CONSTRUCTIONS.length, 3);
   assert.equal(TPL_PROTOCOLS.length, 3);
-  assert.ok(TPL_PROTOCOLS.every((protocol) => protocol.reviewStatus === "CANDIDATE"));
+  assert.ok(TPL_PROTOCOLS.every((protocol) => protocol.reviewStatus === "REVIEWED"));
   assert.equal(generateMatrix().filter((cell) => cell.reviewStatus === "UNMAPPED").length, 180);
   const anchored = buildMatrixWithAnchors();
   assert.equal(anchored.length, 180);
@@ -55,6 +96,11 @@ test("TPL scaffold covers each family while remaining unapproved", () => {
   assert.ok(anchored.some((cell) => cell.requiredContextOrLoreFacts.length > 0));
   assert.ok(anchored.flatMap((cell) => cell.requiredContextOrLoreFacts).every((gate) => anchored.some((cell) => cell.candidateAnchorIds.includes(gate.sourceAnchorId))));
   assert.ok(anchored.every((cell) => cell.reviewStatus === "UNMAPPED"));
+  const runtime = buildRuntimeMatrix();
+  assert.equal(runtime.filter((cell) => cell.reviewStatus === "REVIEWED").length, 180);
+  assert.equal(TPL_TEMPLATES.length, 180);
+  assert.equal(TPL_STYLE_PROFILES.find((profile) => profile.profileId === "CANONICAL_NEUTRAL_V01").previewEligible, true);
+  assert.equal(TPL_STYLE_PROFILES.find((profile) => profile.profileId === "CANONICAL_NEUTRAL_V01").productionEligible, false);
   assert.equal(BASED_VIBES.length, 20);
 });
 
@@ -217,7 +263,7 @@ test("the runtime boundary rejects incomplete and contradictory semantic envelop
   }
 });
 
-test("safe fallback preserves the selected act and records unmapped-cell deferment", () => {
+test("legacy fallback remains safe while mapped preview preserves the selected act", () => {
   for (const speechAct of ["DEAL", "PRESSURE", "ASK"]) {
     const slots = speechAct === "DEAL" ? { OFFER: { object: "cash", quantity: 80, unit: "USD" }, offer: { object: "cash", quantity: 80, unit: "USD" }, RETURN: { object: "extension" }, return: { object: "extension" } } : speechAct === "PRESSURE" ? { DEMAND: "pay today", demand: "pay today", CONSEQUENCE: "report the debt", consequence: "report the debt" } : { REQUEST: "review the ledger", request: "review the ledger" };
     const payload = makeSemanticRequest(speechAct, slots, { semanticRequestId: `r-${speechAct}` });
@@ -232,9 +278,11 @@ test("safe fallback preserves the selected act and records unmapped-cell deferme
     for (const requiredSlot of construction.requiredSlots) assert.ok(Object.hasOwn(payload.slots, requiredSlot), `${speechAct} fallback lacks ${requiredSlot}`);
     assert.equal(result.tplProtocolId, null);
     assert.deepEqual(result.appliedAtomIds, []);
-    const resolved = resolveMatrixCell(generateMatrix(), payload, "AS", "OVERT");
+    const resolved = resolveMatrixCell(generateMatrix(), speechAct === "PRESSURE" ? completePressure() : payload, "AS", "OVERT");
     assert.equal(resolved.matrixKey, `${speechAct}_AS_OVERT`);
-    assert.equal(resolved.rejectionReasons[0].code, "MATRIX_CELL_UNMAPPED");
+    assert.equal(resolved.matrixReviewStatus, "REVIEWED");
+    assert.equal(resolved.fallbackUsed, false);
+    assert.equal(resolved.tplProtocolId, TPL_PROTOCOLS.find((protocol) => protocol.speechActs.includes(speechAct)).tplProtocolId);
     assert.equal(resolved.constructionId, result.constructionId);
   }
   assert.throws(() => renderSafeFallback({ semanticRequestId: "bad", speechAct: "UNKNOWN", slots: {} }, "AS", "OVERT"), /SEMANTIC_PAYLOAD_INVALID/);
@@ -242,7 +290,7 @@ test("safe fallback preserves the selected act and records unmapped-cell deferme
   assert.throws(() => renderSafeFallback(canonicalAsk(), "AS", "LOUD"), /DELIVERY_INTENSITY_NOT_ALLOWED/);
   assert.equal(FACE_COMPATIBILITY_BOUNDARY.rendererMayMutateFaceSlots, false);
   assert.equal(TPL_FALLBACK_POLICY.totalActIntensityForms, 9);
-  assert.equal(TPL_FALLBACK_POLICY.vibeAffectsWording, false);
+  assert.equal(TPL_FALLBACK_POLICY.vibeAffectsWording, true);
   const wordingPayload = makeSemanticRequest("ASK", { REQUEST: "review the ledger", request: "review the ledger" }, { semanticRequestId: "vibe-wording" });
   const subtle = renderSafeFallback(wordingPayload, "AS", "SUBTLE");
   const otherVibe = renderSafeFallback(wordingPayload, "BA", "SUBTLE");
