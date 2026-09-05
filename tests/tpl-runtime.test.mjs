@@ -17,6 +17,7 @@ import {
   validateRenderedTextSemanticEvidence,
   validateSemanticPayload,
   validateSemanticInvariance,
+  authorizeAuthoredSemanticContract,
 } from "../src/tpl.mjs";
 
 const matrix = buildRuntimeMatrix();
@@ -37,7 +38,7 @@ function noLeakage(text) {
   assert.doesNotMatch(text, /(?:REQUEST_EXTENSION|debt_relief|cash_80_usd|debt_250_usd|pressure_debt_exposure)/);
 }
 
-function nonDemoPressurePayload() {
+function nonDemoPressurePayload(consequenceText = "The broker records the active obligation.") {
   const demand = {
     kind: "FULFILL_OBLIGATION",
     demandId: "OWES:alt_obligation",
@@ -56,7 +57,7 @@ function nonDemoPressurePayload() {
   };
   const consequence = {
     consequenceId: "alt_consequence",
-    text: "The broker records the active obligation.",
+    text: consequenceText,
     fearedBy: "alt_resident",
     fearedConsequenceSourceAssertionId: "alt_fear",
     leverageBasis: "debt_250_usd",
@@ -107,7 +108,7 @@ function nonDemoPressurePayload() {
     payload: { actor: request.actorId, target: request.targetId, action: request.actionId, leverage: request.slots.leverage, demand: request.slots.demand, consequence: request.slots.consequence },
     semanticSlots: { DEMAND: request.slots.DEMAND, CONSEQUENCE: request.slots.CONSEQUENCE, leverage: request.slots.leverage },
   };
-  return request;
+  return authorizeAuthoredSemanticContract(request);
 }
 
 test("semantic-bearing slots are either realized, accounted for, or rejected", () => {
@@ -227,10 +228,7 @@ test("canonical action values cannot be replaced by a matching forged semantic b
 });
 
 test("authored PRESSURE threats remain valid when the full contract is bound", () => {
-  const payload = nonDemoPressurePayload();
-  payload.slots.CONSEQUENCE.text = "The broker will expose the sealed record.";
-  payload.slots.consequence = structuredClone(payload.slots.CONSEQUENCE);
-  payload.semanticBinding.semanticSlots.CONSEQUENCE = structuredClone(payload.slots.CONSEQUENCE);
+  const payload = nonDemoPressurePayload("The broker will expose the sealed record.");
   const result = resolveMatrixCell(matrix, payload, "AS", "BALANCED");
   assert.match(result.renderedText, /expose the sealed record/i);
 });
@@ -517,7 +515,7 @@ test("PRESSURE accepts a valid non-demo authored semantic contract", () => {
 });
 
 test("PRESSURE temporal evaluation is explicit and deterministic", () => {
-  const payload = nonDemoPressurePayload();
+  let payload = nonDemoPressurePayload();
   const boundedUntil = "2026-09-03T00:00:00.000Z";
   payload.slots.leverage.validUntil = boundedUntil;
   payload.slots.DEMAND.validUntil = boundedUntil;
@@ -526,6 +524,7 @@ test("PRESSURE temporal evaluation is explicit and deterministic", () => {
   payload.slots.CONSEQUENCE.validity.validUntil = boundedUntil;
   payload.slots.CONSEQUENCE.validity.validUntilIsUnbounded = false;
   payload.slots.consequence = structuredClone(payload.slots.CONSEQUENCE);
+  payload = authorizeAuthoredSemanticContract(payload);
   const first = resolveMatrixCell(matrix, payload, "AS", "BALANCED");
   const second = resolveMatrixCell(matrix, payload, "AS", "BALANCED");
   assert.deepEqual(first, second);
@@ -535,6 +534,19 @@ test("PRESSURE temporal evaluation is explicit and deterministic", () => {
 
 test("unauthorized PRESSURE actions fail safely at the runtime boundary", () => {
   assert.throws(() => resolveMatrixCell(matrix, invalidPressureActionPayload(), "AS", "BALANCED"), /TPL_PRESSURE_ACTION_UNAUTHORIZED/);
+});
+
+test("PRESSURE cannot rebind a mechanics resolution as an authored contract", () => {
+  const forged = structuredClone(adapted("INVOKE_CONSEQUENCE", "marcus_broker_hill", "player"));
+  const forgedText = "I promise delivery by tomorrow";
+  forged.semanticBinding.source = "AUTHORED_SEMANTIC_CONTRACT";
+  forged.slots.CONSEQUENCE.text = forgedText;
+  forged.slots.consequence = structuredClone(forged.slots.CONSEQUENCE);
+  forged.semanticBinding.payload.consequence = structuredClone(forged.slots.CONSEQUENCE);
+  forged.semanticBinding.semanticSlots.CONSEQUENCE = structuredClone(forged.slots.CONSEQUENCE);
+
+  assert.throws(() => resolveMatrixCell(matrix, forged, "AS", "BALANCED"), /TPL_PRESSURE_CONTRACT_UNAUTHORIZED/);
+  assert.throws(() => renderSafeFallback(forged, "AS", "BALANCED"), /TPL_PRESSURE_CONTRACT_UNAUTHORIZED/);
 });
 
 test("intensity cannot introduce an unauthorized PRESSURE condition", () => {

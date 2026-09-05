@@ -170,6 +170,12 @@ const ACTION_MACRO_ACT_BY_ID = Object.freeze(Object.fromEntries(ACTION_DEFINITIO
 const hasOwn = (value, key) => Object.prototype.hasOwnProperty.call(value ?? {}, key);
 const isObject = (value) => value !== null && typeof value === "object" && !Array.isArray(value);
 const identifierPattern = /^[A-Za-z0-9][A-Za-z0-9_.:%-]*$/;
+const AUTHORED_SEMANTIC_CONTRACT_RECORDS = new WeakMap();
+const freezeDeep = (value) => {
+  if (value === null || typeof value !== "object" || Object.isFrozen(value)) return value;
+  for (const child of Object.values(value)) freezeDeep(child);
+  return Object.freeze(value);
+};
 
 function meaningfulValue(value, path = "value") {
   if (value === undefined || value === null) return rejection("REJECT_MEANINGLESS_VALUE", `${path} must not be null or undefined.`, { path });
@@ -266,7 +272,7 @@ function canonicalActionSemanticProjection(payload) {
   }
 }
 
-function validateSemanticBinding(payload, reasons) {
+function validateSemanticBinding(payload, reasons, { allowUnboundAuthored = false } = {}) {
   const binding = payload.semanticBinding;
   if (!isObject(binding)) {
     reasons.push(rejection("REJECT_SEMANTIC_BINDING_MISSING", "semanticBinding must identify the trusted mechanics resolution."));
@@ -283,20 +289,29 @@ function validateSemanticBinding(payload, reasons) {
   if (binding.actionId !== payload.actionId || binding.actorId !== payload.actorId || binding.targetId !== payload.targetId || binding.contextId !== payload.contextId) {
     reasons.push(rejection("REJECT_SEMANTIC_BINDING_IDENTITY_DRIFT", "semanticBinding identity must match the canonical semantic envelope."));
   }
-  if (typeof binding.sourceRecordId === "string" && payload.provenance?.[0]?.sourceRecordId !== binding.sourceRecordId) {
+  if (binding.source === "AUTHORED_SEMANTIC_CONTRACT" && typeof binding.sourceRecordId === "string" && payload.provenance?.[0]?.sourceRecordId !== binding.sourceRecordId) {
     reasons.push(rejection("REJECT_SEMANTIC_BINDING_PROVENANCE_DRIFT", "semanticBinding.sourceRecordId must match the primary semantic provenance record."));
   }
   if (!isObject(binding.payload)) reasons.push(rejection("REJECT_SEMANTIC_BINDING_PAYLOAD_INVALID", "semanticBinding.payload must be the structured mechanics payload."));
   if (!isObject(binding.semanticSlots)) reasons.push(rejection("REJECT_SEMANTIC_BINDING_SLOTS_INVALID", "semanticBinding.semanticSlots must be the canonical semantic projection."));
   if (!isObject(binding.payload) || !isObject(binding.semanticSlots)) return;
   if (binding.source === "MECHANICS_RESOLUTION") {
-    const record = getRecordedResolutionPayload(binding.sourceRecordId);
+    const record = typeof binding.resolutionRecordId === "string" ? getRecordedResolutionPayload(binding.resolutionRecordId) : null;
+    if (typeof binding.resolutionRecordId !== "string" || !binding.resolutionRecordId.trim()) reasons.push(rejection("REJECT_SEMANTIC_BINDING_RECORD_ID_MISSING", "MECHANICS_RESOLUTION bindings must carry the mechanics-issued authority-record identity."));
     if (!record) reasons.push(rejection("REJECT_SEMANTIC_BINDING_RECORD_UNAVAILABLE", "The mechanics resolution record is not available for semantic binding verification."));
     else {
+      if (record.resolutionRecordId !== binding.resolutionRecordId || record.historyId !== binding.sourceRecordId || payload.provenance?.[0]?.sourceRecordId !== record.historyId) reasons.push(rejection("REJECT_SEMANTIC_BINDING_RECORD_HISTORY_DRIFT", "The mechanics authority record does not match the emitted history provenance."));
       if (record.actionId !== payload.actionId || record.actorId !== payload.actorId || record.targetId !== payload.targetId || record.contextId !== payload.contextId) reasons.push(rejection("REJECT_SEMANTIC_BINDING_RECORD_IDENTITY_DRIFT", "The mechanics resolution record identity does not match the semantic envelope."));
       if (!valuesEqual(binding.payload, record.payload)) reasons.push(rejection("REJECT_SEMANTIC_BINDING_RECORD_PAYLOAD_DRIFT", "The semantic binding payload does not match the mechanics resolution record."));
       const recordedProjection = semanticProjectionFromPayload(record.payload, payload.speechAct);
       if (!recordedProjection || !valuesEqual(binding.semanticSlots, recordedProjection)) reasons.push(rejection("REJECT_SEMANTIC_BINDING_RECORD_SLOTS_DRIFT", "The semantic binding slots do not match the mechanics resolution record."));
+    }
+  } else if (payload.speechAct === "PRESSURE" && binding.source === "AUTHORED_SEMANTIC_CONTRACT") {
+    const authorizedPayload = AUTHORED_SEMANTIC_CONTRACT_RECORDS.get(payload);
+    if (!authorizedPayload) {
+      if (!allowUnboundAuthored) reasons.push(rejection("REJECT_SEMANTIC_BINDING_AUTHORITY_UNAVAILABLE", "AUTHORED_SEMANTIC_CONTRACT content must be issued through the trusted authoring boundary."));
+    } else if (!valuesEqual(payload, authorizedPayload)) {
+      reasons.push(rejection("REJECT_SEMANTIC_BINDING_AUTHORITY_DRIFT", "The authored semantic contract changed after trusted authoring."));
     }
   }
   if (binding.payload.action !== payload.actionId || binding.payload.actor !== payload.actorId || binding.payload.target !== payload.targetId) {
@@ -322,7 +337,7 @@ function validateSemanticBinding(payload, reasons) {
   }
 }
 
-function validateCanonicalEnvelope(payload, reasons) {
+function validateCanonicalEnvelope(payload, reasons, options = {}) {
   for (const field of requiredCanonicalFields) {
     if (!hasOwn(payload, field)) reasons.push(rejection("REJECT_ENVELOPE_FIELD_MISSING", `Canonical semantic field ${field} is required.`, { field }));
   }
@@ -359,7 +374,7 @@ function validateCanonicalEnvelope(payload, reasons) {
     }
   }
   reasons.push(...validateCanonicalProvenance(payload.provenance));
-  validateSemanticBinding(payload, reasons);
+  validateSemanticBinding(payload, reasons, options);
 }
 
 function validateSlotPairs(payload, reasons, strictCanonical) {
@@ -457,16 +472,29 @@ function rejection(code, message, extra = {}) {
   return { code, message, ...extra };
 }
 
-export function validateSemanticPayload(payload) {
+function validateSemanticPayloadInternal(payload, options = {}) {
   const reasons = [];
   if (!isObject(payload)) return { passed: false, reasons: [rejection("REJECT_PAYLOAD_NOT_OBJECT", "The semantic request must be an object.")] };
-  validateCanonicalEnvelope(payload, reasons);
+  validateCanonicalEnvelope(payload, reasons, options);
   if (!isObject(payload.slots)) {
     reasons.push(rejection("REJECT_SLOTS_NOT_OBJECT", "The semantic request slots must be an object."));
     return { passed: reasons.length === 0, reasons };
   }
   validateSlotPairs(payload, reasons, true);
   return { passed: reasons.length === 0, reasons };
+}
+
+export function validateSemanticPayload(payload) {
+  return validateSemanticPayloadInternal(payload);
+}
+
+export function authorizeAuthoredSemanticContract(payload) {
+  const candidate = structuredClone(payload);
+  if (!isObject(candidate) || candidate.speechAct !== "PRESSURE" || candidate.semanticBinding?.source !== "AUTHORED_SEMANTIC_CONTRACT") renderFailure("TPL_PRESSURE_CONTRACT_UNAUTHORIZED", "Only a complete PRESSURE request with an explicit authored-contract binding may cross the trusted authoring boundary.");
+  const validation = validateSemanticPayloadInternal(candidate, { allowUnboundAuthored: true });
+  if (!validation.passed) failForPayloadValidation(validation);
+  AUTHORED_SEMANTIC_CONTRACT_RECORDS.set(candidate, freezeDeep(structuredClone(candidate)));
+  return candidate;
 }
 
 export function validateSemanticInvariance(payloadBefore, payloadAfter, evidence = {}) {
@@ -568,6 +596,8 @@ function failForPayloadValidation(validation) {
   if (actionFailure) renderFailure("TPL_ACTION_LABEL_UNAVAILABLE", actionFailure.message, actionFailure);
   const pressureActionFailure = validation.reasons.find((reason) => reason.code === "REJECT_ACTION_MACRO_ACT_MISMATCH" && reason.speechAct === "PRESSURE");
   if (pressureActionFailure) renderFailure("TPL_PRESSURE_ACTION_UNAUTHORIZED", pressureActionFailure.message, pressureActionFailure);
+  const pressureAuthorityFailure = validation.reasons.find((reason) => ["REJECT_SEMANTIC_BINDING_AUTHORITY_UNAVAILABLE", "REJECT_SEMANTIC_BINDING_AUTHORITY_DRIFT"].includes(reason.code));
+  if (pressureAuthorityFailure) renderFailure("TPL_PRESSURE_CONTRACT_UNAUTHORIZED", pressureAuthorityFailure.message, pressureAuthorityFailure);
   renderFailure("SEMANTIC_PAYLOAD_INVALID", validation.reasons.map((reason) => reason.code).join(","), { reasons: validation.reasons });
 }
 

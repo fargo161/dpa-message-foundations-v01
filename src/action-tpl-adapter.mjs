@@ -57,6 +57,7 @@ function validateResolutionIdentity(resolvedAction) {
   if (!isObject(historyEvent)) return { failures: [failure("RESOLUTION_HISTORY_NOT_OBJECT", "The emitted history identity evidence must be an object.")] };
   if (!nonEmptyString(historyEvent.historyId)) failures.push(failure("RESOLUTION_HISTORY_ID_MISSING", "The emitted history event must carry a non-empty historyId."));
   if (!nonEmptyString(historyEvent.eventType)) failures.push(failure("RESOLUTION_HISTORY_EVENT_TYPE_MISSING", "The emitted history event must carry a non-empty eventType."));
+  if (!nonEmptyString(resolvedAction.resolutionRecordId)) failures.push(failure("RESOLUTION_RECORD_ID_MISSING", "A successful resolution must carry mechanics-issued authority-record identity."));
 
   const identityFields = ["actionId", "actorId", "targetId"];
   for (const field of identityFields) {
@@ -238,6 +239,7 @@ export function adaptResolvedActionToSemanticRequest(resolvedAction) {
       bindingVersion: SEMANTIC_BINDING_VERSION,
       source: "MECHANICS_RESOLUTION",
       sourceRecordId: historyEvent.historyId,
+      resolutionRecordId: resolvedAction.resolutionRecordId,
       actionId: resolvedAction.actionId,
       actorId: resolvedAction.actorId,
       targetId: resolvedAction.targetId,

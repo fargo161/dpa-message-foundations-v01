@@ -157,6 +157,7 @@
         "bindingVersion": { "const": "mechanics-tpl-binding@0.1" },
         "source": { "enum": ["MECHANICS_RESOLUTION", "AUTHORED_SEMANTIC_CONTRACT"] },
         "sourceRecordId": { "$ref": "#/$defs/nonEmptyString" },
+        "resolutionRecordId": { "$ref": "#/$defs/nonEmptyString" },
         "actionId": { "$ref": "#/$defs/actionIdentifier" },
         "actorId": { "$ref": "#/$defs/identifier" },
         "targetId": { "$ref": "#/$defs/identifier" },

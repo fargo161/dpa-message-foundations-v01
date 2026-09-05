@@ -349,6 +349,7 @@
         "actorId": { "$ref": "#/$defs/id" },
         "targetId": { "$ref": "#/$defs/id" },
         "macroAct": { "$ref": "#/$defs/macroAct" },
+        "resolutionRecordId": { "type": ["string", "null"], "minLength": 1 },
         "payload": { "type": ["object", "null"] },
         "preconditionEvaluations": { "type": "object", "required": ["required", "forbidden"], "properties": { "required": { "type": "array" }, "forbidden": { "type": "array" } }, "additionalProperties": false },
         "outcome": { "type": "string", "enum": ["PROPOSED", "BLOCKED"] },

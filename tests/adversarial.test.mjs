@@ -103,7 +103,7 @@ function canonicalSemanticRequest(speechAct, semanticSlots = {}, overrides = {})
     payload: { actor: request.actorId, target: request.targetId, action: request.actionId, ...projection },
     semanticSlots: projection,
   };
-  return request;
+  return speechAct === "PRESSURE" ? tplLoad.module.authorizeAuthoredSemanticContract(request) : request;
 }
 
 test("TPL syntax gate reports the exact current blocker", () => {

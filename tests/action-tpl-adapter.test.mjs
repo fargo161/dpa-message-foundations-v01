@@ -40,6 +40,31 @@ test("replaying the same immutable resolution is idempotent", () => {
   assert.deepEqual(carriedIdentity.semanticRequest, adapted.semanticRequest);
 });
 
+test("independent PRESSURE resolutions retain immutable authority and reject substitution", () => {
+  const startingState = createMarcusScenario();
+  const first = resolveAction(startingState, "INVOKE_CONSEQUENCE", "marcus_broker_hill", "player", "PRIVATE_NEGOTIATION");
+  const firstAdapted = adaptResolvedActionToSemanticRequest(first);
+
+  const secondState = structuredClone(startingState);
+  secondState.consequences.public_debt_exposure = "The broker records a different consequence.";
+  const second = resolveAction(secondState, "INVOKE_CONSEQUENCE", "marcus_broker_hill", "player", "PRIVATE_NEGOTIATION");
+  const secondAdapted = adaptResolvedActionToSemanticRequest(second);
+  const firstReplay = adaptResolvedActionToSemanticRequest(structuredClone(first));
+
+  assert.equal(firstAdapted.ok, true);
+  assert.equal(secondAdapted.ok, true);
+  assert.equal(first.emittedHistory[0].historyId, second.emittedHistory[0].historyId, "the deterministic gameplay history identity changed");
+  assert.notEqual(first.resolutionRecordId, second.resolutionRecordId, "independent resolutions share one authority record identity");
+  assert.deepEqual(firstReplay.semanticRequest, firstAdapted.semanticRequest, "the first resolution was not replayable after the second resolution");
+  assert.notEqual(firstAdapted.semanticRequest.slots.CONSEQUENCE.text, secondAdapted.semanticRequest.slots.CONSEQUENCE.text);
+
+  const substituted = structuredClone(first);
+  substituted.payload = structuredClone(second.payload);
+  const rejected = adaptResolvedActionToSemanticRequest(substituted);
+  assert.equal(rejected.ok, false, "a payload from another resolution crossed the adapter boundary");
+  assert.ok(rejected.failures.some((entry) => entry.code === "RESOLUTION_PAYLOAD_PROVENANCE_MISMATCH"));
+});
+
 test("nested mechanics payload mutation is rejected before TPL adaptation", () => {
   const mutations = [
     ["offer object", (resolution) => { resolution.payload.offer.object = "debt_250_usd"; }],

@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { ACTION_DEFINITIONS, createMarcusScenario, resolveAction } from "../src/mechanics.mjs";
 import { BASED_VIBES, buildMatrixWithAnchors, generateMatrix } from "../src/based.mjs";
 import { adaptResolvedActionToSemanticRequest } from "../src/action-tpl-adapter.mjs";
-import { ACTION_PRESENTATION_LABELS, FACE_COMPATIBILITY_BOUNDARY, FALLBACK_CONSTRUCTION_BY_ACT, TPL_ATOMS, TPL_CONSTRUCTIONS, TPL_FALLBACK_POLICY, TPL_FAMILIES, TPL_PROTOCOLS, TPL_TEMPLATES, TPL_STYLE_PROFILES, buildRuntimeMatrix, deriveActionPresentationLabels, renderSafeFallback, resolveMatrixCell, validateSemanticInvariance, validateSemanticPayload } from "../src/tpl.mjs";
+import { ACTION_PRESENTATION_LABELS, FACE_COMPATIBILITY_BOUNDARY, FALLBACK_CONSTRUCTION_BY_ACT, TPL_ATOMS, TPL_CONSTRUCTIONS, TPL_FALLBACK_POLICY, TPL_FAMILIES, TPL_PROTOCOLS, TPL_TEMPLATES, TPL_STYLE_PROFILES, authorizeAuthoredSemanticContract, buildRuntimeMatrix, deriveActionPresentationLabels, renderSafeFallback, resolveMatrixCell, validateSemanticInvariance, validateSemanticPayload } from "../src/tpl.mjs";
 
 const makeSemanticRequest = (speechAct, semanticSlots, overrides = {}) => {
   const slots = {
@@ -48,7 +48,7 @@ const makeSemanticRequest = (speechAct, semanticSlots, overrides = {}) => {
     payload: { actor: request.actorId, target: request.targetId, action: request.actionId, ...projection },
     semanticSlots: projection,
   };
-  return request;
+  return speechAct === "PRESSURE" ? authorizeAuthoredSemanticContract(request) : request;
 };
 
 const canonicalAsk = () => makeSemanticRequest("ASK", {

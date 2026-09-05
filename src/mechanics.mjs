@@ -24,6 +24,22 @@ const stableValue = (value) => {
 
 const stableKey = (value) => JSON.stringify(stableValue(value));
 
+const freezeDeep = (value) => {
+  if (value === null || typeof value !== "object" || Object.isFrozen(value)) return value;
+  for (const child of Object.values(value)) freezeDeep(child);
+  return Object.freeze(value);
+};
+
+const RESOLUTION_RECORD_IDS_BY_HISTORY = new Map();
+
+function nextResolutionRecordId(historyId) {
+  const recordIds = RESOLUTION_RECORD_IDS_BY_HISTORY.get(historyId) ?? [];
+  const resolutionRecordId = `${historyId}:authority:${recordIds.length + 1}`;
+  recordIds.push(resolutionRecordId);
+  RESOLUTION_RECORD_IDS_BY_HISTORY.set(historyId, recordIds);
+  return resolutionRecordId;
+}
+
 export function fact(keywordId, args, options = {}) {
   if (!KEYWORD_BY_ID.has(keywordId)) throw new Error(`Unknown keyword: ${keywordId}`);
   const defaultAssertionId = `${keywordId}_${Object.entries(stableValue(args)).map(([key, value]) => `${key}_${String(value)}`).join("_").toLowerCase()}`;
@@ -731,19 +747,28 @@ export function resolveAction(state, actionId, actorId, targetId, contextId) {
     provenance: projectProv(`${state.scenarioId}:${action.history}`),
   };
   if (available) nextState.history.push(historyEvent);
-  if (available) RESOLUTION_PAYLOAD_RECORDS.set(historyId, {
-    actionId,
-    macroAct: action.macroAct,
-    actorId,
-    targetId,
-    contextId,
-    payload: structuredClone(payload),
-  });
+  const resolutionRecordId = available ? nextResolutionRecordId(historyId) : null;
+  if (available) {
+    const record = freezeDeep({
+      resolutionRecordId,
+      historyId,
+      actionId,
+      macroAct: action.macroAct,
+      actorId,
+      targetId,
+      contextId,
+      stateBeforeFingerprint: stableKey(state),
+      stateAfterFingerprint: stableKey(nextState),
+      payload: freezeDeep(structuredClone(payload)),
+    });
+    RESOLUTION_PAYLOAD_RECORDS.set(resolutionRecordId, record);
+  }
   return {
     actionId,
     actorId,
     targetId,
     macroAct: action.macroAct,
+    resolutionRecordId,
     payload,
     preconditionEvaluations: { required: evaluation.requiredChecks, forbidden: evaluation.forbiddenChecks },
     outcome: available ? "PROPOSED" : "BLOCKED",
@@ -760,16 +785,19 @@ export function resolveAction(state, actionId, actorId, targetId, contextId) {
 
 export function getAuthoritativeResolvedPayload(resolvedAction, contextId) {
   const historyId = resolvedAction?.emittedHistory?.[0]?.historyId;
-  const record = typeof historyId === "string" ? RESOLUTION_PAYLOAD_RECORDS.get(historyId) : null;
+  const resolutionRecordId = resolvedAction?.resolutionRecordId;
+  const record = typeof resolutionRecordId === "string" ? RESOLUTION_PAYLOAD_RECORDS.get(resolutionRecordId) : null;
   if (!record) throw new Error("RESOLUTION_CANONICAL_RECORD_UNAVAILABLE");
+  if (record.resolutionRecordId !== resolutionRecordId || record.historyId !== historyId) throw new Error("RESOLUTION_CANONICAL_RECORD_IDENTITY_MISMATCH");
   if (record.actionId !== resolvedAction.actionId || record.macroAct !== resolvedAction.macroAct || record.actorId !== resolvedAction.actorId || record.targetId !== resolvedAction.targetId || record.contextId !== contextId) {
     throw new Error("RESOLUTION_CANONICAL_RECORD_IDENTITY_MISMATCH");
   }
+  if (stableKey(resolvedAction.stateBefore) !== record.stateBeforeFingerprint || stableKey(resolvedAction.stateAfter) !== record.stateAfterFingerprint) throw new Error("RESOLUTION_CANONICAL_RECORD_STATE_MISMATCH");
   return structuredClone(record.payload);
 }
 
-export function getRecordedResolutionPayload(historyId) {
-  const record = typeof historyId === "string" ? RESOLUTION_PAYLOAD_RECORDS.get(historyId) : null;
+export function getRecordedResolutionPayload(resolutionRecordId) {
+  const record = typeof resolutionRecordId === "string" ? RESOLUTION_PAYLOAD_RECORDS.get(resolutionRecordId) : null;
   return record ? structuredClone(record) : null;
 }
 
