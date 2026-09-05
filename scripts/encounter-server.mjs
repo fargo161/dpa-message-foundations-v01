@@ -53,7 +53,7 @@ export function createEncounterServer() {
       }
       const now = Date.now();
       for (const [id, session] of sessions) if (now - session.touched > TTL) sessions.delete(id);
-      let sid = req.headers.cookie?.split(";").map(part => part.trim()).find(part => part.startsWith("marcus_session="))?.slice("marcus_session=".length);
+      let sid = req.headers.cookie?.split(";").map(part => part.trim()).find(part => part.startsWith("marcus_lore_session="))?.slice("marcus_lore_session=".length);
       let session = sid && sessions.get(sid);
       if (!session && path === "/api/state") {
         if (sessions.size >= 256) throw new EncounterError("Prototype session capacity reached. Try again later.", 503);
@@ -62,7 +62,7 @@ export function createEncounterServer() {
         session = { csrf: token(), state: createState(seed, randomUUID(), selectQuirk(seed)), seen: new Set(), touched: now };
         sessions.set(sid, session);
         const secure = req.headers["x-forwarded-proto"] === "https" ? "; Secure" : "";
-        res.setHeader("Set-Cookie", `marcus_session=${sid}; HttpOnly; SameSite=Strict; Path=/; Max-Age=7200${secure}`);
+        res.setHeader("Set-Cookie", `marcus_lore_session=${sid}; HttpOnly; SameSite=Strict; Path=/; Max-Age=7200${secure}`);
       }
       if (!session) throw new EncounterError("Session missing or expired; refresh the page.", 401);
       session.touched = now;
@@ -96,7 +96,7 @@ export function createEncounterServer() {
 }
 
 if (process.argv[1] && pathToFileURL(process.argv[1]).href === import.meta.url) {
-  const port = Number(process.env.MARCUS_PORT ?? 4174);
+  const port = Number(process.env.MARCUS_PORT ?? 4175);
   if (!Number.isInteger(port) || port < 1 || port > 65535) throw new Error("MARCUS_PORT must be 1–65535.");
   const server = createEncounterServer();
   server.listen(port, "127.0.0.1", () => console.log(`Marcus encounter: http://127.0.0.1:${port}/ (PID ${process.pid}; ${fileURLToPath(import.meta.url)})`));

@@ -1,0 +1,2061 @@
+{
+  "schemaVersion": "marcus-independent-scenarios@0.1",
+  "sourceBaseline": "72451fac5bcc857a3811fc78ace782118431e3f2",
+  "evidence": "Executed authoritative engine transitions; independent HTTP evidence in named tests. Browser verification separately owned by H1.",
+  "reviewerTests": {
+    "passed": 21,
+    "failed": 0,
+    "files": [
+      "tests/encounter-history.test.mjs",
+      "tests/encounter-information.test.mjs",
+      "tests/encounter-lore-adversarial.test.mjs"
+    ]
+  },
+  "seeds": {
+    "POSITIVE": {
+      "final_say": "independent-lore-6",
+      "plain_dealing": "independent-lore-4",
+      "recognition": "independent-lore-2"
+    },
+    "NEGATIVE": {
+      "final_say": "independent-lore-0",
+      "plain_dealing": "independent-lore-1",
+      "recognition": "independent-lore-5"
+    }
+  },
+  "allCombinationRoutes": [
+    {
+      "seed": "independent-lore-6",
+      "variant": "POSITIVE",
+      "quirk": "final_say",
+      "status": "AGREED",
+      "metrics": {
+        "cash": 30,
+        "debt": 324,
+        "marcusStock": 6,
+        "playerStock": 2,
+        "confidence": 47,
+        "tension": 19,
+        "patience": 17
+      },
+      "obligations": {
+        "existing": 250,
+        "principal": 70,
+        "extra": 4,
+        "days": 7
+      },
+      "disclosure": "FULL",
+      "beliefs": {
+        "source": "CHECKED",
+        "relevance": "POSSIBLY_USEFUL",
+        "content": "DOCUMENT_SUPPORTED",
+        "record": "NOT_APPLICABLE"
+      },
+      "negativeWindow": null,
+      "quality": {
+        "result": "Intended credit objective met",
+        "designDefault": "Newly authored provisional target: at least two Contra units with positive new principal. This is not a hidden victory score.",
+        "creditObjectiveMet": true,
+        "acquiredUnits": 2,
+        "cashRetained": 30,
+        "existingDebt": 250,
+        "newPrincipal": 70,
+        "additionalRepayment": 4,
+        "totalNewObligation": 74,
+        "repaymentDays": 7,
+        "relationalConsequences": [
+          "Marcus's confidence in your commitment rose relative to the opening.",
+          "Tension in the conversation fell relative to the opening."
+        ]
+      },
+      "vibeId": "EA",
+      "sequence": [
+        "VERIFY_SOURCE",
+        "PROBE_USEFULNESS",
+        "DEAL",
+        "ACCEPT"
+      ]
+    },
+    {
+      "seed": "independent-lore-6",
+      "variant": "POSITIVE",
+      "quirk": "final_say",
+      "status": "AGREED",
+      "metrics": {
+        "cash": 30,
+        "debt": 324,
+        "marcusStock": 6,
+        "playerStock": 2,
+        "confidence": 46,
+        "tension": 14,
+        "patience": 17
+      },
+      "obligations": {
+        "existing": 250,
+        "principal": 70,
+        "extra": 4,
+        "days": 7
+      },
+      "disclosure": "FULL",
+      "beliefs": {
+        "source": "CHECKED",
+        "relevance": "POSSIBLY_USEFUL",
+        "content": "DOCUMENT_SUPPORTED",
+        "record": "NOT_APPLICABLE"
+      },
+      "negativeWindow": null,
+      "quality": {
+        "result": "Intended credit objective met",
+        "designDefault": "Newly authored provisional target: at least two Contra units with positive new principal. This is not a hidden victory score.",
+        "creditObjectiveMet": true,
+        "acquiredUnits": 2,
+        "cashRetained": 30,
+        "existingDebt": 250,
+        "newPrincipal": 70,
+        "additionalRepayment": 4,
+        "totalNewObligation": 74,
+        "repaymentDays": 7,
+        "relationalConsequences": [
+          "Marcus's confidence in your commitment rose relative to the opening.",
+          "Tension in the conversation fell relative to the opening."
+        ]
+      },
+      "vibeId": "SE",
+      "sequence": [
+        "VERIFY_SOURCE",
+        "PROBE_USEFULNESS",
+        "DEAL",
+        "ACCEPT"
+      ]
+    },
+    {
+      "seed": "independent-lore-4",
+      "variant": "POSITIVE",
+      "quirk": "plain_dealing",
+      "status": "AGREED",
+      "metrics": {
+        "cash": 30,
+        "debt": 324,
+        "marcusStock": 6,
+        "playerStock": 2,
+        "confidence": 47,
+        "tension": 19,
+        "patience": 17
+      },
+      "obligations": {
+        "existing": 250,
+        "principal": 70,
+        "extra": 4,
+        "days": 7
+      },
+      "disclosure": "FULL",
+      "beliefs": {
+        "source": "CHECKED",
+        "relevance": "POSSIBLY_USEFUL",
+        "content": "DOCUMENT_SUPPORTED",
+        "record": "NOT_APPLICABLE"
+      },
+      "negativeWindow": null,
+      "quality": {
+        "result": "Intended credit objective met",
+        "designDefault": "Newly authored provisional target: at least two Contra units with positive new principal. This is not a hidden victory score.",
+        "creditObjectiveMet": true,
+        "acquiredUnits": 2,
+        "cashRetained": 30,
+        "existingDebt": 250,
+        "newPrincipal": 70,
+        "additionalRepayment": 4,
+        "totalNewObligation": 74,
+        "repaymentDays": 7,
+        "relationalConsequences": [
+          "Marcus's confidence in your commitment rose relative to the opening.",
+          "Tension in the conversation fell relative to the opening."
+        ]
+      },
+      "vibeId": "EA",
+      "sequence": [
+        "VERIFY_SOURCE",
+        "PROBE_USEFULNESS",
+        "DEAL",
+        "ACCEPT"
+      ]
+    },
+    {
+      "seed": "independent-lore-4",
+      "variant": "POSITIVE",
+      "quirk": "plain_dealing",
+      "status": "AGREED",
+      "metrics": {
+        "cash": 30,
+        "debt": 324,
+        "marcusStock": 6,
+        "playerStock": 2,
+        "confidence": 46,
+        "tension": 14,
+        "patience": 17
+      },
+      "obligations": {
+        "existing": 250,
+        "principal": 70,
+        "extra": 4,
+        "days": 7
+      },
+      "disclosure": "FULL",
+      "beliefs": {
+        "source": "CHECKED",
+        "relevance": "POSSIBLY_USEFUL",
+        "content": "DOCUMENT_SUPPORTED",
+        "record": "NOT_APPLICABLE"
+      },
+      "negativeWindow": null,
+      "quality": {
+        "result": "Intended credit objective met",
+        "designDefault": "Newly authored provisional target: at least two Contra units with positive new principal. This is not a hidden victory score.",
+        "creditObjectiveMet": true,
+        "acquiredUnits": 2,
+        "cashRetained": 30,
+        "existingDebt": 250,
+        "newPrincipal": 70,
+        "additionalRepayment": 4,
+        "totalNewObligation": 74,
+        "repaymentDays": 7,
+        "relationalConsequences": [
+          "Marcus's confidence in your commitment rose relative to the opening.",
+          "Tension in the conversation fell relative to the opening."
+        ]
+      },
+      "vibeId": "SE",
+      "sequence": [
+        "VERIFY_SOURCE",
+        "PROBE_USEFULNESS",
+        "DEAL",
+        "ACCEPT"
+      ]
+    },
+    {
+      "seed": "independent-lore-2",
+      "variant": "POSITIVE",
+      "quirk": "recognition",
+      "status": "AGREED",
+      "metrics": {
+        "cash": 30,
+        "debt": 324,
+        "marcusStock": 6,
+        "playerStock": 2,
+        "confidence": 47,
+        "tension": 19,
+        "patience": 17
+      },
+      "obligations": {
+        "existing": 250,
+        "principal": 70,
+        "extra": 4,
+        "days": 7
+      },
+      "disclosure": "FULL",
+      "beliefs": {
+        "source": "CHECKED",
+        "relevance": "POSSIBLY_USEFUL",
+        "content": "DOCUMENT_SUPPORTED",
+        "record": "NOT_APPLICABLE"
+      },
+      "negativeWindow": null,
+      "quality": {
+        "result": "Intended credit objective met",
+        "designDefault": "Newly authored provisional target: at least two Contra units with positive new principal. This is not a hidden victory score.",
+        "creditObjectiveMet": true,
+        "acquiredUnits": 2,
+        "cashRetained": 30,
+        "existingDebt": 250,
+        "newPrincipal": 70,
+        "additionalRepayment": 4,
+        "totalNewObligation": 74,
+        "repaymentDays": 7,
+        "relationalConsequences": [
+          "Marcus's confidence in your commitment rose relative to the opening.",
+          "Tension in the conversation fell relative to the opening."
+        ]
+      },
+      "vibeId": "EA",
+      "sequence": [
+        "VERIFY_SOURCE",
+        "PROBE_USEFULNESS",
+        "DEAL",
+        "ACCEPT"
+      ]
+    },
+    {
+      "seed": "independent-lore-2",
+      "variant": "POSITIVE",
+      "quirk": "recognition",
+      "status": "AGREED",
+      "metrics": {
+        "cash": 30,
+        "debt": 324,
+        "marcusStock": 6,
+        "playerStock": 2,
+        "confidence": 46,
+        "tension": 14,
+        "patience": 17
+      },
+      "obligations": {
+        "existing": 250,
+        "principal": 70,
+        "extra": 4,
+        "days": 7
+      },
+      "disclosure": "FULL",
+      "beliefs": {
+        "source": "CHECKED",
+        "relevance": "POSSIBLY_USEFUL",
+        "content": "DOCUMENT_SUPPORTED",
+        "record": "NOT_APPLICABLE"
+      },
+      "negativeWindow": null,
+      "quality": {
+        "result": "Intended credit objective met",
+        "designDefault": "Newly authored provisional target: at least two Contra units with positive new principal. This is not a hidden victory score.",
+        "creditObjectiveMet": true,
+        "acquiredUnits": 2,
+        "cashRetained": 30,
+        "existingDebt": 250,
+        "newPrincipal": 70,
+        "additionalRepayment": 4,
+        "totalNewObligation": 74,
+        "repaymentDays": 7,
+        "relationalConsequences": [
+          "Marcus's confidence in your commitment rose relative to the opening.",
+          "Tension in the conversation fell relative to the opening."
+        ]
+      },
+      "vibeId": "SE",
+      "sequence": [
+        "VERIFY_SOURCE",
+        "PROBE_USEFULNESS",
+        "DEAL",
+        "ACCEPT"
+      ]
+    },
+    {
+      "seed": "independent-lore-0",
+      "variant": "NEGATIVE",
+      "quirk": "final_say",
+      "status": "AGREED",
+      "metrics": {
+        "cash": 30,
+        "debt": 324,
+        "marcusStock": 6,
+        "playerStock": 2,
+        "confidence": 50,
+        "tension": 23,
+        "patience": 15
+      },
+      "obligations": {
+        "existing": 250,
+        "principal": 70,
+        "extra": 4,
+        "days": 7
+      },
+      "disclosure": "FULL",
+      "beliefs": {
+        "source": "CHECKED",
+        "relevance": "POSSIBLY_USEFUL",
+        "content": "DOCUMENT_SUPPORTED",
+        "record": "DISPUTED"
+      },
+      "negativeWindow": {
+        "factId": "NEGATIVE_DISCREPANCY",
+        "openedAt": 4,
+        "expiresAt": 7,
+        "consumedAt": 5
+      },
+      "quality": {
+        "result": "Intended credit objective met",
+        "designDefault": "Newly authored provisional target: at least two Contra units with positive new principal. This is not a hidden victory score.",
+        "creditObjectiveMet": true,
+        "acquiredUnits": 2,
+        "cashRetained": 30,
+        "existingDebt": 250,
+        "newPrincipal": 70,
+        "additionalRepayment": 4,
+        "totalNewObligation": 74,
+        "repaymentDays": 7,
+        "relationalConsequences": [
+          "Marcus's confidence in your commitment rose relative to the opening.",
+          "Tension in the conversation rose relative to the opening."
+        ]
+      },
+      "vibeId": "EA",
+      "sequence": [
+        "VERIFY_SOURCE",
+        "PROBE_USEFULNESS",
+        "QUESTION_RECORD",
+        "DISCLOSE_FULL",
+        "DEAL",
+        "ACCEPT"
+      ]
+    },
+    {
+      "seed": "independent-lore-0",
+      "variant": "NEGATIVE",
+      "quirk": "final_say",
+      "status": "AGREED",
+      "metrics": {
+        "cash": 30,
+        "debt": 324,
+        "marcusStock": 6,
+        "playerStock": 2,
+        "confidence": 51,
+        "tension": 14,
+        "patience": 15
+      },
+      "obligations": {
+        "existing": 250,
+        "principal": 70,
+        "extra": 4,
+        "days": 7
+      },
+      "disclosure": "FULL",
+      "beliefs": {
+        "source": "CHECKED",
+        "relevance": "POSSIBLY_USEFUL",
+        "content": "DOCUMENT_SUPPORTED",
+        "record": "DISPUTED"
+      },
+      "negativeWindow": {
+        "factId": "NEGATIVE_DISCREPANCY",
+        "openedAt": 4,
+        "expiresAt": 7,
+        "consumedAt": 5
+      },
+      "quality": {
+        "result": "Intended credit objective met",
+        "designDefault": "Newly authored provisional target: at least two Contra units with positive new principal. This is not a hidden victory score.",
+        "creditObjectiveMet": true,
+        "acquiredUnits": 2,
+        "cashRetained": 30,
+        "existingDebt": 250,
+        "newPrincipal": 70,
+        "additionalRepayment": 4,
+        "totalNewObligation": 74,
+        "repaymentDays": 7,
+        "relationalConsequences": [
+          "Marcus's confidence in your commitment rose relative to the opening.",
+          "Tension in the conversation fell relative to the opening."
+        ]
+      },
+      "vibeId": "SE",
+      "sequence": [
+        "VERIFY_SOURCE",
+        "PROBE_USEFULNESS",
+        "QUESTION_RECORD",
+        "DISCLOSE_FULL",
+        "DEAL",
+        "ACCEPT"
+      ]
+    },
+    {
+      "seed": "independent-lore-1",
+      "variant": "NEGATIVE",
+      "quirk": "plain_dealing",
+      "status": "AGREED",
+      "metrics": {
+        "cash": 30,
+        "debt": 324,
+        "marcusStock": 6,
+        "playerStock": 2,
+        "confidence": 50,
+        "tension": 23,
+        "patience": 15
+      },
+      "obligations": {
+        "existing": 250,
+        "principal": 70,
+        "extra": 4,
+        "days": 7
+      },
+      "disclosure": "FULL",
+      "beliefs": {
+        "source": "CHECKED",
+        "relevance": "POSSIBLY_USEFUL",
+        "content": "DOCUMENT_SUPPORTED",
+        "record": "DISPUTED"
+      },
+      "negativeWindow": {
+        "factId": "NEGATIVE_DISCREPANCY",
+        "openedAt": 4,
+        "expiresAt": 7,
+        "consumedAt": 5
+      },
+      "quality": {
+        "result": "Intended credit objective met",
+        "designDefault": "Newly authored provisional target: at least two Contra units with positive new principal. This is not a hidden victory score.",
+        "creditObjectiveMet": true,
+        "acquiredUnits": 2,
+        "cashRetained": 30,
+        "existingDebt": 250,
+        "newPrincipal": 70,
+        "additionalRepayment": 4,
+        "totalNewObligation": 74,
+        "repaymentDays": 7,
+        "relationalConsequences": [
+          "Marcus's confidence in your commitment rose relative to the opening.",
+          "Tension in the conversation rose relative to the opening."
+        ]
+      },
+      "vibeId": "EA",
+      "sequence": [
+        "VERIFY_SOURCE",
+        "PROBE_USEFULNESS",
+        "QUESTION_RECORD",
+        "DISCLOSE_FULL",
+        "DEAL",
+        "ACCEPT"
+      ]
+    },
+    {
+      "seed": "independent-lore-1",
+      "variant": "NEGATIVE",
+      "quirk": "plain_dealing",
+      "status": "AGREED",
+      "metrics": {
+        "cash": 30,
+        "debt": 324,
+        "marcusStock": 6,
+        "playerStock": 2,
+        "confidence": 51,
+        "tension": 14,
+        "patience": 15
+      },
+      "obligations": {
+        "existing": 250,
+        "principal": 70,
+        "extra": 4,
+        "days": 7
+      },
+      "disclosure": "FULL",
+      "beliefs": {
+        "source": "CHECKED",
+        "relevance": "POSSIBLY_USEFUL",
+        "content": "DOCUMENT_SUPPORTED",
+        "record": "DISPUTED"
+      },
+      "negativeWindow": {
+        "factId": "NEGATIVE_DISCREPANCY",
+        "openedAt": 4,
+        "expiresAt": 7,
+        "consumedAt": 5
+      },
+      "quality": {
+        "result": "Intended credit objective met",
+        "designDefault": "Newly authored provisional target: at least two Contra units with positive new principal. This is not a hidden victory score.",
+        "creditObjectiveMet": true,
+        "acquiredUnits": 2,
+        "cashRetained": 30,
+        "existingDebt": 250,
+        "newPrincipal": 70,
+        "additionalRepayment": 4,
+        "totalNewObligation": 74,
+        "repaymentDays": 7,
+        "relationalConsequences": [
+          "Marcus's confidence in your commitment rose relative to the opening.",
+          "Tension in the conversation fell relative to the opening."
+        ]
+      },
+      "vibeId": "SE",
+      "sequence": [
+        "VERIFY_SOURCE",
+        "PROBE_USEFULNESS",
+        "QUESTION_RECORD",
+        "DISCLOSE_FULL",
+        "DEAL",
+        "ACCEPT"
+      ]
+    },
+    {
+      "seed": "independent-lore-5",
+      "variant": "NEGATIVE",
+      "quirk": "recognition",
+      "status": "AGREED",
+      "metrics": {
+        "cash": 30,
+        "debt": 324,
+        "marcusStock": 6,
+        "playerStock": 2,
+        "confidence": 50,
+        "tension": 23,
+        "patience": 15
+      },
+      "obligations": {
+        "existing": 250,
+        "principal": 70,
+        "extra": 4,
+        "days": 7
+      },
+      "disclosure": "FULL",
+      "beliefs": {
+        "source": "CHECKED",
+        "relevance": "POSSIBLY_USEFUL",
+        "content": "DOCUMENT_SUPPORTED",
+        "record": "DISPUTED"
+      },
+      "negativeWindow": {
+        "factId": "NEGATIVE_DISCREPANCY",
+        "openedAt": 4,
+        "expiresAt": 7,
+        "consumedAt": 5
+      },
+      "quality": {
+        "result": "Intended credit objective met",
+        "designDefault": "Newly authored provisional target: at least two Contra units with positive new principal. This is not a hidden victory score.",
+        "creditObjectiveMet": true,
+        "acquiredUnits": 2,
+        "cashRetained": 30,
+        "existingDebt": 250,
+        "newPrincipal": 70,
+        "additionalRepayment": 4,
+        "totalNewObligation": 74,
+        "repaymentDays": 7,
+        "relationalConsequences": [
+          "Marcus's confidence in your commitment rose relative to the opening.",
+          "Tension in the conversation rose relative to the opening."
+        ]
+      },
+      "vibeId": "EA",
+      "sequence": [
+        "VERIFY_SOURCE",
+        "PROBE_USEFULNESS",
+        "QUESTION_RECORD",
+        "DISCLOSE_FULL",
+        "DEAL",
+        "ACCEPT"
+      ]
+    },
+    {
+      "seed": "independent-lore-5",
+      "variant": "NEGATIVE",
+      "quirk": "recognition",
+      "status": "AGREED",
+      "metrics": {
+        "cash": 30,
+        "debt": 324,
+        "marcusStock": 6,
+        "playerStock": 2,
+        "confidence": 51,
+        "tension": 14,
+        "patience": 15
+      },
+      "obligations": {
+        "existing": 250,
+        "principal": 70,
+        "extra": 4,
+        "days": 7
+      },
+      "disclosure": "FULL",
+      "beliefs": {
+        "source": "CHECKED",
+        "relevance": "POSSIBLY_USEFUL",
+        "content": "DOCUMENT_SUPPORTED",
+        "record": "DISPUTED"
+      },
+      "negativeWindow": {
+        "factId": "NEGATIVE_DISCREPANCY",
+        "openedAt": 4,
+        "expiresAt": 7,
+        "consumedAt": 5
+      },
+      "quality": {
+        "result": "Intended credit objective met",
+        "designDefault": "Newly authored provisional target: at least two Contra units with positive new principal. This is not a hidden victory score.",
+        "creditObjectiveMet": true,
+        "acquiredUnits": 2,
+        "cashRetained": 30,
+        "existingDebt": 250,
+        "newPrincipal": 70,
+        "additionalRepayment": 4,
+        "totalNewObligation": 74,
+        "repaymentDays": 7,
+        "relationalConsequences": [
+          "Marcus's confidence in your commitment rose relative to the opening.",
+          "Tension in the conversation fell relative to the opening."
+        ]
+      },
+      "vibeId": "SE",
+      "sequence": [
+        "VERIFY_SOURCE",
+        "PROBE_USEFULNESS",
+        "QUESTION_RECORD",
+        "DISCLOSE_FULL",
+        "DEAL",
+        "ACCEPT"
+      ]
+    }
+  ],
+  "factPairs": [
+    {
+      "factId": "OLD_ACCOUNT",
+      "topic": "DEBT",
+      "present": {
+        "outcome": "ANSWER",
+        "deltas": {
+          "cash": 0,
+          "debt": 0,
+          "marcusStock": 0,
+          "playerStock": 0,
+          "confidence": 2,
+          "tension": -2,
+          "patience": -1
+        }
+      },
+      "absent": {
+        "rejected": true,
+        "error": "The relevant history or context for this question is not established.",
+        "existingDebt": 250
+      }
+    },
+    {
+      "factId": "STOCK_TITLE",
+      "topic": "RISK",
+      "present": {
+        "outcome": "ANSWER",
+        "deltas": {
+          "cash": 0,
+          "debt": 0,
+          "marcusStock": 0,
+          "playerStock": 0,
+          "confidence": 5,
+          "tension": -4,
+          "patience": -1
+        }
+      },
+      "absent": {
+        "rejected": true,
+        "error": "The relevant history or context for this question is not established.",
+        "existingDebt": 250
+      }
+    },
+    {
+      "factId": "MISSED_CHECKIN",
+      "topic": "ACK_MISSED",
+      "present": {
+        "outcome": "ANSWER",
+        "deltas": {
+          "cash": 0,
+          "debt": 0,
+          "marcusStock": 0,
+          "playerStock": 0,
+          "confidence": 4,
+          "tension": -2,
+          "patience": -1
+        }
+      },
+      "absent": {
+        "rejected": true,
+        "error": "The relevant history or context for this question is not established.",
+        "existingDebt": 250
+      }
+    },
+    {
+      "factId": "SHARED_LOADING_SHIFT",
+      "topic": "SMALL_TALK",
+      "present": {
+        "outcome": "ANSWER",
+        "deltas": {
+          "cash": 0,
+          "debt": 0,
+          "marcusStock": 0,
+          "playerStock": 0,
+          "confidence": 2,
+          "tension": -2,
+          "patience": -1
+        }
+      },
+      "absent": {
+        "rejected": true,
+        "error": "The relevant history or context for this question is not established.",
+        "existingDebt": 250
+      }
+    },
+    {
+      "factId": "DIRECT_RECEIPT",
+      "topic": "VERIFY_SOURCE",
+      "present": {
+        "outcome": "ANSWER",
+        "deltas": {
+          "cash": 0,
+          "debt": 0,
+          "marcusStock": 0,
+          "playerStock": 0,
+          "confidence": 2,
+          "tension": 0,
+          "patience": -1
+        }
+      },
+      "absent": {
+        "rejected": true,
+        "error": "The relevant history or context for this question is not established.",
+        "existingDebt": 250
+      }
+    },
+    {
+      "factId": "LEDGER_CLOSING",
+      "topic": "PROBE_USEFULNESS",
+      "present": {
+        "outcome": "ANSWER",
+        "deltas": {
+          "cash": 0,
+          "debt": 0,
+          "marcusStock": 0,
+          "playerStock": 0,
+          "confidence": 1,
+          "tension": 0,
+          "patience": -1
+        }
+      },
+      "absent": {
+        "rejected": true,
+        "error": "The relevant history or context for this question is not established.",
+        "existingDebt": 250
+      }
+    },
+    {
+      "factId": "POSITIVE_ROUTE",
+      "topic": "DISCLOSE_PARTIAL",
+      "present": {
+        "outcome": "ANSWER",
+        "deltas": {
+          "cash": 0,
+          "debt": 0,
+          "marcusStock": 0,
+          "playerStock": 0,
+          "confidence": 1,
+          "tension": 0,
+          "patience": -1
+        }
+      },
+      "absent": {
+        "rejected": true,
+        "error": "You do not hold the relevant information in this encounter.",
+        "existingDebt": 250
+      }
+    },
+    {
+      "factId": "NEGATIVE_DISCREPANCY",
+      "topic": "DISCLOSE_PARTIAL",
+      "present": {
+        "outcome": "ANSWER",
+        "deltas": {
+          "cash": 0,
+          "debt": 0,
+          "marcusStock": 0,
+          "playerStock": 0,
+          "confidence": 1,
+          "tension": 0,
+          "patience": -1
+        }
+      },
+      "absent": {
+        "rejected": true,
+        "error": "You do not hold the relevant information in this encounter.",
+        "existingDebt": 250
+      }
+    },
+    {
+      "factId": "RECORD_ASSERTION",
+      "topic": "QUESTION_RECORD",
+      "present": {
+        "outcome": "ANSWER",
+        "deltas": {
+          "cash": 0,
+          "debt": 0,
+          "marcusStock": 0,
+          "playerStock": 0,
+          "confidence": 1,
+          "tension": 2,
+          "patience": -1
+        }
+      },
+      "absent": {
+        "rejected": true,
+        "error": "The relevant history or context for this question is not established.",
+        "existingDebt": 250
+      }
+    },
+    {
+      "factId": "PICKUP_NEED",
+      "topic": "PROBE_USEFULNESS",
+      "present": {
+        "allowed": true,
+        "reason": "Offer the exact collection detail with the terms; it is delivered only when you confirm an agreement."
+      },
+      "absent": {
+        "allowed": false,
+        "reason": "You have not established a useful reason for him to trade for this detail."
+      }
+    }
+  ],
+  "scenarios": {
+    "positiveWithoutExchange": {
+      "seed": "independent-lore-2",
+      "variant": "POSITIVE",
+      "quirk": "recognition",
+      "status": "OPEN",
+      "metrics": {
+        "cash": 80,
+        "debt": 250,
+        "marcusStock": 8,
+        "playerStock": 0,
+        "confidence": 47,
+        "tension": 19,
+        "patience": 17
+      },
+      "obligations": {
+        "existing": 250,
+        "principal": 0,
+        "extra": 0,
+        "days": null
+      },
+      "disclosure": "PARTIAL",
+      "beliefs": {
+        "source": "CHECKED",
+        "relevance": "POSSIBLY_USEFUL",
+        "content": "UNKNOWN",
+        "record": "NOT_APPLICABLE"
+      },
+      "negativeWindow": null,
+      "quality": null,
+      "events": [
+        {
+          "turn": 1,
+          "action": "ASK",
+          "topic": "VERIFY_SOURCE",
+          "vibeId": "EA",
+          "intensity": "BALANCED",
+          "outcome": "ANSWER",
+          "progressKey": "evidence:DIRECT_RECEIPT",
+          "deltas": {
+            "cash": 0,
+            "debt": 0,
+            "marcusStock": 0,
+            "playerStock": 0,
+            "confidence": 2,
+            "tension": 0,
+            "patience": -1
+          },
+          "factIds": [
+            "DIRECT_RECEIPT"
+          ],
+          "causes": [
+            "EVIDENCE_OBSERVED",
+            "INTENT_RESOLVED",
+            "PHASE_ADVANCED"
+          ]
+        },
+        {
+          "turn": 2,
+          "action": "ASK",
+          "topic": "PROBE_USEFULNESS",
+          "vibeId": "EA",
+          "intensity": "BALANCED",
+          "outcome": "ANSWER",
+          "progressKey": "relevance:POSITIVE_ROUTE",
+          "deltas": {
+            "cash": 0,
+            "debt": 0,
+            "marcusStock": 0,
+            "playerStock": 0,
+            "confidence": 1,
+            "tension": 0,
+            "patience": -1
+          },
+          "factIds": [
+            "LEDGER_CLOSING",
+            "PICKUP_NEED"
+          ],
+          "causes": [
+            "EVIDENCE_OBSERVED",
+            "INTENT_RESOLVED"
+          ]
+        },
+        {
+          "turn": 3,
+          "action": "DEAL",
+          "terms": {
+            "units": 2,
+            "upfront": 41,
+            "repayment": 79,
+            "extra": 0,
+            "days": 7
+          },
+          "information": "NONE",
+          "vibeId": "EA",
+          "intensity": "BALANCED",
+          "outcome": "COUNTER",
+          "score": 14.12,
+          "informationBonus": 0,
+          "progressKey": "FIRST_PROPOSAL",
+          "deltas": {
+            "cash": 0,
+            "debt": 0,
+            "marcusStock": 0,
+            "playerStock": 0,
+            "confidence": 4,
+            "tension": -1,
+            "patience": -1
+          },
+          "factIds": [
+            "STOCK_TITLE",
+            "OLD_ACCOUNT"
+          ],
+          "causes": [
+            "PROPOSAL_EVALUATED",
+            "PHASE_ADVANCED"
+          ]
+        }
+      ]
+    },
+    "positiveWithExchange": {
+      "seed": "independent-lore-2",
+      "variant": "POSITIVE",
+      "quirk": "recognition",
+      "status": "AGREED",
+      "metrics": {
+        "cash": 39,
+        "debt": 329,
+        "marcusStock": 6,
+        "playerStock": 2,
+        "confidence": 47,
+        "tension": 19,
+        "patience": 16
+      },
+      "obligations": {
+        "existing": 250,
+        "principal": 79,
+        "extra": 0,
+        "days": 7
+      },
+      "disclosure": "FULL",
+      "beliefs": {
+        "source": "CHECKED",
+        "relevance": "POSSIBLY_USEFUL",
+        "content": "DOCUMENT_SUPPORTED",
+        "record": "NOT_APPLICABLE"
+      },
+      "negativeWindow": null,
+      "quality": {
+        "result": "Intended credit objective met",
+        "designDefault": "Newly authored provisional target: at least two Contra units with positive new principal. This is not a hidden victory score.",
+        "creditObjectiveMet": true,
+        "acquiredUnits": 2,
+        "cashRetained": 39,
+        "existingDebt": 250,
+        "newPrincipal": 79,
+        "additionalRepayment": 0,
+        "totalNewObligation": 79,
+        "repaymentDays": 7,
+        "relationalConsequences": [
+          "Marcus's confidence in your commitment rose relative to the opening.",
+          "Tension in the conversation fell relative to the opening."
+        ]
+      },
+      "events": [
+        {
+          "turn": 1,
+          "action": "ASK",
+          "topic": "VERIFY_SOURCE",
+          "vibeId": "EA",
+          "intensity": "BALANCED",
+          "outcome": "ANSWER",
+          "progressKey": "evidence:DIRECT_RECEIPT",
+          "deltas": {
+            "cash": 0,
+            "debt": 0,
+            "marcusStock": 0,
+            "playerStock": 0,
+            "confidence": 2,
+            "tension": 0,
+            "patience": -1
+          },
+          "factIds": [
+            "DIRECT_RECEIPT"
+          ],
+          "causes": [
+            "EVIDENCE_OBSERVED",
+            "INTENT_RESOLVED",
+            "PHASE_ADVANCED"
+          ]
+        },
+        {
+          "turn": 2,
+          "action": "ASK",
+          "topic": "PROBE_USEFULNESS",
+          "vibeId": "EA",
+          "intensity": "BALANCED",
+          "outcome": "ANSWER",
+          "progressKey": "relevance:POSITIVE_ROUTE",
+          "deltas": {
+            "cash": 0,
+            "debt": 0,
+            "marcusStock": 0,
+            "playerStock": 0,
+            "confidence": 1,
+            "tension": 0,
+            "patience": -1
+          },
+          "factIds": [
+            "LEDGER_CLOSING",
+            "PICKUP_NEED"
+          ],
+          "causes": [
+            "EVIDENCE_OBSERVED",
+            "INTENT_RESOLVED"
+          ]
+        },
+        {
+          "turn": 3,
+          "action": "DEAL",
+          "terms": {
+            "units": 2,
+            "upfront": 41,
+            "repayment": 79,
+            "extra": 0,
+            "days": 7
+          },
+          "information": "OFFER_INFORMATION",
+          "vibeId": "EA",
+          "intensity": "BALANCED",
+          "outcome": "ACCEPT",
+          "score": 22.12,
+          "informationBonus": 8,
+          "progressKey": "FIRST_PROPOSAL",
+          "deltas": {
+            "cash": 0,
+            "debt": 0,
+            "marcusStock": 0,
+            "playerStock": 0,
+            "confidence": 4,
+            "tension": -1,
+            "patience": -1
+          },
+          "factIds": [
+            "POSITIVE_ROUTE",
+            "DIRECT_RECEIPT",
+            "LEDGER_CLOSING",
+            "PICKUP_NEED",
+            "STOCK_TITLE",
+            "OLD_ACCOUNT"
+          ],
+          "causes": [
+            "INFORMATION_OFFERED",
+            "PROPOSAL_EVALUATED",
+            "PHASE_ADVANCED"
+          ]
+        },
+        {
+          "turn": 4,
+          "action": "ASK",
+          "topic": "CLARIFY_OFFER",
+          "vibeId": "EA",
+          "intensity": "BALANCED",
+          "outcome": "ANSWER",
+          "progressKey": null,
+          "deltas": {
+            "cash": 0,
+            "debt": 0,
+            "marcusStock": 0,
+            "playerStock": 0,
+            "confidence": 0,
+            "tension": 0,
+            "patience": -1
+          },
+          "factIds": [
+            "STOCK_TITLE",
+            "OLD_ACCOUNT"
+          ],
+          "causes": [
+            "OFFER_CLARIFIED",
+            "NO_NEW_PROGRESS"
+          ]
+        },
+        {
+          "turn": 5,
+          "action": "ACCEPT",
+          "vibeId": "EA",
+          "intensity": "BALANCED",
+          "outcome": "AGREED",
+          "progressKey": null,
+          "deltas": {
+            "cash": -41,
+            "debt": 79,
+            "marcusStock": -2,
+            "playerStock": 2,
+            "confidence": 0,
+            "tension": 0,
+            "patience": 0
+          },
+          "factIds": [
+            "POSITIVE_ROUTE",
+            "DIRECT_RECEIPT",
+            "PICKUP_NEED",
+            "STOCK_TITLE",
+            "OLD_ACCOUNT"
+          ],
+          "causes": [
+            "FULL_DISCLOSURE",
+            "INFORMATION_EXCHANGE_COMPLETED",
+            "INTENT_RESOLVED",
+            "PHASE_ADVANCED"
+          ]
+        }
+      ]
+    },
+    "positiveEarlyGiveaway": {
+      "seed": "independent-lore-2",
+      "variant": "POSITIVE",
+      "quirk": "recognition",
+      "status": "OPEN",
+      "metrics": {
+        "cash": 80,
+        "debt": 250,
+        "marcusStock": 8,
+        "playerStock": 0,
+        "confidence": 44,
+        "tension": 20,
+        "patience": 17
+      },
+      "obligations": {
+        "existing": 250,
+        "principal": 0,
+        "extra": 0,
+        "days": null
+      },
+      "disclosure": "FULL",
+      "beliefs": {
+        "source": "CHECKED",
+        "relevance": "POSSIBLY_USEFUL",
+        "content": "DOCUMENT_SUPPORTED",
+        "record": "NOT_APPLICABLE"
+      },
+      "negativeWindow": null,
+      "quality": null,
+      "exchangeEligibility": {
+        "allowed": false,
+        "reason": "Marcus already has the exact information; it is no longer private exchange value."
+      }
+    },
+    "negativeWithOpening": {
+      "seed": "independent-lore-5",
+      "variant": "NEGATIVE",
+      "quirk": "recognition",
+      "status": "AGREED",
+      "metrics": {
+        "cash": 32,
+        "debt": 322,
+        "marcusStock": 6,
+        "playerStock": 2,
+        "confidence": 50,
+        "tension": 23,
+        "patience": 15
+      },
+      "obligations": {
+        "existing": 250,
+        "principal": 72,
+        "extra": 0,
+        "days": 7
+      },
+      "disclosure": "FULL",
+      "beliefs": {
+        "source": "CHECKED",
+        "relevance": "POSSIBLY_USEFUL",
+        "content": "DOCUMENT_SUPPORTED",
+        "record": "DISPUTED"
+      },
+      "negativeWindow": {
+        "factId": "NEGATIVE_DISCREPANCY",
+        "openedAt": 4,
+        "expiresAt": 7,
+        "consumedAt": 5
+      },
+      "quality": {
+        "result": "Intended credit objective met",
+        "designDefault": "Newly authored provisional target: at least two Contra units with positive new principal. This is not a hidden victory score.",
+        "creditObjectiveMet": true,
+        "acquiredUnits": 2,
+        "cashRetained": 32,
+        "existingDebt": 250,
+        "newPrincipal": 72,
+        "additionalRepayment": 0,
+        "totalNewObligation": 72,
+        "repaymentDays": 7,
+        "relationalConsequences": [
+          "Marcus's confidence in your commitment rose relative to the opening.",
+          "Tension in the conversation rose relative to the opening."
+        ]
+      },
+      "events": [
+        {
+          "turn": 1,
+          "action": "ASK",
+          "topic": "VERIFY_SOURCE",
+          "vibeId": "EA",
+          "intensity": "BALANCED",
+          "outcome": "ANSWER",
+          "progressKey": "evidence:DIRECT_RECEIPT",
+          "deltas": {
+            "cash": 0,
+            "debt": 0,
+            "marcusStock": 0,
+            "playerStock": 0,
+            "confidence": 2,
+            "tension": 0,
+            "patience": -1
+          },
+          "factIds": [
+            "DIRECT_RECEIPT"
+          ],
+          "causes": [
+            "EVIDENCE_OBSERVED",
+            "INTENT_RESOLVED",
+            "PHASE_ADVANCED"
+          ]
+        },
+        {
+          "turn": 2,
+          "action": "ASK",
+          "topic": "PROBE_USEFULNESS",
+          "vibeId": "EA",
+          "intensity": "BALANCED",
+          "outcome": "ANSWER",
+          "progressKey": "relevance:NEGATIVE_DISCREPANCY",
+          "deltas": {
+            "cash": 0,
+            "debt": 0,
+            "marcusStock": 0,
+            "playerStock": 0,
+            "confidence": 1,
+            "tension": 0,
+            "patience": -1
+          },
+          "factIds": [
+            "LEDGER_CLOSING",
+            "RECORD_ASSERTION"
+          ],
+          "causes": [
+            "EVIDENCE_OBSERVED",
+            "INTENT_RESOLVED"
+          ]
+        },
+        {
+          "turn": 3,
+          "action": "ASK",
+          "topic": "QUESTION_RECORD",
+          "vibeId": "EA",
+          "intensity": "BALANCED",
+          "outcome": "ANSWER",
+          "progressKey": "question:RECORD_ASSERTION",
+          "deltas": {
+            "cash": 0,
+            "debt": 0,
+            "marcusStock": 0,
+            "playerStock": 0,
+            "confidence": 1,
+            "tension": 2,
+            "patience": -1
+          },
+          "factIds": [
+            "RECORD_ASSERTION"
+          ],
+          "causes": [
+            "EVIDENCE_OBSERVED",
+            "BELIEF_CHALLENGED",
+            "INTENT_RESOLVED"
+          ]
+        },
+        {
+          "turn": 4,
+          "action": "ASK",
+          "topic": "DISCLOSE_FULL",
+          "vibeId": "EA",
+          "intensity": "BALANCED",
+          "outcome": "ANSWER",
+          "progressKey": "disclosure:NEGATIVE_DISCREPANCY",
+          "deltas": {
+            "cash": 0,
+            "debt": 0,
+            "marcusStock": 0,
+            "playerStock": 0,
+            "confidence": 2,
+            "tension": 2,
+            "patience": -1
+          },
+          "factIds": [
+            "NEGATIVE_DISCREPANCY",
+            "RECORD_ASSERTION",
+            "LEDGER_CLOSING"
+          ],
+          "causes": [
+            "FULL_DISCLOSURE",
+            "BELIEF_REVISED",
+            "OPPORTUNITY_OPENED",
+            "INTENT_RESOLVED"
+          ]
+        },
+        {
+          "turn": 5,
+          "action": "DEAL",
+          "terms": {
+            "units": 2,
+            "upfront": 48,
+            "repayment": 72,
+            "extra": 0,
+            "days": 7
+          },
+          "information": "NONE",
+          "vibeId": "EA",
+          "intensity": "BALANCED",
+          "outcome": "ACCEPT",
+          "score": 22.2,
+          "informationBonus": 6,
+          "progressKey": "FIRST_PROPOSAL",
+          "deltas": {
+            "cash": 0,
+            "debt": 0,
+            "marcusStock": 0,
+            "playerStock": 0,
+            "confidence": 4,
+            "tension": -1,
+            "patience": -1
+          },
+          "factIds": [
+            "NEGATIVE_DISCREPANCY",
+            "RECORD_ASSERTION",
+            "LEDGER_CLOSING",
+            "STOCK_TITLE",
+            "OLD_ACCOUNT"
+          ],
+          "causes": [
+            "OPPORTUNITY_USED",
+            "PROPOSAL_EVALUATED",
+            "PHASE_ADVANCED"
+          ]
+        },
+        {
+          "turn": 6,
+          "action": "ACCEPT",
+          "vibeId": "EA",
+          "intensity": "BALANCED",
+          "outcome": "AGREED",
+          "progressKey": null,
+          "deltas": {
+            "cash": -48,
+            "debt": 72,
+            "marcusStock": -2,
+            "playerStock": 2,
+            "confidence": 0,
+            "tension": 0,
+            "patience": 0
+          },
+          "factIds": [
+            "STOCK_TITLE",
+            "OLD_ACCOUNT"
+          ],
+          "causes": [
+            "INTENT_RESOLVED",
+            "PHASE_ADVANCED"
+          ]
+        }
+      ]
+    },
+    "negativeWithoutOpening": {
+      "seed": "independent-lore-5",
+      "variant": "NEGATIVE",
+      "quirk": "recognition",
+      "status": "OPEN",
+      "metrics": {
+        "cash": 80,
+        "debt": 250,
+        "marcusStock": 8,
+        "playerStock": 0,
+        "confidence": 50,
+        "tension": 23,
+        "patience": 15
+      },
+      "obligations": {
+        "existing": 250,
+        "principal": 0,
+        "extra": 0,
+        "days": null
+      },
+      "disclosure": "FULL",
+      "beliefs": {
+        "source": "CHECKED",
+        "relevance": "POSSIBLY_USEFUL",
+        "content": "DOCUMENT_SUPPORTED",
+        "record": "DISPUTED"
+      },
+      "negativeWindow": null,
+      "quality": null,
+      "terms": {
+        "units": 2,
+        "upfront": 48,
+        "repayment": 72,
+        "extra": 0,
+        "days": 7
+      },
+      "decision": "COUNTER",
+      "derived": {
+        "repetition": 0,
+        "priorSocialTurns": 4,
+        "meaningfulProgress": true,
+        "progressKey": "FIRST_PROPOSAL",
+        "acceptThreshold": 22,
+        "counterThreshold": 4,
+        "score": 16.2,
+        "informationBonus": 0,
+        "cashShare": 0.4,
+        "exposure": 322,
+        "creditDefensible": true,
+        "maximumNewPrincipal": 180,
+        "maximumExposure": 650,
+        "maximumCreditDays": 14,
+        "projectedConfidence": 50,
+        "projectedTension": 23
+      },
+      "controlNote": "Only negativeWindow removed from a clone after identical preparation/disclosure; metrics and knowledge unchanged."
+    },
+    "negativeBacklash": {
+      "seed": "independent-lore-5",
+      "variant": "NEGATIVE",
+      "quirk": "recognition",
+      "status": "OPEN",
+      "metrics": {
+        "cash": 80,
+        "debt": 250,
+        "marcusStock": 8,
+        "playerStock": 0,
+        "confidence": 32,
+        "tension": 38,
+        "patience": 19
+      },
+      "obligations": {
+        "existing": 250,
+        "principal": 0,
+        "extra": 0,
+        "days": null
+      },
+      "disclosure": "FULL",
+      "beliefs": {
+        "source": "UNCHECKED",
+        "relevance": "UNTESTED",
+        "content": "RECEIVED_UNVERIFIED",
+        "record": "CHALLENGED_UNVERIFIED"
+      },
+      "negativeWindow": null,
+      "quality": null,
+      "events": [
+        {
+          "turn": 1,
+          "action": "ASK",
+          "topic": "DISCLOSE_FULL",
+          "vibeId": "BA",
+          "intensity": "OVERT",
+          "outcome": "ANSWER",
+          "progressKey": "disclosure:NEGATIVE_DISCREPANCY",
+          "deltas": {
+            "cash": 0,
+            "debt": 0,
+            "marcusStock": 0,
+            "playerStock": 0,
+            "confidence": -8,
+            "tension": 18,
+            "patience": -1
+          },
+          "factIds": [
+            "NEGATIVE_DISCREPANCY",
+            "RECORD_ASSERTION"
+          ],
+          "causes": [
+            "FULL_DISCLOSURE",
+            "BELIEF_REVISED",
+            "DISCLOSURE_BACKLASH",
+            "INTENT_RESOLVED",
+            "PHASE_ADVANCED"
+          ]
+        }
+      ]
+    },
+    "negativeExpired": {
+      "seed": "independent-lore-5",
+      "variant": "NEGATIVE",
+      "quirk": "recognition",
+      "status": "OPEN",
+      "metrics": {
+        "cash": 80,
+        "debt": 250,
+        "marcusStock": 8,
+        "playerStock": 0,
+        "confidence": 58,
+        "tension": 17,
+        "patience": 12
+      },
+      "obligations": {
+        "existing": 250,
+        "principal": 0,
+        "extra": 0,
+        "days": null
+      },
+      "disclosure": "FULL",
+      "beliefs": {
+        "source": "CHECKED",
+        "relevance": "POSSIBLY_USEFUL",
+        "content": "DOCUMENT_SUPPORTED",
+        "record": "DISPUTED"
+      },
+      "negativeWindow": {
+        "factId": "NEGATIVE_DISCREPANCY",
+        "openedAt": 4,
+        "expiresAt": 7,
+        "consumedAt": 8,
+        "expiredAt": 8
+      },
+      "quality": null,
+      "finalInformationBonus": 0
+    },
+    "sixExchangeLateConcession": {
+      "seed": "independent-lore-2",
+      "variant": "POSITIVE",
+      "quirk": "recognition",
+      "status": "AGREED",
+      "metrics": {
+        "cash": 20,
+        "debt": 322,
+        "marcusStock": 6,
+        "playerStock": 2,
+        "confidence": 61,
+        "tension": 6,
+        "patience": 14
+      },
+      "obligations": {
+        "existing": 250,
+        "principal": 60,
+        "extra": 12,
+        "days": 7
+      },
+      "disclosure": "PARTIAL",
+      "beliefs": {
+        "source": "CHECKED",
+        "relevance": "POSSIBLY_USEFUL",
+        "content": "UNKNOWN",
+        "record": "NOT_APPLICABLE"
+      },
+      "negativeWindow": null,
+      "quality": {
+        "result": "Intended credit objective met",
+        "designDefault": "Newly authored provisional target: at least two Contra units with positive new principal. This is not a hidden victory score.",
+        "creditObjectiveMet": true,
+        "acquiredUnits": 2,
+        "cashRetained": 20,
+        "existingDebt": 250,
+        "newPrincipal": 60,
+        "additionalRepayment": 12,
+        "totalNewObligation": 72,
+        "repaymentDays": 7,
+        "relationalConsequences": [
+          "Marcus's confidence in your commitment rose relative to the opening.",
+          "Tension in the conversation fell relative to the opening."
+        ]
+      },
+      "events": [
+        {
+          "turn": 1,
+          "action": "ASK",
+          "topic": "SMALL_TALK",
+          "vibeId": "SE",
+          "intensity": "BALANCED",
+          "outcome": "ANSWER",
+          "progressKey": "history:SHARED_LOADING_SHIFT",
+          "deltas": {
+            "cash": 0,
+            "debt": 0,
+            "marcusStock": 0,
+            "playerStock": 0,
+            "confidence": 3,
+            "tension": -4,
+            "patience": -1
+          },
+          "factIds": [
+            "SHARED_LOADING_SHIFT"
+          ],
+          "causes": [
+            "HISTORY_INVOKED",
+            "INTENT_RESOLVED"
+          ]
+        },
+        {
+          "turn": 2,
+          "action": "ASK",
+          "topic": "ACK_MISSED",
+          "vibeId": "SE",
+          "intensity": "BALANCED",
+          "outcome": "ANSWER",
+          "progressKey": "history:MISSED_CHECKIN",
+          "deltas": {
+            "cash": 0,
+            "debt": 0,
+            "marcusStock": 0,
+            "playerStock": 0,
+            "confidence": 5,
+            "tension": -4,
+            "patience": -1
+          },
+          "factIds": [
+            "MISSED_CHECKIN",
+            "OLD_ACCOUNT"
+          ],
+          "causes": [
+            "HISTORY_ACKNOWLEDGED",
+            "INTENT_RESOLVED",
+            "PHASE_ADVANCED"
+          ]
+        },
+        {
+          "turn": 3,
+          "action": "ASK",
+          "topic": "VERIFY_SOURCE",
+          "vibeId": "SE",
+          "intensity": "BALANCED",
+          "outcome": "ANSWER",
+          "progressKey": "evidence:DIRECT_RECEIPT",
+          "deltas": {
+            "cash": 0,
+            "debt": 0,
+            "marcusStock": 0,
+            "playerStock": 0,
+            "confidence": 3,
+            "tension": -2,
+            "patience": -1
+          },
+          "factIds": [
+            "DIRECT_RECEIPT"
+          ],
+          "causes": [
+            "EVIDENCE_OBSERVED",
+            "INTENT_RESOLVED"
+          ]
+        },
+        {
+          "turn": 4,
+          "action": "ASK",
+          "topic": "PROBE_USEFULNESS",
+          "vibeId": "SE",
+          "intensity": "BALANCED",
+          "outcome": "ANSWER",
+          "progressKey": "relevance:POSITIVE_ROUTE",
+          "deltas": {
+            "cash": 0,
+            "debt": 0,
+            "marcusStock": 0,
+            "playerStock": 0,
+            "confidence": 2,
+            "tension": -2,
+            "patience": -1
+          },
+          "factIds": [
+            "LEDGER_CLOSING",
+            "PICKUP_NEED"
+          ],
+          "causes": [
+            "EVIDENCE_OBSERVED",
+            "INTENT_RESOLVED"
+          ]
+        },
+        {
+          "turn": 5,
+          "action": "DEAL",
+          "terms": {
+            "units": 2,
+            "upfront": 40,
+            "repayment": 80,
+            "extra": 0,
+            "days": 12
+          },
+          "information": "NONE",
+          "vibeId": "EA",
+          "intensity": "BALANCED",
+          "outcome": "COUNTER",
+          "score": 15.93,
+          "informationBonus": 0,
+          "progressKey": "FIRST_PROPOSAL",
+          "deltas": {
+            "cash": 0,
+            "debt": 0,
+            "marcusStock": 0,
+            "playerStock": 0,
+            "confidence": 4,
+            "tension": -1,
+            "patience": -1
+          },
+          "factIds": [
+            "STOCK_TITLE",
+            "OLD_ACCOUNT"
+          ],
+          "causes": [
+            "PROPOSAL_EVALUATED",
+            "PHASE_ADVANCED"
+          ]
+        },
+        {
+          "turn": 6,
+          "action": "DEAL",
+          "terms": {
+            "units": 2,
+            "upfront": 60,
+            "repayment": 60,
+            "extra": 12,
+            "days": 7
+          },
+          "information": "NONE",
+          "vibeId": "EA",
+          "intensity": "BALANCED",
+          "outcome": "ACCEPT",
+          "score": 32.18,
+          "informationBonus": 0,
+          "progressKey": "CONCESSION:2:60:7",
+          "deltas": {
+            "cash": 0,
+            "debt": 0,
+            "marcusStock": 0,
+            "playerStock": 0,
+            "confidence": 4,
+            "tension": -1,
+            "patience": -1
+          },
+          "factIds": [
+            "STOCK_TITLE",
+            "OLD_ACCOUNT"
+          ],
+          "causes": [
+            "PROPOSAL_EVALUATED"
+          ]
+        },
+        {
+          "turn": 7,
+          "action": "ACCEPT",
+          "vibeId": "EA",
+          "intensity": "BALANCED",
+          "outcome": "AGREED",
+          "progressKey": null,
+          "deltas": {
+            "cash": -60,
+            "debt": 72,
+            "marcusStock": -2,
+            "playerStock": 2,
+            "confidence": 0,
+            "tension": 0,
+            "patience": 0
+          },
+          "factIds": [
+            "STOCK_TITLE",
+            "OLD_ACCOUNT"
+          ],
+          "causes": [
+            "INTENT_RESOLVED",
+            "PHASE_ADVANCED"
+          ]
+        }
+      ]
+    },
+    "directCredit": {
+      "seed": "independent-lore-2",
+      "variant": "POSITIVE",
+      "quirk": "recognition",
+      "status": "AGREED",
+      "metrics": {
+        "cash": 20,
+        "debt": 322,
+        "marcusStock": 6,
+        "playerStock": 2,
+        "confidence": 44,
+        "tension": 19,
+        "patience": 19
+      },
+      "obligations": {
+        "existing": 250,
+        "principal": 60,
+        "extra": 12,
+        "days": 7
+      },
+      "disclosure": "NONE",
+      "beliefs": {
+        "source": "UNCHECKED",
+        "relevance": "UNTESTED",
+        "content": "UNKNOWN",
+        "record": "NOT_APPLICABLE"
+      },
+      "negativeWindow": null,
+      "quality": {
+        "result": "Intended credit objective met",
+        "designDefault": "Newly authored provisional target: at least two Contra units with positive new principal. This is not a hidden victory score.",
+        "creditObjectiveMet": true,
+        "acquiredUnits": 2,
+        "cashRetained": 20,
+        "existingDebt": 250,
+        "newPrincipal": 60,
+        "additionalRepayment": 12,
+        "totalNewObligation": 72,
+        "repaymentDays": 7,
+        "relationalConsequences": [
+          "Marcus's confidence in your commitment rose relative to the opening.",
+          "Tension in the conversation fell relative to the opening."
+        ]
+      }
+    },
+    "limitedCashPurchase": {
+      "seed": "independent-lore-2",
+      "variant": "POSITIVE",
+      "quirk": "recognition",
+      "status": "AGREED",
+      "metrics": {
+        "cash": 20,
+        "debt": 250,
+        "marcusStock": 7,
+        "playerStock": 1,
+        "confidence": 44,
+        "tension": 19,
+        "patience": 19
+      },
+      "obligations": {
+        "existing": 250,
+        "principal": 0,
+        "extra": 0,
+        "days": 1
+      },
+      "disclosure": "NONE",
+      "beliefs": {
+        "source": "UNCHECKED",
+        "relevance": "UNTESTED",
+        "content": "UNKNOWN",
+        "record": "NOT_APPLICABLE"
+      },
+      "negativeWindow": null,
+      "quality": {
+        "result": "Valid limited acquisition",
+        "designDefault": "Newly authored provisional target: at least two Contra units with positive new principal. This is not a hidden victory score.",
+        "creditObjectiveMet": false,
+        "acquiredUnits": 1,
+        "cashRetained": 20,
+        "existingDebt": 250,
+        "newPrincipal": 0,
+        "additionalRepayment": 0,
+        "totalNewObligation": 0,
+        "repaymentDays": 1,
+        "relationalConsequences": [
+          "Marcus's confidence in your commitment rose relative to the opening.",
+          "Tension in the conversation fell relative to the opening."
+        ]
+      }
+    },
+    "worsenedRiskRegression": {
+      "seed": "independent-lore-2",
+      "variant": "POSITIVE",
+      "quirk": "recognition",
+      "status": "OPEN",
+      "metrics": {
+        "cash": 80,
+        "debt": 250,
+        "marcusStock": 8,
+        "playerStock": 0,
+        "confidence": 44,
+        "tension": 19,
+        "patience": 18
+      },
+      "obligations": {
+        "existing": 250,
+        "principal": 0,
+        "extra": 0,
+        "days": null
+      },
+      "disclosure": "NONE",
+      "beliefs": {
+        "source": "UNCHECKED",
+        "relevance": "UNTESTED",
+        "content": "UNKNOWN",
+        "record": "NOT_APPLICABLE"
+      },
+      "negativeWindow": null,
+      "quality": null,
+      "events": [
+        {
+          "turn": 1,
+          "action": "DEAL",
+          "terms": {
+            "units": 1,
+            "upfront": 60,
+            "repayment": 0,
+            "extra": 0,
+            "days": 1
+          },
+          "information": "NONE",
+          "vibeId": "EA",
+          "intensity": "BALANCED",
+          "outcome": "ACCEPT",
+          "score": 43.62,
+          "informationBonus": 0,
+          "progressKey": "FIRST_PROPOSAL",
+          "deltas": {
+            "cash": 0,
+            "debt": 0,
+            "marcusStock": 0,
+            "playerStock": 0,
+            "confidence": 4,
+            "tension": -1,
+            "patience": -1
+          },
+          "factIds": [
+            "STOCK_TITLE",
+            "OLD_ACCOUNT"
+          ],
+          "causes": [
+            "PROPOSAL_EVALUATED",
+            "PHASE_ADVANCED"
+          ]
+        },
+        {
+          "turn": 2,
+          "action": "DEAL",
+          "terms": {
+            "units": 8,
+            "upfront": 61,
+            "repayment": 419,
+            "extra": 0,
+            "days": 30
+          },
+          "information": "NONE",
+          "vibeId": "EA",
+          "intensity": "BALANCED",
+          "outcome": "REJECT",
+          "score": -20.79,
+          "informationBonus": 0,
+          "progressKey": null,
+          "deltas": {
+            "cash": 0,
+            "debt": 0,
+            "marcusStock": 0,
+            "playerStock": 0,
+            "confidence": 0,
+            "tension": 0,
+            "patience": -1
+          },
+          "factIds": [
+            "STOCK_TITLE",
+            "OLD_ACCOUNT"
+          ],
+          "causes": [
+            "PROPOSAL_EVALUATED",
+            "NO_NEW_PROGRESS"
+          ]
+        }
+      ]
+    }
+  }
+}

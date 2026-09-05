@@ -20,15 +20,21 @@
     <p id="notice" role="status" aria-live="polite">Loading encounter…</p>
     <button id="reload" type="button" hidden>Reload authoritative state</button>
     <section id="play-view" aria-label="Play">
-      <p>You owe Marcus money. He owns the Contra you want, and you cannot afford two units outright. Ask what matters to him, propose credit terms, and decide whether to accept his offer. Future profits are uncertain; they are not cash you can spend now.</p>
+      <section aria-labelledby="opening-title"><h2 id="opening-title">Before you speak</h2><div id="opening"></div></section>
+      <p class="hint">Provisional objective, newly authored for this playtest: secure at least two Contra units with positive new credit. A smaller cash purchase remains a valid, limited outcome. Future profits are uncertain; they are not cash you can spend now.</p>
+      <section aria-labelledby="knowledge-title"><h2 id="knowledge-title">What you know</h2><div id="knowledge"></div></section>
       <h2>Your position</h2>
       <div id="public-metrics"></div>
       <p id="encounter-status"></p>
+      <p id="phase" class="hint"></p>
+      <div id="next-steps"></div>
       <section aria-labelledby="offer-title">
         <h2 id="offer-title">Current offer</h2>
         <div id="current-offer"></div>
         <button id="accept" type="button" disabled>Accept these exact terms</button>
         <p id="accept-reason" class="hint"></p>
+        <button id="clarify" type="button" disabled>Clarify this offer without changing it</button>
+        <p id="clarify-reason" class="hint"></p>
       </section>
       <section aria-labelledby="compose-title">
         <h2 id="compose-title">Your next message</h2>
@@ -39,7 +45,9 @@
             <select id="action"><option value="ASK">ASK — learn about Marcus and his terms</option><option value="DEAL">DEAL — propose or revise terms</option></select>
             <div id="ask-fields">
               <label for="topic">Question</label>
-              <select id="topic"></select>
+              <select id="topic" aria-describedby="topic-reason"></select>
+              <p id="topic-reason" class="hint"></p>
+              <details><summary>Question availability</summary><div id="topic-availability"></div></details>
             </div>
             <div id="deal-fields" hidden>
               <p id="price-note" class="hint"></p>
@@ -51,6 +59,10 @@
                 <div><label for="days">Repay within (days)</label><input id="days" type="number" min="1" max="30" step="1" value="7" required></div>
               </div>
               <p id="draft-summary" class="hint"></p>
+              <label for="information">Information included in this DEAL</label>
+              <select id="information" aria-describedby="information-reason"></select>
+              <p id="information-reason" class="hint"></p>
+              <details><summary>Information option availability</summary><div id="information-availability"></div></details>
               <p class="hint">Principal must equal price minus upfront cash. Sending a revision replaces any current offer. Proposing transfers nothing.</p>
             </div>
             <label for="vibe">BASED Vibe</label>
@@ -69,6 +81,7 @@
       <section aria-labelledby="conversation-title"><h2 id="conversation-title">Conversation</h2><div id="conversation"></div></section>
       <section aria-labelledby="clues-title"><h2 id="clues-title">What you have learned</h2><div id="clues"></div></section>
       <section aria-labelledby="agreement-title"><h2 id="agreement-title">Agreement and obligations</h2><div id="agreement"></div></section>
+      <section id="outcome-section" aria-labelledby="outcome-title" hidden><h2 id="outcome-title">Outcome</h2><div id="outcome"></div></section>
     </section>
     <section id="debug-view" aria-label="Debug" hidden>
       <h2>Authoritative Debug</h2>

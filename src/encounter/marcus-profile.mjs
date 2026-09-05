@@ -22,7 +22,7 @@ export const PERSONALITY = freeze({
     price: PRICE, acceptThreshold: 22, counterThreshold: 4,
     maximumNewPrincipal: 180, maximumExposure: 650, maximumCreditDays: 14,
     minimumUpfrontShare: 0.2, counterUpfrontShare: 0.4,
-    maximumTension: 82, positiveTurnBudget: 3,
+    maximumTension: 82,
     intensitySalience: { SUBTLE: 0.5, BALANCED: 1, OVERT: 1.5 },
   },
   reactions: {

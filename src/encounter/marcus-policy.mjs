@@ -5,7 +5,7 @@ const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
 const sameTerms = (a, b) => ["units", "upfront", "repayment", "extra", "days"].every((key) => a?.[key] === b?.[key]);
 
 // Pure interpretation of validated intent. The engine owns hard validation and transfers.
-export function evaluateTurn(state, intent) {
+export function evaluateTurn(state, intent, information = { scoreBonus: 0, social: { confidence: 0, tension: 0 }, progressKey: null, exchange: null }) {
   const config = PERSONALITY.policy;
   const quirk = PERSONALITY.quirks[state.quirk];
   const context = intent.action === "DEAL" || intent.topic === "TERMS" ? "business"
@@ -18,11 +18,25 @@ export function evaluateTurn(state, intent) {
   const priorSocialTurns = history.filter((old) => ["ASK", "DEAL"].includes(old.action)).length;
   const salience = config.intensitySalience[intent.intensity];
   const signal = { confidence: Math.round(reaction[context][0] * salience), tension: Math.round(reaction[context][1] * salience) };
-  const social = { ...signal, patience: -1 - Math.min(repetition, 2) };
+  const social = { confidence: signal.confidence + information.social.confidence, tension: signal.tension + information.social.tension, patience: -1 - Math.min(repetition, 2) };
   const reasons = [`${canonical.name}: ${reaction.reading}`, `${intent.intensity} changes signal salience only; proposal facts stay fixed.`];
   const based = { vibeId: canonical.vibeId, name: canonical.name, primaryCue: canonical.primaryCue, secondaryCue: canonical.secondaryCue, fusionLogic: canonical.fusionLogic, intensity: intent.intensity, context, salience, contribution: signal, interpretationApplied: true };
-  const derived = { repetition, priorSocialTurns, acceptThreshold: config.acceptThreshold, counterThreshold: config.counterThreshold };
-  /** @type {{outcome: string, social: typeof social, reasons: string[], based: typeof based, derived: Record<string, number | boolean>, counterTerms?: {units:number, upfront:number,repayment:number,extra:number,days:number}, clue?:string}} */
+  let progressKey = information.progressKey;
+  if (!progressKey && intent.action === "ASK" && ["DEBT", "RISK", "FINAL_SAY"].includes(intent.topic) && repetition === 0) progressKey = `ACK:${intent.topic}`;
+  if (!progressKey && intent.action === "DEAL") {
+    const prior = history.filter(old => old.action === "DEAL").map(old => old.terms);
+    if (!prior.length) progressKey = "FIRST_PROPOSAL";
+    else {
+      const last = prior.at(-1);
+      const terms = intent.terms;
+      const noWorse = terms.units <= last.units && terms.upfront >= last.upfront && terms.repayment <= last.repayment && terms.days <= last.days;
+      const newRecord = terms.upfront > Math.max(...prior.map(t => t.upfront)) || terms.units < Math.min(...prior.map(t => t.units)) || terms.days < Math.min(...prior.map(t => t.days));
+      if (noWorse && newRecord) progressKey = `CONCESSION:${terms.units}:${terms.upfront}:${terms.days}`;
+    }
+  }
+  const meaningfulProgress = !!progressKey && !state.events.some(event => event.progressKey === progressKey);
+  const derived = { repetition, priorSocialTurns, meaningfulProgress, progressKey: progressKey ?? "NONE", acceptThreshold: config.acceptThreshold, counterThreshold: config.counterThreshold };
+  /** @type {{outcome: string, social: typeof social, reasons: string[], based: typeof based, derived: Record<string, number | boolean | string>, counterTerms?: {units:number, upfront:number,repayment:number,extra:number,days:number}, clue?:string}} */
   const result = { outcome: "ANSWER", social, reasons, based, derived };
   if (intent.action === "WALK" || intent.action === "ACCEPT") {
     result.outcome = intent.action === "WALK" ? "END" : "ACCEPT";
@@ -37,7 +51,7 @@ export function evaluateTurn(state, intent) {
       reasons.push("This question addresses his particular concern.");
       result.clue = quirk.clue;
     }
-    if (intent.topic === "PRIORITIES") result.clue = quirk.clue;
+    if (intent.topic === "PRIORITIES") result.clue = "He mentions cash, timing and an accurate account. That does not tell you which concern matters most.";
     if (intent.topic === quirk.unwelcomeTopic) {
       social.confidence -= 4; social.tension += 5;
       reasons.push("This framing strikes his particular sore point.");
@@ -56,10 +70,10 @@ export function evaluateTurn(state, intent) {
     social.tension += Math.round(2 * salience);
     reasons.push("An imposed direction or immovable position leaves him little room for his own terms.");
   }
-  if (repetition > 0 || priorSocialTurns >= config.positiveTurnBudget) {
+  if (!meaningfulProgress) {
     social.confidence = Math.min(0, social.confidence);
     social.tension = Math.max(0, social.tension);
-    reasons.push("Repeated requests or an exhausted opening goodwill budget cannot farm confidence or calm.");
+    reasons.push("No new fact, specific acknowledgment or record financial concession: exhausted topics and cosmetic changes cannot farm confidence or calm.");
   }
   if (repetition > 0) {
     social.tension += Math.min(6, repetition * 2);
@@ -77,9 +91,9 @@ export function evaluateTurn(state, intent) {
   const price = units * config.price;
   const cashShare = upfront / price;
   const exposure = state.metrics.debt + repayment + extra;
-  const score = Math.round((cashShare * 35 - repayment * 0.045 + Math.min(extra, repayment * 0.2, 24) * 0.5 - (repayment > 0 ? days * 0.5 : 0) + confidence * 0.2 - tension * 0.22 + 4) * 100) / 100;
+  const score = Math.round((cashShare * 35 - repayment * 0.045 + Math.min(extra, repayment * 0.2, 24) * 0.5 - (repayment > 0 ? days * 0.5 : 0) + confidence * 0.2 - tension * 0.22 + 4 + information.scoreBonus) * 100) / 100;
   const creditDefensible = repayment === 0 || (cashShare >= config.minimumUpfrontShare && repayment <= config.maximumNewPrincipal && exposure <= config.maximumExposure && days <= config.maximumCreditDays);
-  Object.assign(derived, { score, cashShare, exposure, creditDefensible, maximumNewPrincipal: config.maximumNewPrincipal, maximumExposure: config.maximumExposure, maximumCreditDays: config.maximumCreditDays, projectedConfidence: confidence, projectedTension: tension });
+  Object.assign(derived, { score, informationBonus: information.scoreBonus, cashShare, exposure, creditDefensible, maximumNewPrincipal: config.maximumNewPrincipal, maximumExposure: config.maximumExposure, maximumCreditDays: config.maximumCreditDays, projectedConfidence: confidence, projectedTension: tension });
   reasons.push(`Derived proposal score ${score}; approval needs ${config.acceptThreshold} and defensible credit.`, "Extra repayment receives limited credit: a large promise cannot replace cash or erase the old debt.");
   if (creditDefensible && score >= config.acceptThreshold) {
     result.outcome = "ACCEPT";
@@ -90,7 +104,7 @@ export function evaluateTurn(state, intent) {
   const counterPrice = counterUnits * config.price;
   const counterUpfront = Math.min(state.metrics.cash, counterPrice, Math.max(upfront, Math.ceil(counterPrice * config.counterUpfrontShare)));
   const counterRepayment = counterPrice - counterUpfront;
-  const counterExtra = Math.ceil(counterRepayment * 0.15);
+  const counterExtra = Math.max(0, Math.ceil(counterRepayment * 0.15) - (information.exchange ? 6 : 0));
   const counterTerms = { units: counterUnits, upfront: counterUpfront, repayment: counterRepayment, extra: counterExtra, days: Math.min(days, 10) };
   const counterPossible = counterUnits > 0 && counterUpfront / counterPrice >= config.minimumUpfrontShare && counterRepayment <= config.maximumNewPrincipal && state.metrics.debt + counterRepayment + counterExtra <= config.maximumExposure;
   if (counterPossible && tension < 65 && score >= config.counterThreshold && !sameTerms(counterTerms, intent.terms)) {

@@ -35,6 +35,8 @@ function section(parent, title, content) { const block = node("section"); block.
 function notice(text, error = false) { $("notice").textContent = text; $("notice").classList.toggle("error", error); }
 function availability(action) { return snapshot?.play.availableActions.find((entry) => entry.action === action) || { available: false, reason: "State is not available." }; }
 function currentOffer() { return snapshot?.play.counteroffer || null; }
+function topicAvailability(id = $("topic").value) { return snapshot?.options.topics.find((entry) => entry.id === id); }
+function informationAvailability() { return snapshot?.options.informationOptions?.find((entry) => entry.id === $("information").value); }
 
 function refreshControls() {
   const ready = Boolean(snapshot) && synchronized && !busy;
@@ -42,12 +44,19 @@ function refreshControls() {
   const action = $("action").value;
   $("ask-fields").hidden = action !== "ASK"; $("deal-fields").hidden = action !== "DEAL";
   $("topic").disabled = action !== "ASK";
+  $("information").disabled = action !== "DEAL";
   termKeys.forEach((key) => { $(key).disabled = action !== "DEAL"; });
   $("send").textContent = busy ? "Working…" : `Send ${action}`;
-  $("send").disabled = !ready || !availability(action).available;
+  const selected = action === "ASK" ? topicAvailability() : informationAvailability();
+  $("send").disabled = !ready || !availability(action).available || selected?.available === false;
   $("send-reason").textContent = availability(action).reason || "";
   $("accept").disabled = !ready || !currentOffer() || !availability("ACCEPT").available;
   $("accept-reason").textContent = availability("ACCEPT").reason || "";
+  const clarification = topicAvailability("CLARIFY_OFFER");
+  $("clarify").disabled = !ready || !currentOffer() || !availability("ASK").available || clarification?.available !== true;
+  $("clarify-reason").textContent = clarification?.reason || "A current offer is required. Clarification costs patience; exhaustion ends negotiations.";
+  $("topic-reason").textContent = topicAvailability()?.reason || "";
+  $("information-reason").textContent = informationAvailability()?.reason || "";
   $("walk").disabled = !ready || !availability("WALK").available;
   $("walk-reason").textContent = availability("WALK").reason || "";
   $("restart").disabled = !ready; $("seed").disabled = busy;
@@ -58,13 +67,18 @@ function fillOptions() {
   const options = snapshot.options;
   const fill = (id, entries, getId, getLabel) => {
     const old = $(id).value; $(id).replaceChildren();
-    entries.forEach((entry) => { const option = node("option", getLabel(entry)); option.value = getId(entry); $(id).append(option); });
+    entries.forEach((entry) => { const option = node("option", getLabel(entry)); option.value = getId(entry); option.disabled = entry?.available === false; $(id).append(option); });
     if ([...$(id).options].some((entry) => entry.value === old)) $(id).value = old;
+    if ($(id).selectedOptions[0]?.disabled) $(id).value = [...$(id).options].find((entry) => !entry.disabled)?.value || "";
   };
   fill("vibe", options.vibes, (entry) => entry.vibeId, (entry) => `${entry.vibeId} — ${entry.name}`);
   fill("intensity", options.intensities, (entry) => entry, (entry) => entry);
   if (!$("intensity").dataset.initialized) { $("intensity").value = "BALANCED"; $("intensity").dataset.initialized = "true"; }
   fill("topic", options.topics, (entry) => entry.id, (entry) => entry.label);
+  fill("information", options.informationOptions || [], (entry) => entry.id, (entry) => entry.label);
+  const optionTable = (entries) => table(["Option", "Available", "Reason"], entries.map((entry) => [entry.label, entry.available === false ? "No" : "Yes", entry.reason || "Available"]));
+  $("topic-availability").replaceChildren(optionTable(options.topics));
+  $("information-availability").replaceChildren(optionTable(options.informationOptions || []));
   $("price-note").textContent = `Contra price: ${options.price} per unit. Existing debt is separate from the new principal and additional repayment.`;
   updateVibe(); updateDraft();
 }
@@ -84,24 +98,35 @@ function offerSummary(offer) {
   fragment.append(node("p", offer.source === "APPROVED_PROPOSAL" ? "Marcus has approved your proposal. Confirm the terms below to make the transfer." : "Marcus proposes the following terms. Review them before accepting."));
   fragment.append(table(["Term", "Amount / timing"], termKeys.map((key) => [label(key), offer.terms[key]])));
   fragment.append(node("p", `Accepting transfers ${offer.terms.upfront} cash to Marcus and ${offer.terms.units} Contra units to you. It adds ${offer.terms.repayment} principal plus ${offer.terms.extra} additional repayment, due within ${offer.terms.days} days. Existing debt remains owed.`));
-  fragment.append(node("p", "Any intervening message invalidates this offer. Acceptance ends the encounter."));
+  if (offer.informationExchange) fragment.append(node("p", `Information exchange on acceptance: ${offer.informationExchange.summary}. The accepted exchange delivers the private detail as part of the agreement.`));
+  fragment.append(node("p", "Pure clarification preserves this offer unless negotiations end. Every other question, disclosure or new proposal replaces it. Acceptance ends the encounter."));
   return fragment;
 }
 
 function renderPlay() {
   const play = snapshot.play;
+  $("opening").replaceChildren(details(play.conversation?.opening || play.lore?.briefing || []));
+  $("knowledge").replaceChildren();
+  section($("knowledge"), "Facts available to you", details(play.lore?.playerKnowledge));
+  section($("knowledge"), "What you have told Marcus", details(play.lore?.disclosed));
+  section($("knowledge"), "Observed evidence — clues, not certainty", details(play.lore?.evidence));
+  $("phase").textContent = play.conversation ? `Conversation phase: ${label(play.conversation.phase)}. You can go directly to business; small talk is optional.` : "";
+  $("next-steps").replaceChildren(details(play.conversation?.nextSteps || []));
   $("public-metrics").replaceChildren(table(["Resource", "Current amount"], publicKeys.map((key) => [label(key), play.metrics[key]])));
   const statuses = { OPEN: "Negotiations are open.", AGREED: "Agreement reached. This encounter is complete.", WITHDRAWN: "You walked away. This encounter is complete.", ENDED: "Marcus ended negotiations. This encounter is complete." };
   $("encounter-status").textContent = statuses[play.status] || play.status;
   $("current-offer").replaceChildren(offerSummary(currentOffer()));
   const conversation = $("conversation"); conversation.replaceChildren();
   if (!play.events.length) conversation.append(node("p", "Marcus waits for your opening message."));
-  play.events.forEach((event, index) => { const article = node("article"); article.append(node("h3", `Turn ${index + 1} · ${label(event.outcome)}`), node("p", `You: ${event.playerText}`), node("p", `Marcus: ${event.marcusText}`)); conversation.append(article); });
+  play.events.forEach((event, index) => { const article = node("article"); article.append(node("h3", `Turn ${index + 1} · ${label(event.outcome)}`), node("p", `You: ${event.playerText}`), node("p", `Marcus: ${event.marcusText}`)); if (event.feedback) { const feedback = node("p", `What changed: ${event.feedback}`); feedback.className = "turn-feedback"; article.append(feedback); } conversation.append(article); });
   $("clues").replaceChildren(details(play.clues));
   $("agreement").replaceChildren();
   if (play.agreement) section($("agreement"), "Accepted terms", table(["Term", "Amount / timing"], termKeys.map((key) => [label(key), play.agreement.terms[key]])));
   else $("agreement").append(node("p", "No agreement has been accepted. Proposals do not transfer cash or Contra."));
   section($("agreement"), "Obligation breakdown", details(play.obligations));
+  if (play.agreement?.informationExchange) section($("agreement"), "Accepted information exchange", node("p", play.agreement.informationExchange.summary));
+  $("outcome-section").hidden = !play.conversation?.outcomeQuality;
+  $("outcome").replaceChildren(details(play.conversation?.outcomeQuality));
 }
 
 function renderDebug() {
@@ -113,6 +138,9 @@ function renderDebug() {
   section(content, "Rules and reasons for the latest decision", details(turn?.reasons));
   section(content, "BASED and intensity contribution", details(turn?.based));
   section(content, "Derived decision scores, thresholds and repetition", details(turn?.derived));
+  section(content, "Reaction cause — later presentation handoff", details(turn?.reactionCause));
+  section(content, "Information causes and meaningful progress", details({ progressKey: turn?.progressKey, informationCauses: turn?.informationCauses }));
+  section(content, "Knowledge, disclosure and belief state", details(state.lore));
   section(content, "Available actions and reasons", table(["Action", "Available", "Reason"], play.availableActions.map((entry) => [entry.action, entry.available ? "Yes" : "No", entry.reason])));
   section(content, "Current player proposal", details(state.proposal));
   section(content, "Current Marcus offer", details(state.counteroffer));
@@ -164,12 +192,15 @@ function messageFields(action) { return { action, vibeId: $("vibe").value, inten
 $("turn-form").addEventListener("submit", (event) => {
   event.preventDefault(); const action = $("action").value;
   if (action === "DEAL") { updateDraft(); if (!$("turn-form").reportValidity()) return; }
-  void submit("/api/turn", { ...messageFields(action), ...(action === "ASK" ? { topic: $("topic").value } : { terms: draftTerms() }) });
+  void submit("/api/turn", { ...messageFields(action), ...(action === "ASK" ? { topic: $("topic").value } : { terms: draftTerms(), information: $("information").value || "NONE" }) });
 });
 $("accept").addEventListener("click", () => { const offer = currentOffer(); if (offer) void submit("/api/turn", { ...messageFields("ACCEPT"), offerId: offer.id, offerVersion: offer.version }); });
+$("clarify").addEventListener("click", () => { void submit("/api/turn", { ...messageFields("ASK"), topic: "CLARIFY_OFFER" }); });
 $("walk").addEventListener("click", () => { void submit("/api/turn", messageFields("WALK")); });
 $("restart-form").addEventListener("submit", (event) => { event.preventDefault(); void submit("/api/restart", { seed: $("seed").value }); });
 $("action").addEventListener("change", refreshControls);
+$("topic").addEventListener("change", refreshControls);
+$("information").addEventListener("change", refreshControls);
 $("vibe").addEventListener("change", updateVibe);
 termKeys.forEach((key) => $(key).addEventListener("input", updateDraft));
 $("reload").addEventListener("click", () => { void load(); });

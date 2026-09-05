@@ -76,18 +76,19 @@ test("history and current tension change decisions; tone switching cannot farm a
   assert.ok(repeated.social.tension >= 0);
   assert.equal(repeated.social.patience, -2);
   current.events = ["DEBT", "RISK", "PRIORITIES"].map(topic => ({ intent: ask(topic) }));
-  assert.ok(evaluateTurn(current, ask("FINAL_SAY", "SE")).social.confidence <= 0);
+  assert.ok(evaluateTurn(current, ask("FINAL_SAY", "SE")).social.confidence > 0, "A new specific acknowledgment remains useful after turn three");
   current.metrics.tension = 70;
   assert.equal(evaluateTurn(current, deal()).outcome, "REJECT");
   current.metrics.patience = 1;
   assert.equal(evaluateTurn(current, ask()).outcome, "END");
 });
 
-test("quirks are discoverable through priorities and welcome probes without diagnostic names", () => {
+test("priorities provide imperfect evidence while specific welcome probes remain useful", () => {
   for (const [id, quirk] of Object.entries(PERSONALITY.quirks)) {
     const current = state(id);
     const probe = evaluateTurn(current, ask("PRIORITIES", "SE"));
-    assert.equal(probe.clue, quirk.clue);
+    assert.notEqual(probe.clue, quirk.clue);
+    assert.match(probe.clue, /does not tell you/);
     assert.ok(!probe.clue.includes(id));
     const welcome = evaluateTurn(current, ask(quirk.welcomeTopic, "SE"));
     assert.ok(welcome.social.confidence > 0);

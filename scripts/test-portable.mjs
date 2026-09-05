@@ -2,6 +2,10 @@
 import { spawnSync } from "node:child_process";
 
 const portableTests = [
+  "tests/encounter-history.test.mjs",
+  "tests/encounter-information.test.mjs",
+  "tests/encounter-lore-adversarial.test.mjs",
+  "tests/encounter-knowledge-unit.test.mjs",
   "tests/encounter-engine.test.mjs",
   "tests/encounter-api.test.mjs",
   "tests/encounter-policy.test.mjs",

@@ -1,0 +1,5 @@
+# Stage 1 baseline audit
+
+Setup completed before implementation on 2026-09-05. Source remote: https://github.com/fargo161/dpa-message-foundations-v01.git. Source branch codex/marcus-encounter-v01 and exact source commit 72451fac5bcc857a3811fc78ace782118431e3f2. Source checkout clean. Isolated Git worktree: work/marcus-lore within the local task workspace (exact local path is in the user-facing output handoff, not tracked repository text). New branch: codex/marcus-lore-information-v01. New worktree clean at setup. No advanced source commits or unrelated changes found. Stage 1 ended; the full mission proceeds to Stage 2.
+
+Baseline observations: seven metrics 80/250/8/0/40/20/12; 60 per unit; blanket three-turn positive cutoff; all intervening messages invalidate offers; PRIORITIES reveals a deterministic quirk clue. Existing knowledge is not modeled. The prior 159-test result is historical until this mission's validation. Existing TPL and semantic authority stay independent. AGENTS.md's UNMAPPED-only status is stale: architecture describes reviewed authoring previews, not approved production protocols.

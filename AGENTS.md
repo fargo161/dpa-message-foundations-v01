@@ -33,6 +33,6 @@ This isolated repository implements the Phase 1 semantic keyword, mechanics, BAS
 
 ## Phase-2 boundary
 
-The exact extension procedures are in `docs/architecture/PHASE_2_EXTENSION_POINTS_V01.md`. The current status is 14 approved keywords, 9 authored actions, 5 BASED cues, 20 ordered Vibes, 180 `UNMAPPED` matrix cells, 0 approved runtime TPL protocols, 0 runtime corpus records, and external research retained as evidence-only priors. Dynamic dialogue population remains deferred to Phase 2.
+The exact extension procedures are in `docs/architecture/PHASE_2_EXTENSION_POINTS_V01.md`. The foundation has 14 approved keywords, 9 authored actions, 5 BASED cues, 20 ordered Vibes, and 180 structural matrix cells with reviewed authoring-preview executions. These are not production approvals: there are 0 approved runtime TPL protocols and 0 runtime corpus records; external research remains evidence-only. See `TPL_RUNTIME_PHASE_2_V01.md` for the preview/production boundary. The separate live Marcus ASK/DEAL encounter has authored lore and deterministic information mechanics; its events do not automatically carry foundation/TPL resolution authority. Encounter delivery intensity may affect authored social interpretation while preserving semantic facts, independently of the TPL renderer.
 
 The package is `UNLICENSED`. Do not add a reuse license without an explicit project-owner decision.

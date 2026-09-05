@@ -120,7 +120,7 @@ test("adversarial: projection has four Play metrics and every displayed fact agr
   for (const [key, value] of Object.entries(projected.play.metrics)) assert.equal(value, projected.debug.state.metrics[key]);
   for (const key of ["status", "seed", "runId", "proposal", "counteroffer", "agreement", "obligations", "clues"]) assert.deepEqual(projected.play[key], projected.debug.state[key]);
   assert.equal(projected.play.version, state.events.length); assert.equal(Object.hasOwn(projected.play, "quirk"), false);
-  assert.ok(projected.play.events.every(event => Object.keys(event).sort().join() === "marcusText,outcome,playerText"));
+  assert.ok(projected.play.events.every(event => Object.keys(event).sort().join() === "feedback,marcusText,outcome,playerText"));
 });
 
 test("adversarial HTTP: sessions, CSRF, stale/replay, simultaneous turns and restart isolate authority", async () => withServer(async base => {
@@ -174,12 +174,12 @@ test("adversarial: context, prior risk acknowledgment and delivery change actual
   assert.equal(refused.events[0].outcome, "REJECT"); assert.equal(refused.metrics.playerStock, 0);
   for (const quirk of ["recognition", "plain_dealing", "final_say"]) {
     const discovered = transition(createState("clue", "clue-run", quirk), intent(createState("clue", "clue-run", quirk), { topic: "PRIORITIES", vibeId: "ES" }));
-    assert.ok(discovered.clues.length); assert.ok(discovered.metrics.confidence >= 40); assert.equal(discovered.metrics.patience, 11);
+    assert.ok(discovered.clues.length); assert.ok(discovered.metrics.confidence >= 40); assert.equal(discovered.metrics.patience, 19);
     assert.ok(!discovered.clues.join(" ").includes(quirk));
   }
 });
 
-test("adversarial: cycling distinct social actions cannot evade opening benefit budget", () => {
+test("adversarial: generic and repeated topics cannot farm benefits after specific acknowledgments", () => {
   let state = initial();
   for (const [index, topic] of ["RISK", "DEBT", "FINAL_SAY", "PRIORITIES", "TERMS", "RISK"].entries()) {
     const old = state; state = transition(state, intent(state, { topic, vibeId: ["EA", "SE", "ES"][index % 3] }));

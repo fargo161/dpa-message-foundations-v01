@@ -1,3 +1,5 @@
+import { createLore } from "./knowledge.mjs";
+
 export const METRIC_DEFINITIONS = [
   { key: "cash", label: "Player cash", min: 0, max: 100000, meaning: "Money available now; hoped-for profits are excluded." },
   { key: "debt", label: "Outstanding debt", min: 0, max: 100000, meaning: "Existing debt plus accepted new principal and extra repayment." },
@@ -5,7 +7,7 @@ export const METRIC_DEFINITIONS = [
   { key: "playerStock", label: "Player Contra", min: 0, max: 100, meaning: "Units already transferred to you." },
   { key: "confidence", label: "Marcus confidence", min: 0, max: 100, meaning: "How credible he finds your commitment." },
   { key: "tension", label: "Marcus tension", min: 0, max: 100, meaning: "How strained this conversation has become." },
-  { key: "patience", label: "Marcus patience", min: 0, max: 12, meaning: "Remaining willingness to keep negotiating." },
+  { key: "patience", label: "Marcus patience", min: 0, max: 20, meaning: "Finite room for opening, evidence and bargaining; repetition costs extra." },
 ];
 export const PRICE = 60;
 export const TOPICS = [
@@ -18,8 +20,8 @@ export const TOPICS = [
   { id: "ENTITLEMENT", label: "Ask why he will not simply trust you" },
 ];
 export function createState(seed, runId, quirk = "final_say") {
-  return { schemaVersion: "marcus-encounter@0.1", runId, seed, quirk, status: "OPEN",
-    metrics: { cash: 80, debt: 250, marcusStock: 8, playerStock: 0, confidence: 40, tension: 20, patience: 12 },
+  return { schemaVersion: "marcus-encounter@0.2", runId, seed, quirk, status: "OPEN", phase: "CONTACT", lore: createLore(seed),
+    metrics: { cash: 80, debt: 250, marcusStock: 8, playerStock: 0, confidence: 40, tension: 20, patience: 20 },
     obligations: { existing: 250, principal: 0, extra: 0, days: null },
     proposal: null, counteroffer: null, agreement: null, events: [], clues: [] };
 }

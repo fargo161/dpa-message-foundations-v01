@@ -22,6 +22,9 @@ legend { padding: 0 6px; }
 .fields { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0 18px; }
 .fields input { width: 100%; }
 .hint { color: #4f5952; font-size: .92rem; }
+.turn-feedback { background: #edf0eb; padding: 9px 12px; }
+summary { cursor: pointer; line-height: 1.5; }
+#knowledge section { margin-bottom: 12px; }
 #notice { border-left: 4px solid #55735d; padding: 10px 14px; background: #e9eee8; }
 #notice.error { border-color: #a12323; background: #fbeaea; color: #7c1515; }
 .table-wrap { overflow-x: auto; }
