@@ -8,6 +8,7 @@
     "node": ">=22.13.0"
   },
   "scripts": {
+    "encounter:dev": "node scripts/encounter-server.mjs",
     "test": "node scripts/test-portable.mjs",
     "test:real": "node --test tests/real-acquisition.test.mjs",
     "schema:validate": "node scripts/validate-schemas.mjs",

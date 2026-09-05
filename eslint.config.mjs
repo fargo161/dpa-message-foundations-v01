@@ -1,10 +1,10 @@
 export default [{
-  files: ["src/**/*.mjs", "scripts/**/*.mjs"],
+  files: ["src/**/*.mjs", "scripts/**/*.mjs", "public/encounter/**/*.js"],
   ignores: ["data/**", ".cache/**"],
   languageOptions: {
     ecmaVersion: "latest",
     sourceType: "module",
-    globals: Object.fromEntries(["AbortSignal", "Buffer", "URL", "console", "fetch", "global", "process", "structuredClone"].map((name) => [name, "readonly"])),
+    globals: Object.fromEntries(["AbortSignal", "Buffer", "URL", "console", "fetch", "global", "process", "structuredClone", "document", "Node", "crypto"].map((name) => [name, "readonly"])),
   },
   rules: {
     "no-undef": "error",

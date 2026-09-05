@@ -1,0 +1,38 @@
+:root { color-scheme: light; font-family: system-ui, sans-serif; color: #202522; background: #f6f6f3; }
+* { box-sizing: border-box; }
+body { margin: 0; }
+main { max-width: 960px; margin: auto; padding: 24px; }
+h1 { margin-bottom: 0; }
+h2 { font-size: 1.25rem; margin-top: 28px; }
+h3 { font-size: 1rem; }
+p { line-height: 1.55; }
+section { margin-bottom: 24px; }
+nav { display: flex; gap: 8px; }
+button, input, select { font: inherit; padding: 9px 12px; border: 1px solid #767e78; border-radius: 3px; }
+button { background: #fff; cursor: pointer; }
+button:hover:enabled { background: #e8ece7; }
+button:disabled { opacity: .55; cursor: default; }
+button[aria-pressed="true"] { background: #293c31; color: #fff; }
+:focus-visible { outline: 3px solid #225faa; outline-offset: 3px; }
+label { display: block; font-weight: 600; margin: 14px 0 6px; }
+input, select { max-width: 100%; background: #fff; color: #202522; }
+select { width: 100%; }
+fieldset { padding: 16px; border: 1px solid #bcc4bd; margin-bottom: 16px; min-width: 0; }
+legend { padding: 0 6px; }
+.fields { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0 18px; }
+.fields input { width: 100%; }
+.hint { color: #4f5952; font-size: .92rem; }
+#notice { border-left: 4px solid #55735d; padding: 10px 14px; background: #e9eee8; }
+#notice.error { border-color: #a12323; background: #fbeaea; color: #7c1515; }
+.table-wrap { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; background: #fff; margin: 12px 0; }
+th, td { text-align: left; vertical-align: top; border: 1px solid #c6cdc7; padding: 9px; overflow-wrap: anywhere; }
+th { background: #edf0eb; }
+td table { margin: 0; }
+article { border-left: 3px solid #b6c2b7; padding-left: 16px; margin: 20px 0; }
+article p { white-space: pre-wrap; }
+ul { padding-left: 24px; }
+li { margin: 7px 0; line-height: 1.45; }
+pre { overflow: auto; padding: 12px; background: #fff; border: 1px solid #c6cdc7; max-height: 500px; }
+[hidden] { display: none !important; }
+@media (max-width: 540px) { main { padding: 16px; } th, td { padding: 7px; } }
