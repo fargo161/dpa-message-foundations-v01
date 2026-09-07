@@ -3,15 +3,24 @@ import { createServer } from "node:http";
 import { readFile } from "node:fs/promises";
 import { randomBytes, randomUUID } from "node:crypto";
 import { fileURLToPath, pathToFileURL } from "node:url";
-import { createState } from "../src/encounter/state.mjs";
-import { selectQuirk } from "../src/encounter/marcus-profile.mjs";
-import { EncounterError, exactObject, projectState, transition, validateIdentity, validateSeed } from "../src/encounter/engine.mjs";
+import { EncounterError, exactObject, validateIdentity, validateSeed } from "../src/encounter/engine.mjs";
+import { createConversation, resolveConversation, previewConversation, projectConversation } from "../src/conversation/runtime.mjs";
+import { FACE_CATALOG } from "../src/conversation/face/catalog.mjs";
+import { languageReadiness } from "../src/conversation/contracts.mjs";
 
 const STATIC = new Map([
   ["/", ["index.html", "text/html; charset=utf-8"]],
   ["/app.js", ["app.js", "text/javascript; charset=utf-8"]],
   ["/style.css", ["style.css", "text/css; charset=utf-8"]],
+  ["/delivery-chart.js", ["delivery-chart.js", "text/javascript; charset=utf-8"]],
+  ["/delivery-chart.css", ["delivery-chart.css", "text/css; charset=utf-8"]],
+  ["/face-renderer.js", ["face-renderer.js", "text/javascript; charset=utf-8"]],
+  ["/turn-player.js", ["turn-player.js", "text/javascript; charset=utf-8"]],
 ]);
+for (const asset of [FACE_CATALOG.base, ...FACE_CATALOG.assets]) {
+  if (!/^\/assets\/marcus\/[a-zA-Z0-9_-]+\.webp$/.test(asset.src)) throw new Error("Unsafe catalog asset path.");
+  STATIC.set(asset.src, [asset.src.slice(1), "image/webp"]);
+}
 const token = () => randomBytes(32).toString("hex");
 const TTL = 2 * 60 * 60 * 1000;
 
@@ -28,22 +37,28 @@ async function readJson(req) {
   catch { throw new EncounterError("Invalid JSON."); }
 }
 
-export function createEncounterServer() {
+export function createEncounterServer({ languageMode = "AUTHORING_PREVIEW" } = {}) {
+  languageReadiness(languageMode);
+  const executionOptions = { languageMode };
   const sessions = new Map();
   const server = createServer(async (req, res) => {
     res.setHeader("Cache-Control", "no-store");
     res.setHeader("X-Content-Type-Options", "nosniff");
     res.setHeader("Referrer-Policy", "no-referrer");
-    res.setHeader("Content-Security-Policy", "default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self'; img-src 'none'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'");
+    res.setHeader("Content-Security-Policy", "default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self'; img-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'");
     const json = (status, value) => { res.writeHead(status, { "Content-Type": "application/json; charset=utf-8" }); res.end(JSON.stringify(value)); };
     try {
       const path = req.url;
+      if (req.method === "GET" && path === "/delivery-options.mjs") {
+        const data = await readFile(new URL("../src/conversation/delivery-options.mjs", import.meta.url));
+        res.writeHead(200, { "Content-Type": "text/javascript; charset=utf-8" }); res.end(data); return;
+      }
       if (req.method === "GET" && STATIC.has(path)) {
         const [file, type] = STATIC.get(path);
         const data = await readFile(new URL(`../public/encounter/${file}`, import.meta.url));
         res.writeHead(200, { "Content-Type": type }); res.end(data); return;
       }
-      if (!["/api/state", "/api/turn", "/api/restart"].includes(path)) { json(404, { error: "Not found." }); return; }
+      if (!["/api/state", "/api/turn", "/api/restart", "/api/preview"].includes(path)) { json(404, { error: "Not found." }); return; }
       if ((path === "/api/state" && req.method !== "GET") || (path !== "/api/state" && req.method !== "POST")) { json(405, { error: "Method not allowed." }); return; }
       if (req.headers["sec-fetch-site"] === "cross-site") throw new EncounterError("Cross-site requests are not allowed.", 403);
       if (req.headers.origin) {
@@ -59,30 +74,33 @@ export function createEncounterServer() {
         if (sessions.size >= 256) throw new EncounterError("Prototype session capacity reached. Try again later.", 503);
         sid = token();
         const seed = randomBytes(6).toString("hex");
-        session = { csrf: token(), state: createState(seed, randomUUID(), selectQuirk(seed)), seen: new Set(), touched: now };
+        session = { csrf: token(), state: createConversation("marcus", seed, randomUUID()), seen: new Set(), touched: now };
         sessions.set(sid, session);
         const secure = req.headers["x-forwarded-proto"] === "https" ? "; Secure" : "";
         res.setHeader("Set-Cookie", `marcus_lore_session=${sid}; HttpOnly; SameSite=Strict; Path=/; Max-Age=7200${secure}`);
       }
       if (!session) throw new EncounterError("Session missing or expired; refresh the page.", 401);
       session.touched = now;
-      if (path === "/api/state") { json(200, projectState(session.state, session.csrf)); return; }
+      if (path === "/api/state") { json(200, projectConversation(session.state, session.csrf, executionOptions)); return; }
       if (req.headers["x-csrf-token"] !== session.csrf) throw new EncounterError("Session token mismatch.", 403);
       const input = await readJson(req);
       if (!input || typeof input !== "object" || Array.isArray(input)) throw new EncounterError("Expected an object.");
       if (session.seen.has(input.requestId)) throw new EncounterError("Submission already used.", 409);
       if (session.seen.size >= 512) throw new EncounterError("Session request limit reached. Open a new browser session.", 429);
+      if (path === "/api/preview") {
+        json(200, previewConversation(session.state, input, executionOptions)); return;
+      }
       let next;
       if (path === "/api/restart") {
-        exactObject(input, ["requestId", "runId", "version", "seed"]);
+        exactObject(input, ["requestId", "runId", "version", "seed", ...(Object.hasOwn(input, "scenarioId") ? ["scenarioId"] : [])]);
         validateIdentity(session.state, input);
         const seed = validateSeed(input.seed);
-        next = createState(seed, randomUUID(), selectQuirk(seed));
-      } else next = transition(session.state, input);
+        next = createConversation(input.scenarioId ?? "marcus", seed, randomUUID());
+      } else next = resolveConversation(session.state, input, executionOptions);
       // No asynchronous operation between validation and assignment: a turn commits atomically.
       session.state = next;
       session.seen.add(input.requestId);
-      json(200, projectState(session.state, session.csrf));
+      json(200, projectConversation(session.state, session.csrf, executionOptions));
     } catch (error) {
       if (!res.headersSent) json(error instanceof EncounterError ? error.status : 500, { error: error instanceof EncounterError ? error.message : "Prototype could not complete this request." });
       else res.end();

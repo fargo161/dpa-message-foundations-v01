@@ -1,0 +1,744 @@
+{
+  "packId": "encounter-authored-language-preview@1",
+  "ownerApproval": "PENDING",
+  "status": "IMPLEMENTED_FOR_AUTHORING_REVIEW",
+  "productionEligible": false,
+  "foundationRuntimeProtocolsAdded": 0,
+  "runtimeCorpusRecordsAdded": 0,
+  "npcFamilyCount": 31,
+  "npcPhrasingCount": 62,
+  "deliveryCoordinateCount": 60,
+  "coverageNote": "Family samples are a direct authored catalog review harness; this does not claim every defensive branch is reachable in an unmodified seeded run. Baseline engine regression separately exercises live paths.",
+  "npcFamilies": [
+    {
+      "family": "WALK",
+      "coverageKind": "AUTHORED_REPLY_FAMILY",
+      "samples": [
+        "Then we leave it here. The old debt still stands.",
+        "We will leave it there, then. You still owe the old debt."
+      ]
+    },
+    {
+      "family": "AGREED",
+      "coverageKind": "AUTHORED_REPLY_FAMILY",
+      "samples": [
+        "Agreed. The stock is yours on the terms you just confirmed. The old account stays on the books.",
+        "That is agreed. The stock is yours under the terms you confirmed. The old account remains unpaid."
+      ]
+    },
+    {
+      "family": "END",
+      "coverageKind": "AUTHORED_REPLY_FAMILY",
+      "samples": [
+        "Enough. I am closing this conversation. No new stock changes hands.",
+        "We are done talking. I am ending this conversation, and no new stock changes hands."
+      ]
+    },
+    {
+      "family": "CLARIFY",
+      "coverageKind": "AUTHORED_REPLY_FAMILY",
+      "samples": [
+        "The offer remains 2 Contra unit(s), $50 upfront, $70 new principal plus $4 extra due in 7 day(s). It also includes the agreed information exchange: Exact collection instructions delivered on confirmation. Those terms have not changed. Your old debt is still separate.",
+        "Here are the unchanged terms: 2 Contra unit(s), $50 upfront, $70 new principal plus $4 extra due in 7 day(s). The agreed information exchange is also included: Exact collection instructions delivered on confirmation. Your old debt remains separate."
+      ]
+    },
+    {
+      "family": "REPEATED_ASK",
+      "coverageKind": "AUTHORED_REPLY_FAMILY",
+      "samples": [
+        "We have covered that point. Saying it again does not give me a new reason to change terms.",
+        "We already covered that. Repeating the question gives me no new reason to change the terms."
+      ]
+    },
+    {
+      "family": "APPROVED_PROPOSAL",
+      "coverageKind": "AUTHORED_REPLY_FAMILY",
+      "samples": [
+        "I can agree to 2 Contra unit(s), $50 upfront, $70 new principal plus $4 extra due in 7 day(s). Review it and confirm if you want the deal. Until then, the stock stays here.",
+        "These terms are workable: 2 Contra unit(s), $50 upfront, $70 new principal plus $4 extra due in 7 day(s). Read them over and confirm if you want to proceed. The stock stays here until you confirm."
+      ]
+    },
+    {
+      "family": "COUNTER",
+      "coverageKind": "AUTHORED_REPLY_FAMILY",
+      "samples": [
+        "Not on those terms. Here is what I will put my name to: 2 Contra unit(s), $50 upfront, $70 new principal plus $4 extra due in 7 day(s). Your existing debt is separate. Take a look before you decide.",
+        "I will not agree to your proposal. My counteroffer is 2 Contra unit(s), $50 upfront, $70 new principal plus $4 extra due in 7 day(s). The existing debt is separate. Review that before deciding."
+      ]
+    },
+    {
+      "family": "REJECT_FRICTION",
+      "coverageKind": "AUTHORED_REPLY_FAMILY",
+      "samples": [
+        "With this much friction, I am not extending myself. Better numbers alone will not settle this conversation.",
+        "There is too much friction for me to extend myself. Changing the numbers alone will not settle this."
+      ]
+    },
+    {
+      "family": "REJECT_RISK",
+      "coverageKind": "AUTHORED_REPLY_FAMILY",
+      "samples": [
+        "That leaves too much riding on money you do not have yet. Bring more cash, ask for less stock, or shorten the wait. A bigger promise is not security.",
+        "Too much of that depends on money you do not have. Put down more cash, reduce the stock, or shorten the repayment time. Promising more does not make it secure."
+      ]
+    },
+    {
+      "family": "TERMS",
+      "coverageKind": "AUTHORED_REPLY_FAMILY",
+      "samples": [
+        "Contra is $60 a unit. Put real cash down, keep the new credit modest, and give me a short repayment date. Extra repayment can help, but it is still only a promise.",
+        "It is $60 for each Contra unit. I want cash down, modest new credit, and a short repayment date. Offering extra can help, but that extra remains a promise."
+      ]
+    },
+    {
+      "family": "DEBT",
+      "coverageKind": "AUTHORED_REPLY_FAMILY",
+      "samples": [
+        "The $250 already on your account stays there. Another deal adds its own principal and any agreed extra; it does not replace what you owe.",
+        "You still owe the $250 on your account. New principal and any agreed extra go on top of that. Another deal does not replace the existing debt."
+      ]
+    },
+    {
+      "family": "RISK",
+      "coverageKind": "AUTHORED_REPLY_FAMILY",
+      "samples": [
+        "My stock leaves today. Your earnings might come later, or might not. Cash now and a smaller request give me something solid.",
+        "I would be handing over stock today against earnings that may never arrive. Cash up front and a smaller request give me something concrete."
+      ]
+    },
+    {
+      "family": "PRIORITIES",
+      "coverageKind": "AUTHORED_REPLY_FAMILY",
+      "samples": [
+        "The account, the stock, and whether the terms hold up. There is more than one way to make a bad deal. You will need to be more specific.",
+        "I am looking at the account, the stock, and the terms. A deal can go wrong in more than one way. Ask me something more specific."
+      ]
+    },
+    {
+      "family": "FINAL_SAY",
+      "coverageKind": "AUTHORED_REPLY_FAMILY",
+      "samples": [
+        "You can propose. I can counter. Neither of us owes the other a yes.",
+        "Make a proposal; I can make a counteroffer. Either of us can say no."
+      ]
+    },
+    {
+      "family": "GUARANTEE",
+      "coverageKind": "AUTHORED_REPLY_FAMILY",
+      "samples": [
+        "No. Calling future profit guaranteed does not make it cash. Keep the uncertainty in the open.",
+        "No. Future profit is uncertain, whatever you call it. It is not cash. Be clear about that uncertainty."
+      ]
+    },
+    {
+      "family": "ENTITLEMENT",
+      "coverageKind": "AUTHORED_REPLY_FAMILY",
+      "samples": [
+        "No. The old loan is an unpaid account, not a ticket to my shelf.",
+        "No. Having an unpaid loan does not entitle you to more of my stock."
+      ]
+    },
+    {
+      "family": "OPPORTUNITY_OPENED",
+      "coverageKind": "AUTHORED_REPLY_FAMILY",
+      "samples": [
+        "That count needs checking. Put a defensible proposal down while I sort this out. I have not agreed to a deal yet.",
+        "I need to check that count. You can put forward a defensible proposal while I sort it out. That is not an agreement to a deal."
+      ]
+    },
+    {
+      "family": "DISCLOSURE_BACKLASH",
+      "coverageKind": "AUTHORED_REPLY_FAMILY",
+      "samples": [
+        "You have put that discrepancy on the table. It has not made this easier. I am not extending credit just because you have challenged the record.",
+        "The discrepancy is out in the open, and this has not become easier. Challenging the record does not make me extend credit."
+      ]
+    },
+    {
+      "family": "PRIVATE_VALUE_SPENT",
+      "coverageKind": "AUTHORED_REPLY_FAMILY",
+      "samples": [
+        "I have the collection detail now. That was your choice to share; it was not an agreement for stock.",
+        "You chose to give me the collection detail. I have it now. We did not agree to exchange stock for it."
+      ]
+    },
+    {
+      "family": "DISCLOSURE_REPEATED",
+      "coverageKind": "AUTHORED_REPLY_FAMILY",
+      "samples": [
+        "I already have that detail. Repeating it does not make a new bargain.",
+        "You already gave me that detail. Saying it again does not create another bargain."
+      ]
+    },
+    {
+      "family": "TOPIC_EXHAUSTED",
+      "coverageKind": "AUTHORED_REPLY_FAMILY",
+      "samples": [
+        "We have covered that point. It has not become a new reason to change terms.",
+        "That point has been covered. It gives me no new reason to change the terms."
+      ]
+    },
+    {
+      "family": "HISTORY_INVOKED",
+      "coverageKind": "AUTHORED_REPLY_FAMILY",
+      "samples": [
+        "I remember that shift. We got the loading done. We still have an unpaid account to discuss.",
+        "Yes, I remember getting that loading done with you. The unpaid account still needs discussing."
+      ]
+    },
+    {
+      "family": "HISTORY_ACKNOWLEDGED",
+      "coverageKind": "AUTHORED_REPLY_FAMILY",
+      "samples": [
+        "You missed it. I appreciate you naming that plainly. The money is still owed.",
+        "You did miss the check-in. I appreciate the plain acknowledgment. It does not clear the debt."
+      ]
+    },
+    {
+      "family": "BELIEF_CHALLENGED",
+      "coverageKind": "AUTHORED_REPLY_FAMILY",
+      "samples": [
+        "The intake was signed off. If there is a specific discrepancy, it can be checked. A question alone does not settle it.",
+        "That intake has a sign-off. A specific discrepancy can be checked, but asking the question does not settle the matter."
+      ]
+    },
+    {
+      "family": "SOURCE_VERIFIED",
+      "coverageKind": "AUTHORED_REPLY_FAMILY",
+      "samples": [
+        "The header and signature check out. That tells me where the document came from; it does not settle everything the document might mean.",
+        "The header and signature are valid. That establishes the document's source. It does not establish everything its contents might imply."
+      ]
+    },
+    {
+      "family": "RELEVANCE_UNCERTAIN",
+      "coverageKind": "DEFENSIVE_OR_CONTEXT_REMOVAL_FIXTURE",
+      "samples": [
+        "I cannot name a use for that in the business we are settling here.",
+        "I cannot identify how that would be useful to the business we are discussing."
+      ]
+    },
+    {
+      "family": "RELEVANCE_PICKUP",
+      "coverageKind": "AUTHORED_REPLY_FAMILY",
+      "samples": [
+        "Checked collection instructions could save a wasted journey. That is a reason to listen, not a promise of a concession.",
+        "Verified collection instructions might save a wasted trip. I have reason to hear you out; I have not promised better terms."
+      ]
+    },
+    {
+      "family": "RELEVANCE_COUNT",
+      "coverageKind": "AUTHORED_REPLY_FAMILY",
+      "samples": [
+        "A concrete count discrepancy would warrant rechecking the intake summary. That does not establish who is responsible.",
+        "A specific mismatch in the count would justify checking the intake summary again. It would not tell us who caused it."
+      ]
+    },
+    {
+      "family": "PARTIAL_ALREADY_FULL",
+      "coverageKind": "DEFENSIVE_OR_CONTEXT_REMOVAL_FIXTURE",
+      "samples": [
+        "I already have the exact detail. Describing its category now does not take it back.",
+        "You already gave me the exact detail. Talking about its category cannot make me unhear it."
+      ]
+    },
+    {
+      "family": "PARTIAL_WITHHELD",
+      "coverageKind": "AUTHORED_REPLY_FAMILY",
+      "samples": [
+        "I hear what kind of information you say you have. You have not given me the exact detail yet.",
+        "You have told me the kind of information you hold. The exact detail has not been shared with me."
+      ]
+    },
+    {
+      "family": "GENERAL",
+      "coverageKind": "DEFENSIVE_OR_CONTEXT_REMOVAL_FIXTURE",
+      "samples": [
+        "I have heard you. Let us see what that changes in the arrangement.",
+        "I hear you. Let us look at what that means for the arrangement."
+      ]
+    }
+  ],
+  "deliverySamples": [
+    {
+      "vibeId": "BA",
+      "vibeName": "Reckless",
+      "intensity": "SUBTLE",
+      "text": "I still owe you money, and future profits are uncertain. How does that affect another deal?",
+      "readiness": "AUTHORING_PREVIEW_CONTEXT_NEUTRAL",
+      "variantId": "player:ASK:DEBT:BA:SUBTLE:0"
+    },
+    {
+      "vibeId": "BA",
+      "vibeName": "Reckless",
+      "intensity": "BALANCED",
+      "text": "Look—I still owe you money, and future profits are uncertain. How does that affect another deal?",
+      "readiness": "AUTHORING_PREVIEW_CONTEXT_NEUTRAL",
+      "variantId": "player:ASK:DEBT:BA:BALANCED:0"
+    },
+    {
+      "vibeId": "BA",
+      "vibeName": "Reckless",
+      "intensity": "OVERT",
+      "text": "LOOK…\nI still owe you money, and future profits are uncertain. How does that affect another deal?",
+      "readiness": "AUTHORING_PREVIEW_CONTEXT_NEUTRAL",
+      "variantId": "player:ASK:DEBT:BA:OVERT:0"
+    },
+    {
+      "vibeId": "BS",
+      "vibeName": "Instigating",
+      "intensity": "SUBTLE",
+      "text": "I still owe you money, and future profits are uncertain. How does that affect another deal?",
+      "readiness": "AUTHORING_PREVIEW_CONTEXT_NEUTRAL",
+      "variantId": "player:ASK:DEBT:BS:SUBTLE:0"
+    },
+    {
+      "vibeId": "BS",
+      "vibeName": "Instigating",
+      "intensity": "BALANCED",
+      "text": "So—I still owe you money, and future profits are uncertain. How does that affect another deal?",
+      "readiness": "AUTHORING_PREVIEW_CONTEXT_NEUTRAL",
+      "variantId": "player:ASK:DEBT:BS:BALANCED:0"
+    },
+    {
+      "vibeId": "BS",
+      "vibeName": "Instigating",
+      "intensity": "OVERT",
+      "text": "SO…\nI still owe you money, and future profits are uncertain. How does that affect another deal?",
+      "readiness": "AUTHORING_PREVIEW_CONTEXT_NEUTRAL",
+      "variantId": "player:ASK:DEBT:BS:OVERT:0"
+    },
+    {
+      "vibeId": "BE",
+      "vibeName": "Condemning",
+      "intensity": "SUBTLE",
+      "text": "I still owe you money, and future profits are uncertain. How does that affect another deal?",
+      "readiness": "AUTHORING_PREVIEW_CONTEXT_NEUTRAL",
+      "variantId": "player:ASK:DEBT:BE:SUBTLE:0"
+    },
+    {
+      "vibeId": "BE",
+      "vibeName": "Condemning",
+      "intensity": "BALANCED",
+      "text": "Well—I still owe you money, and future profits are uncertain. How does that affect another deal?",
+      "readiness": "AUTHORING_PREVIEW_CONTEXT_NEUTRAL",
+      "variantId": "player:ASK:DEBT:BE:BALANCED:0"
+    },
+    {
+      "vibeId": "BE",
+      "vibeName": "Condemning",
+      "intensity": "OVERT",
+      "text": "WELL…\nI still owe you money, and future profits are uncertain. How does that affect another deal?",
+      "readiness": "AUTHORING_PREVIEW_CONTEXT_NEUTRAL",
+      "variantId": "player:ASK:DEBT:BE:OVERT:0"
+    },
+    {
+      "vibeId": "BD",
+      "vibeName": "Extortive",
+      "intensity": "SUBTLE",
+      "text": "I still owe you money, and future profits are uncertain. How does that affect another deal?",
+      "readiness": "AUTHORING_PREVIEW_CONTEXT_NEUTRAL",
+      "variantId": "player:ASK:DEBT:BD:SUBTLE:0"
+    },
+    {
+      "vibeId": "BD",
+      "vibeName": "Extortive",
+      "intensity": "BALANCED",
+      "text": "Well—I still owe you money, and future profits are uncertain. How does that affect another deal?",
+      "readiness": "AUTHORING_PREVIEW_CONTEXT_NEUTRAL",
+      "variantId": "player:ASK:DEBT:BD:BALANCED:0"
+    },
+    {
+      "vibeId": "BD",
+      "vibeName": "Extortive",
+      "intensity": "OVERT",
+      "text": "WELL…\nI still owe you money, and future profits are uncertain. How does that affect another deal?",
+      "readiness": "AUTHORING_PREVIEW_CONTEXT_NEUTRAL",
+      "variantId": "player:ASK:DEBT:BD:OVERT:0"
+    },
+    {
+      "vibeId": "AB",
+      "vibeName": "Menacing",
+      "intensity": "SUBTLE",
+      "text": "I still owe you money, and future profits are uncertain. How does that affect another deal?",
+      "readiness": "AUTHORING_PREVIEW_CONTEXT_NEUTRAL",
+      "variantId": "player:ASK:DEBT:AB:SUBTLE:0"
+    },
+    {
+      "vibeId": "AB",
+      "vibeName": "Menacing",
+      "intensity": "BALANCED",
+      "text": "Look—I still owe you money, and future profits are uncertain. How does that affect another deal?",
+      "readiness": "AUTHORING_PREVIEW_CONTEXT_NEUTRAL",
+      "variantId": "player:ASK:DEBT:AB:BALANCED:0"
+    },
+    {
+      "vibeId": "AB",
+      "vibeName": "Menacing",
+      "intensity": "OVERT",
+      "text": "LOOK…\nI still owe you money, and future profits are uncertain. How does that affect another deal?",
+      "readiness": "AUTHORING_PREVIEW_CONTEXT_NEUTRAL",
+      "variantId": "player:ASK:DEBT:AB:OVERT:0"
+    },
+    {
+      "vibeId": "AS",
+      "vibeName": "Commanding",
+      "intensity": "SUBTLE",
+      "text": "I still owe you money, and future profits are uncertain. How does that affect another deal?",
+      "readiness": "AUTHORING_PREVIEW",
+      "variantId": "player:ASK:DEBT:AS:SUBTLE:0"
+    },
+    {
+      "vibeId": "AS",
+      "vibeName": "Commanding",
+      "intensity": "BALANCED",
+      "text": "All right—I still owe you money, and future profits are uncertain. How does that affect another deal?",
+      "readiness": "AUTHORING_PREVIEW",
+      "variantId": "player:ASK:DEBT:AS:BALANCED:0"
+    },
+    {
+      "vibeId": "AS",
+      "vibeName": "Commanding",
+      "intensity": "OVERT",
+      "text": "ALL RIGHT…\nI still owe you money, and future profits are uncertain. How does that affect another deal?",
+      "readiness": "AUTHORING_PREVIEW",
+      "variantId": "player:ASK:DEBT:AS:OVERT:0"
+    },
+    {
+      "vibeId": "AE",
+      "vibeName": "Urgent",
+      "intensity": "SUBTLE",
+      "text": "I still owe you money, and future profits are uncertain. How does that affect another deal?",
+      "readiness": "AUTHORING_PREVIEW",
+      "variantId": "player:ASK:DEBT:AE:SUBTLE:0"
+    },
+    {
+      "vibeId": "AE",
+      "vibeName": "Urgent",
+      "intensity": "BALANCED",
+      "text": "Okay—I still owe you money, and future profits are uncertain. How does that affect another deal?",
+      "readiness": "AUTHORING_PREVIEW",
+      "variantId": "player:ASK:DEBT:AE:BALANCED:0"
+    },
+    {
+      "vibeId": "AE",
+      "vibeName": "Urgent",
+      "intensity": "OVERT",
+      "text": "OKAY…\nI still owe you money, and future profits are uncertain. How does that affect another deal?",
+      "readiness": "AUTHORING_PREVIEW",
+      "variantId": "player:ASK:DEBT:AE:OVERT:0"
+    },
+    {
+      "vibeId": "AD",
+      "vibeName": "Hustled",
+      "intensity": "SUBTLE",
+      "text": "I still owe you money, and future profits are uncertain. How does that affect another deal?",
+      "readiness": "AUTHORING_PREVIEW_CONTEXT_NEUTRAL",
+      "variantId": "player:ASK:DEBT:AD:SUBTLE:0"
+    },
+    {
+      "vibeId": "AD",
+      "vibeName": "Hustled",
+      "intensity": "BALANCED",
+      "text": "So—I still owe you money, and future profits are uncertain. How does that affect another deal?",
+      "readiness": "AUTHORING_PREVIEW_CONTEXT_NEUTRAL",
+      "variantId": "player:ASK:DEBT:AD:BALANCED:0"
+    },
+    {
+      "vibeId": "AD",
+      "vibeName": "Hustled",
+      "intensity": "OVERT",
+      "text": "SO…\nI still owe you money, and future profits are uncertain. How does that affect another deal?",
+      "readiness": "AUTHORING_PREVIEW_CONTEXT_NEUTRAL",
+      "variantId": "player:ASK:DEBT:AD:OVERT:0"
+    },
+    {
+      "vibeId": "SB",
+      "vibeName": "Irreverent",
+      "intensity": "SUBTLE",
+      "text": "I still owe you money, and future profits are uncertain. How does that affect another deal?",
+      "readiness": "AUTHORING_PREVIEW",
+      "variantId": "player:ASK:DEBT:SB:SUBTLE:0"
+    },
+    {
+      "vibeId": "SB",
+      "vibeName": "Irreverent",
+      "intensity": "BALANCED",
+      "text": "Well—I still owe you money, and future profits are uncertain. How does that affect another deal?",
+      "readiness": "AUTHORING_PREVIEW",
+      "variantId": "player:ASK:DEBT:SB:BALANCED:0"
+    },
+    {
+      "vibeId": "SB",
+      "vibeName": "Irreverent",
+      "intensity": "OVERT",
+      "text": "WELL…\nI still owe you money, and future profits are uncertain. How does that affect another deal?",
+      "readiness": "AUTHORING_PREVIEW",
+      "variantId": "player:ASK:DEBT:SB:OVERT:0"
+    },
+    {
+      "vibeId": "SA",
+      "vibeName": "Charismatic",
+      "intensity": "SUBTLE",
+      "text": "I still owe you money, and future profits are uncertain. How does that affect another deal?",
+      "readiness": "AUTHORING_PREVIEW",
+      "variantId": "player:ASK:DEBT:SA:SUBTLE:0"
+    },
+    {
+      "vibeId": "SA",
+      "vibeName": "Charismatic",
+      "intensity": "BALANCED",
+      "text": "All right—I still owe you money, and future profits are uncertain. How does that affect another deal?",
+      "readiness": "AUTHORING_PREVIEW",
+      "variantId": "player:ASK:DEBT:SA:BALANCED:0"
+    },
+    {
+      "vibeId": "SA",
+      "vibeName": "Charismatic",
+      "intensity": "OVERT",
+      "text": "ALL RIGHT…\nI still owe you money, and future profits are uncertain. How does that affect another deal?",
+      "readiness": "AUTHORING_PREVIEW",
+      "variantId": "player:ASK:DEBT:SA:OVERT:0"
+    },
+    {
+      "vibeId": "SE",
+      "vibeName": "Compassionate",
+      "intensity": "SUBTLE",
+      "text": "I still owe you money, and future profits are uncertain. How does that affect another deal?",
+      "readiness": "AUTHORING_PREVIEW",
+      "variantId": "player:ASK:DEBT:SE:SUBTLE:0"
+    },
+    {
+      "vibeId": "SE",
+      "vibeName": "Compassionate",
+      "intensity": "BALANCED",
+      "text": "Well—I still owe you money, and future profits are uncertain. How does that affect another deal?",
+      "readiness": "AUTHORING_PREVIEW",
+      "variantId": "player:ASK:DEBT:SE:BALANCED:0"
+    },
+    {
+      "vibeId": "SE",
+      "vibeName": "Compassionate",
+      "intensity": "OVERT",
+      "text": "WELL…\nI still owe you money, and future profits are uncertain. How does that affect another deal?",
+      "readiness": "AUTHORING_PREVIEW",
+      "variantId": "player:ASK:DEBT:SE:OVERT:0"
+    },
+    {
+      "vibeId": "SD",
+      "vibeName": "Coaxing",
+      "intensity": "SUBTLE",
+      "text": "I still owe you money, and future profits are uncertain. How does that affect another deal?",
+      "readiness": "AUTHORING_PREVIEW",
+      "variantId": "player:ASK:DEBT:SD:SUBTLE:0"
+    },
+    {
+      "vibeId": "SD",
+      "vibeName": "Coaxing",
+      "intensity": "BALANCED",
+      "text": "So—I still owe you money, and future profits are uncertain. How does that affect another deal?",
+      "readiness": "AUTHORING_PREVIEW",
+      "variantId": "player:ASK:DEBT:SD:BALANCED:0"
+    },
+    {
+      "vibeId": "SD",
+      "vibeName": "Coaxing",
+      "intensity": "OVERT",
+      "text": "SO…\nI still owe you money, and future profits are uncertain. How does that affect another deal?",
+      "readiness": "AUTHORING_PREVIEW",
+      "variantId": "player:ASK:DEBT:SD:OVERT:0"
+    },
+    {
+      "vibeId": "EB",
+      "vibeName": "Steadfast",
+      "intensity": "SUBTLE",
+      "text": "I still owe you money, and future profits are uncertain. How does that affect another deal?",
+      "readiness": "AUTHORING_PREVIEW",
+      "variantId": "player:ASK:DEBT:EB:SUBTLE:0"
+    },
+    {
+      "vibeId": "EB",
+      "vibeName": "Steadfast",
+      "intensity": "BALANCED",
+      "text": "All right—I still owe you money, and future profits are uncertain. How does that affect another deal?",
+      "readiness": "AUTHORING_PREVIEW",
+      "variantId": "player:ASK:DEBT:EB:BALANCED:0"
+    },
+    {
+      "vibeId": "EB",
+      "vibeName": "Steadfast",
+      "intensity": "OVERT",
+      "text": "ALL RIGHT…\nI still owe you money, and future profits are uncertain. How does that affect another deal?",
+      "readiness": "AUTHORING_PREVIEW",
+      "variantId": "player:ASK:DEBT:EB:OVERT:0"
+    },
+    {
+      "vibeId": "EA",
+      "vibeName": "Boundaried",
+      "intensity": "SUBTLE",
+      "text": "I still owe you money, and future profits are uncertain. How does that affect another deal?",
+      "readiness": "AUTHORING_PREVIEW",
+      "variantId": "player:ASK:DEBT:EA:SUBTLE:0"
+    },
+    {
+      "vibeId": "EA",
+      "vibeName": "Boundaried",
+      "intensity": "BALANCED",
+      "text": "Okay—I still owe you money, and future profits are uncertain. How does that affect another deal?",
+      "readiness": "AUTHORING_PREVIEW",
+      "variantId": "player:ASK:DEBT:EA:BALANCED:0"
+    },
+    {
+      "vibeId": "EA",
+      "vibeName": "Boundaried",
+      "intensity": "OVERT",
+      "text": "OKAY…\nI still owe you money, and future profits are uncertain. How does that affect another deal?",
+      "readiness": "AUTHORING_PREVIEW",
+      "variantId": "player:ASK:DEBT:EA:OVERT:0"
+    },
+    {
+      "vibeId": "ES",
+      "vibeName": "Communal",
+      "intensity": "SUBTLE",
+      "text": "I still owe you money, and future profits are uncertain. How does that affect another deal?",
+      "readiness": "AUTHORING_PREVIEW",
+      "variantId": "player:ASK:DEBT:ES:SUBTLE:0"
+    },
+    {
+      "vibeId": "ES",
+      "vibeName": "Communal",
+      "intensity": "BALANCED",
+      "text": "Well—I still owe you money, and future profits are uncertain. How does that affect another deal?",
+      "readiness": "AUTHORING_PREVIEW",
+      "variantId": "player:ASK:DEBT:ES:BALANCED:0"
+    },
+    {
+      "vibeId": "ES",
+      "vibeName": "Communal",
+      "intensity": "OVERT",
+      "text": "WELL…\nI still owe you money, and future profits are uncertain. How does that affect another deal?",
+      "readiness": "AUTHORING_PREVIEW",
+      "variantId": "player:ASK:DEBT:ES:OVERT:0"
+    },
+    {
+      "vibeId": "ED",
+      "vibeName": "Deflecting",
+      "intensity": "SUBTLE",
+      "text": "I still owe you money, and future profits are uncertain. How does that affect another deal?",
+      "readiness": "AUTHORING_PREVIEW",
+      "variantId": "player:ASK:DEBT:ED:SUBTLE:0"
+    },
+    {
+      "vibeId": "ED",
+      "vibeName": "Deflecting",
+      "intensity": "BALANCED",
+      "text": "Well—I still owe you money, and future profits are uncertain. How does that affect another deal?",
+      "readiness": "AUTHORING_PREVIEW",
+      "variantId": "player:ASK:DEBT:ED:BALANCED:0"
+    },
+    {
+      "vibeId": "ED",
+      "vibeName": "Deflecting",
+      "intensity": "OVERT",
+      "text": "WELL…\nI still owe you money, and future profits are uncertain. How does that affect another deal?",
+      "readiness": "AUTHORING_PREVIEW",
+      "variantId": "player:ASK:DEBT:ED:OVERT:0"
+    },
+    {
+      "vibeId": "DB",
+      "vibeName": "Bluffing",
+      "intensity": "SUBTLE",
+      "text": "I still owe you money, and future profits are uncertain. How does that affect another deal?",
+      "readiness": "AUTHORING_PREVIEW_CONTEXT_NEUTRAL",
+      "variantId": "player:ASK:DEBT:DB:SUBTLE:0"
+    },
+    {
+      "vibeId": "DB",
+      "vibeName": "Bluffing",
+      "intensity": "BALANCED",
+      "text": "So—I still owe you money, and future profits are uncertain. How does that affect another deal?",
+      "readiness": "AUTHORING_PREVIEW_CONTEXT_NEUTRAL",
+      "variantId": "player:ASK:DEBT:DB:BALANCED:0"
+    },
+    {
+      "vibeId": "DB",
+      "vibeName": "Bluffing",
+      "intensity": "OVERT",
+      "text": "SO…\nI still owe you money, and future profits are uncertain. How does that affect another deal?",
+      "readiness": "AUTHORING_PREVIEW_CONTEXT_NEUTRAL",
+      "variantId": "player:ASK:DEBT:DB:OVERT:0"
+    },
+    {
+      "vibeId": "DA",
+      "vibeName": "Predatory",
+      "intensity": "SUBTLE",
+      "text": "I still owe you money, and future profits are uncertain. How does that affect another deal?",
+      "readiness": "AUTHORING_PREVIEW_CONTEXT_NEUTRAL",
+      "variantId": "player:ASK:DEBT:DA:SUBTLE:0"
+    },
+    {
+      "vibeId": "DA",
+      "vibeName": "Predatory",
+      "intensity": "BALANCED",
+      "text": "Well—I still owe you money, and future profits are uncertain. How does that affect another deal?",
+      "readiness": "AUTHORING_PREVIEW_CONTEXT_NEUTRAL",
+      "variantId": "player:ASK:DEBT:DA:BALANCED:0"
+    },
+    {
+      "vibeId": "DA",
+      "vibeName": "Predatory",
+      "intensity": "OVERT",
+      "text": "WELL…\nI still owe you money, and future profits are uncertain. How does that affect another deal?",
+      "readiness": "AUTHORING_PREVIEW_CONTEXT_NEUTRAL",
+      "variantId": "player:ASK:DEBT:DA:OVERT:0"
+    },
+    {
+      "vibeId": "DS",
+      "vibeName": "Insinuating",
+      "intensity": "SUBTLE",
+      "text": "I still owe you money, and future profits are uncertain. How does that affect another deal?",
+      "readiness": "AUTHORING_PREVIEW_CONTEXT_NEUTRAL",
+      "variantId": "player:ASK:DEBT:DS:SUBTLE:0"
+    },
+    {
+      "vibeId": "DS",
+      "vibeName": "Insinuating",
+      "intensity": "BALANCED",
+      "text": "So—I still owe you money, and future profits are uncertain. How does that affect another deal?",
+      "readiness": "AUTHORING_PREVIEW_CONTEXT_NEUTRAL",
+      "variantId": "player:ASK:DEBT:DS:BALANCED:0"
+    },
+    {
+      "vibeId": "DS",
+      "vibeName": "Insinuating",
+      "intensity": "OVERT",
+      "text": "SO…\nI still owe you money, and future profits are uncertain. How does that affect another deal?",
+      "readiness": "AUTHORING_PREVIEW_CONTEXT_NEUTRAL",
+      "variantId": "player:ASK:DEBT:DS:OVERT:0"
+    },
+    {
+      "vibeId": "DE",
+      "vibeName": "Feigning",
+      "intensity": "SUBTLE",
+      "text": "I still owe you money, and future profits are uncertain. How does that affect another deal?",
+      "readiness": "AUTHORING_PREVIEW_CONTEXT_NEUTRAL",
+      "variantId": "player:ASK:DEBT:DE:SUBTLE:0"
+    },
+    {
+      "vibeId": "DE",
+      "vibeName": "Feigning",
+      "intensity": "BALANCED",
+      "text": "Well—I still owe you money, and future profits are uncertain. How does that affect another deal?",
+      "readiness": "AUTHORING_PREVIEW_CONTEXT_NEUTRAL",
+      "variantId": "player:ASK:DEBT:DE:BALANCED:0"
+    },
+    {
+      "vibeId": "DE",
+      "vibeName": "Feigning",
+      "intensity": "OVERT",
+      "text": "WELL…\nI still owe you money, and future profits are uncertain. How does that affect another deal?",
+      "readiness": "AUTHORING_PREVIEW_CONTEXT_NEUTRAL",
+      "variantId": "player:ASK:DEBT:DE:OVERT:0"
+    }
+  ]
+}

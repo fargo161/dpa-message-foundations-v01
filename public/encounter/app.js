@@ -1,212 +1,252 @@
-"use strict";
+import { createDeliveryChart } from "/delivery-chart.js";
+import { createFaceRenderer } from "/face-renderer.js";
+import { createTurnPlayer } from "/turn-player.js";
 
-const $ = (id) => document.getElementById(id);
-let snapshot = null;
-let busy = false;
-let synchronized = false;
-let view = "play";
-const publicKeys = ["cash", "debt", "marcusStock", "playerStock"];
-const termKeys = ["units", "upfront", "repayment", "extra", "days"];
-const names = { cash: "Player cash", debt: "Outstanding debt", marcusStock: "Marcus Contra stock", playerStock: "Player Contra stock", confidence: "Marcus confidence", tension: "Marcus tension", patience: "Marcus patience", units: "Contra units", upfront: "Upfront cash", repayment: "New credit principal", existing: "Existing debt", principal: "Accepted new Contra principal", extra: "Additional repayment", days: "Repay within (days)", runId: "Run identity", vibeId: "BASED Vibe", offerId: "Offer identity", offerVersion: "Offer version" };
-const label = (key) => names[key] || key.replace(/([a-z])([A-Z])/g, "$1 $2").replace(/_/g, " ").replace(/^./, (c) => c.toUpperCase());
+const $ = id => document.getElementById(id);
 const node = (tag, text) => { const element = document.createElement(tag); if (text !== undefined) element.textContent = String(text); return element; };
-const plain = (value) => value === null || value === undefined ? "None" : typeof value === "boolean" ? (value ? "Yes" : "No") : String(value);
-
-function table(headers, rows) {
-  const wrap = node("div"); wrap.className = "table-wrap";
-  const element = node("table"); const head = node("thead"); const tr = node("tr");
-  headers.forEach((text) => { const cell = node("th", text); cell.scope = "col"; tr.append(cell); }); head.append(tr); element.append(head);
-  const body = node("tbody");
-  rows.forEach((cells) => { const row = node("tr"); cells.forEach((value) => { const cell = node("td"); cell.append(value instanceof Node ? value : document.createTextNode(plain(value))); row.append(cell); }); body.append(row); });
-  element.append(body); wrap.append(element); return wrap;
-}
-
-function details(value) {
-  if (value === null || value === undefined) return node("p", "None yet.");
-  if (Array.isArray(value)) {
-    if (!value.length) return node("p", "None yet.");
-    const list = node("ul"); value.forEach((item) => { const entry = node("li"); entry.append(typeof item === "object" && item !== null ? details(item) : document.createTextNode(plain(item))); list.append(entry); }); return list;
-  }
-  if (typeof value === "object") return table(["Setting / field", "Value"], Object.entries(value).map(([key, entry]) => [label(key), typeof entry === "object" && entry !== null ? details(entry) : plain(entry)]));
-  return node("p", plain(value));
-}
-
-function section(parent, title, content) { const block = node("section"); block.append(node("h3", title), content); parent.append(block); }
+const termKeys = ["units", "upfront", "repayment", "extra", "days"];
+const names = { cash: "Cash", debt: "Outstanding debt", marcusStock: "Their Contra", playerStock: "Your Contra", units: "Contra units", upfront: "Cash now", repayment: "New principal", extra: "Additional repayment", days: "Repay within (days)" };
+let snapshot = null, busy = false, synchronized = false, view = "play", delivery = null;
+let keywordId = null, actionId = null, preview = null, previewSequence = 0, previewTimer = null;
+let pendingSnapshot = null;
+const faceRenderer = createFaceRenderer($("portrait"));
+const character = () => snapshot?.play.character || { id: "marcus", name: "Marcus" };
+const keywords = () => snapshot?.options.keywords || [];
+const selectedKeyword = () => keywords().find(entry => entry.id === keywordId);
+const selectedAction = () => selectedKeyword()?.actions.find(entry => entry.id === actionId);
+const offer = () => snapshot?.play.counteroffer;
+const commercial = () => snapshot?.play.scenario?.kind !== "CONVERSATION" && snapshot?.options.price != null;
+const available = action => snapshot?.play.availableActions?.find(entry => entry.action === action)?.available === true;
 function notice(text, error = false) { $("notice").textContent = text; $("notice").classList.toggle("error", error); }
-function availability(action) { return snapshot?.play.availableActions.find((entry) => entry.action === action) || { available: false, reason: "State is not available." }; }
-function currentOffer() { return snapshot?.play.counteroffer || null; }
-function topicAvailability(id = $("topic").value) { return snapshot?.options.topics.find((entry) => entry.id === id); }
-function informationAvailability() { return snapshot?.options.informationOptions?.find((entry) => entry.id === $("information").value); }
+function publicDetails(value) {
+  const box = node("div");
+  if (value == null) return box;
+  if (Array.isArray(value)) value.forEach(entry => box.append(publicDetails(entry)));
+  else if (typeof value === "object") Object.entries(value).forEach(([key, entry]) => { const part = node("div"); part.append(node("strong", `${key.replace(/([a-z])([A-Z])/g, "$1 $2")}: `), publicDetails(entry)); box.append(part); });
+  else box.append(node("p", value));
+  return box;
+}
+function termTable(terms) {
+  const table = node("table"), body = node("tbody");
+  termKeys.forEach(key => { const row = node("tr"), header = node("th", names[key]); header.scope = "row"; row.append(header, node("td", terms[key])); body.append(row); });
+  table.append(body); return table;
+}
+function renderFace(face, phase) {
+  faceRenderer.render(snapshot.options.faceCatalog, face, character());
+  $("face-caption").textContent = face?.visibleCaption || "";
+  $("receiving-phase").classList.toggle("active", phase === "receiving");
+  $("responding-phase").classList.toggle("active", phase === "responding");
+}
+const turnPlayer = createTurnPlayer({
+  onReceiving(event) {
+    $("player-line").hidden = false; $("player-line").textContent = `You: ${event.playerText}`;
+    $("npc-line").textContent = "…";
+    renderFace(event.faces?.receiving || snapshot.play.face, "receiving");
+    $("skip").hidden = false; notice(`${character().name} hears you.`);
+  },
+  onResponding(event) {
+    if (pendingSnapshot) { applySnapshot(pendingSnapshot); pendingSnapshot = null; }
+    renderFace(event.faces?.responding || snapshot.play.face, "responding");
+  },
+  onFinish() { $("skip").hidden = true; },
+});
 
+function setUnavailable(id, condition) { $(id).dataset.unavailable = String(condition); }
 function refreshControls() {
   const ready = Boolean(snapshot) && synchronized && !busy;
-  $("turn-fields").disabled = !ready || snapshot?.play.status !== "OPEN";
-  const action = $("action").value;
-  $("ask-fields").hidden = action !== "ASK"; $("deal-fields").hidden = action !== "DEAL";
-  $("topic").disabled = action !== "ASK";
-  $("information").disabled = action !== "DEAL";
-  termKeys.forEach((key) => { $(key).disabled = action !== "DEAL"; });
-  $("send").textContent = busy ? "Working…" : `Send ${action}`;
-  const selected = action === "ASK" ? topicAvailability() : informationAvailability();
-  $("send").disabled = !ready || !availability(action).available || selected?.available === false;
-  $("send-reason").textContent = availability(action).reason || "";
-  $("accept").disabled = !ready || !currentOffer() || !availability("ACCEPT").available;
-  $("accept-reason").textContent = availability("ACCEPT").reason || "";
-  const clarification = topicAvailability("CLARIFY_OFFER");
-  $("clarify").disabled = !ready || !currentOffer() || !availability("ASK").available || clarification?.available !== true;
-  $("clarify-reason").textContent = clarification?.reason || "A current offer is required. Clarification costs patience; exhaustion ends negotiations.";
-  $("topic-reason").textContent = topicAvailability()?.reason || "";
-  $("information-reason").textContent = informationAvailability()?.reason || "";
-  $("walk").disabled = !ready || !availability("WALK").available;
-  $("walk-reason").textContent = availability("WALK").reason || "";
-  $("restart").disabled = !ready; $("seed").disabled = busy;
-  $("reload").disabled = busy;
+  const open = ready && snapshot.play.status === "OPEN";
+  $("turn-fields").disabled = !open; $("menu-fields").disabled = !open;
+  setUnavailable("more", !open); setUnavailable("walk", !available("WALK"));
+  setUnavailable("accept", !offer() || !available("ACCEPT"));
+  setUnavailable("clarify", !findAction(intent => intent.action === "ASK" && intent.topic === "CLARIFY_OFFER"));
+  setUnavailable("propose", !findAction(intent => intent.action === "DEAL"));
+  document.querySelectorAll("[data-interact]").forEach(element => { element.disabled = !ready || element.dataset.unavailable === "true"; });
+  $("seed").disabled = !ready; $("scenario").disabled = !ready; $("reload").disabled = busy;
+  const isDeal = selectedAction()?.intent.action === "DEAL";
+  termKeys.forEach(key => { $(key).disabled = !open || !commercial(); $(key).required = isDeal; });
+  $("information").disabled = !open || !commercial();
+  $("send").disabled = !open || !preview || preview.key !== draftKey();
+  $("send").textContent = busy ? "Working…" : selectedAction()?.intent.action === "ACCEPT" ? "Confirm exact terms →" : selectedAction()?.intent.action === "WALK" ? "Walk away →" : "Say it →";
 }
-
+function findAction(predicate) {
+  for (const keyword of keywords()) { const action = keyword.actions.find(entry => entry.available && predicate(entry.intent)); if (action) return { keyword, action }; }
+  return null;
+}
+function chooseFound(found) { if (found) chooseAction(found.keyword.id, found.action.id); }
+function chooseAction(subject, action) {
+  if (busy || !synchronized) return;
+  keywordId = subject; actionId = action;
+  const chosen = selectedAction();
+  if (chosen?.intent.action === "DEAL") $("information").value = chosen.intent.information || "NONE";
+  renderKeywords(); updateDraft(); schedulePreview();
+}
+function actionButton(keyword, action, full) {
+  const button = node("button", action.label); button.type = "button";
+  button.disabled = !action.available; button.setAttribute("aria-pressed", String(keyword.id === keywordId && action.id === actionId));
+  button.title = action.reason || action.description;
+  if (full) button.append(node("small", action.available ? action.description : action.reason));
+  button.addEventListener("click", () => chooseAction(keyword.id, action.id)); return button;
+}
+function renderKeywords() {
+  const bank = $("keyword-bank"); bank.replaceChildren();
+  keywords().forEach(keyword => {
+    const button = node("button", keyword.label); button.type = "button"; button.append(node("small", keyword.kind));
+    button.setAttribute("aria-pressed", String(keyword.id === keywordId));
+    button.addEventListener("click", () => { if (busy) return; keywordId = keyword.id; actionId = keyword.actions.find(action => action.available)?.id || null; const intent = selectedAction()?.intent; if (intent?.action === "DEAL") $("information").value = intent.information || "NONE"; renderKeywords(); updateDraft(); schedulePreview(); }); bank.append(button);
+  });
+  const keyword = selectedKeyword(), actions = keyword?.actions || [];
+  $("keyword-title").textContent = keyword?.label || "No known subjects"; $("keyword-summary").textContent = keyword?.summary || "";
+  $("subject-label").textContent = keyword ? `// ${keyword.label}` : "";
+  $("keyword-actions").replaceChildren(...actions.map(action => actionButton(keyword, action, true)));
+  const suggestions = actions.filter(action => action.available).slice(0, 3);
+  // Keep a chosen fourth-or-later authored action visible when the menu closes.
+  const chosen = selectedAction(); if (chosen?.available && !suggestions.includes(chosen)) suggestions.splice(2, 1, chosen);
+  $("context-actions").replaceChildren(...suggestions.map(action => actionButton(keyword, action, false)));
+  $("action-description").textContent = chosen?.description || "Open More things to say to choose a subject.";
+  $("edge-note").replaceChildren(node("strong", keyword?.label || "Your knowledge"), node("p", keyword?.summary || "Known subjects are available in your keyword bank."));
+  $("draft-warning").textContent = chosen?.intent.action === "ACCEPT" ? "This confirms the exact offer shown above, including any attached information. Acceptance ends the encounter." : chosen?.description || "";
+  refreshControls();
+}
 function fillOptions() {
   const options = snapshot.options;
-  const fill = (id, entries, getId, getLabel) => {
-    const old = $(id).value; $(id).replaceChildren();
-    entries.forEach((entry) => { const option = node("option", getLabel(entry)); option.value = getId(entry); option.disabled = entry?.available === false; $(id).append(option); });
-    if ([...$(id).options].some((entry) => entry.value === old)) $(id).value = old;
-    if ($(id).selectedOptions[0]?.disabled) $(id).value = [...$(id).options].find((entry) => !entry.disabled)?.value || "";
-  };
-  fill("vibe", options.vibes, (entry) => entry.vibeId, (entry) => `${entry.vibeId} — ${entry.name}`);
-  fill("intensity", options.intensities, (entry) => entry, (entry) => entry);
-  if (!$("intensity").dataset.initialized) { $("intensity").value = "BALANCED"; $("intensity").dataset.initialized = "true"; }
-  fill("topic", options.topics, (entry) => entry.id, (entry) => entry.label);
-  fill("information", options.informationOptions || [], (entry) => entry.id, (entry) => entry.label);
-  const optionTable = (entries) => table(["Option", "Available", "Reason"], entries.map((entry) => [entry.label, entry.available === false ? "No" : "Yes", entry.reason || "Available"]));
-  $("topic-availability").replaceChildren(optionTable(options.topics));
-  $("information-availability").replaceChildren(optionTable(options.informationOptions || []));
-  $("price-note").textContent = `Contra price: ${options.price} per unit. Existing debt is separate from the new principal and additional repayment.`;
-  updateVibe(); updateDraft();
+  if (!delivery) delivery = createDeliveryChart($("delivery-main"), { vibes: options.vibes, intensities: options.intensities, chartContainer: $("based-chart-menu"), onChange: () => schedulePreview() });
+  const previousInformation = $("information").value;
+  $("information").replaceChildren(...(options.informationOptions || []).map(entry => { const option = node("option", entry.label); option.value = entry.id; option.disabled = entry.available === false; return option; }));
+  if ([...$("information").options].some(entry => entry.value === previousInformation && !entry.disabled)) $("information").value = previousInformation;
+  else $("information").value = [...$("information").options].find(entry => !entry.disabled)?.value || "";
+  $("scenario").replaceChildren(...(options.scenarios || [{ id: snapshot.play.scenario?.id || "marcus", label: "Marcus encounter" }]).map(entry => { const option = node("option", entry.label); option.value = entry.id; return option; }));
+  $("scenario").value = snapshot.play.scenario?.id || $("scenario").options[0]?.value;
+  if (!selectedKeyword()) { keywordId = keywords()[0]?.id || null; actionId = null; }
+  if (!selectedAction()?.available) actionId = selectedKeyword()?.actions.find(entry => entry.available)?.id || null;
 }
-
-function updateVibe() { const selected = snapshot?.options.vibes.find((entry) => entry.vibeId === $("vibe").value); $("vibe-meaning").textContent = selected?.fusionLogic || ""; }
-function draftTerms() { return Object.fromEntries(termKeys.map((key) => [key, $(key).valueAsNumber])); }
+function draftTerms() { return Object.fromEntries(termKeys.map(key => [key, $(key).value === "" ? NaN : Number($(key).value)])); }
 function updateDraft() {
   if (!snapshot) return;
-  const terms = draftTerms(); const expected = terms.units * snapshot.options.price - terms.upfront;
-  $("repayment").setCustomValidity(Number.isFinite(expected) && terms.repayment !== expected ? `Principal must be ${expected}: units × price minus upfront cash.` : "");
-  $("draft-summary").textContent = Number.isFinite(expected) && Number.isFinite(terms.extra) ? `Required principal: ${expected}. Your proposed new obligation: ${terms.repayment + terms.extra}. Existing debt is not included in this new obligation.` : "Enter whole-number terms to preview this proposal.";
+  const terms = draftTerms(), expected = terms.units * snapshot.options.price - terms.upfront;
+  const isDeal = selectedAction()?.intent.action === "DEAL";
+  $("repayment").setCustomValidity(isDeal && terms.repayment !== expected ? `Principal must be ${expected}: units × price minus cash now.` : "");
+  $("draft-summary").textContent = Number.isFinite(expected) ? `Required principal: ${expected}. New repayment: ${terms.repayment + terms.extra}. Existing debt stays separate.` : "Enter whole-number terms.";
+  const information = snapshot.options.informationOptions?.find(entry => entry.id === $("information").value);
+  $("information-reason").textContent = information?.reason || "";
+  refreshControls();
 }
-
-function offerSummary(offer) {
-  const fragment = document.createDocumentFragment();
-  if (!offer) { fragment.append(node("p", "No current offer to accept. Ask a question or propose a deal.")); return fragment; }
-  fragment.append(node("p", offer.source === "APPROVED_PROPOSAL" ? "Marcus has approved your proposal. Confirm the terms below to make the transfer." : "Marcus proposes the following terms. Review them before accepting."));
-  fragment.append(table(["Term", "Amount / timing"], termKeys.map((key) => [label(key), offer.terms[key]])));
-  fragment.append(node("p", `Accepting transfers ${offer.terms.upfront} cash to Marcus and ${offer.terms.units} Contra units to you. It adds ${offer.terms.repayment} principal plus ${offer.terms.extra} additional repayment, due within ${offer.terms.days} days. Existing debt remains owed.`));
-  if (offer.informationExchange) fragment.append(node("p", `Information exchange on acceptance: ${offer.informationExchange.summary}. The accepted exchange delivers the private detail as part of the agreement.`));
-  fragment.append(node("p", "Pure clarification preserves this offer unless negotiations end. Every other question, disclosure or new proposal replaces it. Acceptance ends the encounter."));
-  return fragment;
+function intentFields() {
+  const selected = selectedAction();
+  if (!selected?.available) return null;
+  const fields = { ...selected.intent, ...delivery.getSelection(), keywordId, contextActionId: actionId };
+  if (fields.action === "DEAL") { fields.terms = draftTerms(); fields.information = selected.intent.information || "NONE"; }
+  if (fields.action === "ACCEPT") { if (!offer()) return null; fields.offerId = offer().id; fields.offerVersion = offer().version; }
+  return fields;
 }
-
+function draftKey() { return snapshot ? JSON.stringify({ runId: snapshot.play.runId, version: snapshot.play.version, fields: intentFields() }) : ""; }
+function invalidatePreview() { previewSequence += 1; preview = null; globalThis.clearTimeout(previewTimer); }
+function schedulePreview() {
+  invalidatePreview(); refreshControls();
+  if (busy || !snapshot || !synchronized) return;
+  if (snapshot.play.status !== "OPEN") { $("preview-state").textContent = "Conversation complete"; $("player-preview").textContent = "Review your conversation or start a new encounter."; return; }
+  $("preview-state").textContent = "Preparing your line…"; $("player-preview").textContent = "…";
+  const sequence = previewSequence;
+  previewTimer = globalThis.setTimeout(() => { void requestPreview(sequence); }, 180);
+}
+async function post(path, body) {
+  const response = await fetch(path, { method: "POST", credentials: "same-origin", headers: { "Content-Type": "application/json", "X-CSRF-Token": snapshot.csrf }, body: JSON.stringify(body) });
+  const data = await response.json(); if (!response.ok) throw new Error(data.error || `Request failed (${response.status}).`); return data;
+}
+async function requestPreview(sequence) {
+  const fields = intentFields(); if (!fields || busy || sequence !== previewSequence) return;
+  const key = draftKey(); const body = { requestId: crypto.randomUUID(), runId: snapshot.play.runId, version: snapshot.play.version, ...fields };
+  try {
+    const data = await post("/api/preview", body);
+    if (sequence !== previewSequence || busy || key !== draftKey() || data.runId !== snapshot.play.runId || data.version !== snapshot.play.version) return;
+    preview = { key, body, text: data.playerText };
+    $("player-preview").textContent = data.playerText; $("preview-state").textContent = "Ready · review, then send";
+  } catch (error) {
+    if (sequence !== previewSequence || key !== draftKey()) return;
+    preview = null; $("player-preview").textContent = error.message; $("preview-state").textContent = "Draft needs attention";
+  }
+  refreshControls();
+}
+function renderOffer() {
+  const box = $("current-offer"), current = offer(); box.replaceChildren();
+  if (!current) { box.append(node("p", "No offer is open. Build your terms or ask what would make an agreement possible.")); return; }
+  box.append(node("p", current.source === "APPROVED_PROPOSAL" ? `${character().name} approved your proposal. It still needs your confirmation.` : `${character().name} offers these terms.`), termTable(current.terms));
+  box.append(node("p", `Confirmation transfers ${current.terms.upfront} cash and ${current.terms.units} Contra, adding ${current.terms.repayment} principal and ${current.terms.extra} additional repayment due within ${current.terms.days} days. Existing debt remains owed.`));
+  if (current.informationExchange) box.append(node("p", `On acceptance: ${current.informationExchange.summary}`));
+  $("accept-reason").textContent = "Clarification preserves this offer unless the conversation ends. Other discussion or a new proposal replaces it.";
+}
 function renderPlay() {
-  const play = snapshot.play;
-  $("opening").replaceChildren(details(play.conversation?.opening || play.lore?.briefing || []));
-  $("knowledge").replaceChildren();
-  section($("knowledge"), "Facts available to you", details(play.lore?.playerKnowledge));
-  section($("knowledge"), "What you have told Marcus", details(play.lore?.disclosed));
-  section($("knowledge"), "Observed evidence — clues, not certainty", details(play.lore?.evidence));
-  $("phase").textContent = play.conversation ? `Conversation phase: ${label(play.conversation.phase)}. You can go directly to business; small talk is optional.` : "";
-  $("next-steps").replaceChildren(details(play.conversation?.nextSteps || []));
-  $("public-metrics").replaceChildren(table(["Resource", "Current amount"], publicKeys.map((key) => [label(key), play.metrics[key]])));
-  const statuses = { OPEN: "Negotiations are open.", AGREED: "Agreement reached. This encounter is complete.", WITHDRAWN: "You walked away. This encounter is complete.", ENDED: "Marcus ended negotiations. This encounter is complete." };
+  const play = snapshot.play, who = character(), latest = play.events.at(-1);
+  $("speaker-name").textContent = who.name; $("portrait-name").textContent = who.name.toUpperCase();
+  $("scenario-name").textContent = play.scenario?.label || "READ THE DEAL";
+  $("language-readiness").textContent = snapshot.options.languageReadiness?.mode === "AUTHORING_PREVIEW" ? "AUTHORING PREVIEW · LANGUAGE IN REVIEW" : "Existing authored wording";
+  const statuses = { OPEN: "Conversation open", AGREED: "Agreement reached", WITHDRAWN: "You walked away", ENDED: "Conversation ended" };
   $("encounter-status").textContent = statuses[play.status] || play.status;
-  $("current-offer").replaceChildren(offerSummary(currentOffer()));
-  const conversation = $("conversation"); conversation.replaceChildren();
-  if (!play.events.length) conversation.append(node("p", "Marcus waits for your opening message."));
-  play.events.forEach((event, index) => { const article = node("article"); article.append(node("h3", `Turn ${index + 1} · ${label(event.outcome)}`), node("p", `You: ${event.playerText}`), node("p", `Marcus: ${event.marcusText}`)); if (event.feedback) { const feedback = node("p", `What changed: ${event.feedback}`); feedback.className = "turn-feedback"; article.append(feedback); } conversation.append(article); });
-  $("clues").replaceChildren(details(play.clues));
-  $("agreement").replaceChildren();
-  if (play.agreement) section($("agreement"), "Accepted terms", table(["Term", "Amount / timing"], termKeys.map((key) => [label(key), play.agreement.terms[key]])));
-  else $("agreement").append(node("p", "No agreement has been accepted. Proposals do not transfer cash or Contra."));
-  section($("agreement"), "Obligation breakdown", details(play.obligations));
-  if (play.agreement?.informationExchange) section($("agreement"), "Accepted information exchange", node("p", play.agreement.informationExchange.summary));
-  $("outcome-section").hidden = !play.conversation?.outcomeQuality;
-  $("outcome").replaceChildren(details(play.conversation?.outcomeQuality));
+  $("npc-line").textContent = latest?.marcusText || `${who.name} waits for your opening words.`;
+  $("player-line").hidden = !latest; $("player-line").textContent = latest ? `You: ${latest.playerText}` : "";
+  renderFace(play.face, "responding");
+  $("opening").replaceChildren(publicDetails(play.conversation?.opening || play.lore?.briefing || []));
+  $("public-metrics").replaceChildren(...["cash", "debt", "marcusStock", "playerStock"].filter(key => play.metrics?.[key] !== undefined).map(key => { const entry = node("div"); entry.className = "metric"; entry.append(node("span", names[key]), node("strong", play.metrics[key])); return entry; }));
+  $("deal-fields").hidden = !commercial(); $("workspace-title").textContent = commercial() ? "BUILD THE OFFER" : "BUILD YOUR MESSAGE";
+  $("price-note").textContent = commercial() ? `${snapshot.options.price} PER CONTRA · OLD DEBT SEPARATE` : "SUBJECT · INTENTION · DELIVERY";
+  renderOffer(); renderKeywords(); updateDraft();
+  $("conversation").replaceChildren(...play.events.map((event, index) => { const article = node("article"); article.append(node("h3", `Turn ${index + 1}`), node("p", `You: ${event.playerText}`), node("p", `${who.name}: ${event.marcusText}`)); if (event.feedback) { const feedback = node("p", event.feedback); feedback.className = "turn-feedback"; article.append(feedback); } return article; }));
+  $("resolution").hidden = play.status === "OPEN";
+  $("agreement").replaceChildren(publicDetails(play.agreement), publicDetails(play.obligations));
+  $("outcome").replaceChildren(publicDetails(play.conversation?.outcomeQuality));
+  $("walk-reason").textContent = play.availableActions?.find(entry => entry.action === "WALK")?.reason || "";
 }
-
 function renderDebug() {
-  if (!snapshot) return;
-  const { debug, options, play } = snapshot; const state = debug.state; const turn = debug.latestTurn;
-  const content = $("debug-content"); content.replaceChildren();
-  section(content, "All seven persistent metrics", table(["Metric", "Value", "Range", "Meaning"], options.metricDefinitions.map((entry) => [entry.label, state.metrics[entry.key], `${entry.min}–${entry.max}`, entry.meaning])));
-  section(content, "Latest turn — before / after / delta", turn ? table(["Metric", "Before", "After", "Delta"], options.metricDefinitions.map((entry) => [entry.label, turn.before[entry.key], turn.after[entry.key], turn.deltas[entry.key]])) : node("p", "No turn has been taken."));
-  section(content, "Rules and reasons for the latest decision", details(turn?.reasons));
-  section(content, "BASED and intensity contribution", details(turn?.based));
-  section(content, "Derived decision scores, thresholds and repetition", details(turn?.derived));
-  section(content, "Reaction cause — later presentation handoff", details(turn?.reactionCause));
-  section(content, "Information causes and meaningful progress", details({ progressKey: turn?.progressKey, informationCauses: turn?.informationCauses }));
-  section(content, "Knowledge, disclosure and belief state", details(state.lore));
-  section(content, "Available actions and reasons", table(["Action", "Available", "Reason"], play.availableActions.map((entry) => [entry.action, entry.available ? "Yes" : "No", entry.reason])));
-  section(content, "Current player proposal", details(state.proposal));
-  section(content, "Current Marcus offer", details(state.counteroffer));
-  section(content, "Accepted agreement", details(state.agreement));
-  section(content, "Obligation breakdown", details(state.obligations));
-  section(content, "Personality settings", details(debug.personality));
-  section(content, "Run and hidden quirk", details({ seed: state.seed, runId: state.runId, version: play.version, status: state.status, quirk: state.quirk }));
-  section(content, "Discovered clues", details(state.clues));
-  section(content, "History and semantic intent", details(state.events));
-  const raw = node("details"); raw.append(node("summary", "Optional raw state"), node("pre", JSON.stringify(state, null, 2))); content.append(raw);
+  if (view !== "debug" || !snapshot) return;
+  $("debug-content").replaceChildren(node("pre", JSON.stringify({ definitions: snapshot.options.metricDefinitions, ...snapshot.debug }, null, 2)));
 }
-
 function applySnapshot(data) {
-  snapshot = data; synchronized = true;
-  if (!$("seed").value || $("seed").dataset.run !== data.play.runId) { $("seed").value = data.play.seed; $("seed").dataset.run = data.play.runId; }
-  fillOptions(); renderPlay(); if (view === "debug") renderDebug(); refreshControls();
+  invalidatePreview(); snapshot = data; synchronized = true;
+  if ($("seed").dataset.run !== data.play.runId) { $("seed").value = data.play.seed; $("seed").dataset.run = data.play.runId; keywordId = null; actionId = null; }
+  fillOptions(); renderPlay(); renderDebug(); refreshControls();
 }
-
 async function getState() {
   const response = await fetch("/api/state", { credentials: "same-origin", cache: "no-store" });
-  const data = await response.json(); if (!response.ok) throw new Error(data.error || `State request failed (${response.status}).`); applySnapshot(data);
+  const data = await response.json(); if (!response.ok) throw new Error(data.error || "Could not load encounter."); applySnapshot(data);
 }
-
 async function load() {
-  if (busy) return; busy = true; refreshControls(); notice("Loading authoritative state…");
-  try { await getState(); $("reload").hidden = true; notice("Encounter ready."); }
-  catch (error) { synchronized = false; $("reload").hidden = false; notice(`Could not load state: ${error.message}`, true); }
-  finally { busy = false; refreshControls(); }
+  if (busy) return; busy = true; invalidatePreview(); turnPlayer.cancel(); pendingSnapshot = null; refreshControls();
+  try { await getState(); $("reload").hidden = true; notice("Choose a subject, a move, and your delivery. Read your line before sending."); }
+  catch (error) { synchronized = false; $("reload").hidden = false; notice(error.message, true); }
+  finally { busy = false; refreshControls(); schedulePreview(); }
 }
-
-async function submit(path, fields) {
+async function submit(path, body) {
   if (busy || !synchronized || !snapshot) return;
-  busy = true; refreshControls(); notice("Marcus is considering your message…");
+  busy = true; invalidatePreview(); closeMenu(); refreshControls(); notice(path === "/api/restart" ? "Starting a fresh conversation…" : "Sending your words…");
   try {
-    const body = { requestId: crypto.randomUUID(), runId: snapshot.play.runId, version: snapshot.play.version, ...fields };
-    const response = await fetch(path, { method: "POST", credentials: "same-origin", headers: { "Content-Type": "application/json", "X-CSRF-Token": snapshot.csrf }, body: JSON.stringify(body) });
-    const data = await response.json();
-    if (!response.ok) throw new Error(data.error || `Request failed (${response.status}).`);
-    applySnapshot(data); $("reload").hidden = true;
-    notice(path === "/api/restart" ? "New encounter started." : `Turn recorded. ${$("encounter-status").textContent}`);
+    const data = await post(path, body);
+    if (path === "/api/turn") {
+      const event = data.play.events.at(-1);
+      if (event && data.play.events.length > snapshot.play.events.length) {
+        delivery.recordTurn({ runId: data.play.runId, index: event.turnRef?.index ?? data.play.events.length, action: event.action || body.action, vibeId: event.vibeId || body.vibeId });
+        pendingSnapshot = data; await turnPlayer.play(event);
+      } else applySnapshot(data);
+    } else { turnPlayer.cancel(); pendingSnapshot = null; applySnapshot(data); }
+    $("reload").hidden = true; notice(path === "/api/restart" ? "New conversation started." : "Response received. Review what changed, then choose your next move.");
   } catch (error) {
-    synchronized = false;
-    try { await getState(); $("reload").hidden = true; notice(`${error.message} Current state has been reloaded; review it before sending another action.`, true); }
-    catch { $("reload").hidden = false; notice(`${error.message} The result is uncertain. Reload state before continuing; this action will not be automatically resent.`, true); }
-  } finally { busy = false; refreshControls(); }
+    synchronized = false; turnPlayer.cancel(); pendingSnapshot = null; $("skip").hidden = true;
+    try { await getState(); $("reload").hidden = true; notice(`${error.message} Current state reloaded. Review it before sending again.`, true); }
+    catch { $("reload").hidden = false; notice(`${error.message} Result uncertain. Reload state before continuing; this action will not be resent automatically.`, true); }
+  } finally { busy = false; refreshControls(); schedulePreview(); }
 }
-
-function messageFields(action) { return { action, vibeId: $("vibe").value, intensity: $("intensity").value }; }
-$("turn-form").addEventListener("submit", (event) => {
-  event.preventDefault(); const action = $("action").value;
-  if (action === "DEAL") { updateDraft(); if (!$("turn-form").reportValidity()) return; }
-  void submit("/api/turn", { ...messageFields(action), ...(action === "ASK" ? { topic: $("topic").value } : { terms: draftTerms(), information: $("information").value || "NONE" }) });
-});
-$("accept").addEventListener("click", () => { const offer = currentOffer(); if (offer) void submit("/api/turn", { ...messageFields("ACCEPT"), offerId: offer.id, offerVersion: offer.version }); });
-$("clarify").addEventListener("click", () => { void submit("/api/turn", { ...messageFields("ASK"), topic: "CLARIFY_OFFER" }); });
-$("walk").addEventListener("click", () => { void submit("/api/turn", messageFields("WALK")); });
-$("restart-form").addEventListener("submit", (event) => { event.preventDefault(); void submit("/api/restart", { seed: $("seed").value }); });
-$("action").addEventListener("change", refreshControls);
-$("topic").addEventListener("change", refreshControls);
-$("information").addEventListener("change", refreshControls);
-$("vibe").addEventListener("change", updateVibe);
-termKeys.forEach((key) => $(key).addEventListener("input", updateDraft));
-$("reload").addEventListener("click", () => { void load(); });
-["play", "debug"].forEach((target) => $(`${target}-tab`).addEventListener("click", () => {
-  view = target; $("play-view").hidden = target !== "play"; $("debug-view").hidden = target !== "debug";
-  $("play-tab").setAttribute("aria-pressed", String(target === "play")); $("debug-tab").setAttribute("aria-pressed", String(target === "debug"));
-  if (target === "debug") renderDebug();
-}));
+function closeMenu() { if ($("conversation-menu").open) $("conversation-menu").close(); $("more").setAttribute("aria-expanded", "false"); }
+$("more").addEventListener("click", () => { if (busy) return; $("conversation-menu").showModal(); $("more").setAttribute("aria-expanded", "true"); $("keywords-tab").focus(); });
+$("close-menu").addEventListener("click", closeMenu); $("return-draft").addEventListener("click", closeMenu);
+$("conversation-menu").addEventListener("close", () => { $("more").setAttribute("aria-expanded", "false"); $("more").focus(); });
+["keywords", "based"].forEach(page => $(`${page}-tab`).addEventListener("click", () => { ["keywords", "based"].forEach(other => { $(`${other}-page`).hidden = other !== page; $(`${other}-tab`).setAttribute("aria-pressed", String(other === page)); }); }));
+$("history-toggle").addEventListener("click", () => { $("history-panel").hidden = !$("history-panel").hidden; $("history-toggle").setAttribute("aria-expanded", String(!$("history-panel").hidden)); });
+["play", "debug"].forEach(target => $(`${target}-tab`).addEventListener("click", () => { if (busy) return; view = target; $("play-view").hidden = target !== "play"; $("debug-view").hidden = target !== "debug"; ["play", "debug"].forEach(other => $(`${other}-tab`).setAttribute("aria-pressed", String(other === target))); renderDebug(); }));
+$("turn-form").addEventListener("submit", event => { event.preventDefault(); if (busy || !preview || preview.key !== draftKey()) return; updateDraft(); if (selectedAction()?.intent.action === "DEAL" && !$("turn-form").reportValidity()) return; void submit("/api/turn", preview.body); });
+$("accept").addEventListener("click", () => chooseFound(findAction(intent => intent.action === "ACCEPT")));
+$("clarify").addEventListener("click", () => chooseFound(findAction(intent => intent.action === "ASK" && intent.topic === "CLARIFY_OFFER")));
+$("walk").addEventListener("click", () => chooseFound(findAction(intent => intent.action === "WALK")));
+$("propose").addEventListener("click", () => chooseFound(findAction(intent => intent.action === "DEAL" && (intent.information || "NONE") === ($("information").value || "NONE"))));
+$("information").addEventListener("change", () => { const match = findAction(intent => intent.action === "DEAL" && (intent.information || "NONE") === $("information").value); chooseFound(match); });
+termKeys.forEach(key => $(key).addEventListener("input", () => { updateDraft(); schedulePreview(); }));
+$("restart-form").addEventListener("submit", event => { event.preventDefault(); if (busy || !snapshot) return; void submit("/api/restart", { requestId: crypto.randomUUID(), runId: snapshot.play.runId, version: snapshot.play.version, seed: $("seed").value, scenarioId: $("scenario").value }); });
+$("reload").addEventListener("click", () => { void load(); }); $("skip").addEventListener("click", () => turnPlayer.skip());
 void load();

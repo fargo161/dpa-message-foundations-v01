@@ -2,10 +2,20 @@ import { BASED_VIBES, DELIVERY_INTENSITIES } from "../based.mjs";
 import { METRIC_DEFINITIONS, PRICE, TOPICS, availableActions } from "./state.mjs";
 import { evaluateTurn } from "./marcus-policy.mjs";
 import { PERSONALITY } from "./marcus-profile.mjs";
-import { playerMessage, marcusMessage } from "./messages.mjs";
+import { marcusMessage } from "./messages.mjs";
 import { hasLoreFact, informationEligibility, loreOptions, projectLore } from "./knowledge.mjs";
 import { resolveInformation } from "./information-policy.mjs";
 import { conversationView, reactionCause } from "./conversation.mjs";
+import { keywordBank } from "../conversation/keyword-bank.mjs";
+import { resolveContextAction } from "../conversation/context-actions.mjs";
+import { FACE_CATALOG } from "../conversation/face/catalog.mjs";
+import { openingFace, buildFaceTurn } from "../conversation/face/policy.mjs";
+import { buildPlayerFrame, renderPlayerFrame } from "../conversation/language/realizer.mjs";
+import { createLanguageAuthority } from "../conversation/encounter-language-authority.mjs";
+import { SCENARIO_OPTIONS, languageReadiness } from "../conversation/contracts.mjs";
+
+// Only this adapter issues its bindings, after the ordinary engine validators.
+const languageAuthority = createLanguageAuthority();
 
 export class EncounterError extends Error {
   constructor(message, status = 400) { super(message); this.status = status; }
@@ -46,7 +56,8 @@ function validateIntent(state, input) {
   const fields = { ASK: ["topic"], DEAL: ["terms"], ACCEPT: ["offerId", "offerVersion"], WALK: [] };
   requireThat(typeof input?.action === "string" && Object.hasOwn(fields, input.action), "Unknown encounter action.");
   const optional = input.action === "DEAL" && Object.hasOwn(input, "information") ? ["information"] : [];
-  exactObject(input, ["requestId", "runId", "version", "action", "vibeId", "intensity", ...fields[input.action], ...optional]);
+  const contextFields = Object.hasOwn(input, "keywordId") || Object.hasOwn(input, "contextActionId") ? ["keywordId", "contextActionId"] : [];
+  exactObject(input, ["requestId", "runId", "version", "action", "vibeId", "intensity", ...fields[input.action], ...optional, ...contextFields]);
   if (optional.length) requireThat(["NONE", "OFFER_INFORMATION"].includes(input.information), "Unknown information exchange choice.");
   validateIdentity(state, input);
   requireThat(state.status === "OPEN", "This encounter has ended.", 409);
@@ -64,10 +75,33 @@ function validateIntent(state, input) {
   }
   const eligibility = informationEligibility(state, input);
   requireThat(eligibility.allowed, eligibility.reason);
+  if (contextFields.length) {
+    let expected;
+    try { expected = resolveContextAction(state, input.keywordId, input.contextActionId); }
+    catch (error) { throw new EncounterError(error.message); }
+    requireThat(Object.entries(expected).every(([key, value]) => (key === "information" ? input.information ?? "NONE" : input[key]) === value), "Selected subject/action does not match the submitted intent.");
+  }
 }
 
-export function transition(state, input) {
+function authorizedPlayerLine(state, input, mode) {
+  languageReadiness(mode);
+  const frame = buildPlayerFrame(state, input);
+  const binding = languageAuthority.issue(frame, { runId: state.runId, version: state.events.length });
+  const authorized = languageAuthority.read(binding);
+  return renderPlayerFrame(authorized.frame, { vibeId: input.vibeId, intensity: input.intensity, mode, variantSeed: `${state.seed}:${state.events.length}` });
+}
+
+/** Pure preview: no evaluation, information resolution, event, or nonce consumption. */
+export function previewIntent(state, input, { languageMode = "PRODUCTION" } = {}) {
   validateIntent(state, input);
+  const line = authorizedPlayerLine(state, input, languageMode);
+  return { runId: state.runId, version: state.events.length, playerText: line.text,
+    delivery: { vibeId: input.vibeId, intensity: input.intensity }, readiness: languageReadiness(languageMode) };
+}
+
+export function transition(state, input, { languageMode = "PRODUCTION" } = {}) {
+  validateIntent(state, input);
+  const line = authorizedPlayerLine(state, input, languageMode);
   const next = structuredClone(state);
   const before = structuredClone(state.metrics);
   const intent = structuredClone(input);
@@ -130,16 +164,18 @@ export function transition(state, input) {
   decision.factIds = [...new Set(informationEffect.causes.flatMap(c => c.factIds ?? []))];
   decision.informationCauses = informationEffect.causes;
   decision.reasons.push(...informationEffect.causes.filter(c => c.kind !== "INTENT_RESOLVED").map(c => c.consequence));
-  const playerText = playerMessage(intent, { price: PRICE, offer, state, informationEffect });
-  const marcusText = marcusMessage(next, intent, decision);
+  const playerText = line.text;
+  const marcusText = marcusMessage(next, intent, decision, { mode: languageMode, variantSeed: `${state.seed}:${state.events.length}` });
   const progressKey = decision.derived.progressKey === "NONE" ? null : decision.derived.progressKey ?? informationEffect.progressKey;
   decision.progressKey = progressKey;
   const cause = reactionCause(next, intent, decision, informationEffect);
-  next.events.push({ intent, playerText, marcusText, outcome: decision.outcome, before, after, deltas, reasons: decision.reasons, based: decision.based, derived: decision.derived, progressKey, informationCauses: informationEffect.causes, feedback: informationEffect.feedback, reactionCause: cause });
+  const event = { intent, playerText, marcusText, outcome: decision.outcome, before, after, deltas, reasons: decision.reasons, based: decision.based, derived: decision.derived, progressKey, informationCauses: informationEffect.causes, feedback: informationEffect.feedback, reactionCause: cause, characterId: "marcus", faces: null };
+  event.faces = buildFaceTurn(event, state.events.at(-1)?.faces?.responding ?? openingFace());
+  next.events.push(event);
   return next;
 }
 
-export function projectState(state, csrf) {
+export function projectState(state, csrf, { languageMode = "PRODUCTION" } = {}) {
   const { cash, debt, marcusStock, playerStock } = state.metrics;
   // Offer identity is needed for confirmation; internal lore bindings are Debug-only.
   const publicOffer = offer => {
@@ -160,10 +196,14 @@ export function projectState(state, csrf) {
   });
   return { csrf,
     play: { runId: state.runId, version: state.events.length, seed: state.seed, status: state.status,
+      character: { id: "marcus", name: "Marcus ‘Broker’ Hill" }, scenario: SCENARIO_OPTIONS[0],
+      face: structuredClone(state.events.at(-1)?.faces?.responding ?? openingFace()),
       metrics: { cash, debt, marcusStock, playerStock }, obligations: state.obligations,
       proposal: publicOffer(state.proposal), counteroffer: publicOffer(state.counteroffer), agreement: publicOffer(state.agreement), clues: state.clues,
       lore, conversation: conversationView(state),
-      events: state.events.map(({ playerText, marcusText, outcome, feedback }) => ({ playerText, marcusText, outcome, feedback })), availableActions: actions },
+      events: state.events.map(({ playerText, marcusText, outcome, feedback, intent, reactionCause: cause, faces }) => ({ playerText, marcusText, outcome, feedback,
+        turnRef: cause.turnRef, action: intent.action, vibeId: intent.vibeId, intensity: intent.intensity, faces: structuredClone(faces) })), availableActions: actions },
     debug: { state, latestTurn: state.events.at(-1) ?? null, personality: PERSONALITY },
-    options: { vibes: BASED_VIBES, intensities: DELIVERY_INTENSITIES, topics, informationOptions: lore.informationOptions, metricDefinitions: METRIC_DEFINITIONS, price: PRICE } };
+    options: { vibes: BASED_VIBES, intensities: DELIVERY_INTENSITIES, topics, informationOptions: lore.informationOptions, metricDefinitions: METRIC_DEFINITIONS, price: PRICE,
+      keywords: keywordBank(state), faceCatalog: FACE_CATALOG, scenarios: SCENARIO_OPTIONS, languageReadiness: languageReadiness(languageMode) } };
 }

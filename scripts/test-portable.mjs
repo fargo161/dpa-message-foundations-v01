@@ -2,6 +2,13 @@
 import { spawnSync } from "node:child_process";
 
 const portableTests = [
+  "tests/conversation-keyword-bank.test.mjs",
+  "tests/conversation-delivery.test.mjs",
+  "tests/conversation-language.test.mjs",
+  "tests/conversation-faces.test.mjs",
+  "tests/conversation-acceptance.test.mjs",
+  "tests/conversation-portability.test.mjs",
+  "tests/conversation-security.test.mjs",
   "tests/encounter-history.test.mjs",
   "tests/encounter-information.test.mjs",
   "tests/encounter-lore-adversarial.test.mjs",

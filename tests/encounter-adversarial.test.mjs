@@ -120,7 +120,13 @@ test("adversarial: projection has four Play metrics and every displayed fact agr
   for (const [key, value] of Object.entries(projected.play.metrics)) assert.equal(value, projected.debug.state.metrics[key]);
   for (const key of ["status", "seed", "runId", "proposal", "counteroffer", "agreement", "obligations", "clues"]) assert.deepEqual(projected.play[key], projected.debug.state[key]);
   assert.equal(projected.play.version, state.events.length); assert.equal(Object.hasOwn(projected.play, "quirk"), false);
-  assert.ok(projected.play.events.every(event => Object.keys(event).sort().join() === "feedback,marcusText,outcome,playerText"));
+  const publicEventKeys = ["playerText", "marcusText", "outcome", "feedback", "turnRef", "action", "vibeId", "intensity", "faces"].sort();
+  for (const event of projected.play.events) {
+    assert.deepEqual(Object.keys(event).sort(), publicEventKeys);
+    for (const privateKey of ["intent", "before", "after", "reasons", "derived", "informationCauses", "reactionCause"]) {
+      assert.equal(Object.hasOwn(event, privateKey), false);
+    }
+  }
 });
 
 test("adversarial HTTP: sessions, CSRF, stale/replay, simultaneous turns and restart isolate authority", async () => withServer(async base => {

@@ -1,0 +1,18 @@
+{
+  "id": "broken-promise",
+  "label": "The broken promise",
+  "kind": "CONVERSATION",
+  "character": { "id": "avery", "name": "Avery (conversation fixture)" },
+  "keywords": [{
+    "id": "missed-meeting",
+    "label": "The missed meeting",
+    "kind": "EVENT",
+    "summary": "Avery promised to meet you and did not arrive.",
+    "actions": [
+      { "id": "ask-explanation", "intent": { "action": "ASK", "topic": "EXPLANATION" } },
+      { "id": "ask-accountability", "intent": { "action": "ASK", "topic": "ACCOUNTABILITY" } },
+      { "id": "walk-away", "intent": { "action": "WALK" } }
+    ]
+  }],
+  "expected": { "price": null, "metrics": {}, "counteroffer": null, "agreement": null, "obligations": null }
+}

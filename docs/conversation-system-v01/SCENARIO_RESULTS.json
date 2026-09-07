@@ -1,0 +1,34 @@
+{
+  "schemaVersion": "independent-conversation-validation@1",
+  "date": "2026-09-07",
+  "baseline": "1c4cdc9655bb6cf97e4e8dd9241263dfe4debb1e",
+  "command": "node --test tests/conversation-acceptance.test.mjs tests/conversation-portability.test.mjs tests/conversation-security.test.mjs",
+  "result": { "initialScenarioTestsPassed": 8, "presentationTestsPassed": 2, "registeredIndependentTests": 10, "failed": 0 },
+  "marcusRoute": ["PRIORITIES", "VERIFY_SOURCE", "PROBE_USEFULNESS", "DEAL", "CLARIFY_OFFER", "ACCEPT"],
+  "marcusScenarios": [
+    { "variant": "NEGATIVE", "quirk": "plain_dealing", "seed": "conversation-coverage-6", "turns": 6, "status": "AGREED" },
+    { "variant": "NEGATIVE", "quirk": "final_say", "seed": "conversation-coverage-7", "turns": 6, "status": "AGREED" },
+    { "variant": "NEGATIVE", "quirk": "recognition", "seed": "conversation-coverage-4", "turns": 6, "status": "AGREED" },
+    { "variant": "POSITIVE", "quirk": "recognition", "seed": "conversation-coverage-10", "turns": 6, "status": "AGREED" },
+    { "variant": "POSITIVE", "quirk": "plain_dealing", "seed": "conversation-coverage-9", "turns": 6, "status": "AGREED" },
+    { "variant": "POSITIVE", "quirk": "final_say", "seed": "conversation-coverage-11", "turns": 6, "status": "AGREED" }
+  ],
+  "conditionalPreviewCoordinates": 60,
+  "portability": {
+    "scenarioId": "broken-promise",
+    "characterId": "avery",
+    "route": ["EXPLANATION", "ACCOUNTABILITY", "WALK"],
+    "status": "WITHDRAWN",
+    "repetitionTurns": 6,
+    "repetitionStatus": "ENDED",
+    "commerce": false,
+    "reportedClaimsRemainUnverified": true,
+    "productionCharacter": false
+  },
+  "faceContactSheet": { "viewed": true, "presets": 13, "fullHeadContained": true, "forwardEyes": true, "ownerAestheticApproval": "PENDING" },
+  "liveBrowser": { "status": "BLOCKED", "reason": "net::ERR_BLOCKED_BY_CLIENT navigating supported cloud Chrome to local preview", "appFailureEstablished": false },
+  "uiSourceDom": { "sourceReview": "COMPLETE", "nativeBrowserInteraction": "NOT_CERTIFIED", "timerControllerTests": "PASS", "overlayOrderCorrection": "FIXED_BY_A5_SOURCE_VERIFIED_BY_A6", "implementerDomSmoke": "A5_REPORTS_PASS_DOM_EMULATION_WITH_REAL_HTTP_NOT_NATIVE_BROWSER" },
+  "integrationLeadEvidence": { "testsPassed": 237, "testsFailed": 0, "gates": "lint, typecheck, schemas, build, generated freshness, lorebook check and build", "independentlyRerunByA6": false },
+  "productionLanguageApproval": "PENDING",
+  "publication": "NOT_AUTHORIZED_NOT_ATTEMPTED"
+}

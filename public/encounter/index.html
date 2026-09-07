@@ -1,101 +1,42 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Marcus — ASK / DEAL encounter</title>
-  <link rel="stylesheet" href="/style.css">
-  <script src="/app.js" defer></script>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Trapstar — Read the Deal</title>
+  <link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="/delivery-chart.css">
+  <script type="module" src="/app.js"></script>
 </head>
 <body>
-  <main>
-    <header>
-      <h1>Marcus</h1>
-      <p>A guarded creditor. A new arrangement.</p>
-      <nav aria-label="Encounter view">
-        <button id="play-tab" type="button" aria-pressed="true">Play</button>
-        <button id="debug-tab" type="button" aria-pressed="false">Debug</button>
-      </nav>
-    </header>
-    <p id="notice" role="status" aria-live="polite">Loading encounter…</p>
-    <button id="reload" type="button" hidden>Reload authoritative state</button>
-    <section id="play-view" aria-label="Play">
-      <section aria-labelledby="opening-title"><h2 id="opening-title">Before you speak</h2><div id="opening"></div></section>
-      <p class="hint">Provisional objective, newly authored for this playtest: secure at least two Contra units with positive new credit. A smaller cash purchase remains a valid, limited outcome. Future profits are uncertain; they are not cash you can spend now.</p>
-      <section aria-labelledby="knowledge-title"><h2 id="knowledge-title">What you know</h2><div id="knowledge"></div></section>
-      <h2>Your position</h2>
-      <div id="public-metrics"></div>
-      <p id="encounter-status"></p>
-      <p id="phase" class="hint"></p>
-      <div id="next-steps"></div>
-      <section aria-labelledby="offer-title">
-        <h2 id="offer-title">Current offer</h2>
-        <div id="current-offer"></div>
-        <button id="accept" type="button" disabled>Accept these exact terms</button>
-        <p id="accept-reason" class="hint"></p>
-        <button id="clarify" type="button" disabled>Clarify this offer without changing it</button>
-        <p id="clarify-reason" class="hint"></p>
+<main class="shell">
+  <header class="mast"><div><h1>TRAP<span>STAR</span></h1><p class="kicker">Read the room. Choose your words.</p></div><div class="mast-right"><p id="scenario-name">READ THE DEAL</p><span id="language-readiness" class="badge">Loading conversation</span></div></header>
+  <nav class="toolbar" aria-label="Conversation controls"><div><button id="more" type="button" aria-haspopup="dialog" aria-expanded="false" data-interact>More things to say ↗</button><button id="history-toggle" type="button" aria-expanded="false" data-interact>Conversation log</button></div><div><button id="play-tab" type="button" aria-pressed="true" data-interact>Play</button><button id="debug-tab" type="button" aria-pressed="false" data-interact>Debug</button></div></nav>
+  <p id="notice" role="status" aria-live="polite">Loading encounter…</p><button id="reload" type="button" hidden>Reload authoritative state</button>
+  <section id="play-view" aria-label="Play">
+    <form id="turn-form" novalidate><fieldset id="turn-fields" disabled><legend class="sr-only">Compose your conversation turn</legend>
+      <section class="read-zone" aria-label="Read and interact">
+        <div class="portrait-panel"><div id="portrait" role="img" aria-label="Character portrait"></div><div class="portrait-name" id="portrait-name">MARCUS</div><div class="face-phases" aria-label="Facial turn sequence"><span id="receiving-phase">01 · HEARS YOU</span><span id="responding-phase" class="active">02 · RESPONDS</span></div></div>
+        <div class="interaction"><div class="speaker-line"><h2 id="speaker-name">Marcus</h2><span id="encounter-status" class="kicker"></span></div><blockquote id="npc-line">Loading…</blockquote><p id="face-caption" class="caption"></p><p id="player-line" class="last-player" hidden></p><h3 class="section-label">What do you want to do next? <span id="subject-label"></span></h3><div id="context-actions" class="action-grid"></div><p id="action-description" class="hint"></p><div class="delivery-section"><h3 class="section-label">How do you say it?</h3><div id="delivery-main"></div><p class="hint">Your full BASED chart is in “More things to say.”</p></div></div>
+        <aside class="edge"><h2>Your edge</h2><div id="edge-note"></div><div id="public-metrics"></div><details><summary>Before you speak</summary><div id="opening"></div></details></aside>
       </section>
-      <section aria-labelledby="compose-title">
-        <h2 id="compose-title">Your next message</h2>
-        <form id="turn-form">
-          <fieldset id="turn-fields" disabled>
-            <legend>Build a message</legend>
-            <label for="action">Action</label>
-            <select id="action"><option value="ASK">ASK — learn about Marcus and his terms</option><option value="DEAL">DEAL — propose or revise terms</option></select>
-            <div id="ask-fields">
-              <label for="topic">Question</label>
-              <select id="topic" aria-describedby="topic-reason"></select>
-              <p id="topic-reason" class="hint"></p>
-              <details><summary>Question availability</summary><div id="topic-availability"></div></details>
-            </div>
-            <div id="deal-fields" hidden>
-              <p id="price-note" class="hint"></p>
-              <div class="fields">
-                <div><label for="units">Contra units</label><input id="units" type="number" min="1" max="8" step="1" value="2" required></div>
-                <div><label for="upfront">Upfront cash</label><input id="upfront" type="number" min="0" max="10000" step="1" value="40" required></div>
-                <div><label for="repayment">New credit principal to repay</label><input id="repayment" type="number" min="0" max="10000" step="1" value="80" required></div>
-                <div><label for="extra">Additional repayment</label><input id="extra" type="number" min="0" max="10000" step="1" value="10" required></div>
-                <div><label for="days">Repay within (days)</label><input id="days" type="number" min="1" max="30" step="1" value="7" required></div>
-              </div>
-              <p id="draft-summary" class="hint"></p>
-              <label for="information">Information included in this DEAL</label>
-              <select id="information" aria-describedby="information-reason"></select>
-              <p id="information-reason" class="hint"></p>
-              <details><summary>Information option availability</summary><div id="information-availability"></div></details>
-              <p class="hint">Principal must equal price minus upfront cash. Sending a revision replaces any current offer. Proposing transfers nothing.</p>
-            </div>
-            <label for="vibe">BASED Vibe</label>
-            <select id="vibe" aria-describedby="vibe-meaning"></select>
-            <p id="vibe-meaning" class="hint"></p>
-            <label for="intensity">Delivery intensity</label>
-            <select id="intensity"></select>
-            <p class="hint">Vibe and delivery affect Marcus’s reading of your message; quantities and promises remain exactly as entered.</p>
-            <button id="send" type="submit">Send ASK</button>
-            <p id="send-reason" class="hint"></p>
-          </fieldset>
-        </form>
-        <button id="walk" type="button" disabled>Walk away and end this encounter</button>
-        <p id="walk-reason" class="hint"></p>
+      <section class="deal-workspace" aria-labelledby="workspace-title">
+        <div class="workspace-heading"><h2 id="workspace-title">BUILD THE OFFER</h2><span id="price-note" class="kicker"></span></div>
+        <div id="deal-fields"><div class="deal-grid"><div class="proposal"><p class="kicker">YOUR DRAFT · NOTHING TRANSFERS UNTIL YOU CONFIRM</p><div class="table-wrap"><table class="deal-table"><thead><tr><th scope="col">The exchange</th><th scope="col">Your terms</th></tr></thead><tbody>
+          <tr><th scope="row"><label for="units">Contra units</label></th><td><input id="units" type="number" min="1" max="8" step="1" value="2" required></td></tr>
+          <tr><th scope="row"><label for="upfront">Cash now</label></th><td><input id="upfront" type="number" min="0" max="10000" step="1" value="40" required></td></tr>
+          <tr><th scope="row"><label for="repayment">New credit principal</label></th><td><input id="repayment" type="number" min="0" max="10000" step="1" value="80" required></td></tr>
+          <tr><th scope="row"><label for="extra">Additional repayment</label></th><td><input id="extra" type="number" min="0" max="10000" step="1" value="10" required></td></tr>
+          <tr><th scope="row"><label for="days">Repay within (days)</label></th><td><input id="days" type="number" min="1" max="30" step="1" value="7" required></td></tr>
+        </tbody></table></div><p id="draft-summary" class="hint"></p><label for="information">Information included</label><select id="information" aria-describedby="information-reason"></select><p id="information-reason" class="hint"></p><button id="propose" type="button" data-interact>Use these terms in my message</button></div>
+        <div class="offer-sheet"><h3>ON THE TABLE</h3><div id="current-offer"></div><div class="offer-buttons"><button id="accept" type="button" data-interact>Review exact acceptance</button><button id="clarify" type="button" data-interact>Ask about these terms</button></div><p id="accept-reason" class="hint"></p></div></div></div>
+        <div class="message-draft"><div><h3 class="section-label">Your words <span id="preview-state">Choose your next move</span></h3><blockquote id="player-preview" aria-live="polite">Select a subject and an action to compose your message.</blockquote><p id="draft-warning" class="hint"></p></div><button id="send" type="submit" disabled>Say it →</button></div>
       </section>
-      <section aria-labelledby="conversation-title"><h2 id="conversation-title">Conversation</h2><div id="conversation"></div></section>
-      <section aria-labelledby="clues-title"><h2 id="clues-title">What you have learned</h2><div id="clues"></div></section>
-      <section aria-labelledby="agreement-title"><h2 id="agreement-title">Agreement and obligations</h2><div id="agreement"></div></section>
-      <section id="outcome-section" aria-labelledby="outcome-title" hidden><h2 id="outcome-title">Outcome</h2><div id="outcome"></div></section>
-    </section>
-    <section id="debug-view" aria-label="Debug" hidden>
-      <h2>Authoritative Debug</h2>
-      <p>Exact hidden values are intentionally visible here. This view cannot change state. Decision scores and repetition counts are derived, not extra gameplay meters.</p>
-      <div id="debug-content"></div>
-    </section>
-    <section aria-labelledby="restart-title">
-      <h2 id="restart-title">Restart / reproduce</h2>
-      <form id="restart-form">
-        <label for="seed">Run seed</label><input id="seed" type="text" maxlength="80" required autocomplete="off">
-        <p class="hint">Restart discards this encounter. The same seed and choices reproduce equivalent outcomes. Use a different seed for another run.</p>
-        <button id="restart" type="submit" disabled>Restart with this seed</button>
-      </form>
-    </section>
-  </main>
+    </fieldset></form>
+    <div class="turn-controls"><button id="skip" type="button" hidden>Show response now</button><button id="walk" type="button" data-interact>Prepare to walk away</button><span id="walk-reason" class="hint"></span></div>
+    <div id="history-panel" hidden><h2>Conversation log</h2><div id="conversation"></div></div><section id="resolution" hidden><h2>Where things stand</h2><div id="agreement"></div><div id="outcome"></div></section>
+  </section>
+  <section id="debug-view" hidden aria-label="Debug"><h2>Authoritative Debug</h2><p>Exact hidden state is intentionally visible here. This diagnostic view does not change the encounter.</p><div id="debug-content"></div></section>
+  <details class="restart-panel"><summary>Restart / choose test conversation</summary><form id="restart-form"><label for="scenario">Conversation</label><select id="scenario"></select><label for="seed">Run seed</label><input id="seed" type="text" maxlength="80" required autocomplete="off"><p class="hint">Restart replaces this encounter. The same seed and choices reproduce its results.</p><button id="restart" type="submit" data-interact>Restart encounter</button></form></details>
+</main>
+<dialog id="conversation-menu" aria-labelledby="menu-title"><div class="menu-heading"><h2 id="menu-title">MORE THINGS TO SAY</h2><button id="close-menu" type="button" aria-label="Close conversation menu">✕</button></div><nav class="menu-tabs" aria-label="Conversation menu pages"><button id="keywords-tab" type="button" aria-pressed="true">Known keywords</button><button id="based-tab" type="button" aria-pressed="false">BASED vibes</button></nav><fieldset id="menu-fields"><legend class="sr-only">Subject and delivery selection</legend><section id="keywords-page"><p class="hint">Choose something you know. Browsing and composing do not spend a turn or reveal information.</p><div class="keyword-layout"><div id="keyword-bank"></div><div><h3 id="keyword-title"></h3><p id="keyword-summary"></p><div id="keyword-actions"></div></div></div></section><section id="based-page" hidden><div id="based-chart-menu"></div></section></fieldset><div class="menu-footer"><button id="return-draft" type="button">Return to my draft →</button></div></dialog>
 </body>
 </html>
