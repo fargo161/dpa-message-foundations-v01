@@ -2,6 +2,12 @@
 import { spawnSync } from "node:child_process";
 
 const portableTests = [
+  "tests/refinement-edge.test.mjs",
+  "tests/refinement-language.test.mjs",
+  "tests/refinement-delivery.test.mjs",
+  "tests/refinement-policy.test.mjs",
+  "tests/refinement-acceptance.test.mjs",
+  "tests/refinement-ui.test.mjs",
   "tests/conversation-keyword-bank.test.mjs",
   "tests/conversation-delivery.test.mjs",
   "tests/conversation-language.test.mjs",

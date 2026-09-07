@@ -70,7 +70,25 @@ function actionCard(state, key) {
   if (state.counteroffer && (action.intent.action === "DEAL" || (action.intent.action === "ASK" && key !== "CLARIFY_OFFER"))) {
     description += " Sending this move replaces or closes the current offer; browsing does not.";
   }
-  return { ...action, description, available: eligibility.allowed, reason: eligibility.reason };
+  const completion = actionCompletion(state, key, action.intent);
+  return { ...action, description, available: eligibility.allowed, reason: eligibility.reason, completion };
+}
+
+function actionCompletion(state, key, intent) {
+  if (intent.action !== "ASK" || key === "CLARIFY_OFFER") return null;
+  const observedKeys = {
+    VERIFY_SOURCE: "evidence:DIRECT_RECEIPT", PROBE_USEFULNESS: `relevance:${state.lore.privateFactId}`,
+    QUESTION_RECORD: "question:RECORD_ASSERTION", SMALL_TALK: "history:SHARED_LOADING_SHIFT", ACK_MISSED: "history:MISSED_CHECKIN",
+  };
+  const done = key === "DISCLOSE_FULL" ? state.lore.disclosure === "FULL"
+    : key === "DISCLOSE_PARTIAL" ? state.lore.disclosure !== "NONE"
+      : observedKeys[key] ? state.lore.progressKeys.includes(observedKeys[key])
+        : state.events.some(event => event.intent?.action === "ASK" && event.intent.topic === key);
+  const label = !done ? "Not yet discussed." : key === "DISCLOSE_FULL" ? "Exact detail already shared; repeating does not renew its value."
+    : key === "DISCLOSE_PARTIAL" ? "Category already shared; another hint adds no new information."
+      : observedKeys[key] ? "Already addressed; repeating cannot renew this step's progress."
+        : "Asked before; repeating still uses a turn.";
+  return { done, label };
 }
 
 function actionsFor(state, keys) {

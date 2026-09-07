@@ -13,6 +13,8 @@ import { openingFace, buildFaceTurn } from "../conversation/face/policy.mjs";
 import { buildPlayerFrame, renderPlayerFrame } from "../conversation/language/realizer.mjs";
 import { createLanguageAuthority } from "../conversation/encounter-language-authority.mjs";
 import { SCENARIO_OPTIONS, languageReadiness } from "../conversation/contracts.mjs";
+import { edgeView } from "../conversation/edge.mjs";
+import { describeDelivery } from "../conversation/delivery-description.mjs";
 
 // Only this adapter issues its bindings, after the ordinary engine validators.
 const languageAuthority = createLanguageAuthority();
@@ -96,7 +98,9 @@ export function previewIntent(state, input, { languageMode = "PRODUCTION" } = {}
   validateIntent(state, input);
   const line = authorizedPlayerLine(state, input, languageMode);
   return { runId: state.runId, version: state.events.length, playerText: line.text,
-    delivery: { vibeId: input.vibeId, intensity: input.intensity }, readiness: languageReadiness(languageMode) };
+    delivery: { vibeId: input.vibeId, intensity: input.intensity }, readiness: languageReadiness(languageMode),
+    renderingStatus: line.readiness,
+    deliveryDescription: describeDelivery({ vibeId: input.vibeId, intensity: input.intensity, action: input.action, topic: input.topic, renderingStatus: line.readiness }) };
 }
 
 export function transition(state, input, { languageMode = "PRODUCTION" } = {}) {
@@ -197,6 +201,8 @@ export function projectState(state, csrf, { languageMode = "PRODUCTION" } = {}) 
   return { csrf,
     play: { runId: state.runId, version: state.events.length, seed: state.seed, status: state.status,
       character: { id: "marcus", name: "Marcus ‘Broker’ Hill" }, scenario: SCENARIO_OPTIONS[0],
+      situation: { summary: `You owe Marcus $${state.obligations.existing} on the old account. You want more Contra.${hasLoreFact(state, "MISSED_CHECKIN") && state.lore.knowledge.player.includes("MISSED_CHECKIN") ? " You missed yesterday's check-in." : ""}${hasLoreFact(state, state.lore?.privateFactId) && state.lore.knowledge.player.includes(state.lore.privateFactId) ? " Information you hold may affect this conversation; track what has been shared in Your edge." : ""}`, objective: "Suggested challenge: acquire at least two Contra units using some new credit. Compare cash retained, new debt and repayment time; you can choose a smaller deal or walk away." },
+      edge: edgeView(state),
       face: structuredClone(state.events.at(-1)?.faces?.responding ?? openingFace()),
       metrics: { cash, debt, marcusStock, playerStock }, obligations: state.obligations,
       proposal: publicOffer(state.proposal), counteroffer: publicOffer(state.counteroffer), agreement: publicOffer(state.agreement), clues: state.clues,

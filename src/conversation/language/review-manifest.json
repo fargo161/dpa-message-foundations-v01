@@ -78,8 +78,8 @@
       "family": "REJECT_RISK",
       "coverageKind": "AUTHORED_REPLY_FAMILY",
       "samples": [
-        "That leaves too much riding on money you do not have yet. Bring more cash, ask for less stock, or shorten the wait. A bigger promise is not security.",
-        "Too much of that depends on money you do not have. Put down more cash, reduce the stock, or shorten the repayment time. Promising more does not make it secure."
+        "I am not agreeing to this proposal as things stand. We can discuss the terms or how we got here. Promising more money later is not the same as security.",
+        "I am not saying yes to this. We can talk about the terms or where this conversation stands. More promised money is still a promise."
       ]
     },
     {
@@ -183,7 +183,7 @@
       "coverageKind": "AUTHORED_REPLY_FAMILY",
       "samples": [
         "I remember that shift. We got the loading done. We still have an unpaid account to discuss.",
-        "Yes, I remember getting that loading done with you. The unpaid account still needs discussing."
+        "We got the loading done, all right. Still have your account to settle."
       ]
     },
     {
@@ -191,7 +191,7 @@
       "coverageKind": "AUTHORED_REPLY_FAMILY",
       "samples": [
         "You missed it. I appreciate you naming that plainly. The money is still owed.",
-        "You did miss the check-in. I appreciate the plain acknowledgment. It does not clear the debt."
+        "You did. I appreciate you saying it. The money is still owed."
       ]
     },
     {
@@ -199,7 +199,7 @@
       "coverageKind": "AUTHORED_REPLY_FAMILY",
       "samples": [
         "The intake was signed off. If there is a specific discrepancy, it can be checked. A question alone does not settle it.",
-        "That intake has a sign-off. A specific discrepancy can be checked, but asking the question does not settle the matter."
+        "There is a sign-off. Give me a specific discrepancy to check; the question alone does not settle it."
       ]
     },
     {
@@ -207,7 +207,7 @@
       "coverageKind": "AUTHORED_REPLY_FAMILY",
       "samples": [
         "The header and signature check out. That tells me where the document came from; it does not settle everything the document might mean.",
-        "The header and signature are valid. That establishes the document's source. It does not establish everything its contents might imply."
+        "That header and signature check out. I know where it came from. What it means is another question."
       ]
     },
     {
@@ -223,7 +223,7 @@
       "coverageKind": "AUTHORED_REPLY_FAMILY",
       "samples": [
         "Checked collection instructions could save a wasted journey. That is a reason to listen, not a promise of a concession.",
-        "Verified collection instructions might save a wasted trip. I have reason to hear you out; I have not promised better terms."
+        "Could save me a wasted trip, if it checks out. I am listening; I have not promised better terms."
       ]
     },
     {
@@ -231,7 +231,7 @@
       "coverageKind": "AUTHORED_REPLY_FAMILY",
       "samples": [
         "A concrete count discrepancy would warrant rechecking the intake summary. That does not establish who is responsible.",
-        "A specific mismatch in the count would justify checking the intake summary again. It would not tell us who caused it."
+        "A specific mismatch is worth checking against the summary. It would not tell me who caused it."
       ]
     },
     {
@@ -739,6 +739,41 @@
       "text": "WELL…\nI still owe you money, and future profits are uncertain. How does that affect another deal?",
       "readiness": "AUTHORING_PREVIEW_CONTEXT_NEUTRAL",
       "variantId": "player:ASK:DEBT:DE:OVERT:0"
+    }
+  ],
+  "refinementRevision": "conversation-refinement-v02",
+  "sharedDetailSamples": [
+    {
+      "family": "BELIEF_CHALLENGED",
+      "coverageKind": "ALREADY_SHARED_DETAIL",
+      "samples": [
+        "The intake was signed off. The mismatch you showed me can be checked against it. That does not establish who is responsible.",
+        "There is a sign-off. I can check the mismatch you showed me against it; that still does not tell us who caused it."
+      ]
+    },
+    {
+      "family": "SOURCE_VERIFIED",
+      "coverageKind": "ALREADY_SHARED_DETAIL",
+      "samples": [
+        "The header and signature check out. That supports the source of the detail you already showed me; it does not settle everything it means.",
+        "The header and signature check out. Now I can place the detail you showed me. That still does not settle what it means."
+      ]
+    },
+    {
+      "family": "RELEVANCE_PICKUP",
+      "coverageKind": "ALREADY_SHARED_DETAIL",
+      "samples": [
+        "The collection detail you showed me could save a wasted journey if it checks out. You have already shared it; I have not promised a concession.",
+        "That detail you showed me could save a trip if it checks out. I have it now. I have not promised better terms."
+      ]
+    },
+    {
+      "family": "RELEVANCE_COUNT",
+      "coverageKind": "ALREADY_SHARED_DETAIL",
+      "samples": [
+        "The count mismatch you showed me warrants checking the intake summary. It does not establish who is responsible or create a new agreement.",
+        "That mismatch you showed me needs checking against the summary. It tells me neither who caused it nor what deal to make."
+      ]
     }
   ]
 }

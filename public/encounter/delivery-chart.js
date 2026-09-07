@@ -4,6 +4,11 @@ const CUES = Object.freeze([
   ["B", "Belligerence"], ["A", "Aggression"], ["S", "Sociability"], ["E", "Empathy"], ["D", "Deception"],
 ]);
 const INTENSITY_LABELS = { SUBTLE: "Subtle", BALANCED: "Balanced", OVERT: "Overt" };
+const INTENSITY_SUMMARIES = {
+  SUBTLE: "Keep the selected manner understated.",
+  BALANCED: "Make the selected manner clear without emphasizing it heavily.",
+  OVERT: "Make the selected manner strongly apparent.",
+};
 
 export function createDeliveryChart(container, { vibes, intensities, onChange, storage, chartContainer }) {
   const doc = container.ownerDocument;
@@ -59,19 +64,15 @@ export function createDeliveryChart(container, { vibes, intensities, onChange, s
   }
   const description = element("p", "dc-description");
   description.setAttribute("aria-live", "polite");
-  const intensityGroup = element("fieldset", "dc-intensity");
-  intensityGroup.append(element("legend", "", "Intensity"));
-  for (const intensity of intensities) {
-    const button = element("button", "dc-intensity-button", INTENSITY_LABELS[intensity]);
-    button.type = "button";
-    button.dataset.intensity = intensity;
-    intensityGroup.append(button);
-  }
+  const menuDescription = menuRoot ? element("p", "dc-description dc-menu-description") : null;
+  if (menuDescription) menuDescription.setAttribute("aria-live", "polite");
+  const intensityGroup = intensityControls();
   const storageNote = element("p", "dc-storage-note", "Shortcuts remember submitted speaking turns in this browser.");
   root.append(intro, toolbar, shortcutNote, shortcuts);
   if (menuRoot) {
     menuRoot.setAttribute("aria-label", "All BASED vibes");
-    menuRoot.append(chartLabel, chart);
+    menuRoot.append(chartLabel, menuDescription, intensityControls(), chart);
+    menuRoot.append(element("p", "dc-delivery-note", "These describe your manner, not a promised reaction. Read the exact-line preview for the wording used on this turn."));
     chartContainer.replaceChildren(menuRoot);
     menuRoot.addEventListener("click", handleClick);
   } else root.append(chartLabel, chart);
@@ -89,6 +90,18 @@ export function createDeliveryChart(container, { vibes, intensities, onChange, s
     if (className) node.className = className;
     if (text !== undefined) node.textContent = text;
     return node;
+  }
+  function intensityControls() {
+    const group = element("fieldset", "dc-intensity");
+    group.append(element("legend", "", "Intensity"));
+    for (const intensity of intensities) {
+      const button = element("button", "dc-intensity-button", INTENSITY_LABELS[intensity]);
+      button.type = "button";
+      button.dataset.intensity = intensity;
+      button.title = INTENSITY_SUMMARIES[intensity];
+      group.append(button);
+    }
+    return group;
   }
   function vibeButton(vibe, source) {
     const button = element("button", "dc-vibe");
@@ -117,10 +130,11 @@ export function createDeliveryChart(container, { vibes, intensities, onChange, s
   function renderSelection() {
     for (const area of [root, menuRoot].filter(Boolean)) {
       for (const button of area.querySelectorAll("[data-vibe]")) button.setAttribute("aria-pressed", String(button.dataset.vibe === selection.vibeId));
+      for (const button of area.querySelectorAll("[data-intensity]")) button.setAttribute("aria-pressed", String(button.dataset.intensity === selection.intensity));
     }
-    for (const button of root.querySelectorAll("[data-intensity]")) button.setAttribute("aria-pressed", String(button.dataset.intensity === selection.intensity));
     const vibe = vibes.find((entry) => entry.vibeId === selection.vibeId);
-    description.textContent = `${vibe.name} · ${INTENSITY_LABELS[selection.intensity]} — ${vibe.fusionLogic ?? "Selected delivery."}`;
+    description.textContent = `${vibe.name} · ${INTENSITY_LABELS[selection.intensity]} — ${vibe.fusionLogic ?? "Selected delivery."} ${INTENSITY_SUMMARIES[selection.intensity]}`;
+    if (menuDescription) menuDescription.textContent = description.textContent;
   }
   function persist() {
     const saved = writeDeliveryPreferences(storage, preferences);

@@ -37,8 +37,38 @@ function renderFace(face, phase) {
   $("receiving-phase").classList.toggle("active", phase === "receiving");
   $("responding-phase").classList.toggle("active", phase === "responding");
 }
+function inspectFaces(event, index) {
+  if (busy || !event?.faces) return;
+  $("face-review-title").textContent = `TURN ${index + 1} · SAVED REACTIONS`;
+  $("face-review-pair").replaceChildren(...["receiving", "responding"].map(phase => {
+    const panel = node("section"), portrait = node("div"), face = event.faces[phase];
+    portrait.className = "review-portrait";
+    createFaceRenderer(portrait).render(snapshot.options.faceCatalog, face, character());
+    panel.append(node("h3", phase === "receiving" ? "01 · HEARS YOU" : "02 · RESPONDS"), portrait,
+      node("p", face?.visibleCaption || ""), node("blockquote", phase === "receiving" ? `You: ${event.playerText}` : `${character().name}: ${event.marcusText}`));
+    return panel;
+  }));
+  $("face-review").showModal(); $("close-face-review").focus();
+}
+function renderEdge() {
+  const edge = snapshot.play.edge, box = $("edge-note"); box.replaceChildren();
+  if (!edge) { box.append(node("strong", "What you know"), node("p", snapshot.play.situation?.summary || "Review the conversation for what has been said.")); return; }
+  box.append(node("strong", edge.title));
+  for (const [label, status] of [["Disclosure", edge.disclosure], ["Source", edge.source], ["Relevance", edge.relevance]]) {
+    if (status?.label) box.append(node("p", `${label}: ${status.label}`));
+  }
+  if (edge.opening?.status !== "NONE" && edge.opening?.label) { const opening = node("p", edge.opening.label); opening.className = "edge-opening"; box.append(opening); }
+  const evidence = node("details"); evidence.append(node("summary", "Exact evidence and observations"), node("p", edge.detail));
+  for (const observation of edge.observations || []) evidence.append(node("p", observation));
+  box.append(evidence);
+  if (edge.action) {
+    const action = node("button", edge.action.label); action.type = "button"; action.dataset.interact = "";
+    action.addEventListener("click", () => chooseAction(edge.action.keywordId, edge.action.contextActionId)); box.append(action);
+  }
+}
 const turnPlayer = createTurnPlayer({
   onReceiving(event) {
+    $("response-announcement").textContent = ""; $("latest-feedback").hidden = true;
     $("player-line").hidden = false; $("player-line").textContent = `You: ${event.playerText}`;
     $("npc-line").textContent = "…";
     renderFace(event.faces?.receiving || snapshot.play.face, "receiving");
@@ -47,6 +77,7 @@ const turnPlayer = createTurnPlayer({
   onResponding(event) {
     if (pendingSnapshot) { applySnapshot(pendingSnapshot); pendingSnapshot = null; }
     renderFace(event.faces?.responding || snapshot.play.face, "responding");
+    $("response-announcement").textContent = `${character().name}: ${event.marcusText} ${event.faces?.responding?.visibleCaption || ""} ${event.feedback || ""}`;
   },
   onFinish() { $("skip").hidden = true; },
 });
@@ -60,6 +91,7 @@ function refreshControls() {
   setUnavailable("accept", !offer() || !available("ACCEPT"));
   setUnavailable("clarify", !findAction(intent => intent.action === "ASK" && intent.topic === "CLARIFY_OFFER"));
   setUnavailable("propose", !findAction(intent => intent.action === "DEAL"));
+  setUnavailable("inspect-last", !snapshot?.play.events.at(-1)?.faces);
   document.querySelectorAll("[data-interact]").forEach(element => { element.disabled = !ready || element.dataset.unavailable === "true"; });
   $("seed").disabled = !ready; $("scenario").disabled = !ready; $("reload").disabled = busy;
   const isDeal = selectedAction()?.intent.action === "DEAL";
@@ -85,6 +117,7 @@ function actionButton(keyword, action, full) {
   button.disabled = !action.available; button.setAttribute("aria-pressed", String(keyword.id === keywordId && action.id === actionId));
   button.title = action.reason || action.description;
   if (full) button.append(node("small", action.available ? action.description : action.reason));
+  if (action.completion?.done) { const badge = node("small", action.completion.label || "Already discussed"); badge.className = "completion"; button.append(badge); }
   button.addEventListener("click", () => chooseAction(keyword.id, action.id)); return button;
 }
 function renderKeywords() {
@@ -98,12 +131,12 @@ function renderKeywords() {
   $("keyword-title").textContent = keyword?.label || "No known subjects"; $("keyword-summary").textContent = keyword?.summary || "";
   $("subject-label").textContent = keyword ? `// ${keyword.label}` : "";
   $("keyword-actions").replaceChildren(...actions.map(action => actionButton(keyword, action, true)));
-  const suggestions = actions.filter(action => action.available).slice(0, 3);
+  const suggestions = actions.filter(action => action.available).sort((a, b) => Number(Boolean(a.completion?.done)) - Number(Boolean(b.completion?.done))).slice(0, 3);
   // Keep a chosen fourth-or-later authored action visible when the menu closes.
   const chosen = selectedAction(); if (chosen?.available && !suggestions.includes(chosen)) suggestions.splice(2, 1, chosen);
   $("context-actions").replaceChildren(...suggestions.map(action => actionButton(keyword, action, false)));
   $("action-description").textContent = chosen?.description || "Open More things to say to choose a subject.";
-  $("edge-note").replaceChildren(node("strong", keyword?.label || "Your knowledge"), node("p", keyword?.summary || "Known subjects are available in your keyword bank."));
+  renderEdge();
   $("draft-warning").textContent = chosen?.intent.action === "ACCEPT" ? "This confirms the exact offer shown above, including any attached information. Acceptance ends the encounter." : chosen?.description || "";
   refreshControls();
 }
@@ -122,10 +155,12 @@ function fillOptions() {
 function draftTerms() { return Object.fromEntries(termKeys.map(key => [key, $(key).value === "" ? NaN : Number($(key).value)])); }
 function updateDraft() {
   if (!snapshot) return;
-  const terms = draftTerms(), expected = terms.units * snapshot.options.price - terms.upfront;
+  const input = draftTerms(), expected = input.units * snapshot.options.price - input.upfront;
+  $("repayment").value = commercial() && Number.isFinite(expected) ? String(expected) : "";
+  const terms = draftTerms();
   const isDeal = selectedAction()?.intent.action === "DEAL";
-  $("repayment").setCustomValidity(isDeal && terms.repayment !== expected ? `Principal must be ${expected}: units × price minus cash now.` : "");
-  $("draft-summary").textContent = Number.isFinite(expected) ? `Required principal: ${expected}. New repayment: ${terms.repayment + terms.extra}. Existing debt stays separate.` : "Enter whole-number terms.";
+  $("upfront").setCustomValidity(isDeal && expected < 0 ? "Cash now cannot exceed the price of the requested Contra." : "");
+  $("draft-summary").textContent = Number.isFinite(expected) ? `Principal = ${terms.units} × ${snapshot.options.price} − ${terms.upfront} = ${expected}. If confirmed: ${snapshot.play.metrics.cash - terms.upfront} cash retained; ${terms.repayment + terms.extra} new repayment in ${terms.days} days. Existing debt stays separate.` : "Enter whole-number terms.";
   const information = snapshot.options.informationOptions?.find(entry => entry.id === $("information").value);
   $("information-reason").textContent = information?.reason || "";
   refreshControls();
@@ -142,6 +177,7 @@ function draftKey() { return snapshot ? JSON.stringify({ runId: snapshot.play.ru
 function invalidatePreview() { previewSequence += 1; preview = null; globalThis.clearTimeout(previewTimer); }
 function schedulePreview() {
   invalidatePreview(); refreshControls();
+  $("delivery-description").replaceChildren();
   if (busy || !snapshot || !synchronized) return;
   if (snapshot.play.status !== "OPEN") { $("preview-state").textContent = "Conversation complete"; $("player-preview").textContent = "Review your conversation or start a new encounter."; return; }
   $("preview-state").textContent = "Preparing your line…"; $("player-preview").textContent = "…";
@@ -160,6 +196,8 @@ async function requestPreview(sequence) {
     if (sequence !== previewSequence || busy || key !== draftKey() || data.runId !== snapshot.play.runId || data.version !== snapshot.play.version) return;
     preview = { key, body, text: data.playerText };
     $("player-preview").textContent = data.playerText; $("preview-state").textContent = "Ready · review, then send";
+    const manner = data.deliveryDescription;
+    if (manner) $("delivery-description").replaceChildren(node("strong", manner.label), ...[manner.description, manner.note, manner.applicability].filter(Boolean).map(text => node("p", text)));
   } catch (error) {
     if (sequence !== previewSequence || key !== draftKey()) return;
     preview = null; $("player-preview").textContent = error.message; $("preview-state").textContent = "Draft needs attention";
@@ -168,9 +206,15 @@ async function requestPreview(sequence) {
 }
 function renderOffer() {
   const box = $("current-offer"), current = offer(); box.replaceChildren();
+  $("accept-reason").textContent = "";
   if (!current) { box.append(node("p", "No offer is open. Build your terms or ask what would make an agreement possible.")); return; }
   box.append(node("p", current.source === "APPROVED_PROPOSAL" ? `${character().name} approved your proposal. It still needs your confirmation.` : `${character().name} offers these terms.`), termTable(current.terms));
   box.append(node("p", `Confirmation transfers ${current.terms.upfront} cash and ${current.terms.units} Contra, adding ${current.terms.repayment} principal and ${current.terms.extra} additional repayment due within ${current.terms.days} days. Existing debt remains owed.`));
+  box.append(node("p", `After confirmation: ${snapshot.play.metrics.cash - current.terms.upfront} cash retained; ${current.terms.repayment + current.terms.extra} new repayment due.`));
+  const proposal = [...snapshot.play.events].reverse().find(event => event.action === "DEAL");
+  if (proposal && current.source !== "APPROVED_PROPOSAL") {
+    const comparison = node("details"); comparison.append(node("summary", "Compare with your last spoken proposal"), node("p", proposal.playerText)); box.append(comparison);
+  }
   if (current.informationExchange) box.append(node("p", `On acceptance: ${current.informationExchange.summary}`));
   $("accept-reason").textContent = "Clarification preserves this offer unless the conversation ends. Other discussion or a new proposal replaces it.";
 }
@@ -182,6 +226,10 @@ function renderPlay() {
   const statuses = { OPEN: "Conversation open", AGREED: "Agreement reached", WITHDRAWN: "You walked away", ENDED: "Conversation ended" };
   $("encounter-status").textContent = statuses[play.status] || play.status;
   $("npc-line").textContent = latest?.marcusText || `${who.name} waits for your opening words.`;
+  $("latest-feedback").hidden = !latest?.feedback; $("latest-feedback").textContent = latest?.feedback || "";
+  $("situation").hidden = !play.situation;
+  $("situation-summary").textContent = play.situation?.summary || "";
+  $("situation-objective").textContent = play.situation?.objective || "";
   $("player-line").hidden = !latest; $("player-line").textContent = latest ? `You: ${latest.playerText}` : "";
   renderFace(play.face, "responding");
   $("opening").replaceChildren(publicDetails(play.conversation?.opening || play.lore?.briefing || []));
@@ -189,7 +237,7 @@ function renderPlay() {
   $("deal-fields").hidden = !commercial(); $("workspace-title").textContent = commercial() ? "BUILD THE OFFER" : "BUILD YOUR MESSAGE";
   $("price-note").textContent = commercial() ? `${snapshot.options.price} PER CONTRA · OLD DEBT SEPARATE` : "SUBJECT · INTENTION · DELIVERY";
   renderOffer(); renderKeywords(); updateDraft();
-  $("conversation").replaceChildren(...play.events.map((event, index) => { const article = node("article"); article.append(node("h3", `Turn ${index + 1}`), node("p", `You: ${event.playerText}`), node("p", `${who.name}: ${event.marcusText}`)); if (event.feedback) { const feedback = node("p", event.feedback); feedback.className = "turn-feedback"; article.append(feedback); } return article; }));
+  $("conversation").replaceChildren(...play.events.map((event, index) => { const article = node("article"); article.append(node("h3", `Turn ${index + 1}`), node("p", `You: ${event.playerText}`), node("p", `${who.name}: ${event.marcusText}`)); if (event.feedback) { const feedback = node("p", event.feedback); feedback.className = "turn-feedback"; article.append(feedback); } if (event.faces) { const inspect = node("button", "Inspect both reactions"); inspect.type = "button"; inspect.dataset.interact = ""; inspect.addEventListener("click", () => inspectFaces(event, index)); article.append(inspect); } return article; }));
   $("resolution").hidden = play.status === "OPEN";
   $("agreement").replaceChildren(publicDetails(play.agreement), publicDetails(play.obligations));
   $("outcome").replaceChildren(publicDetails(play.conversation?.outcomeQuality));
@@ -249,4 +297,7 @@ $("information").addEventListener("change", () => { const match = findAction(int
 termKeys.forEach(key => $(key).addEventListener("input", () => { updateDraft(); schedulePreview(); }));
 $("restart-form").addEventListener("submit", event => { event.preventDefault(); if (busy || !snapshot) return; void submit("/api/restart", { requestId: crypto.randomUUID(), runId: snapshot.play.runId, version: snapshot.play.version, seed: $("seed").value, scenarioId: $("scenario").value }); });
 $("reload").addEventListener("click", () => { void load(); }); $("skip").addEventListener("click", () => turnPlayer.skip());
+$("inspect-last").addEventListener("click", () => inspectFaces(snapshot.play.events.at(-1), snapshot.play.events.length - 1));
+$("close-face-review").addEventListener("click", () => $("face-review").close());
+$("face-review").addEventListener("close", () => $("inspect-last").focus());
 void load();

@@ -53,7 +53,7 @@ export function renderAuthoredFixtureLine(text, { vibeId = "EA", intensity = "BA
   const variant = deterministicVariant(variantSeed);
   return {
     text: mode === "PRODUCTION" ? text : presentPlayerText(text, vibeId, intensity, variant),
-    readiness: mode === "PRODUCTION" ? "PRODUCTION_SAFETY_FALLBACK" : "AUTHORING_PREVIEW",
+    readiness: mode === "PRODUCTION" ? "PRODUCTION_SAFETY_FALLBACK" : CONTEXT_NEUTRAL_VIBES.includes(vibeId) ? "AUTHORING_PREVIEW_CONTEXT_NEUTRAL" : "AUTHORING_PREVIEW",
     variantId: `avery-fixture:${FIXTURE_LINES.indexOf(text)}:${mode === "PRODUCTION" ? "canonical" : `${vibeId}:${intensity}:${variant}`}`,
   };
 }

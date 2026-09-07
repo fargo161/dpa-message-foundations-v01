@@ -51,7 +51,8 @@ test("conversation: preview has no effects and its request can still commit exac
     const response = await api.post("/api/preview", input);
     assert.equal(response.status, 200, await response.clone().text());
     const preview = await response.json();
-    assert.deepEqual(Object.keys(preview).sort(), ["delivery", "playerText", "readiness", "runId", "version"]);
+    assert.deepEqual(Object.keys(preview).sort(), ["delivery", "deliveryDescription", "playerText", "readiness", "renderingStatus", "runId", "version"]);
+    assert.deepEqual(Object.keys(preview.deliveryDescription).sort(), ["applicability", "description", "label", "note"]);
     assert.equal(preview.runId, before.play.runId);
     assert.equal(preview.version, before.play.version);
     assert.ok(preview.playerText.length > 10);

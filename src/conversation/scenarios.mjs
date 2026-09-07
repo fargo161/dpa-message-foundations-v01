@@ -3,6 +3,7 @@ import { EncounterError, exactObject, validateIdentity } from "../encounter/engi
 import { openingFace, buildFaceTurn } from "./face/policy.mjs";
 import { SCENARIO_OPTIONS, languageReadiness } from "./contracts.mjs";
 import { renderAuthoredFixtureLine } from "./language/realizer.mjs";
+import { describeDelivery } from "./delivery-description.mjs";
 
 // An intentionally bounded, newly authored portability fixture. Avery's explanation
 // is a reported claim, not independent evidence that the explanation is true.
@@ -51,7 +52,8 @@ export function previewBrokenPromise(state, input, { languageMode = "PRODUCTION"
   validateFixture(state, input);
   const line = renderAuthoredFixtureLine(playerLines[input.action === "WALK" ? "WALK" : input.topic], { vibeId: input.vibeId, intensity: input.intensity, mode: languageMode, variantSeed: `${state.seed}:${state.events.length}` });
   return { runId: state.runId, version: state.events.length, playerText: line.text,
-    delivery: { vibeId: input.vibeId, intensity: input.intensity }, readiness: languageReadiness(languageMode) };
+    delivery: { vibeId: input.vibeId, intensity: input.intensity }, readiness: languageReadiness(languageMode), renderingStatus: line.readiness,
+    deliveryDescription: describeDelivery({ vibeId: input.vibeId, intensity: input.intensity, action: input.action, topic: input.topic, renderingStatus: line.readiness }) };
 }
 
 export function transitionBrokenPromise(state, input, options = {}) {
@@ -85,6 +87,7 @@ export function transitionBrokenPromise(state, input, options = {}) {
 export function projectBrokenPromise(state, csrf, { languageMode = "PRODUCTION" } = {}) {
   return { csrf,
     play: { runId: state.runId, version: state.events.length, seed: state.seed, status: state.status, character, scenario: SCENARIO_OPTIONS[1],
+      edge: null, situation: { summary: opening, objective: "Ask what happened, ask for acknowledgment, or choose to leave. Avery's explanation remains an unverified account." },
       face: structuredClone(state.events.at(-1)?.faces?.responding ?? openingFace(character.id)), metrics: {}, obligations: null, proposal: null, counteroffer: null, agreement: null, clues: [],
       lore: { briefing: [opening], playerKnowledge: [...state.knowledge], disclosed: [], evidence: state.statements.map(s => s.text), informationOptions: [] },
       conversation: { phase: state.status === "OPEN" ? "CONVERSATION" : "RESOLUTION", opening: [opening], nextSteps: ["Choose a known subject and decide what to say."], outcomeQuality: null },

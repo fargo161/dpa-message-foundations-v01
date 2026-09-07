@@ -3,6 +3,11 @@ import { PERSONALITY } from "./marcus-profile.mjs";
 
 const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
 const sameTerms = (a, b) => ["units", "upfront", "repayment", "extra", "days"].every((key) => a?.[key] === b?.[key]);
+// The financial part of the existing proposal score, with social interpretation
+// and information deliberately excluded. Use the same valuation for concessions.
+const financialValue = ({ units, upfront, repayment, extra, days }) =>
+  upfront / (units * PERSONALITY.policy.price) * 35 - repayment * 0.045
+  + Math.min(extra, repayment * 0.2, 24) * 0.5 - (repayment > 0 ? days * 0.5 : 0);
 
 // Pure interpretation of validated intent. The engine owns hard validation and transfers.
 export function evaluateTurn(state, intent, information = { scoreBonus: 0, social: { confidence: 0, tension: 0 }, progressKey: null, exchange: null }) {
@@ -31,7 +36,7 @@ export function evaluateTurn(state, intent, information = { scoreBonus: 0, socia
       const terms = intent.terms;
       const noWorse = terms.units <= last.units && terms.upfront >= last.upfront && terms.repayment <= last.repayment && terms.days <= last.days;
       const newRecord = terms.upfront > Math.max(...prior.map(t => t.upfront)) || terms.units < Math.min(...prior.map(t => t.units)) || terms.days < Math.min(...prior.map(t => t.days));
-      if (noWorse && newRecord) progressKey = `CONCESSION:${terms.units}:${terms.upfront}:${terms.days}`;
+      if (noWorse && newRecord && financialValue(terms) >= financialValue(last)) progressKey = `CONCESSION:${terms.units}:${terms.upfront}:${terms.days}`;
     }
   }
   const meaningfulProgress = !!progressKey && !state.events.some(event => event.progressKey === progressKey);
@@ -91,7 +96,7 @@ export function evaluateTurn(state, intent, information = { scoreBonus: 0, socia
   const price = units * config.price;
   const cashShare = upfront / price;
   const exposure = state.metrics.debt + repayment + extra;
-  const score = Math.round((cashShare * 35 - repayment * 0.045 + Math.min(extra, repayment * 0.2, 24) * 0.5 - (repayment > 0 ? days * 0.5 : 0) + confidence * 0.2 - tension * 0.22 + 4 + information.scoreBonus) * 100) / 100;
+  const score = Math.round((financialValue(intent.terms) + confidence * 0.2 - tension * 0.22 + 4 + information.scoreBonus) * 100) / 100;
   const creditDefensible = repayment === 0 || (cashShare >= config.minimumUpfrontShare && repayment <= config.maximumNewPrincipal && exposure <= config.maximumExposure && days <= config.maximumCreditDays);
   Object.assign(derived, { score, informationBonus: information.scoreBonus, cashShare, exposure, creditDefensible, maximumNewPrincipal: config.maximumNewPrincipal, maximumExposure: config.maximumExposure, maximumCreditDays: config.maximumCreditDays, projectedConfidence: confidence, projectedTension: tension });
   reasons.push(`Derived proposal score ${score}; approval needs ${config.acceptThreshold} and defensible credit.`, "Extra repayment receives limited credit: a large promise cannot replace cash or erase the old debt.");
@@ -104,13 +109,17 @@ export function evaluateTurn(state, intent, information = { scoreBonus: 0, socia
   const counterPrice = counterUnits * config.price;
   const counterUpfront = Math.min(state.metrics.cash, counterPrice, Math.max(upfront, Math.ceil(counterPrice * config.counterUpfrontShare)));
   const counterRepayment = counterPrice - counterUpfront;
-  const counterExtra = Math.max(0, Math.ceil(counterRepayment * 0.15) - (information.exchange ? 6 : 0));
-  const counterTerms = { units: counterUnits, upfront: counterUpfront, repayment: counterRepayment, extra: counterExtra, days: Math.min(days, 10) };
+  const counterDays = Math.min(days, 10);
+  const unchangedSecurity = counterUnits === units && counterUpfront === upfront && counterRepayment === repayment && counterDays === days;
+  // A failed social/approval score cannot buy a fee-only discount. If the
+  // generated offer then matches the proposal, the existing gate rejects it.
+  const counterExtra = Math.max(unchangedSecurity ? extra : 0, Math.ceil(counterRepayment * 0.15) - (information.exchange ? 6 : 0), 0);
+  const counterTerms = { units: counterUnits, upfront: counterUpfront, repayment: counterRepayment, extra: counterExtra, days: counterDays };
   const counterPossible = counterUnits > 0 && counterUpfront / counterPrice >= config.minimumUpfrontShare && counterRepayment <= config.maximumNewPrincipal && state.metrics.debt + counterRepayment + counterExtra <= config.maximumExposure;
   if (counterPossible && tension < 65 && score >= config.counterThreshold && !sameTerms(counterTerms, intent.terms)) {
     result.outcome = "COUNTER";
     result.counterTerms = counterTerms;
-    reasons.push("He offers a smaller or better secured arrangement: limited stock, meaningful cash now, and at most ten days.");
+    reasons.push("He offers revised terms within his credit limits; compare the quantity, cash, principal, extra and deadline before confirming.");
     if (state.quirk === "final_say") result.clue = quirk.clue;
   } else {
     result.outcome = "REJECT";

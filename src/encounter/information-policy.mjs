@@ -79,10 +79,10 @@ export function resolveInformation(state, intent) {
   if (intent.action !== "ASK") return result;
   if (intent.topic === "SMALL_TALK") {
     if (progress("history:SHARED_LOADING_SHIFT")) { result.social = { confidence: 1, tension: -2 }; cause("HISTORY_INVOKED", ["SHARED_LOADING_SHIFT"], "A grounded cooperative memory makes initial contact easier."); }
-    result.feedback = "The shared shift is a real point of contact. It does not settle the unpaid account, and repeating it will not add goodwill.";
+    result.feedback = result.progressKey ? "The shared shift is a real point of contact. It does not settle the unpaid account, and repeating it will not add goodwill." : "You already discussed the shared shift. Repeating it adds no new goodwill; the unpaid account remains.";
   } else if (intent.topic === "ACK_MISSED") {
     if (progress("history:MISSED_CHECKIN")) { result.social = { confidence: 3, tension: -2 }; cause("HISTORY_ACKNOWLEDGED", ["MISSED_CHECKIN", "OLD_ACCOUNT"], "A specific acknowledgment helps confidence without modifying any obligation."); }
-    result.feedback = "Naming the missed check-in addresses something concrete. The old debt still stands; promises about future profit are still uncertain.";
+    result.feedback = result.progressKey ? "Naming the missed check-in addresses something concrete. The old debt still stands; promises about future profit are still uncertain." : "You already acknowledged the missed check-in. Repeating the acknowledgment supplies no new progress; the old debt still stands.";
   } else if (intent.topic === "VERIFY_SOURCE") {
     if (progress("evidence:DIRECT_RECEIPT")) {
       lore.beliefs.source = "CHECKED";
@@ -95,7 +95,7 @@ export function resolveInformation(state, intent) {
       evidence("SOURCE_VERIFIED", lore.disclosure === "FULL" ? "Marcus recognizes the depot header and signature; the already disclosed detail now has a checked source." : "Marcus recognizes the depot header and signature. He has checked the source, not the covered operative detail.", ["DIRECT_RECEIPT"]);
       result.social.confidence = 1;
     }
-    result.feedback = "The document's source checks out. The exact line remains covered unless you have already disclosed it; a genuine document does not by itself prove a useful deal or wrongdoing.";
+    result.feedback = `${result.progressKey ? "The document's source checks out." : "The source was already checked; asking again supplies no new verification."} ${lore.disclosure === "FULL" ? "Marcus already has the exact detail. Checking its source cannot restore private exchange value or reopen a reveal opportunity." : "The exact detail remains private."} A genuine document does not by itself prove a useful deal or wrongdoing.`;
   } else if (intent.topic === "PROBE_USEFULNESS") {
     hint();
     if (progress(`relevance:${lore.privateFactId}`)) {
@@ -106,15 +106,15 @@ export function resolveInformation(state, intent) {
         : "He says a concrete discrepancy would warrant rechecking the intake summary. That does not establish blame or guarantee concessions.", ["LEDGER_CLOSING", lore.variant === "POSITIVE" ? "PICKUP_NEED" : "RECORD_ASSERTION"]);
       else evidence("RELEVANCE_UNCERTAIN", "He does not identify a current use for that category of information.", ["LEDGER_CLOSING"]);
     }
-    result.feedback = lore.beliefs.relevance === "POSSIBLY_USEFUL" ? `You have an indication that this category matters to his current business, not a complete read of what he values. ${lore.disclosure === "FULL" ? "The exact detail has already been disclosed; discovering relevance now does not restore its private value." : "The exact detail is still yours to disclose or retain."}` : "The source may be genuine, but a current use for this information has not been established.";
+    result.feedback = `${result.progressKey ? "" : "You already asked about usefulness; repeating it supplies no new evidence. "}${lore.beliefs.relevance === "POSSIBLY_USEFUL" ? `You have an indication that this category matters to his current business, not a complete read of what he values. ${lore.disclosure === "FULL" ? "The exact detail has already been disclosed; discovering relevance now does not restore its private value or reopen a reveal opportunity." : "The exact detail is still yours to disclose or retain."}` : "The source may be genuine, but a current use for this information has not been established."}`;
   } else if (intent.topic === "QUESTION_RECORD") {
     hint();
     if (progress("question:RECORD_ASSERTION")) {
       result.social.tension = 2;
       evidence("RECORD_QUESTIONED", "He maintains that the intake was signed off, but says a specific discrepancy can be checked. You have questioned a record, not proved misconduct.", ["RECORD_ASSERTION"]);
-      cause("BELIEF_CHALLENGED", ["RECORD_ASSERTION"], "The asserted reconciliation has been questioned; the hidden receipt detail has not yet been supplied.");
+      cause("BELIEF_CHALLENGED", ["RECORD_ASSERTION"], lore.disclosure === "FULL" ? "The asserted reconciliation has been questioned against an already disclosed mismatch; no fresh reveal opportunity is created." : "The asserted reconciliation has been questioned; the hidden receipt detail has not yet been supplied.");
     }
-    result.feedback = "The record question puts him on the spot. A checked, relevant detail could now redirect the discussion, but an accusation is likely to harden it.";
+    result.feedback = `${result.progressKey ? "You questioned the intake record; that does not establish blame." : "You already questioned the record. Repeating the question supplies no new progress."} ${lore.disclosure === "FULL" ? "Marcus already has the mismatch. The record can still be checked and ordinary terms discussed, but further preparation cannot replay the reveal or create a fresh opening." : "Checking the source and its relevance can help you decide how to handle the detail you still hold. No concession is promised."}`;
   } else if (intent.topic === "DISCLOSE_PARTIAL") {
     const newlyShared = hint();
     if (newlyShared) {

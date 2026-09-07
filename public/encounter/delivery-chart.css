@@ -30,5 +30,8 @@
 .dc-chart.dc-main-chart{padding:12px;border-left:3px solid var(--dc-cyan)}
 .dc-main-chart .dc-intro{margin-bottom:5px}.dc-main-chart .dc-shortcuts{margin-bottom:5px}.dc-main-chart .dc-description{padding:8px 0;margin-top:7px;min-height:0;font-size:12px}
 .dc-main-chart .dc-storage-note{font-size:10px;margin-bottom:0}.dc-main-chart .dc-toolbar{gap:5px}.dc-main-chart .dc-mode,.dc-main-chart .dc-reset{min-height:34px}.dc-main-chart .dc-shortcut-note{font-size:11px}
+.dc-menu-chart .dc-menu-description{border-top:0;border-left:3px solid var(--dc-cyan);padding:9px 12px;margin:0 0 10px;background:#fff9eb;min-height:0}
+.dc-menu-chart .dc-intensity{margin-bottom:14px}
+.dc-chart .dc-delivery-note{font:12px/1.4 'Courier New',monospace;margin:14px 0 0;color:#66535c}
 @media(max-width:760px){.dc-chart .dc-cue-row{grid-template-columns:1fr}.dc-chart .dc-vibe-row{grid-template-columns:repeat(2,minmax(0,1fr))}.dc-chart .dc-cue-label{margin-top:9px}.dc-chart{padding:12px}}
 @media(forced-colors:active){.dc-chart .dc-vibe[aria-pressed=true],.dc-chart .dc-intensity-button[aria-pressed=true]{outline:3px solid Highlight}.dc-chart .dc-cue-dot{border-color:CanvasText}}
