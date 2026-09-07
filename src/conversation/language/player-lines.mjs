@@ -22,9 +22,17 @@ export function deterministicVariant(seed, count = 2) {
 
 export function presentPlayerText(core, vibeId, intensity, variant) {
   const atom = DELIVERY_RECIPES[vibeId][variant];
-  if (intensity === "SUBTLE") return variant === 0 ? core : `${atom}. ${core}`;
-  if (intensity === "BALANCED") return `${atom}—${core}`;
+  // Lead cue sets the opening beat; second cue sets the pause before the
+  // unchanged sentence. These are written signals, never an extra claim.
+  // Context-neutral coordinates remain explicitly marked by the realizer.
+  const lead = vibeId[0];
+  const follow = vibeId[1];
+  const balancedPause = { B: ". ", A: "—", S: ", ", E: "… ", D: "…\n" }[follow];
+  if (intensity === "SUBTLE") return `${atom.toLowerCase()}. ${core}`;
+  const opening = lead === "A" ? `${atom}.` : lead === "E" ? `${atom}…` : atom;
+  if (intensity === "BALANCED") return `${opening}${lead === "A" || lead === "E" ? " " : balancedPause}${core}`;
   // Preserve every semantic character, including numbers and authored qualifiers.
   // The pause and paragraph boundary intensify presentation, never conditions.
-  return `${atom.toUpperCase()}…\n${core}`;
+  const overtBeat = lead === "A" ? "!" : lead === "E" || lead === "D" ? "…" : "—";
+  return `${atom.toUpperCase()}${overtBeat}\n${core}`;
 }

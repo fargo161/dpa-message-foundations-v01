@@ -2,6 +2,8 @@
 import { spawnSync } from "node:child_process";
 
 const portableTests = [
+  "tests/encounter-polish-regression.test.mjs",
+  "tests/polish-language.test.mjs",
   "tests/refinement-edge.test.mjs",
   "tests/refinement-language.test.mjs",
   "tests/refinement-delivery.test.mjs",

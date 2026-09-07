@@ -2,17 +2,17 @@ import { informationEligibility, informationPlayerText, privateInformation } fro
 import { LORE_TOPICS } from "../../encounter/history-content.mjs";
 
 export const QUESTIONS = Object.freeze({
-  TERMS: "What terms would make more Contra on credit workable?",
+  TERMS: "What would it take to get more Contra on credit?",
   DEBT: "I still owe you money, and future profits are uncertain. How does that affect another deal?",
-  RISK: "You would be putting more stock and money at risk. What would make that acceptable?",
+  RISK: "It's your stock and money on the line. What would make the risk worth it?",
   PRIORITIES: "What matters most to you in this negotiation?",
   FINAL_SAY: "Would you rather set the counterterms yourself?",
   GUARANTEE: "My future profits are guaranteed. Does that reassure you?",
   ENTITLEMENT: "Why won't you simply trust me with more stock?",
-  CLARIFY_OFFER: "Please restate the current offer, including any information exchange. I am not changing its terms.",
+  CLARIFY_OFFER: "Run through the offer again, including any information we're trading. I'm not changing the terms.",
 });
 
-export const describeTerms = terms => `${terms.units} Contra unit(s), $${terms.upfront} upfront, $${terms.repayment} new principal plus $${terms.extra} extra due in ${terms.days} day(s)`;
+export const describeTerms = terms => `${terms.units} Contra ${terms.units === 1 ? "unit" : "units"}, $${terms.upfront} upfront, $${terms.repayment} in new credit plus $${terms.extra} extra due in ${terms.days} ${terms.days === 1 ? "day" : "days"}`;
 export const requireLanguage = (value, message) => { if (!value) throw new Error(`Language frame: ${message}`); };
 const exactKeys = (value, keys) => value && typeof value === "object" && !Array.isArray(value) && Object.keys(value).sort().join() === [...keys].sort().join();
 const whole = value => Number.isSafeInteger(value) && value >= 0;

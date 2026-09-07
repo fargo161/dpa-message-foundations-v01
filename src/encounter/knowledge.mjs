@@ -70,11 +70,11 @@ export function informationPlayerText(state, intent) {
   const phrases = {
     SMALL_TALK: "How has the loading been since that shift we worked together last week?",
     ACK_MISSED: "I missed yesterday's check-in about the unpaid account. I should have shown up. Can we discuss what comes next?",
-    VERIFY_SOURCE: shared ? "Here is today's depot header and signature on my counterfoil. Do they establish the source of the detail I already showed you?" : "Here is today's depot header and signature on my counterfoil. I am keeping the operative line covered for now. Does this establish where my information came from?",
-    PROBE_USEFULNESS: shared ? (positive ? "Do the collection instructions I showed you matter to the arrangements you are making?" : "Does the count mismatch I showed you matter while you settle the stock record?") : positive ? "Would changed collection instructions matter to the arrangements you are making?" : "Would a documented count mismatch matter while you settle the stock record?",
+    VERIFY_SOURCE: shared ? "Here's today's depot header and signature on my counterfoil. Do they check out as the source of the detail I already showed you?" : "Here's today's depot header and signature on my counterfoil. I'm keeping the detail covered. Does the source check out?",
+    PROBE_USEFULNESS: shared ? (positive ? "Do the collection instructions I showed you help with your arrangements?" : "Does the count mismatch I showed you matter for the stock record?") : positive ? "Would a change to the collection instructions matter to you?" : "Would a count mismatch on paper matter for the stock record?",
     DISCLOSE_PARTIAL: shared ? "You already have the exact detail from my counterfoil. Can we discuss what that kind of information means for your business?" : positive ? "I have a depot notice that changes the collection arrangements. Would details like that be useful?" : "My counterfoil points to a mismatch in an intake count. Would you look at that kind of discrepancy?",
     DISCLOSE_FULL: `Here is the exact detail I have: ${privateInformation(state)?.proposition ?? "No private detail is available."} What do you make of it?`,
-    QUESTION_RECORD: shared ? "You said the signed intake summary was reconciled. Can the count mismatch I showed you be checked against that record?" : "You said the signed intake summary was reconciled. Could a signed record still contain a count error?",
+    QUESTION_RECORD: shared ? "You said the signed intake summary was reconciled. Can you check the mismatch I showed you against it?" : "You said the signed intake summary was reconciled. Could the count still be wrong?",
   };
   return phrases[intent.topic] ?? "";
 }

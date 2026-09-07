@@ -78,8 +78,8 @@ test("adversarial: offers move nothing, acceptance accounts once and rechecks re
   assert.equal(done.obligations.existing, 250); assert.equal(done.obligations.principal, proposal.repayment);
   assert.equal(done.obligations.extra, proposal.extra); assert.equal(done.metrics.debt, 250 + proposal.repayment + proposal.extra);
   assert.ok(!done.events.at(-1).playerText.includes(state.counteroffer.id));
-  assert.ok(done.events.at(-1).playerText.includes(`${proposal.units} Contra unit(s)`));
-  assert.ok(done.events.at(-1).playerText.includes(`$${proposal.repayment} new principal`));
+  assert.ok(done.events.at(-1).playerText.includes(`${proposal.units} Contra ${proposal.units === 1 ? "unit" : "units"}`));
+  assert.ok(done.events.at(-1).playerText.includes(`$${proposal.repayment} in new credit`));
   assert.deepEqual(done.agreement.terms, proposal); rejectedUnchanged(done, accept(done, state.counteroffer));
 });
 
