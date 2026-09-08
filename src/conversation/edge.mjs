@@ -8,14 +8,17 @@ function openingView(state) {
   if (!window) return state.lore.variant === "NEGATIVE" && state.lore.disclosure === "FULL"
     ? { status: "NOT_OPENED", label: "No cooperative opening was offered. Checking the source cannot replay the reveal.", remainingTurns: null }
     : { status: "NONE", label: "No brief proposal opening has been offered.", remainingTurns: null };
-  if (window.consumedAt !== null) return { status: "USED", label: "The first proposal after the reveal has used this opening. That does not mean a concession was earned.", remainingTurns: 0 };
+  if (window.consumedAt !== null) {
+    if (window.consumedAt > window.expiresAt) return { status: "ELAPSED", label: "The opening expired before your proposal. The mismatch remains shared; this proposal did not use the opening.", remainingTurns: 0 };
+    return { status: "USED", label: "Your first proposal after the reveal has spent the opening. That does not mean a concession was earned.", remainingTurns: 0 };
+  }
   // The invitation permits subsequent turn positions through expiresAt inclusive.
   // After that final position, lazy expiry has not necessarily mutated the lore yet.
   const remainingTurns = Math.max(0, window.expiresAt - state.events.length);
   if (!remainingTurns || window.expiredAt || state.status !== "OPEN") return {
     status: "ELAPSED", label: "The brief proposal opening has passed. The mismatch remains shared.", remainingTurns: 0,
   };
-  return { status: "AVAILABLE", label: `He invited a proposal while rechecking the mismatch. ${remainingTurns} turn${remainingTurns === 1 ? "" : "s"} remain, including your next move. Terms and delivery still matter.`, remainingTurns };
+  return { status: "AVAILABLE", label: `He invited a proposal while rechecking the mismatch. ${remainingTurns} ${remainingTurns === 1 ? "turn remains" : "turns remain"}, including your next move. Terms and delivery still matter.`, remainingTurns };
 }
 
 /** Working memory of player-owned information and witnessed responses, never an NPC score readout. */
@@ -64,7 +67,7 @@ export function edgeView(state) {
     title: positive ? "Changed collection instructions" : "The two-crate mismatch",
     detail: fact.proposition,
     disclosure,
-    source: sourceChecked ? { id: "CHECKED", label: "Marcus checked the header and signature; this alone proves neither usefulness nor wrongdoing." }
+    source: sourceChecked ? { id: "CHECKED", shortLabel: "Source checked", label: positive ? "Marcus checked the header and signature. That does not guarantee he will trade for the instructions." : "Marcus checked the header and signature; this alone proves neither usefulness nor wrongdoing." }
       : { id: "UNCHECKED", label: "Marcus has not checked the source with you." },
     relevance: relevanceObserved ? { id: "OBSERVED", label: "He indicated a possible use; he has not promised a concession." }
       : relevanceUncertain ? { id: "UNCERTAIN", label: "He did not identify a current use for this information." }

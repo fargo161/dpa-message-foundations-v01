@@ -8,11 +8,11 @@ export function createTurnPlayer({ onReceiving, onResponding, onFinish, reducedM
     current.resolve(showResponse);
   }
   return {
-    play(event) {
+    play(event, { manual = false } = {}) {
       finish(false);
       return new Promise(resolve => {
         active = { event, resolve, timer: null }; onReceiving(event);
-        active.timer = globalThis.setTimeout(() => finish(true), reducedMotion() ? 180 : delay);
+        if (!manual) active.timer = globalThis.setTimeout(() => finish(true), reducedMotion() ? 180 : delay);
       });
     },
     skip() { finish(true); }, cancel() { finish(false); },

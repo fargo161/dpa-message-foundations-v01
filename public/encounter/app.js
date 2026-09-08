@@ -20,8 +20,11 @@ $("npc-line").after($("resolution"));
 const faceDetails = node("details"); faceDetails.className = "face-description";
 faceDetails.append(node("summary", "Face description"), $("face-caption")); $("npc-line").after(faceDetails);
 $("accept").textContent = "Choose these terms";
-$("propose").hidden = true;
+$("propose").hidden = false;
 document.querySelector(".workspace-heading").hidden = true;
+const allVibes = node("button", "All 20 BASED vibes ↗"); allVibes.id = "all-vibes"; allVibes.type = "button"; allVibes.dataset.interact = "";
+allVibes.setAttribute("aria-haspopup", "dialog");
+document.querySelector(".delivery-section>.hint").replaceChildren(allVibes);
 const faceRenderer = createFaceRenderer($("portrait"));
 const character = () => snapshot?.play.character || { id: "marcus", name: "Marcus" };
 const keywords = () => snapshot?.options.keywords || [];
@@ -69,7 +72,7 @@ function renderEdge() {
   box.append(node("strong", edge.title));
   for (const [label, status] of [["Disclosure", edge.disclosure], ["Source", edge.source], ["Relevance", edge.relevance]]) {
     if (status?.label) {
-      const short = label === "Source" ? (status.id === "CHECKED" ? "Checked, not proof of wrongdoing" : "Not checked")
+      const short = label === "Source" ? (status.shortLabel || (status.id === "CHECKED" ? "Source checked" : "Not checked"))
         : label === "Relevance" ? ({ OBSERVED: "Possible use, no promise", UNCERTAIN: "No current use identified", UNTESTED: "Not asked yet" }[status.id] || status.label) : status.label;
       box.append(node("p", `${label}: ${short}`));
     }
@@ -87,7 +90,7 @@ const turnPlayer = createTurnPlayer({
     $("player-line").hidden = false; $("player-line").textContent = `You: ${event.playerText}`;
     $("npc-line").textContent = "…";
     renderFace(event.faces?.receiving || snapshot.play.face, "receiving");
-    $("skip").hidden = false; notice(`${character().name} hears you.`);
+    $("skip").hidden = false; $("skip").focus(); notice(`${character().name} hears you.`);
   },
   onResponding(event) {
     if (pendingSnapshot) { applySnapshot(pendingSnapshot); pendingSnapshot = null; }
@@ -111,12 +114,13 @@ function refreshControls() {
   setUnavailable("replay", !snapshot?.play.events.at(-1)?.faces);
   document.querySelectorAll("[data-interact]").forEach(element => { element.disabled = !ready || element.dataset.unavailable === "true"; });
   $("seed").disabled = !ready; $("scenario").disabled = !ready; $("reload").disabled = busy;
+  $("manual-reactions").disabled = busy;
   const isDeal = selectedAction()?.intent.action === "DEAL";
   termKeys.forEach(key => { $(key).disabled = !open || !commercial(); $(key).required = isDeal; });
   $("information").disabled = !open || !commercial();
   $("send").disabled = !open || !preview || preview.key !== draftKey();
   $("accept").hidden = selectedAction()?.intent.action === "ACCEPT";
-  $("send").textContent = busy ? "Working…" : selectedAction()?.intent.action === "ACCEPT" ? "Confirm exact terms →" : selectedAction()?.intent.action === "WALK" ? "Walk away →" : "Say it →";
+  $("send").textContent = busy ? "Working…" : selectedAction()?.intent.action === "ACCEPT" ? "Confirm exact terms →" : selectedAction()?.intent.action === "WALK" ? "Walk away →" : selectedAction()?.completion?.done ? "Repeat this point →" : "Say it →";
 }
 function findAction(predicate) {
   for (const keyword of keywords()) { const action = keyword.actions.find(entry => entry.available && predicate(entry.intent)); if (action) return { keyword, action }; }
@@ -142,7 +146,7 @@ function actionButton(keyword, action, full) {
 function renderKeywords() {
   const bank = $("keyword-bank"); bank.replaceChildren();
   keywords().forEach(keyword => {
-    const button = node("button", keyword.label); button.type = "button"; button.append(node("small", keyword.kind));
+    const button = node("button", keyword.label); button.type = "button"; button.append(node("small", keyword.kindLabel || keyword.kind));
     button.setAttribute("aria-pressed", String(keyword.id === keywordId));
     button.addEventListener("click", () => { if (busy) return; keywordId = keyword.id; actionId = keyword.actions.find(action => action.available)?.id || null; const intent = selectedAction()?.intent; if (intent?.action === "DEAL") $("information").value = intent.information || "NONE"; renderKeywords(); updateDraft(); schedulePreview(); }); bank.append(button);
   });
@@ -154,12 +158,17 @@ function renderKeywords() {
   // Keep a chosen fourth-or-later authored action visible when the menu closes.
   const chosen = selectedAction(); if (chosen?.available && !chosen.completion?.done && chosen.intent.action !== "ACCEPT" && chosen.intent.topic !== "CLARIFY_OFFER" && !suggestions.includes(chosen)) suggestions.splice(2, 1, chosen);
   $("context-actions").replaceChildren(...suggestions.map(action => actionButton(keyword, action, false)));
-  builder.open = chosen?.intent.action === "DEAL";
   const repeated = actions.filter(action => action.completion?.done);
   revisit.hidden = !repeated.length; revisit.lastElementChild.replaceChildren(...repeated.map(action => actionButton(keyword, action, false)));
+  if (chosen?.completion?.done) revisit.open = true;
+  if (!suggestions.length && commercial()) {
+    const next = node("button", "Return to bargaining →"); next.type = "button";
+    next.addEventListener("click", () => chooseFound(findAction(intent => intent.action === "DEAL" && (intent.information || "NONE") === "NONE")));
+    $("context-actions").append(next);
+  }
   $("action-description").textContent = chosen?.description || "Open More things to say to choose a subject.";
   renderEdge();
-  $("draft-warning").textContent = chosen?.intent.action === "ACCEPT" ? "Confirming transfers the exact terms above, including attached information, and ends this encounter." : "";
+  $("draft-warning").textContent = chosen?.intent.action === "ACCEPT" ? "Confirming transfers the exact terms above, including attached information, and ends this encounter." : chosen?.completion?.done ? "You already discussed this point. Sending it again repeats it and spends another turn." : "";
   refreshControls();
 }
 function fillOptions() {
@@ -189,7 +198,8 @@ function updateDraft() {
   $("upfront").setCustomValidity(isDeal && expected < 0 ? "Cash now cannot exceed the price of the requested Contra." : "");
   $("draft-summary").textContent = snapshot.play.status !== "OPEN" ? "" : Number.isFinite(expected) ? `Keep $${snapshot.play.metrics.cash - terms.upfront} cash. Repay $${terms.repayment + terms.extra} in ${terms.days} days ($${terms.repayment} credit + $${terms.extra} extra). Old debt stays owed.` : "Enter whole-number terms.";
   const information = snapshot.options.informationOptions?.find(entry => entry.id === $("information").value);
-  $("information-reason").textContent = information?.reason || "";
+  const exchange = snapshot.options.informationOptions?.find(entry => entry.id === "OFFER_INFORMATION");
+  $("information-reason").textContent = [information?.reason, information?.id !== "OFFER_INFORMATION" && exchange?.available === false ? exchange.reason : ""].filter(Boolean).join(" ");
   refreshControls();
 }
 function intentFields() {
@@ -222,7 +232,7 @@ async function requestPreview(sequence) {
     const data = await post("/api/preview", body);
     if (sequence !== previewSequence || busy || key !== draftKey() || data.runId !== snapshot.play.runId || data.version !== snapshot.play.version) return;
     preview = { key, body, text: data.playerText };
-    $("player-preview").textContent = data.playerText; $("preview-state").textContent = "Ready · review, then send";
+    $("player-preview").textContent = data.playerText; $("preview-state").textContent = selectedAction()?.completion?.done ? "Repeat prepared · already discussed" : "Ready · review, then send";
     const manner = data.deliveryDescription;
     if (manner) $("delivery-description").replaceChildren(node("strong", manner.label));
     if (fields.topic === "CLARIFY_OFFER") $("draft-warning").textContent = "Asking keeps these exact terms open, but spends a turn and may test his patience.";
@@ -308,6 +318,16 @@ function applySnapshot(data) {
   }
   renderPlay(); renderDebug(); refreshControls();
 }
+function resetDraft() {
+  termKeys.forEach(key => { $(key).value = $(key).defaultValue; });
+  $("information").value = "NONE";
+  $("response-announcement").textContent = "";
+  builder.open = false; revisit.open = false;
+}
+function focusResponse() {
+  const target = snapshot?.play.status === "OPEN" ? $("npc-line") : $("resolution");
+  target.focus({ preventScroll: true });
+}
 async function getState() {
   const response = await fetch("/api/state", { credentials: "same-origin", cache: "no-store" });
   const data = await response.json(); if (!response.ok) throw new Error(data.error || "Could not load encounter."); applySnapshot(data);
@@ -327,18 +347,19 @@ async function submit(path, body) {
       const event = data.play.events.at(-1);
       if (event && data.play.events.length > snapshot.play.events.length) {
         delivery.recordTurn({ runId: data.play.runId, index: event.turnRef?.index ?? data.play.events.length, action: event.action || body.action, vibeId: event.vibeId || body.vibeId });
-        pendingSnapshot = data; await turnPlayer.play(event);
+        pendingSnapshot = data; await turnPlayer.play(event, { manual: $("manual-reactions").checked });
       } else applySnapshot(data);
-    } else { turnPlayer.cancel(); pendingSnapshot = null; applySnapshot(data); }
+    } else { turnPlayer.cancel(); pendingSnapshot = null; resetDraft(); applySnapshot(data); }
     $("reload").hidden = true; notice(snapshot.play.status !== "OPEN" ? "Conversation complete. Your result is shown below." : path === "/api/restart" ? "New conversation started." : "Response received. Review what changed, then choose your next move.");
   } catch (error) {
     synchronized = false; turnPlayer.cancel(); pendingSnapshot = null; $("skip").hidden = true;
     try { await getState(); $("reload").hidden = true; notice(`${error.message} Current state reloaded. Review it before sending again.`, true); }
     catch { $("reload").hidden = false; notice(`${error.message} Result uncertain. Reload state before continuing; this action will not be resent automatically.`, true); }
-  } finally { busy = false; refreshControls(); schedulePreview(); }
+  } finally { busy = false; refreshControls(); schedulePreview(); focusResponse(); }
 }
 function closeMenu() { if ($("conversation-menu").open) $("conversation-menu").close(); $("more").setAttribute("aria-expanded", "false"); }
 $("more").addEventListener("click", () => { if (busy) return; $("conversation-menu").showModal(); $("more").setAttribute("aria-expanded", "true"); $("keywords-tab").focus(); });
+$("all-vibes").addEventListener("click", () => { if (busy) return; $("more").click(); $("based-tab").click(); $("based-tab").focus(); });
 $("close-menu").addEventListener("click", closeMenu); $("return-draft").addEventListener("click", closeMenu);
 $("conversation-menu").addEventListener("close", () => { $("more").setAttribute("aria-expanded", "false"); $("more").focus(); });
 ["keywords", "based"].forEach(page => $(`${page}-tab`).addEventListener("click", () => { ["keywords", "based"].forEach(other => { $(`${other}-page`).hidden = other !== page; $(`${other}-tab`).setAttribute("aria-pressed", String(other === page)); }); }));
@@ -349,15 +370,14 @@ $("accept").addEventListener("click", () => chooseFound(findAction(intent => int
 $("clarify").addEventListener("click", () => chooseFound(findAction(intent => intent.action === "ASK" && intent.topic === "CLARIFY_OFFER")));
 $("walk").addEventListener("click", () => chooseFound(findAction(intent => intent.action === "WALK")));
 $("propose").addEventListener("click", () => chooseFound(findAction(intent => intent.action === "DEAL" && (intent.information || "NONE") === ($("information").value || "NONE"))));
-$("information").addEventListener("change", () => { const match = findAction(intent => intent.action === "DEAL" && (intent.information || "NONE") === $("information").value); chooseFound(match); });
-termKeys.forEach(key => $(key).addEventListener("input", () => { if (selectedAction()?.intent.action !== "DEAL") chooseFound(findAction(intent => intent.action === "DEAL" && (intent.information || "NONE") === ($("information").value || "NONE"))); updateDraft(); schedulePreview(); }));
-builder.addEventListener("toggle", () => { if (builder.open && !busy && selectedAction()?.intent.action !== "DEAL") chooseFound(findAction(intent => intent.action === "DEAL" && (intent.information || "NONE") === ($("information").value || "NONE"))); });
+$("information").addEventListener("change", () => { if (selectedAction()?.intent.action === "DEAL") chooseFound(findAction(intent => intent.action === "DEAL" && (intent.information || "NONE") === $("information").value)); updateDraft(); schedulePreview(); });
+termKeys.forEach(key => $(key).addEventListener("input", () => { updateDraft(); schedulePreview(); }));
 $("restart-form").addEventListener("submit", event => { event.preventDefault(); if (busy || !snapshot) return; void submit("/api/restart", { requestId: crypto.randomUUID(), runId: snapshot.play.runId, version: snapshot.play.version, seed: $("seed").value, scenarioId: $("scenario").value }); });
 $("reload").addEventListener("click", () => { void load(); }); $("skip").addEventListener("click", () => turnPlayer.skip());
 $("replay").addEventListener("click", async () => {
   const event = snapshot?.play.events.at(-1); if (busy || !event?.faces) return;
   busy = true; invalidatePreview(); refreshControls();
-  try { await turnPlayer.play(event); } finally { busy = false; renderPlay(); refreshControls(); schedulePreview(); notice("Reaction replay complete. No turn spent."); }
+  try { await turnPlayer.play(event, { manual: $("manual-reactions").checked }); } finally { busy = false; renderPlay(); refreshControls(); schedulePreview(); notice("Reaction replay complete. No turn spent."); $("replay").focus(); }
 });
 $("inspect-last").addEventListener("click", () => inspectFaces(snapshot.play.events.at(-1), snapshot.play.events.length - 1));
 $("close-face-review").addEventListener("click", () => $("face-review").close());

@@ -13,7 +13,7 @@ export function playerMessage(intent, options = {}) {
   const informationText = options.state?.lore ? informationPlayerText(options.state, intent) : "";
   if (intent.action === "ASK") return `${label} ${informationText || questions[intent.topic] || "Can we discuss this point?"}`;
   if (intent.action === "DEAL") return `${label} I propose ${describeTerms(intent.terms)}. This is in addition to my existing debt.${informationText ? ` ${informationText}` : ""}`;
-  if (intent.action === "ACCEPT") return `${label} I accept the current offer${options.offer?.terms ? `: ${describeTerms(options.offer.terms)}` : ""}. My existing debt remains separate.${options.offer?.informationExchange ? ` I deliver the agreed information: ${options.offer.informationExchange.summary}.` : ""}`;
+  if (intent.action === "ACCEPT") return `${label} I accept the current offer${options.offer?.terms ? `: ${describeTerms(options.offer.terms)}` : ""}. My existing debt remains separate.${options.offer?.informationExchange ? ` I deliver the agreed information: ${options.offer.informationExchange.summary.replace(/[.!?]+$/, "")}.` : ""}`;
   return `${label} I am walking away from this negotiation.`;
 }
 

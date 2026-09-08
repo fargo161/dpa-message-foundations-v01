@@ -127,7 +127,56 @@ test('compact actions preserve every authored choice in menu and completed choic
   assert.deepEqual(Array.from(revisit.lastElementChild.children), ['action-0']);
   assert.equal(revisit.hidden, false);
   assert.match($('action-description').textContent, /cannot become private again/);
-  assert.equal(context.builder.open, false, 'questions collapse the offer draft');
+  assert.equal(context.builder.open, true, 'rerender preserves whether the player opened the draft for inspection');
+  context.selectedAction = () => actions[0];
+  vm.runInContext('renderKeywords()', context);
+  assert.equal(revisit.open, true, 'the armed repeat remains visible in Revisit');
+  assert.match($('draft-warning').textContent, /already discussed.*another turn/);
+});
+
+test('restart discards unsent terms and old accessibility announcement', () => {
+  const fields = new Map(['units', 'upfront', 'repayment', 'extra', 'days'].map(key => [key, { value: '99', defaultValue: '2' }]));
+  fields.set('information', { value: 'OFFER_INFORMATION' });
+  fields.set('response-announcement', { textContent: 'Old response' });
+  const context = vm.createContext({ $: id => fields.get(id), termKeys: ['units', 'upfront', 'repayment', 'extra', 'days'], builder: { open: true }, revisit: { open: true } });
+  vm.runInContext(app.slice(app.indexOf('function resetDraft('), app.indexOf('\nfunction focusResponse(')), context);
+  vm.runInContext('resetDraft()', context);
+  assert.equal(fields.get('upfront').value, '2');
+  assert.equal(fields.get('information').value, 'NONE');
+  assert.equal(fields.get('response-announcement').textContent, '');
+  assert.equal(context.builder.open, false);
+});
+
+test('inspecting and editing offer amounts does not select a different speech act', () => {
+  const handlers = new Map(); let updates = 0;
+  const context = vm.createContext({ termKeys: ['upfront'], $: id => ({ addEventListener: (_event, handler) => handlers.set(id, handler) }), updateDraft() { updates++; }, schedulePreview() {}, chooseFound() { throw new Error('Must not replace prepared question'); } });
+  const start = app.indexOf('termKeys.forEach(key => $(key).addEventListener("input"');
+  vm.runInContext(app.slice(start, app.indexOf('\n', start)), context);
+  handlers.get('upfront')();
+  assert.equal(updates, 1);
+  assert.doesNotMatch(app, /builder\.addEventListener\("toggle"/);
+});
+
+test('all-vibes shortcut opens existing menu directly on BASED without selecting an action', () => {
+  const calls = []; let handler;
+  const context = vm.createContext({ busy: false, $: id => ({ addEventListener(_event, fn) { handler = fn; }, click() { calls.push(`${id}:click`); }, focus() { calls.push(`${id}:focus`); } }) });
+  const start = app.indexOf('$("all-vibes").addEventListener');
+  vm.runInContext(app.slice(start, app.indexOf('\n', start)), context);
+  handler();
+  assert.deepEqual(calls, ['more:click', 'based-tab:click', 'based-tab:focus']);
+});
+
+test('manual face mode waits for explicit continuation without scheduling a timer', async () => {
+  const observed = []; let timers = 0;
+  const context = vm.createContext({ setTimeout() { timers++; }, clearTimeout() {} });
+  vm.runInContext(source.replace('export function', 'function'), context);
+  context.onReceiving = () => observed.push('hear'); context.onResponding = () => observed.push('respond'); context.onFinish = () => observed.push('finish');
+  const player = vm.runInContext('createTurnPlayer({onReceiving,onResponding,onFinish})', context);
+  const pending = player.play({}, { manual: true });
+  assert.deepEqual(observed, ['hear']); assert.equal(timers, 0);
+  player.skip(); player.skip();
+  assert.equal(await pending, true);
+  assert.deepEqual(observed, ['hear', 'respond', 'finish']);
 });
 
 test('skip and replay remain outside the disabled turn fieldset; no automatic acceptance submission', () => {

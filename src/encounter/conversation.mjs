@@ -22,6 +22,10 @@ function quality(state) {
   const creditObjectiveMet = acquiredUnits >= 2 && newPrincipal > 0;
   const first = state.events[0]?.before;
   const relationalConsequences = [];
+  if (state.status === "ENDED" && state.metrics.patience <= 0) {
+    const repeatedQuestions = state.events.some((event, index, events) => event.intent?.action === "ASK" && events.slice(0, index).some(previous => previous.intent?.action === "ASK" && previous.intent.topic === event.intent.topic));
+    relationalConsequences.push(repeatedQuestions ? "Marcus ran out of patience after repeated questions and ended the conversation. No new agreement was made." : "Marcus ran out of patience and ended the conversation. No new agreement was made.");
+  }
   if (first) {
     for (const [key, description] of [["confidence", "Marcus's confidence in your commitment"], ["tension", "Tension in the conversation"]]) {
       const direction = Math.sign(state.metrics[key] - first[key]);
@@ -29,7 +33,7 @@ function quality(state) {
     }
   }
   if (state.status === "WITHDRAWN") relationalConsequences.push("You ended the negotiation voluntarily.");
-  if (state.status === "ENDED") relationalConsequences.push("Marcus would not continue the negotiation.");
+  if (state.status === "ENDED" && state.metrics.patience > 0) relationalConsequences.push("Marcus would not continue the negotiation.");
   return {
     result: creditObjectiveMet ? "Intended credit objective met" : terms ? "Valid limited acquisition" : "No new agreement",
     designDefault: "Newly authored provisional target: at least two Contra units with positive new principal. This is not a hidden victory score.",

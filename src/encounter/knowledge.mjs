@@ -60,7 +60,7 @@ export function informationEligibility(state, intent) {
 }
 
 export function loreOptions(state) {
-  return LORE_TOPICS.map(option => { const eligibility = informationEligibility(state, { action: "ASK", topic: option.id }); return { ...option, available: eligibility.allowed, reason: eligibility.reason }; });
+  return LORE_TOPICS.map(option => { const eligibility = informationEligibility(state, { action: "ASK", topic: option.id }); return { ...option, ...(option.id === "VERIFY_SOURCE" && state.lore?.disclosure === "FULL" ? { label: "Check the source of the detail already shared" } : {}), available: eligibility.allowed, reason: eligibility.reason }; });
 }
 
 export function informationPlayerText(state, intent) {
@@ -84,14 +84,14 @@ export function projectLore(state) {
   if (!lore) return { briefing: [], playerKnowledge: [], disclosed: [], evidence: [], informationOptions: [] };
   const briefing = ["The old account and today's proposed purchase are separate. Hoped-for earnings are not cash."];
   for (const id of ["OLD_ACCOUNT", "MISSED_CHECKIN", "SHARED_LOADING_SHIFT"]) if (knows(state, id)) briefing.push(lore.facts[id].proposition);
-  if (privateInformation(state)) briefing.push("You know the exact private information below. Marcus has not received its operative detail unless you disclose it or complete an information exchange. Its usefulness and his reaction are still for you to assess.");
+  if (privateInformation(state)) briefing.push(lore.disclosure === "FULL" ? "Marcus now has the exact information below. Sharing it did not erase your debt or promise a deal." : `You know the exact information below. Marcus does not have the detail yet. ${lore.variant === "POSITIVE" ? "You can keep it private, share it, or offer it with terms if it is useful to him." : "You can keep it private or decide when to reveal it. His reaction is still for you to assess."}`);
   const playerKnowledge = lore.knowledge.player.filter(id => hasLoreFact(state, id)).map(id => lore.facts[id].proposition);
   const disclosed = lore.disclosure === "FULL" && privateInformation(state) ? [privateInformation(state).proposition]
-    : lore.disclosure === "PARTIAL" ? ["Marcus has received a category hint; the exact operative detail is still withheld."] : [];
+    : lore.disclosure === "PARTIAL" ? ["Marcus knows what kind of information you hold; the exact detail is still private."] : [];
   if (hasEvidence(state, "SOURCE_VERIFIED")) disclosed.push("Marcus has checked the document's dated header and signature.");
   const eligibility = informationEligibility(state, { action: "DEAL", information: "OFFER_INFORMATION" });
   return { briefing, playerKnowledge, disclosed, evidence: lore.evidence.map(item => item.text), informationOptions: [
     { id: "NONE", label: "Keep information outside this proposal", available: state.status === "OPEN", reason: "No information exchange is attached." },
-    { id: "OFFER_INFORMATION", label: "Include the private collection detail in a voluntary exchange", available: eligibility.allowed, reason: eligibility.reason },
+    { id: "OFFER_INFORMATION", label: "Trade the private collection detail with these terms", available: eligibility.allowed, reason: eligibility.reason },
   ] };
 }

@@ -43,7 +43,7 @@ export const HISTORY_CONTENT = freeze({
     evidence: "Both remember the shared work, but it does not identify a hidden preference.", repetition: "One contact progress key, not renewable goodwill.",
     acceptanceScenario: "Remove SHARED_LOADING_SHIFT: SMALL_TALK is unavailable; direct business still works.",
   }),
-  DIRECT_RECEIPT: entry("DIRECT_RECEIPT", "The player holds today's signed depot counterfoil R-17, received directly during collection; its header and signature can be checked without showing its operative detail.", {
+  DIRECT_RECEIPT: entry("DIRECT_RECEIPT", "The player holds today's signed depot counterfoil R-17, received directly during collection; its header and signature can be checked without showing its exact detail.", {
     target: "DEPOT_COUNTERFOIL", initialKnowers: ["PLAYER"], initialBelievers: ["PLAYER"],
     interest: "A checkable document gives Marcus a reason to consider the information beyond the player's unpaid promises.",
     mechanic: "Required for VERIFY_SOURCE and any prepared information benefit. Verification discloses only provenance, never the secret line.",

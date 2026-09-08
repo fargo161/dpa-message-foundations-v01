@@ -26,9 +26,9 @@ export function createBrokenPromiseState(seed, runId) {
 }
 
 function fixtureBank(state) {
-  return [{ id: "missed-meeting", label: "The missed meeting", kind: "SHARED_HISTORY", summary: opening,
+  return [{ id: "missed-meeting", label: "The missed meeting", kind: "SHARED_HISTORY", kindLabel: "Shared history", summary: currentHistory(state),
     actions: actionDefinitions.map(action => ({ ...structuredClone(action), available: state.status === "OPEN", reason: state.status === "OPEN" ? "Available." : "This conversation has ended." })) },
-  ...state.statements.map(statement => ({ id: statement.id, label: statement.label, kind: "REPORTED_CLAIM", summary: statement.text,
+  ...state.statements.map(statement => ({ id: statement.id, label: statement.label, kind: "REPORTED_CLAIM", kindLabel: "What Avery said", summary: statement.text,
     actions: actionDefinitions.filter(a => a.id !== "ask-explanation").map(action => ({ ...structuredClone(action), available: state.status === "OPEN", reason: state.status === "OPEN" ? "Available." : "This conversation has ended." })) }))];
 }
 
@@ -84,13 +84,20 @@ export function transitionBrokenPromise(state, input, options = {}) {
   return next;
 }
 
+function currentHistory(state) {
+  return state.statements.some(statement => statement.id === "avery-explanation")
+    ? "Avery missed yesterday's meeting. They say the bus broke down and they should have let you know. You have not independently checked this explanation."
+    : opening;
+}
+
 export function projectBrokenPromise(state, csrf, { languageMode = "PRODUCTION" } = {}) {
+  const history = currentHistory(state);
   return { csrf,
     play: { runId: state.runId, version: state.events.length, seed: state.seed, status: state.status, character, scenario: SCENARIO_OPTIONS[1],
-      edge: null, situation: { summary: opening, objective: "Ask what happened, ask for acknowledgment, or choose to leave. Avery's explanation remains an unverified account." },
+      edge: null, situation: { summary: history, objective: "Ask what happened, ask for acknowledgment, or choose to leave. Avery's explanation remains an unverified account." },
       face: structuredClone(state.events.at(-1)?.faces?.responding ?? openingFace(character.id)), metrics: {}, obligations: null, proposal: null, counteroffer: null, agreement: null, clues: [],
-      lore: { briefing: [opening], playerKnowledge: [...state.knowledge], disclosed: [], evidence: state.statements.map(s => s.text), informationOptions: [] },
-      conversation: { phase: state.status === "OPEN" ? "CONVERSATION" : "RESOLUTION", opening: [opening], nextSteps: ["Choose a known subject and decide what to say."], outcomeQuality: null },
+      lore: { briefing: [history], playerKnowledge: state.knowledge.map(item => item === opening ? history : item), disclosed: [], evidence: state.statements.map(s => s.text), informationOptions: [] },
+      conversation: { phase: state.status === "OPEN" ? "CONVERSATION" : "RESOLUTION", opening: [history], nextSteps: ["Choose a known subject and decide what to say."], outcomeQuality: null },
       events: state.events.map(e => ({ playerText: e.playerText, marcusText: e.marcusText, outcome: e.outcome, feedback: e.feedback, turnRef: e.reactionCause.turnRef,
         action: e.intent.action, vibeId: e.intent.vibeId, intensity: e.intent.intensity, faces: structuredClone(e.faces) })),
       availableActions: ["ASK", "WALK"].map(action => ({ action, available: state.status === "OPEN", reason: state.status === "OPEN" ? "Available." : "Conversation ended." })) },

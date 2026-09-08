@@ -14,11 +14,11 @@
   <section id="play-view" aria-label="Play">
     <section id="situation" class="situation" aria-label="Your purpose"><p id="situation-summary"></p><p id="situation-objective"></p></section>
     <p id="response-announcement" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></p>
-    <div id="reaction-controls" class="reaction-controls"><button id="skip" type="button" hidden>Show response now</button><button id="replay" type="button" data-interact>Replay reactions</button></div>
+    <div id="reaction-controls" class="reaction-controls"><label><input id="manual-reactions" type="checkbox"> Hold hearing face until I continue</label><button id="skip" type="button" hidden>Show response now</button><button id="replay" type="button" data-interact>Replay reactions</button></div>
     <form id="turn-form" novalidate><fieldset id="turn-fields" disabled><legend class="sr-only">Compose your conversation turn</legend>
       <section class="read-zone" aria-label="Read and interact">
         <div class="portrait-panel"><div id="portrait" role="img" aria-label="Character portrait"></div><div class="portrait-name" id="portrait-name">MARCUS</div><div class="face-phases" aria-label="Facial turn sequence"><span id="receiving-phase">01 · HEARS YOU</span><span id="responding-phase" class="active">02 · RESPONDS</span></div></div>
-        <div class="interaction"><div class="speaker-line"><h2 id="speaker-name">Marcus</h2><span id="encounter-status" class="kicker"></span></div><blockquote id="npc-line">Loading…</blockquote><p id="face-caption" class="caption"></p><p id="player-line" class="last-player" hidden></p><h3 class="section-label">What do you want to do next? <span id="subject-label"></span></h3><div id="context-actions" class="action-grid"></div><p id="action-description" class="hint"></p><div class="delivery-section"><h3 class="section-label">How do you say it?</h3><div id="delivery-main"></div><p class="hint">Your full BASED chart is in “More things to say.”</p></div></div>
+        <div class="interaction"><div class="speaker-line"><h2 id="speaker-name">Marcus</h2><span id="encounter-status" class="kicker"></span></div><blockquote id="npc-line" tabindex="-1">Loading…</blockquote><p id="face-caption" class="caption"></p><p id="player-line" class="last-player" hidden></p><h3 class="section-label">What do you want to do next? <span id="subject-label"></span></h3><div id="context-actions" class="action-grid"></div><p id="action-description" class="hint"></p><div class="delivery-section"><h3 class="section-label">How do you say it?</h3><div id="delivery-main"></div><p class="hint">All 20 BASED vibes: More things to say → BASED vibes.</p></div></div>
         <aside class="edge"><h2>Your edge</h2><div id="edge-note"></div><div id="public-metrics"></div><details><summary>Before you speak</summary><div id="opening"></div></details></aside>
       </section>
       <section class="deal-workspace" aria-labelledby="workspace-title">
@@ -36,7 +36,7 @@
     </fieldset></form>
     <p id="latest-feedback" class="latest-feedback" hidden></p>
     <div class="turn-controls"><button id="inspect-last" type="button" data-interact>Compare both reactions</button><button id="walk" type="button" data-interact>Prepare to walk away</button><span id="walk-reason" class="hint"></span></div>
-    <div id="history-panel" hidden><h2>Conversation log</h2><div id="conversation"></div></div><section id="resolution" hidden><h2>Where things stand</h2><div id="agreement"></div><div id="outcome"></div></section>
+    <div id="history-panel" hidden><h2>Conversation log</h2><div id="conversation"></div></div><section id="resolution" tabindex="-1" hidden><h2>Where things stand</h2><div id="agreement"></div><div id="outcome"></div></section>
   </section>
   <section id="debug-view" hidden aria-label="Debug"><h2>Authoritative Debug</h2><p>Exact hidden state is intentionally visible here. This diagnostic view does not change the encounter.</p><div id="debug-content"></div></section>
   <details class="restart-panel"><summary>Restart / choose test conversation</summary><form id="restart-form"><label for="scenario">Conversation</label><select id="scenario"></select><label for="seed">Run seed</label><input id="seed" type="text" maxlength="80" required autocomplete="off"><p class="hint">Restart replaces this encounter. The same seed and choices reproduce its results.</p><button id="restart" type="submit" data-interact>Restart encounter</button></form></details>

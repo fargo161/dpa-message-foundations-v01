@@ -92,10 +92,10 @@ export function resolveInformation(state, intent) {
         cause("BELIEF_REVISED", ["DIRECT_RECEIPT", lore.privateFactId], "Late source verification supports an already disclosed detail; it creates no fresh private value or opening.");
       }
       addOnce(lore.knowledge.marcus, "DIRECT_RECEIPT"); addOnce(lore.knowledge.marcusAwarePlayerKnows, "DIRECT_RECEIPT");
-      evidence("SOURCE_VERIFIED", lore.disclosure === "FULL" ? "Marcus recognizes the depot header and signature; the already disclosed detail now has a checked source." : "Marcus recognizes the depot header and signature. He has checked the source, not the covered operative detail.", ["DIRECT_RECEIPT"]);
+      evidence("SOURCE_VERIFIED", lore.disclosure === "FULL" ? "Marcus recognizes the depot header and signature; the already disclosed detail now has a checked source." : "Marcus recognizes the depot header and signature. He has checked the source, not the covered detail.", ["DIRECT_RECEIPT"]);
       result.social.confidence = 1;
     }
-    result.feedback = `${result.progressKey ? "The document's source checks out." : "The source was already checked; asking again supplies no new verification."} ${lore.disclosure === "FULL" ? "Marcus already has the exact detail. Checking its source cannot restore private exchange value or reopen a reveal opportunity." : "The exact detail remains private."} A genuine document does not by itself prove a useful deal or wrongdoing.`;
+    result.feedback = `${result.progressKey ? "The document's source checks out." : "The source was already checked; asking again supplies no new verification."} ${lore.disclosure === "FULL" ? "Marcus already has the exact detail. Checking its source cannot restore private exchange value or reopen a reveal opportunity." : "The exact detail remains private."} ${lore.variant === "POSITIVE" ? "A checked source does not guarantee that he will trade for the instructions." : "A genuine document does not by itself prove a useful deal or wrongdoing."}`;
   } else if (intent.topic === "PROBE_USEFULNESS") {
     hint();
     if (progress(`relevance:${lore.privateFactId}`)) {
@@ -121,7 +121,7 @@ export function resolveInformation(state, intent) {
       result.progressKey = `hint:${lore.privateFactId}`;
       cause("PARTIAL_DISCLOSURE", [lore.privateFactId], "The player disclosed only the information category, not the exact proposition.");
     } else cause("TOPIC_EXHAUSTED", [lore.privateFactId], "The category was already shared by a probe, question, offer or disclosure; it supplies no new progress.");
-    result.feedback = lore.disclosure === "FULL" ? "Marcus already has the exact detail. A category hint cannot make it private again." : newlyShared ? "Marcus now knows the category of information you hold. He does not yet have the operative detail; a hint is not proof or a completed exchange." : "Marcus already knows that category from what you said before. The exact detail is still private, but repeating the hint supplies no new progress.";
+    result.feedback = lore.disclosure === "FULL" ? "Marcus already has the exact detail. A category hint cannot make it private again." : newlyShared ? "Marcus now knows what kind of information you hold. He does not yet have the exact detail; a hint is not proof or a completed exchange." : "Marcus already knows that category from what you said before. The exact detail is still private, but repeating the hint supplies no new progress.";
   } else if (intent.topic === "DISCLOSE_FULL") {
     if (lore.disclosure === "FULL" || lore.knowledge.marcus.includes(lore.privateFactId)) {
       cause("DISCLOSURE_REPEATED", [lore.privateFactId], "No new knowledge or negotiating benefit is created by repeating the detail.");

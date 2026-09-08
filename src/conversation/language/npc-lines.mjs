@@ -1,12 +1,20 @@
 import { describeTerms, requireLanguage } from "./frames.mjs";
 
+const sentence = text => /[.!?]$/.test(text.trim()) ? text.trim() : `${text.trim()}.`;
+
 // Two authored phrasings of the same resolved family. No raw lore or future
 // policy is read; polishing a line never changes which reply family resolves.
 export const NPC_REPLY_FAMILIES = Object.freeze({
   WALK: () => ["Then we leave it here. The old debt still stands.", "We will leave it there, then. You still owe the old debt."],
   AGREED: () => ["Agreed. The stock is yours on the terms you just confirmed. The old account stays on the books.", "That is agreed. The stock is yours under the terms you confirmed. The old account remains unpaid."],
-  END: () => ["Enough. We're done talking. No new stock changes hands.", "We're done here. The stock stays put."],
-  CLARIFY: c => [`The offer remains ${c.terms}.${c.exchange ? ` It also includes the agreed information exchange: ${c.exchange}.` : " No information exchange is included."} Those terms have not changed. Your old debt is still separate.`, `Here are the unchanged terms: ${c.terms}.${c.exchange ? ` The agreed information exchange is also included: ${c.exchange}.` : " There is no information exchange in this offer."} Your old debt remains separate.`],
+  END: (c = {}) => c.patience === 0
+    ? c.repeatedClarification
+      ? ["We've gone over these terms again and again. I'm out of patience. We're done talking. No new stock changes hands.", "You keep asking me to repeat the offer. I'm out of patience. We're done here. The stock stays put."]
+      : ["I'm out of patience. We're done talking. No new stock changes hands.", "I've run out of patience. We're done here. The stock stays put."]
+    : c.tension >= 90
+      ? ["This has got too tense. We're done talking. No new stock changes hands.", "Things are too heated now. We're done here. The stock stays put."]
+      : ["Enough. We're done talking. No new stock changes hands.", "We're done here. The stock stays put."],
+  CLARIFY: c => [`The offer remains ${c.terms}.${c.exchange ? ` It also includes the agreed information exchange: ${sentence(c.exchange)}` : " No information exchange is included."} Those terms have not changed. Your old debt is still separate.`, `Here are the unchanged terms: ${c.terms}.${c.exchange ? ` The agreed information exchange is also included: ${sentence(c.exchange)}` : " There is no information exchange in this offer."} Your old debt remains separate.`],
   REPEATED_ASK: () => ["We have covered that point. Saying it again does not give me a new reason to change terms.", "We already covered that. Repeating the question gives me no new reason to change the terms."],
   APPROVED_PROPOSAL: c => [`I can do ${c.terms}. Check it over. Confirm if you want the deal; until then, the stock stays here.`, `That works: ${c.terms}. Read it over and confirm if you're in. The stock stays here until you confirm.`],
   COUNTER: c => [`Not on those terms. Here is what I will put my name to: ${c.terms}. Your existing debt is separate. Take a look before you decide.`, `I will not agree to your proposal. My counteroffer is ${c.terms}. The existing debt is separate. Review that before deciding.`],
@@ -39,7 +47,12 @@ export const NPC_REPLY_FAMILIES = Object.freeze({
 export function buildNpcFrame(state, intent, decision) {
   requireLanguage(state && intent && decision, "missing resolved NPC context");
   let family;
-  const context = { terms: "", exchange: "", debt: state.metrics?.debt, shared: state.lore?.disclosure === "FULL" };
+  // The engine passes resolved metrics and history before appending this turn.
+  // Emotional wording reflects that authored state, never changes it.
+  const priorClarifications = state.events?.filter(event => event.intent.topic === "CLARIFY_OFFER").length ?? 0;
+  const context = { terms: "", exchange: "", debt: state.metrics?.debt, shared: state.lore?.disclosure === "FULL",
+    patience: state.metrics?.patience, tension: state.metrics?.tension,
+    repeatedClarification: intent.topic === "CLARIFY_OFFER" && priorClarifications > 0 };
   const causes = decision.informationCauses || [];
   const has = kind => causes.some(cause => cause.kind === kind);
   const evidence = id => causes.some(cause => cause.evidenceIds?.includes(id));
@@ -69,6 +82,12 @@ export function buildNpcFrame(state, intent, decision) {
     const contribution = decision.based?.contribution;
     if ((contribution?.tension ?? 0) >= 5 && (decision.social?.tension ?? 0) > 0) suffixes.push("And ease off. That approach makes me less willing to listen.");
     else if ((contribution?.confidence ?? 0) >= 3 && (decision.social?.confidence ?? 0) > 0) suffixes.push("I can work with a clear approach like that.");
+  }
+  if (!["WALK", "AGREED", "END"].includes(family)) {
+    if (context.patience <= 3) suffixes.push("I'm almost out of patience. Make your decision.");
+    else if (context.patience <= 6) suffixes.push("I'm running out of patience. We need to move this along.");
+    else if (family === "CLARIFY" && context.repeatedClarification && context.patience <= 12) suffixes.push("We're going in circles. I need a decision, not another reading of the offer.");
+    else if (family === "CLARIFY" && context.repeatedClarification) suffixes.push("We've been through these terms already. Take a moment and decide.");
   }
   const alternatives = NPC_REPLY_FAMILIES[family](context).map(text => `${text}${suffixes.length ? ` ${suffixes.join(" ")}` : ""}`);
   return { id: `marcus:${family}`, actorId: "MARCUS", targetId: "PLAYER", family, context, suffixes, text: alternatives[0], alternatives };

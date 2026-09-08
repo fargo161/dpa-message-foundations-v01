@@ -103,7 +103,7 @@ test("positive information action follows existing preparation and cannot restor
   const offered = step(prepared, { ...intent, vibeId: "EA", intensity: "BALANCED" });
   assert.equal(offered.lore.disclosure, "PARTIAL");
   assert.ok(!offered.lore.knowledge.marcus.includes(offered.lore.privateFactId));
-  assert.match(card(offered, "collection-change").summary, /remains withheld/);
+  assert.match(card(offered, "collection-change").summary, /remains private/);
   const disclosed = step(prepared, resolveContextAction(prepared, "collection-change", "ask-disclose-full"));
   assert.equal(move(disclosed, "collection-change", "offer-information").available, false);
   assert.match(card(disclosed, "collection-change").summary, /already shared/);

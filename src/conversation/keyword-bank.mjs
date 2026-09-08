@@ -35,10 +35,10 @@ const descriptions = {
   ENTITLEMENT: "Challenge his reluctance to trust you. This can strain the conversation.",
   SMALL_TALK: "Bring up the loading shift you actually shared. Repeating it cannot renew goodwill.",
   ACK_MISSED: "Name the specific missed appointment. Acknowledgment does not repay the account.",
-  VERIFY_SOURCE: "Show the dated header and signature while keeping the operative line covered.",
+  VERIFY_SOURCE: "Show the dated header and signature while keeping the exact detail covered.",
   PROBE_USEFULNESS: "Mention the category and ask if it could matter; keep the exact detail private.",
   QUESTION_RECORD: "Question the signed record without alleging theft or revealing the exact mismatch.",
-  DISCLOSE_PARTIAL: "Share the information category, not its exact operative detail.",
+  DISCLOSE_PARTIAL: "Say what kind of information you have while keeping the exact detail private.",
   DISCLOSE_FULL: "Give the exact detail now without an agreement in return. Disclosure cannot be undone.",
   PROPOSE: "Build a voluntary offer in the deal table. Nothing transfers until you confirm a current agreement.",
   EXCHANGE: "Include the private detail in your proposal. It is delivered only when you confirm the agreement.",
@@ -64,8 +64,16 @@ function actionCard(state, key) {
   if (["ACCEPT", "CLARIFY_OFFER"].includes(key) && !state.counteroffer) eligibility = { allowed: false, reason: "No current offer is available." };
   if (state.status !== "OPEN") eligibility = { allowed: false, reason: "This encounter has ended; restart for another run." };
   let description = descriptions[key];
-  if (state.lore?.disclosure === "FULL" && ["PROBE_USEFULNESS", "DISCLOSE_PARTIAL", "DISCLOSE_FULL", "VERIFY_SOURCE"].includes(key)) {
-    description += " The exact detail is already disclosed; this cannot make it private again.";
+  if (state.lore?.disclosure === "FULL") {
+    const sharedDescriptions = {
+      VERIFY_SOURCE: "Show the dated header and signature to check the source of the detail Marcus already has.",
+      PROBE_USEFULNESS: "Ask whether the detail you already shared is useful to him.",
+      QUESTION_RECORD: "Ask him to check the record against the mismatch you already shared, without alleging theft.",
+      DISCLOSE_PARTIAL: "Revisit the kind of information you shared. Marcus already has the exact detail.",
+      DISCLOSE_FULL: "Repeat the exact detail Marcus already has. Repeating it creates no new bargaining value.",
+    };
+    if (sharedDescriptions[key]) description = sharedDescriptions[key];
+    if (key === "VERIFY_SOURCE") action.label = "Check the source of the detail already shared";
   }
   if (state.counteroffer && (action.intent.action === "DEAL" || (action.intent.action === "ASK" && key !== "CLARIFY_OFFER"))) {
     description += " Sending this move replaces or closes the current offer; browsing does not.";
@@ -109,8 +117,8 @@ function subjectSummary(state, subject) {
     text += state.lore.disclosure === "FULL"
       ? " You have already shared the exact detail. It cannot become private again."
       : state.lore.disclosure === "PARTIAL"
-        ? " You have shared its category; the exact operative detail remains withheld."
-        : " You have not disclosed the operative detail in this encounter.";
+        ? " You have said what kind of information it is; the exact detail remains private."
+        : " You have not shared the exact detail in this encounter.";
   }
   return text;
 }
@@ -128,5 +136,6 @@ export function keywordBank(state) {
     summary: "There is an offer on the table. Review the exact terms before confirming; clarification keeps them open.",
     actions: actionsFor(state, ["CLARIFY_OFFER", "ACCEPT", "PROPOSE", "WALK"]),
   });
-  return cards;
+  const kindLabels = { GOODS: "Goods", OBLIGATION: "Debt", HISTORY: "Shared history", DOCUMENT: "Document", INFORMATION: "Information", REPORTED_CLAIM: "What Marcus said", CONVERSATION: "Conversation", PROPOSAL: "Offer" };
+  return cards.map(card => ({ ...card, kindLabel: kindLabels[card.kind] ?? card.kind }));
 }
