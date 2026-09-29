@@ -3,6 +3,7 @@ import { spawnSync } from "node:child_process";
 
 const portableTests = [
   "tests/marcus-world-model-baseline.test.mjs",
+  "tests/marcus-world-conformance.test.mjs",
   "tests/world-kernel.test.mjs",
   "tests/world-subjective.test.mjs",
   "tests/marcus-world-projection.test.mjs",
