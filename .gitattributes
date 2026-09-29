@@ -1,0 +1,4 @@
+# Frozen evidence uses the same bytes on Windows and Unix checkouts.
+tests/fixtures/marcus-world-model-baseline-v01.json text eol=lf
+docs/world-model/TRAPSTAR_WORLD_EVENT_FORMAT_V0_1_3.md -text
+docs/world-model/MARCUS_WORLD_MODEL_CONFORMANCE_IMPLEMENTATION_PLAN.md -text
