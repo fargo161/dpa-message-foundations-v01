@@ -1952,7 +1952,7 @@
               "properties": {
                 "vibeId": {
                   "type": "string",
-                  "minLength": 1
+                  "pattern": "^(?!([BASED])\\1)[BASED]{2}$"
                 },
                 "intensity": {
                   "enum": [
@@ -2407,7 +2407,8 @@
           "properties": {
             "activityId": {
               "type": "string",
-              "minLength": 1
+              "minLength": 1,
+              "pattern": "^(?!(?:constructor|__defineGetter__|__defineSetter__|hasOwnProperty|__lookupGetter__|__lookupSetter__|isPrototypeOf|propertyIsEnumerable|toString|valueOf|__proto__|toLocaleString|prototype)$).+$"
             },
             "actorId": {
               "type": "string",
@@ -2555,7 +2556,8 @@
           "properties": {
             "activityId": {
               "type": "string",
-              "minLength": 1
+              "minLength": 1,
+              "pattern": "^(?!(?:constructor|__defineGetter__|__defineSetter__|hasOwnProperty|__lookupGetter__|__lookupSetter__|isPrototypeOf|propertyIsEnumerable|toString|valueOf|__proto__|toLocaleString|prototype)$).+$"
             },
             "actorId": {
               "type": "string",

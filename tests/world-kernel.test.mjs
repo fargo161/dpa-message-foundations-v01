@@ -2,6 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { KEYWORDS,KEYWORD_BY_ID,validateKeywordDefinition } from "../src/keywords.mjs";
+import { BASED_VIBES } from "../src/based.mjs";
 import { validateDocument } from "../src/schema-validator.mjs";
 import { EVENT_KINDS } from "../src/world/event-contract.mjs";
 import { createLedger,createEvent,appendCommit } from "../src/world/ledger.mjs";
@@ -62,4 +63,37 @@ test("claims reject orphans duplicate IDs mismatched carriers and truth fields",
   assert.throws(()=>validateLedger({...ledger,claims:ledger.claims.map(c=>({...c,truth:true}))}),/claim fields/);
   const statement=createEvent(ledger,"STATEMENT",{speakerId:"player",audienceIds:["marcus"],earshotIds:[],claimIds:["new"],resolution:"EXACT",delivery:{vibeId:"BA",intensity:"BALANCED",landed:1}},options());
   const claim={claimId:"new",proposition:assertion("HAS_ATTRIBUTE",{subject:"intake",attribute:"crates",value:5}),category:{categoryId:"record",label:"Record"},carrier:{actorId:"marcus"},originEventId:statement.eventId};assert.throws(()=>appendCommit(ledger,[statement],[claim]),/linkage/);
+});
+
+test("map-indexed IDs reject prototype aliases and activities survive JSON replay",()=>{
+  const ledger=createAllKindsLedger();
+  const schema=JSON.parse(readFileSync(new URL("../schemas/world-event.schema.json",import.meta.url),"utf8"));
+  for(const activityId of [...Object.getOwnPropertyNames(Object.prototype),"prototype"]) {
+    const event=createEvent(ledger,"ACTIVITY_STARTED",{activityId,actorId:"marcus",label:"Closing",holds:[]},options());
+    assert.throws(()=>appendCommit(ledger,[event]),/activity id/);
+    assert.notEqual(validateDocument(event,schema).length,0);
+    assert.throws(()=>createLedger({seed:"unsafe",entities:[...entities,{entityId:activityId,type:"RESOURCE"}]}),/unsafe entity/);
+  }
+  const running=append(ledger,"ACTIVITY_STARTED",{activityId:"safe_activity",actorId:"marcus",label:"Closing",holds:[]});
+  assert.deepEqual(projectWorld(JSON.parse(JSON.stringify(running))),projectWorld(running));
+  assert.ok(projectWorld(running).activities.safe_activity);
+  const stopped=append(running,"ACTIVITY_ENDED",{activityId:"safe_activity",actorId:"marcus"});
+  assert.deepEqual(projectWorld(stopped).activities,{});
+});
+
+test("statement delivery accepts exactly the existing twenty ordered BASED vibes",()=>{
+  const ledger=createAllKindsLedger();
+  const schema=JSON.parse(readFileSync(new URL("../schemas/world-event.schema.json",import.meta.url),"utf8"));
+  const accepted=[];
+  for(const vibeId of [..."BASED"].flatMap(a=>[..."BASED"].map(b=>a+b)).concat(["NOT_A_BASED_VIBE","ba","B","BAA","BX"])) {
+    const event=createEvent(ledger,"STATEMENT",{speakerId:"player",audienceIds:["marcus"],earshotIds:[],claimIds:[],resolution:"EXACT",delivery:{vibeId,intensity:"BALANCED",landed:1}},options());
+    if(BASED_VIBES.some(v=>v.vibeId===vibeId)){assert.doesNotThrow(()=>appendCommit(ledger,[event]));assert.deepEqual(validateDocument(event,schema),[]);accepted.push(vibeId);}
+    else {assert.throws(()=>appendCommit(ledger,[event]),/delivery/);assert.notEqual(validateDocument(event,schema).length,0);}
+  }
+  assert.deepEqual(accepted.sort(),BASED_VIBES.map(v=>v.vibeId).sort());
+});
+
+test("commitments require distinct parties so every accepted commitment can close",()=>{
+  const ledger=createAllKindsLedger();
+  assert.throws(()=>append(ledger,"COMMITMENT_MADE",{commitmentId:"self",promisorId:"marcus",promiseeId:"marcus",assertion:assertion("PROMISED_TO",{subject:"marcus",object:"marcus",term:"checkin"})},{time:{windowFrom:"11:00",windowUntil:"12:00"}}),/distinct parties/);
 });
