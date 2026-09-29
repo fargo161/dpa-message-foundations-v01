@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dpa-message-foundations.invalid/schemas/world-profile.schema.json",
+  "title": "Fixed world profile",
+  "oneOf": [
+    {
+      "type": "object", "additionalProperties": false,
+      "required": ["version", "entityId", "role"],
+      "properties": {
+        "version": {"const": "world-profile@0.1"}, "entityId": {"type": "string", "minLength": 1}, "role": {"const": "PLAYER"},
+        "effectiveness": {"type": "object", "additionalProperties": false, "required": ["B", "A", "S", "E", "D"], "properties": {"B": {"type": "number", "minimum": 0, "maximum": 1}, "A": {"type": "number", "minimum": 0, "maximum": 1}, "S": {"type": "number", "minimum": 0, "maximum": 1}, "E": {"type": "number", "minimum": 0, "maximum": 1}, "D": {"type": "number", "minimum": 0, "maximum": 1}}}
+      }
+    },
+    {
+      "type": "object", "additionalProperties": false,
+      "required": ["version", "entityId", "role", "recognizes", "reception", "policy", "variant"],
+      "properties": {
+        "version": {"const": "world-profile@0.1"}, "entityId": {"type": "string", "minLength": 1}, "role": {"const": "NPC"},
+        "recognizes": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}}, "reception": {"type": "object"}, "policy": {"type": "object"}, "variant": {"type": "string"}
+      }
+    }
+  ]
+}
