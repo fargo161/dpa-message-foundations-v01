@@ -24,6 +24,15 @@ const DIRECTIONS = new Set(["forward", "reverse", "bidirectional"]);
 const SYMBOL_SIZE = 54;
 
 const KEYWORD_SYMBOLS = Object.freeze({
+  ISSUED_BY: `
+    <rect x="-21" y="-24" width="33" height="46" rx="3" />
+    <path d="M-14-14H5M-14-6H5M-14 2H0" />
+    <circle cx="13" cy="13" r="11" /><path d="M8 13l4 4 7-9" />
+  `,
+  HAS_ATTRIBUTE: `
+    <rect x="-25" y="-19" width="50" height="38" rx="3" />
+    <path d="M-25-5h50M-7-19v38M-19-12h6M0-12h17M-19 4h6M0 4h17M0 12h10" />
+  `,
   OWNS: `
     <path d="M-22-3h27v25h-27zM-15-3v-8h13l7 8" />
     <circle cx="-10" cy="9" r="3" />

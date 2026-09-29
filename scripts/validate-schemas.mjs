@@ -9,6 +9,7 @@ import { TPL_ATOMS, TPL_CONSTRUCTIONS, TPL_FAMILIES, TPL_PROTOCOLS, TPL_TEMPLATE
 import { buildAuthoringPipelineTrace } from "../src/inspection.mjs";
 import { adaptResolvedActionToSemanticRequest } from "../src/action-tpl-adapter.mjs";
 import { assertValidDocument } from "../src/schema-validator.mjs";
+import { createAllKindsLedger } from "../tests/helpers/world-kernel-fixture.mjs";
 
 const root = fileURLToPath(new URL("..", import.meta.url));
 const json = async (relativePath) => JSON.parse(await readFile(resolve(root, relativePath), "utf8"));
@@ -57,4 +58,9 @@ assertCoordinateInventory(persistedBasedTpl.matrix, "persisted-matrix");
 assertCoordinateInventory(persistedBasedTpl.templates, "persisted-templates");
 assertValidDocument(buildAuthoringPipelineTrace().semanticRequest, semanticRequestSchema, "semantic-request");
 assertValidDocument(await json("data/acquisition-manifest.json"), acquisitionSchema, "acquisition-manifest");
-console.log(`schema-validation-ok: ${KEYWORDS.length} keywords, mechanics state/action/transition/capacity, BASED/TPL, semantic request, acquisition manifest`);
+const worldEventSchema = await json("schemas/world-event.schema.json");
+const worldClaimSchema = await json("schemas/world-claim.schema.json");
+const worldFixture = createAllKindsLedger();
+for (const event of worldFixture.events) assertValidDocument(event, worldEventSchema, `world-event:${event.kind}`);
+for (const claim of worldFixture.claims) assertValidDocument(claim, worldClaimSchema, `world-claim:${claim.claimId}`);
+console.log(`schema-validation-ok: ${KEYWORDS.length} keywords, mechanics state/action/transition/capacity, BASED/TPL, semantic request, acquisition manifest, 13 world-event kinds and claims`);

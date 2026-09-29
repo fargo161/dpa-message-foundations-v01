@@ -8,8 +8,8 @@
     "sourceManifestErrors": []
   },
   "keywords": {
-    "count": 14,
-    "crossKeywordRuleCount": 13,
+    "count": 16,
+    "crossKeywordRuleCount": 15,
     "connectionCounts": {
       "OWNS": 2,
       "OWES": 5,
@@ -19,12 +19,14 @@
       "PERMITTED": 2,
       "PROHIBITED": 2,
       "DEPENDS_ON": 3,
-      "KNOWS_SECRET_ABOUT": 3,
-      "BELIEVES": 2,
+      "KNOWS_SECRET_ABOUT": 4,
+      "BELIEVES": 3,
       "TRUSTS": 3,
       "FEARS": 2,
       "RESENTS": 2,
-      "HAS_LEVERAGE_OVER": 3
+      "HAS_LEVERAGE_OVER": 3,
+      "ISSUED_BY": 2,
+      "HAS_ATTRIBUTE": 2
     },
     "definitions": [
       {
@@ -294,6 +296,26 @@
           "FEARS",
           "PROHIBITED"
         ],
+        "conflictingKeywords": [],
+        "reviewStatus": "APPROVED"
+      },
+      {
+        "keywordId": "ISSUED_BY",
+        "displayName": "Issued by",
+        "category": "KNOWLEDGE",
+        "arity": 2,
+        "relatedStats": [],
+        "compatibleKeywords": [],
+        "conflictingKeywords": [],
+        "reviewStatus": "APPROVED"
+      },
+      {
+        "keywordId": "HAS_ATTRIBUTE",
+        "displayName": "Has attribute",
+        "category": "MATERIAL",
+        "arity": 3,
+        "relatedStats": [],
+        "compatibleKeywords": [],
         "conflictingKeywords": [],
         "reviewStatus": "APPROVED"
       }

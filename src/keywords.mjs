@@ -1,4 +1,4 @@
-export const SCHEMA_VERSION = "dpa-keyword-foundation@0.1";
+export const SCHEMA_VERSION = "dpa-keyword-foundation@0.2";
 
 export const KEYWORD_CATEGORIES = Object.freeze([
   "MATERIAL",
@@ -17,7 +17,7 @@ export const KEYWORD_ASSERTION_STATUSES = Object.freeze(["ACTIVE", "INACTIVE", "
 export const KEYWORD_DIRECTIONS = Object.freeze(["DIRECTED", "UNDIRECTED"]);
 export const KEYWORD_SYMMETRIES = Object.freeze(["ASYMMETRIC", "SYMMETRIC"]);
 export const KEYWORD_RECIPROCITIES = Object.freeze(["NOT_IMPLIED", "MUTUAL_BY_DEFINITION"]);
-export const KEYWORD_ARGUMENT_KEYS = Object.freeze(["subject", "object", "term", "proposition", "secret", "basis"]);
+export const KEYWORD_ARGUMENT_KEYS = Object.freeze(["subject", "object", "term", "proposition", "secret", "basis", "attribute", "value"]);
 export const KEYWORD_PROVENANCE_FIELDS = Object.freeze(["sourceId", "sourceVersion", "sourceRecordId", "transformVersion", "licenseId"]);
 
 const stableUpperId = /^[A-Z][A-Z0-9_]+$/;
@@ -39,6 +39,7 @@ const keyword = (spec) => {
   const blockersAndDefeaters = [...(spec.blockersAndDefeaters ?? [])];
   return Object.freeze({
     schemaVersion: SCHEMA_VERSION,
+    valueSlot: spec.keywordId === "OWNS" ? "quantity" : spec.keywordId === "OWES" ? "amount" : null,
     inverseOrReciprocalRule: "No automatic inverse beyond the declared rule.",
     allowedEntityAndResourceTypes: ["ACTOR", "RESOURCE", "OBJECT", "LOCATION", "ACTION", "PROPOSITION", "SECRET", "OBLIGATION"],
     temporalityAndHistoryBehavior: "Active assertions are time-scoped; transitions emit history and never rewrite prior history.",
@@ -46,7 +47,7 @@ const keyword = (spec) => {
     requiredAndForbiddenContexts: { required: [], forbidden: [] },
     truthAndKnowledge: {
       defaultAssertionScope: "ACTUAL",
-      allowedAssertionScopes: ["ACTUAL", "DISPUTED"],
+      allowedAssertionScopes: ["ACTUAL", "DISPUTED", "HYPOTHETICAL"],
       knowledgeBoundary: "NONE",
     },
     temporalValidity: {
@@ -397,12 +398,32 @@ export const KEYWORDS = Object.freeze([
     boundaryExamples: ["A rumor is only a suspected basis, not established leverage."],
     counterexamples: ["A Vibe named Extortive does not create leverage."],
   }),
+  keyword({
+    keywordId: "ISSUED_BY", displayName: "Issued by", category: "KNOWLEDGE", arity: 2,
+    definition: "A document identifies an issuing actor; perceived authenticity and objective issuance remain separate.",
+    explicitNonMeanings: ["Does not establish the truth of its contents.", "Does not establish lawful possession."],
+    typedArgumentRoles: { subject: "DOCUMENT", object: "ISSUER" }, valueSlot: "object",
+    positiveExamples: ["The depot issued counterfoil R-17."],
+    boundaryExamples: ["A genuine document may contain a mistaken count."],
+    counterexamples: ["A recognized forged mark establishes actual issuance."],
+  }),
+  keyword({
+    keywordId: "HAS_ATTRIBUTE", displayName: "Has attribute", category: "MATERIAL", arity: 3,
+    definition: "A subject has a registered attribute with a value of its declared type.",
+    explicitNonMeanings: ["Does not permit arbitrary free-text facts.", "Does not identify the carrier asserting it."],
+    typedArgumentRoles: { subject: "ENTITY", attribute: "REGISTERED_ATTRIBUTE", value: "TYPED_VALUE" }, valueSlot: "value",
+    positiveExamples: ["The R-17 intake has a crate count of six."],
+    boundaryExamples: ["Different collection windows conflict even when one contains the other."],
+    counterexamples: ["An unregistered mood attribute is a valid world fact."],
+  }),
 ]);
 
 export const KEYWORD_BY_ID = new Map(KEYWORDS.map((entry) => [entry.keywordId, entry]));
 export const KEYWORD_IDS = Object.freeze(KEYWORDS.map((entry) => entry.keywordId));
 
 export const CROSS_KEYWORD_RULES = Object.freeze([
+  { ruleId: "RULE_DOCUMENT_SOURCE_AND_CONTENT", keywords: ["ISSUED_BY", "HAS_ATTRIBUTE", "BELIEVES"], result: "SOURCE_AND_CONTENT_REMAIN_DISTINCT" },
+  { ruleId: "RULE_DOCUMENT_CLAIM_CONFLICT", keywords: ["ISSUED_BY", "HAS_ATTRIBUTE", "KNOWS_SECRET_ABOUT"], result: "COMPARE_CLAIMS_WITHOUT_GRANTING_TRUTH" },
   { ruleId: "RULE_DEBT_RELIEF", keywords: ["OWES", "NEEDS", "PROMISED_TO"], result: "REQUEST_EXTENSION_OR_REPAYMENT_DEAL" },
   { ruleId: "RULE_RESOURCE_OFFER", keywords: ["OWES", "OWNS", "NEEDS"], result: "OFFER_PARTIAL_PAYMENT" },
   { ruleId: "RULE_CONTROLLED_PERMISSION", keywords: ["CONTROLS", "PERMITTED", "DEPENDS_ON"], result: "REQUEST_ACCESS" },
@@ -456,7 +477,7 @@ export function validateKeywordDefinition(entry) {
     "blockersAndDefeaters", "possibleHistoryEmissions", "sourceAndProjectProvenance", "positiveExamples",
     "boundaryExamples", "counterexamples", "schemaVersion", "reviewStatus", "argumentKeys",
     "optionalArgumentKeys", "symmetry", "reciprocity", "truthAndKnowledge", "temporalValidity",
-    "contradictionPolicy", "blockerPolicy", "provenancePolicy",
+    "contradictionPolicy", "blockerPolicy", "provenancePolicy", "valueSlot",
   ];
   const errors = required.filter((key) => !(key in entry));
   if (!stableUpperId.test(entry.keywordId ?? "")) errors.push("keywordId");
@@ -474,6 +495,7 @@ export function validateKeywordDefinition(entry) {
   }
   if (!arrayOfStrings(entry.argumentKeys) || entry.argumentKeys.length !== entry.arity) errors.push("argumentKeys");
   if (!arrayOfStrings(entry.optionalArgumentKeys) || new Set(entry.optionalArgumentKeys).size !== entry.optionalArgumentKeys.length) errors.push("optionalArgumentKeys");
+  if (entry.valueSlot !== null && ![...(entry.argumentKeys ?? []), ...(entry.optionalArgumentKeys ?? [])].includes(entry.valueSlot)) errors.push("valueSlot");
   if (arrayOfStrings(entry.argumentKeys) && arrayOfStrings(entry.optionalArgumentKeys) && entry.argumentKeys.some((key) => entry.optionalArgumentKeys.includes(key))) errors.push("argumentKeys_overlap");
   if (!KEYWORD_DIRECTIONS.includes(entry.directionality)) errors.push("directionality");
   if (!KEYWORD_SYMMETRIES.includes(entry.symmetry)) errors.push("symmetry");

@@ -76,7 +76,7 @@ test("each article uses the shared accessible illustration grammar", () => {
 test("rendered pages remain useful without JavaScript and use stable internal links", () => {
   const current = model();
   const pages = renderAllPages(current);
-  assert.equal(pages.size, 23);
+  assert.equal(pages.size, 25);
   const articlePage = pages.get("keywords/OWES/index.html");
   assert.ok(articlePage.includes("<h1>Owes</h1>"));
   assert.ok(articlePage.includes("Marginal note / commentary:"));

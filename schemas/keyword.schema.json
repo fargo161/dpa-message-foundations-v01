@@ -11,7 +11,7 @@
     "negationDisputeAndBeliefHandling", "truthAndKnowledge", "requiredAndForbiddenContexts", "relatedStats",
     "compatibleKeywords", "conflictingKeywords", "contradictionPolicy", "possibleAffordances", "blockersAndDefeaters",
     "blockerPolicy", "possibleHistoryEmissions", "sourceAndProjectProvenance", "provenancePolicy", "positiveExamples",
-    "boundaryExamples", "counterexamples", "reviewStatus"
+    "boundaryExamples", "counterexamples", "reviewStatus", "valueSlot"
   ],
   "$defs": {
     "nonEmptyString": { "type": "string", "minLength": 1 },
@@ -36,7 +36,8 @@
     }
   },
   "properties": {
-    "schemaVersion": { "const": "dpa-keyword-foundation@0.1" },
+    "schemaVersion": { "const": "dpa-keyword-foundation@0.2" },
+    "valueSlot": { "type": ["string", "null"] },
     "keywordId": { "$ref": "#/$defs/upperId" },
     "displayName": { "$ref": "#/$defs/nonEmptyString" },
     "definition": { "$ref": "#/$defs/nonEmptyString" },
@@ -47,7 +48,7 @@
       "type": "object",
       "minProperties": 2,
       "maxProperties": 3,
-      "propertyNames": { "enum": ["subject", "object", "term", "proposition", "secret", "basis"] },
+      "propertyNames": { "enum": ["subject", "object", "term", "proposition", "secret", "basis", "attribute", "value"] },
       "additionalProperties": { "$ref": "#/$defs/upperId" }
     },
     "argumentKeys": {
@@ -55,7 +56,7 @@
       "minItems": 2,
       "maxItems": 3,
       "uniqueItems": true,
-      "items": { "enum": ["subject", "object", "term", "proposition", "secret", "basis"] }
+      "items": { "enum": ["subject", "object", "term", "proposition", "secret", "basis", "attribute", "value"] }
     },
     "optionalArgumentKeys": {
       "type": "array",

@@ -5,8 +5,8 @@ import { BASED_CUES, BASED_VIBES, DELIVERY_INTENSITIES, SPEECH_ACTS, generateMat
 import { RELATIONSHIP_ROLE_CORE, validateRoleCore } from "../src/roles.mjs";
 
 test("keyword foundation has the approved bounded graph", () => {
-  assert.equal(KEYWORDS.length, 14);
-  assert.equal(CROSS_KEYWORD_RULES.length, 13);
+  assert.equal(KEYWORDS.length, 16);
+  assert.equal(CROSS_KEYWORD_RULES.length, 15);
   assert.deepEqual(validateKeywordSet(), []);
   const counts = Object.fromEntries(KEYWORDS.map((keyword) => [keyword.keywordId, CROSS_KEYWORD_RULES.filter((rule) => rule.keywords.includes(keyword.keywordId)).length]));
   assert.ok(Object.values(counts).every((count) => count >= 2));

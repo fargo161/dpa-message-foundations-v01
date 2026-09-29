@@ -1,0 +1,776 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dpa-message-foundations.invalid/schemas/world-claim.schema.json",
+  "title": "Immutable world claim",
+  "$defs": {
+    "assertion": {
+      "allOf": [
+        {
+          "oneOf": [
+            {
+              "properties": {
+                "keywordId": {
+                  "const": "OWNS"
+                },
+                "args": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "subject",
+                    "object"
+                  ],
+                  "properties": {
+                    "subject": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "object": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "quantity": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 1000000
+                    },
+                    "unit": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "properties": {
+                "keywordId": {
+                  "const": "OWES"
+                },
+                "args": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "subject",
+                    "object",
+                    "term"
+                  ],
+                  "properties": {
+                    "subject": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "object": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "term": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "amount": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 1000000
+                    },
+                    "unit": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "due": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "status": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "properties": {
+                "keywordId": {
+                  "const": "NEEDS"
+                },
+                "args": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "subject",
+                    "object"
+                  ],
+                  "properties": {
+                    "subject": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "object": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "properties": {
+                "keywordId": {
+                  "const": "CONTROLS"
+                },
+                "args": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "subject",
+                    "object"
+                  ],
+                  "properties": {
+                    "subject": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "object": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "properties": {
+                "keywordId": {
+                  "const": "PROMISED_TO"
+                },
+                "args": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "subject",
+                    "object",
+                    "term"
+                  ],
+                  "properties": {
+                    "subject": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "object": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "term": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "status": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "properties": {
+                "keywordId": {
+                  "const": "PERMITTED"
+                },
+                "args": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "subject",
+                    "object",
+                    "term"
+                  ],
+                  "properties": {
+                    "subject": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "object": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "term": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "properties": {
+                "keywordId": {
+                  "const": "PROHIBITED"
+                },
+                "args": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "subject",
+                    "object",
+                    "term"
+                  ],
+                  "properties": {
+                    "subject": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "object": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "term": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "properties": {
+                "keywordId": {
+                  "const": "DEPENDS_ON"
+                },
+                "args": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "subject",
+                    "object"
+                  ],
+                  "properties": {
+                    "subject": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "object": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "properties": {
+                "keywordId": {
+                  "const": "KNOWS_SECRET_ABOUT"
+                },
+                "args": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "subject",
+                    "object",
+                    "secret"
+                  ],
+                  "properties": {
+                    "subject": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "object": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "secret": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "properties": {
+                "keywordId": {
+                  "const": "BELIEVES"
+                },
+                "args": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "subject",
+                    "proposition"
+                  ],
+                  "properties": {
+                    "subject": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "proposition": {
+                      "oneOf": [
+                        {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        {
+                          "$ref": "#/$defs/assertion"
+                        }
+                      ]
+                    },
+                    "confidence": {
+                      "type": "number"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "properties": {
+                "keywordId": {
+                  "const": "TRUSTS"
+                },
+                "args": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "subject",
+                    "object"
+                  ],
+                  "properties": {
+                    "subject": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "object": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "properties": {
+                "keywordId": {
+                  "const": "FEARS"
+                },
+                "args": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "subject",
+                    "object"
+                  ],
+                  "properties": {
+                    "subject": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "object": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "properties": {
+                "keywordId": {
+                  "const": "RESENTS"
+                },
+                "args": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "subject",
+                    "object"
+                  ],
+                  "properties": {
+                    "subject": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "object": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "properties": {
+                "keywordId": {
+                  "const": "HAS_LEVERAGE_OVER"
+                },
+                "args": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "subject",
+                    "object",
+                    "basis"
+                  ],
+                  "properties": {
+                    "subject": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "object": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "basis": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "properties": {
+                "keywordId": {
+                  "const": "ISSUED_BY"
+                },
+                "args": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "subject",
+                    "object"
+                  ],
+                  "properties": {
+                    "subject": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "object": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "properties": {
+                "keywordId": {
+                  "const": "HAS_ATTRIBUTE"
+                },
+                "args": {
+                  "oneOf": [
+                    {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": [
+                        "subject",
+                        "attribute",
+                        "value"
+                      ],
+                      "properties": {
+                        "subject": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "attribute": {
+                          "const": "crates"
+                        },
+                        "value": {
+                          "type": "integer",
+                          "minimum": 0,
+                          "maximum": 1000000
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": [
+                        "subject",
+                        "attribute",
+                        "value"
+                      ],
+                      "properties": {
+                        "subject": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "attribute": {
+                          "const": "collection_place"
+                        },
+                        "value": {
+                          "type": "string",
+                          "minLength": 1
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": [
+                        "subject",
+                        "attribute",
+                        "value"
+                      ],
+                      "properties": {
+                        "subject": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "attribute": {
+                          "const": "collection_window"
+                        },
+                        "value": {
+                          "type": "object",
+                          "additionalProperties": false,
+                          "required": [
+                            "from",
+                            "until"
+                          ],
+                          "properties": {
+                            "from": {
+                              "type": "string",
+                              "minLength": 1
+                            },
+                            "until": {
+                              "type": "string",
+                              "minLength": 1
+                            }
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": [
+                        "subject",
+                        "attribute",
+                        "value"
+                      ],
+                      "properties": {
+                        "subject": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "attribute": {
+                          "const": "docket"
+                        },
+                        "value": {
+                          "type": "string",
+                          "minLength": 1
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "assertionId",
+        "keywordId",
+        "args",
+        "scope",
+        "polarity",
+        "status",
+        "contextIds",
+        "validFrom",
+        "validUntil",
+        "provenance"
+      ],
+      "properties": {
+        "assertionId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "keywordId": {
+          "enum": [
+            "OWNS",
+            "OWES",
+            "NEEDS",
+            "CONTROLS",
+            "PROMISED_TO",
+            "PERMITTED",
+            "PROHIBITED",
+            "DEPENDS_ON",
+            "KNOWS_SECRET_ABOUT",
+            "BELIEVES",
+            "TRUSTS",
+            "FEARS",
+            "RESENTS",
+            "HAS_LEVERAGE_OVER",
+            "ISSUED_BY",
+            "HAS_ATTRIBUTE"
+          ]
+        },
+        "args": {
+          "type": "object"
+        },
+        "scope": {
+          "enum": [
+            "ACTUAL",
+            "DISPUTED",
+            "HYPOTHETICAL",
+            "BELIEF",
+            "KNOWLEDGE"
+          ]
+        },
+        "polarity": {
+          "enum": [
+            "ASSERTED",
+            "NEGATED"
+          ]
+        },
+        "status": {
+          "enum": [
+            "ACTIVE",
+            "INACTIVE",
+            "SUPERSEDED",
+            "DEFEATED"
+          ]
+        },
+        "contextIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0,
+          "uniqueItems": true
+        },
+        "validFrom": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "validUntil": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "format": "date-time"
+            }
+          ]
+        },
+        "provenance": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "sourceId",
+            "sourceVersion",
+            "sourceRecordId",
+            "transformVersion",
+            "licenseId"
+          ],
+          "properties": {
+            "sourceId": {
+              "type": "string",
+              "minLength": 1
+            },
+            "sourceVersion": {
+              "type": "string",
+              "minLength": 1
+            },
+            "sourceRecordId": {
+              "type": "string",
+              "minLength": 1
+            },
+            "transformVersion": {
+              "type": "string",
+              "minLength": 1
+            },
+            "licenseId": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        }
+      }
+    }
+  },
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "claimId",
+    "proposition",
+    "category",
+    "carrier",
+    "originEventId"
+  ],
+  "properties": {
+    "claimId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "proposition": {
+      "$ref": "#/$defs/assertion"
+    },
+    "category": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "categoryId",
+        "label"
+      ],
+      "properties": {
+        "categoryId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "label": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "carrier": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "actorId"
+          ],
+          "properties": {
+            "actorId": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "documentId",
+            "partId"
+          ],
+          "properties": {
+            "documentId": {
+              "type": "string",
+              "minLength": 1
+            },
+            "partId": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        }
+      ]
+    },
+    "originEventId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "question": {
+      "type": "string",
+      "minLength": 1
+    }
+  }
+}
