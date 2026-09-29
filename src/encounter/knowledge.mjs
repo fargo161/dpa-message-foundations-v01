@@ -1,71 +1,59 @@
-import { HISTORY_CONTENT, LORE_TOPICS } from "./history-content.mjs";
+import { LORE_TOPICS } from "./history-content.mjs";
 
-export function createLore(seed) {
-  let hash = 2166136261;
-  for (const character of `marcus-information-v1:${seed}`) hash = Math.imul(hash ^ character.codePointAt(0), 16777619) >>> 0;
-  hash = Math.imul(hash ^ (hash >>> 16), 2246822507) >>> 0;
-  const variant = ((hash ^ (hash >>> 13)) >>> 0) % 2 ? "POSITIVE" : "NEGATIVE";
-  const entries = Object.values(HISTORY_CONTENT).filter(fact => !fact.variant || fact.variant === variant);
-  const knownBy = actor => entries.filter(fact => fact.initialKnowers.includes(actor)).map(fact => fact.id);
-  return {
-    schemaVersion: "marcus-lore@0.1", variant,
-    facts: Object.fromEntries(entries.map(fact => [fact.id, structuredClone(fact)])),
-    privateFactId: variant === "POSITIVE" ? "POSITIVE_ROUTE" : "NEGATIVE_DISCREPANCY",
-    knowledge: { player: knownBy("PLAYER"), marcus: knownBy("MARCUS"), marcusAwarePlayerKnows: entries.filter(fact => fact.initialKnowers.includes("PLAYER") && fact.initialKnowers.includes("MARCUS")).map(fact => fact.id) },
-    beliefs: { source: "UNCHECKED", relevance: "UNTESTED", content: "UNKNOWN", record: variant === "NEGATIVE" ? "RECONCILED_CLAIM" : "NOT_APPLICABLE" },
-    disclosure: "NONE", evidence: [], progressKeys: [], negativeWindow: null,
-  };
-}
+import { projectPlayerInformation } from "./marcus-world-adapter.mjs";
 
 export function hasLoreFact(state, id) {
-  const fact = state.lore?.facts?.[id];
-  return fact?.id === id && fact?.status === "ACTIVE" && fact?.scope === HISTORY_CONTENT[id]?.scope;
+  return !!state.world && projectPlayerInformation(state).factIds.includes(id);
 }
-const knows = (state, id) => hasLoreFact(state, id) && state.lore.knowledge.player.includes(id);
-export const hasEvidence = (state, id) => state.lore?.evidence?.some(item => item.id === id) ?? false;
+const knows = hasLoreFact;
+export const hasEvidence = (state, id) => !!state.world && projectPlayerInformation(state).evidence.some(item => item.id === id);
 export function privateInformation(state) {
-  const id = state.lore?.privateFactId;
-  return id && knows(state, id) ? state.lore.facts[id] : null;
+  if (!state.world) return null;
+  const player = projectPlayerInformation(state);
+  return player.privateFactId ? player.facts[player.privateFactId] : null;
 }
 
 export function informationEligibility(state, intent) {
+  const lore = state.world ? projectPlayerInformation(state) : null;
   const no = reason => ({ allowed: false, reason });
   const yes = (reason = "Available.") => ({ allowed: true, reason });
   if (state.status !== "OPEN") return no("This encounter has ended; restart for another run.");
-  if (!state.lore) return no("No encounter history is available.");
+  if (!lore) return no("No encounter history is available.");
   if (["DEAL", "ACCEPT"].includes(intent.action) && !hasLoreFact(state, "STOCK_TITLE")) return no("There is no established authority to transfer this stock.");
   if (intent.action === "ACCEPT" && state.counteroffer?.informationExchange) {
-    if (state.counteroffer.informationExchange.factId !== state.lore.privateFactId) return no("The current information condition no longer matches your available information.");
+    if (state.counteroffer.informationExchange.factId !== lore.privateFactId) return no("The current information condition no longer matches your available information.");
     return informationEligibility(state, { action: "DEAL", information: "OFFER_INFORMATION" });
   }
   if (intent.action === "DEAL") {
     if (!intent.information || intent.information === "NONE") return yes();
     if (intent.information !== "OFFER_INFORMATION") return no("Unknown information option.");
-    if (!privateInformation(state) || state.lore.variant !== "POSITIVE") return no("You have no suitable private collection detail to offer in exchange.");
-    if (state.lore.disclosure === "FULL" || state.lore.knowledge.marcus.includes(state.lore.privateFactId)) return no("Marcus already has the exact information; it is no longer private exchange value.");
+    if (!privateInformation(state) || lore.privateFactId !== "POSITIVE_ROUTE") return no("You have no suitable private collection detail to offer in exchange.");
+    if (lore.disclosure === "FULL") return no("Marcus already has the exact information; it is no longer private exchange value.");
     if (!hasLoreFact(state, "DIRECT_RECEIPT") || !hasEvidence(state, "SOURCE_VERIFIED")) return no("First establish the source without giving away the detail.");
-    if (!hasLoreFact(state, "LEDGER_CLOSING") || !hasLoreFact(state, "PICKUP_NEED") || !hasEvidence(state, "RELEVANCE_OBSERVED")) return no("You have not established a useful reason for him to trade for this detail.");
+    if (!hasEvidence(state, "RELEVANCE_OBSERVED")) return no("You have not established a useful reason for him to trade for this detail.");
     return yes("Offer the exact collection detail with the terms; it is delivered only when you confirm an agreement.");
   }
   if (intent.action !== "ASK") return yes();
   const requirements = {
     DEBT: ["OLD_ACCOUNT"], GUARANTEE: ["OLD_ACCOUNT"], RISK: ["STOCK_TITLE"], ENTITLEMENT: ["STOCK_TITLE"], TERMS: ["STOCK_TITLE"],
     SMALL_TALK: ["SHARED_LOADING_SHIFT"], ACK_MISSED: ["OLD_ACCOUNT", "MISSED_CHECKIN"],
-    VERIFY_SOURCE: ["DIRECT_RECEIPT"], PROBE_USEFULNESS: ["LEDGER_CLOSING"], QUESTION_RECORD: ["RECORD_ASSERTION", "NEGATIVE_DISCREPANCY"],
+    VERIFY_SOURCE: ["DIRECT_RECEIPT"], PROBE_USEFULNESS: [], QUESTION_RECORD: ["RECORD_ASSERTION", "NEGATIVE_DISCREPANCY"],
   };
   if ((requirements[intent.topic] ?? []).some(id => !hasLoreFact(state, id))) return no("The relevant history or context for this question is not established.");
   if (["VERIFY_SOURCE", "PROBE_USEFULNESS", "QUESTION_RECORD", "DISCLOSE_PARTIAL", "DISCLOSE_FULL"].includes(intent.topic) && !privateInformation(state)) return no("You do not hold the relevant information in this encounter.");
-  if (intent.topic === "QUESTION_RECORD" && state.lore.variant !== "NEGATIVE") return no("You have no specific record discrepancy to ask about.");
+  if (intent.topic === "QUESTION_RECORD" && lore.privateFactId !== "NEGATIVE_DISCREPANCY") return no("You have no specific record discrepancy to ask about.");
   return yes();
 }
 
 export function loreOptions(state) {
-  return LORE_TOPICS.map(option => { const eligibility = informationEligibility(state, { action: "ASK", topic: option.id }); return { ...option, ...(option.id === "VERIFY_SOURCE" && state.lore?.disclosure === "FULL" ? { label: "Check the source of the detail already shared" } : {}), available: eligibility.allowed, reason: eligibility.reason }; });
+  const lore = state.world ? projectPlayerInformation(state) : null;
+  return LORE_TOPICS.map(option => { const eligibility = informationEligibility(state, { action: "ASK", topic: option.id }); return { ...option, ...(option.id === "VERIFY_SOURCE" && lore?.disclosure === "FULL" ? { label: "Check the source of the detail already shared" } : {}), available: eligibility.allowed, reason: eligibility.reason }; });
 }
 
 export function informationPlayerText(state, intent) {
-  const positive = state.lore?.variant === "POSITIVE";
-  const shared = state.lore?.disclosure === "FULL";
+  const lore = state.world ? projectPlayerInformation(state) : null;
+  const positive = lore?.privateFactId === "POSITIVE_ROUTE";
+  const shared = lore?.disclosure === "FULL";
   if (intent.action === "DEAL" && intent.information === "OFFER_INFORMATION") return "I offer the exact collection instructions with these terms, to be shared if we both agree. You are free to decline.";
   const phrases = {
     SMALL_TALK: "How has the loading been since that shift we worked together last week?",
@@ -80,12 +68,12 @@ export function informationPlayerText(state, intent) {
 }
 
 export function projectLore(state) {
-  const lore = state.lore;
+  const lore = state.world ? projectPlayerInformation(state) : null;
   if (!lore) return { briefing: [], playerKnowledge: [], disclosed: [], evidence: [], informationOptions: [] };
   const briefing = ["The old account and today's proposed purchase are separate. Hoped-for earnings are not cash."];
   for (const id of ["OLD_ACCOUNT", "MISSED_CHECKIN", "SHARED_LOADING_SHIFT"]) if (knows(state, id)) briefing.push(lore.facts[id].proposition);
-  if (privateInformation(state)) briefing.push(lore.disclosure === "FULL" ? "Marcus now has the exact information below. Sharing it did not erase your debt or promise a deal." : `You know the exact information below. Marcus does not have the detail yet. ${lore.variant === "POSITIVE" ? "You can keep it private, share it, or offer it with terms if it is useful to him." : "You can keep it private or decide when to reveal it. His reaction is still for you to assess."}`);
-  const playerKnowledge = lore.knowledge.player.filter(id => hasLoreFact(state, id)).map(id => lore.facts[id].proposition);
+  if (privateInformation(state)) briefing.push(lore.disclosure === "FULL" ? "Marcus now has the exact information below. Sharing it did not erase your debt or promise a deal." : `You know the exact information below. Marcus does not have the detail yet. ${lore.privateFactId === "POSITIVE_ROUTE" ? "You can keep it private, share it, or offer it with terms if it is useful to him." : "You can keep it private or decide when to reveal it. His reaction is still for you to assess."}`);
+  const playerKnowledge = lore.factIds.filter(id => hasLoreFact(state, id)).map(id => lore.facts[id].proposition);
   const disclosed = lore.disclosure === "FULL" && privateInformation(state) ? [privateInformation(state).proposition]
     : lore.disclosure === "PARTIAL" ? ["Marcus knows what kind of information you hold; the exact detail is still private."] : [];
   if (hasEvidence(state, "SOURCE_VERIFIED")) disclosed.push("Marcus has checked the document's dated header and signature.");

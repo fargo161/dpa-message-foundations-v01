@@ -1,5 +1,6 @@
 import { createConversation, resolveConversation, projectConversation } from "../../src/conversation/runtime.mjs";
 import { buildNpcFrame } from "../../src/conversation/language/npc-lines.mjs";
+import { projectMarcusLore } from "../../src/encounter/marcus-world-adapter.mjs";
 
 export const ORACLE_MODE = "AUTHORING_PREVIEW";
 const json = value => JSON.parse(JSON.stringify(value));
@@ -8,7 +9,7 @@ const turnFields = ["intent", "playerText", "marcusText", "outcome", "before", "
 /** Capture compatibility observations, not the new world's internal representation. */
 export function oracleSnapshot(state) {
   const projected = projectConversation(state, "frozen-oracle-csrf", { languageMode: ORACLE_MODE });
-  const lore = state.lore;
+  const lore = projectMarcusLore(state);
   const turn = state.events.at(-1);
   return json({
     play: projected.play,
@@ -38,7 +39,7 @@ export function replayOracleRun(run) {
     // never a knowledge edit. The corpus explicitly records this intervention.
     if (step.control === "REMOVE_NEGATIVE_WINDOW") {
       state = structuredClone(state);
-      state.lore.negativeWindow = null;
+      state.informationLocal.negativeWindow = null;
     }
     const input = { requestId: `frozen_oracle_${index}`, runId: state.runId, version: state.events.length,
       vibeId: "EA", intensity: "BALANCED", ...step.intent };

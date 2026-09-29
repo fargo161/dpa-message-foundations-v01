@@ -1,3 +1,4 @@
+import { projectPlayerInformation } from "./marcus-world-adapter.mjs";
 import { projectLore } from "./knowledge.mjs";
 
 function remainingAvenues(state) {
@@ -51,7 +52,7 @@ function quality(state) {
 
 /** Player-safe presentation only; phases describe progress and never gate actions. */
 export function conversationView(state) {
-  const lore = state.lore ? projectLore(state) : null;
+  const lore = state.world ? projectLore(state) : null;
   return {
     phase: state.status !== "OPEN" ? "RESOLUTION" : state.phase || "CONTACT",
     opening: lore?.briefing || ["You owe Marcus money. His Contra is available only on terms he agrees to. Future profits are uncertain."],
@@ -80,7 +81,7 @@ export function reactionCause(state, intent, decision, informationEffect = {}) {
     turnRef: { runId: state.runId, index: turn },
     semanticIntent,
     involvedFactIds,
-    observedEvidence: structuredClone((state.lore?.evidence || []).filter((entry) => evidenceIds.has(entry.id))),
+    observedEvidence: structuredClone((state.world ? projectPlayerInformation(state).evidence : []).filter((entry) => evidenceIds.has(entry.id))),
     consequences: {
       outcome: decision.outcome,
       reasons: structuredClone(decision.reasons || []),
@@ -97,7 +98,7 @@ export function reactionCause(state, intent, decision, informationEffect = {}) {
       status: state.status,
       currentOffer: state.counteroffer ? { id: state.counteroffer.id, version: state.counteroffer.version } : null,
       clarificationPreservedOffer: intent.topic === "CLARIFY_OFFER" && Boolean(state.counteroffer),
-      disclosure: state.lore?.disclosure ?? null,
+      disclosure: state.world ? projectPlayerInformation(state).disclosure : null,
     },
     remainingAvenues: remainingAvenues(state),
   };

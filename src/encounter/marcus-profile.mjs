@@ -1,4 +1,4 @@
-import { PRICE } from "./state.mjs";
+import { PRICE } from "./constants.mjs";
 
 const freeze = (value) => {
   if (value && typeof value === "object") {

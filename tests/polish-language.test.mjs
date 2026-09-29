@@ -1,4 +1,5 @@
 import test from "node:test";
+import { projectMarcusLore } from "../src/encounter/marcus-world-adapter.mjs";
 import assert from "node:assert/strict";
 import { BASED_VIBES, DELIVERY_INTENSITIES } from "../src/based.mjs";
 import { createState } from "../src/encounter/state.mjs";
@@ -56,7 +57,7 @@ test("review: repeated clarification signals actual dwindling patience without c
     assert.deepEqual(state.obligations, ledger);
     assert.equal(state.metrics.cash, 80);
     assert.equal(state.metrics.playerStock, 0);
-    assert.equal(state.lore.knowledge.marcus.includes(state.lore.privateFactId), false);
+    assert.equal(projectMarcusLore(state).knowledge.marcus.includes(projectMarcusLore(state).privateFactId), false);
     const reply = state.events.at(-1).marcusText;
     if (state.status === "OPEN") {
       assert.deepEqual(state.counteroffer, offer);

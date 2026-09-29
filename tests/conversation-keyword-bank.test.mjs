@@ -1,3 +1,5 @@
+import { projectMarcusLore } from "../src/encounter/marcus-world-adapter.mjs";
+import { withoutFact, alterPrivateClaim, setOldDebt, setResources, prepareInformation, rewriteMarcusHistory } from "./helpers/marcus-world-interventions.mjs";
 import test from "node:test";
 import assert from "node:assert/strict";
 import { keywordBank } from "../src/conversation/keyword-bank.mjs";
@@ -12,8 +14,9 @@ const card = (state, id) => keywordBank(state).find(item => item.id === id);
 const move = (state, id, actionId) => card(state, id)?.actions.find(action => action.id === actionId);
 const ask = topic => ({ action: "ASK", topic, vibeId: "EA", intensity: "BALANCED" });
 function step(state, intent) {
+  intent = { vibeId: "EA", intensity: "BALANCED", ...intent };
   const effect = resolveInformation(state, intent);
-  return { ...structuredClone(state), lore: effect.lore, events: [...state.events, { intent }] };
+  return { ...structuredClone(state), world: effect.world, informationLocal: effect.informationLocal, events: [...state.events, { intent }] };
 }
 const prepare = state => step(step(state, ask("VERIFY_SOURCE")), ask("PROBE_USEFULNESS"));
 
@@ -35,10 +38,10 @@ test("keyword projection is deterministic, detached, read-only and hides NPC-pri
 
 test("only known active subjects appear, and removing knowledge removes subject-bound actions", () => {
   for (const mutate of [
-    state => { state.lore.knowledge.player = state.lore.knowledge.player.filter(id => id !== "POSITIVE_ROUTE"); },
-    state => { state.lore.facts.POSITIVE_ROUTE.status = "INACTIVE"; },
-    state => { state.lore.facts.POSITIVE_ROUTE.scope = "BELIEF"; },
-    state => { delete state.lore.facts.POSITIVE_ROUTE; },
+    state => { withoutFact(state, "POSITIVE_ROUTE"); },
+    state => { alterPrivateClaim(state, "status", "INACTIVE"); },
+    state => { alterPrivateClaim(state, "scope", "HYPOTHETICAL"); },
+    state => { withoutFact(state, "POSITIVE_ROUTE"); },
   ]) {
     const state = initial(); mutate(state);
     assert.equal(card(state, "collection-change"), undefined);
@@ -46,7 +49,7 @@ test("only known active subjects appear, and removing knowledge removes subject-
     assert.throws(() => resolveContextAction(state, "collection-change", "ask-disclose-full"));
   }
   const state = initial();
-  state.lore.knowledge.player = state.lore.knowledge.player.filter(id => id !== "MISSED_CHECKIN");
+  withoutFact(state, "MISSED_CHECKIN");
   assert.equal(card(state, "missed-check-in"), undefined);
   assert.equal(move(state, "old-account", "ask-ack-missed"), undefined);
   assert.equal(state.obligations.existing, 250);
@@ -101,8 +104,8 @@ test("positive information action follows existing preparation and cannot restor
   assert.deepEqual(intent, { action: "DEAL", information: "OFFER_INFORMATION" });
   assert.deepEqual(prepared, before);
   const offered = step(prepared, { ...intent, vibeId: "EA", intensity: "BALANCED" });
-  assert.equal(offered.lore.disclosure, "PARTIAL");
-  assert.ok(!offered.lore.knowledge.marcus.includes(offered.lore.privateFactId));
+  assert.equal(projectMarcusLore(offered).disclosure, "PARTIAL");
+  assert.ok(!projectMarcusLore(offered).knowledge.marcus.includes(projectMarcusLore(offered).privateFactId));
   assert.match(card(offered, "collection-change").summary, /remains private/);
   const disclosed = step(prepared, resolveContextAction(prepared, "collection-change", "ask-disclose-full"));
   assert.equal(move(disclosed, "collection-change", "offer-information").available, false);
@@ -116,7 +119,7 @@ test("negative contextual route preserves prepared one-use opening and no browsi
     const intent = resolveContextAction(state, "intake-mismatch", actionId);
     state = step(state, { ...intent, vibeId: "EA", intensity: "BALANCED" });
   }
-  assert.ok(state.lore.negativeWindow);
+  assert.ok(projectMarcusLore(state).negativeWindow);
   const before = structuredClone(state);
   keywordBank(state); keywordBank(state);
   assert.deepEqual(state, before);
@@ -137,7 +140,7 @@ test("current-offer card preserves clarification and separates draft revision fr
   assert.match(move(state, "current-offer", "ask-clarify-offer").description, /without changing/);
   assert.match(move(state, "old-account", "ask-debt").description, /replaces or closes/);
   assert.deepEqual(state, before);
-  delete state.lore.facts.STOCK_TITLE;
+  withoutFact(state, "STOCK_TITLE");
   assert.equal(move(state, "current-offer", "accept-offer").available, false);
 });
 

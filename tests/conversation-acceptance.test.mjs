@@ -1,4 +1,5 @@
 import test from "node:test";
+import { projectMarcusLore } from "../src/encounter/marcus-world-adapter.mjs";
 import assert from "node:assert/strict";
 import { createEncounterServer } from "../scripts/encounter-server.mjs";
 import { createState } from "../src/encounter/state.mjs";
@@ -76,7 +77,7 @@ test("conversation: both knowledge variants and all three quirks complete contex
   for (let i = 0; i < 500 && combinations.size < 6; i++) {
     const seed = `conversation-coverage-${i}`;
     const state = createState(seed, "coverage", selectQuirk(seed));
-    combinations.set(`${state.lore.variant}/${state.quirk}`, seed);
+    combinations.set(`${projectMarcusLore(state).variant}/${state.quirk}`, seed);
   }
   assert.equal(combinations.size, 6);
   const api = await serve(t);
@@ -126,12 +127,12 @@ test("conversation: delivery previews preserve conditional information and exact
   let seed;
   for (let i = 0; i < 50; i++) {
     const candidate = `conditional-preview-${i}`;
-    if (createState(candidate, "preview-proof", selectQuirk(candidate)).lore.variant === "POSITIVE") { seed = candidate; break; }
+    if (projectMarcusLore(createState(candidate, "preview-proof", selectQuirk(candidate))).variant === "POSITIVE") { seed = candidate; break; }
   }
   assert.ok(seed);
   await api.commit("/api/restart", api.body({ seed }));
-  const factId = api.view.debug.state.lore.privateFactId;
-  const detail = api.view.debug.state.lore.facts[factId].proposition;
+  const factId = projectMarcusLore(api.view.debug.state).privateFactId;
+  const detail = projectMarcusLore(api.view.debug.state).facts[factId].proposition;
   for (const topic of ["VERIFY_SOURCE", "PROBE_USEFULNESS"]) await api.commit("/api/turn", api.body(speaking(contextual(api.view, topic))));
   const terms = { units: 2, upfront: 41, repayment: 79, extra: 0, days: 7 };
   const before = structuredClone(api.view);
@@ -153,9 +154,9 @@ test("conversation: delivery previews preserve conditional information and exact
   assert.equal(preview.status, 200, await preview.clone().text());
   assert.ok((await preview.json()).playerText.includes(detail));
   assert.deepEqual(await api.read(), held);
-  assert.equal(held.debug.state.lore.knowledge.marcus.includes(factId), false);
+  assert.equal(projectMarcusLore(held.debug.state).knowledge.marcus.includes(factId), false);
   await api.commit("/api/turn", input);
-  assert.ok(api.view.debug.state.lore.knowledge.marcus.includes(factId));
+  assert.ok(projectMarcusLore(api.view.debug.state).knowledge.marcus.includes(factId));
   assert.equal(api.view.play.metrics.cash, 80 - offer.terms.upfront);
   assert.equal(api.view.play.metrics.debt, 250 + offer.terms.repayment + offer.terms.extra);
 });

@@ -5,7 +5,7 @@ const portableTests = [
   "tests/marcus-world-model-baseline.test.mjs",
   "tests/world-kernel.test.mjs",
   "tests/world-subjective.test.mjs",
-  "tests/marcus-world-shadow.test.mjs",
+  "tests/marcus-world-projection.test.mjs",
   "tests/review-state-copy.test.mjs",
   "tests/encounter-polish-regression.test.mjs",
   "tests/polish-language.test.mjs",

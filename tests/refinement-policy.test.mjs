@@ -1,10 +1,17 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { createState } from "../src/encounter/state.mjs";
-import { evaluateTurn } from "../src/encounter/marcus-policy.mjs";
+import { evaluateTurn as evaluatePolicy } from "../src/encounter/marcus-policy.mjs";
+import { marcusDecisionContext } from "../src/encounter/marcus-world-adapter.mjs";
 import { createConversation, resolveConversation } from "../src/conversation/runtime.mjs";
 
 const deal = terms => ({ action: "DEAL", vibeId: "EA", intensity: "BALANCED", terms });
+const evaluateTurn = (current, intent) => {
+  const context = marcusDecisionContext(current), before = structuredClone(context);
+  const result = evaluatePolicy(context, intent);
+  assert.deepEqual(context, before, "Policy cannot mutate its narrowed NPC input");
+  return result;
+};
 const original = { units: 4, upfront: 60, repayment: 180, extra: 24, days: 14 };
 const afterProposal = () => {
   const state = createState("conversation-coverage-6", "refinement-policy", "plain_dealing");

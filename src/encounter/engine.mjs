@@ -5,6 +5,8 @@ import { PERSONALITY } from "./marcus-profile.mjs";
 import { marcusMessage } from "./messages.mjs";
 import { hasLoreFact, informationEligibility, loreOptions, projectLore } from "./knowledge.mjs";
 import { resolveInformation } from "./information-policy.mjs";
+import { advanceMarcusWorld, projectMarcusEconomy } from "./marcus-world.mjs";
+import { projectPlayerInformation, marcusDecisionContext } from "./marcus-world-adapter.mjs";
 import { conversationView, reactionCause } from "./conversation.mjs";
 import { keywordBank } from "../conversation/keyword-bank.mjs";
 import { resolveContextAction } from "../conversation/context-actions.mjs";
@@ -38,7 +40,12 @@ export function validateSeed(seed) {
   requireThat(typeof seed === "string" && seed.length > 0 && seed.length <= 80 && !/[\u0000-\u001f\u007f]/.test(seed), "Seed must contain 1–80 printable characters.");
   return seed;
 }
+function withWorldEconomy(state) {
+  const economy = projectMarcusEconomy(state.world);
+  return { ...state, metrics: { ...state.metrics, ...economy.metrics }, obligations: economy.obligations };
+}
 export function validateTerms(state, terms) {
+  state = withWorldEconomy(state);
   exactObject(terms, ["units", "upfront", "repayment", "extra", "days"]);
   for (const key of ["units", "upfront", "repayment", "extra", "days"]) {
     requireThat(Number.isSafeInteger(terms[key]), `${key} must be a finite whole number.`);
@@ -95,6 +102,7 @@ function authorizedPlayerLine(state, input, mode) {
 
 /** Pure preview: no evaluation, information resolution, event, or nonce consumption. */
 export function previewIntent(state, input, { languageMode = "PRODUCTION" } = {}) {
+  state = withWorldEconomy(state);
   validateIntent(state, input);
   const line = authorizedPlayerLine(state, input, languageMode);
   return { runId: state.runId, version: state.events.length, playerText: line.text,
@@ -104,6 +112,7 @@ export function previewIntent(state, input, { languageMode = "PRODUCTION" } = {}
 }
 
 export function transition(state, input, { languageMode = "PRODUCTION" } = {}) {
+  state = withWorldEconomy(state);
   validateIntent(state, input);
   const line = authorizedPlayerLine(state, input, languageMode);
   const next = structuredClone(state);
@@ -112,17 +121,15 @@ export function transition(state, input, { languageMode = "PRODUCTION" } = {}) {
   const offer = state.counteroffer;
   const clarification = intent.action === "ASK" && intent.topic === "CLARIFY_OFFER";
   const informationEffect = resolveInformation(structuredClone(state), structuredClone(input));
-  next.lore = informationEffect.lore;
+  next.world = informationEffect.world;
+  next.informationLocal = informationEffect.informationLocal;
   if (!clarification) next.counteroffer = null;
   let decision;
   if (input.action === "ACCEPT") {
-    const terms = validateTerms(state, offer.terms);
-    next.metrics.cash -= terms.upfront;
-    next.metrics.marcusStock -= terms.units;
-    next.metrics.playerStock += terms.units;
-    next.obligations.principal += terms.repayment;
-    next.obligations.extra += terms.extra;
-    next.obligations.days = terms.days;
+    validateTerms(state, offer.terms);
+    const economy = projectMarcusEconomy(next.world);
+    Object.assign(next.metrics, economy.metrics);
+    next.obligations = economy.obligations;
     next.status = "AGREED";
     next.agreement = { ...structuredClone(offer), obligations: structuredClone(next.obligations) };
     decision = { outcome: "AGREED", social: {}, reasons: ["Accepted the exact current offer. Cash and Contra transferred atomically once; existing debt was retained."], based: { contribution: 0, reason: "Delivery cannot alter accepted terms." }, derived: {} };
@@ -133,7 +140,7 @@ export function transition(state, input, { languageMode = "PRODUCTION" } = {}) {
     // Policy receives a private clone so no policy mutation can change authoritative state.
     decision = clarification
       ? { outcome: "ANSWER", social: { confidence: 0, tension: 0, patience: -1 - Math.min(2, state.events.filter(e => e.intent.topic === "CLARIFY_OFFER").length) }, reasons: ["Pure clarification preserves the current offer's identity, terms and information exchange. It consumes patience and gives no social reward."], based: { contribution: { confidence: 0, tension: 0 }, reason: "Clarification cannot alter terms." }, derived: { progressKey: "NONE", meaningfulProgress: false } }
-      : evaluateTurn(structuredClone(state), structuredClone(input), informationEffect);
+      : evaluateTurn(marcusDecisionContext(state), structuredClone(input), structuredClone({ social: informationEffect.social, progressKey: informationEffect.progressKey, scoreBonus: informationEffect.scoreBonus, exchange: informationEffect.exchange }));
     requireThat(["ANSWER", "ACCEPT", "COUNTER", "REJECT", "END"].includes(decision.outcome), "Invalid authored policy outcome.", 500);
     for (const key of ["confidence", "tension", "patience"]) {
       const delta = decision.social[key] ?? 0;
@@ -154,7 +161,12 @@ export function transition(state, input, { languageMode = "PRODUCTION" } = {}) {
     }
     if (decision.clue && !next.clues.includes(decision.clue)) next.clues.push(decision.clue);
   }
-  next.metrics.debt = next.obligations.existing + next.obligations.principal + next.obligations.extra;
+  const committed = ["AGREED", "WITHDRAWN", "ENDED"].includes(next.status) ? advanceMarcusWorld(state, input, { status: next.status }) : informationEffect;
+  next.world = committed.world;
+  next.informationLocal = committed.informationLocal;
+  const economy = projectMarcusEconomy(next.world);
+  Object.assign(next.metrics, economy.metrics);
+  next.obligations = economy.obligations;
   next.phase = next.status !== "OPEN" ? "RESOLUTION" : input.action === "DEAL" || state.phase === "NEGOTIATION" ? "NEGOTIATION" : input.topic === "SMALL_TALK" && state.phase === "CONTACT" ? "CONTACT" : "BUSINESS";
   const after = structuredClone(next.metrics);
   const deltas = Object.fromEntries(METRIC_DEFINITIONS.map(d => [d.key, after[d.key] - before[d.key]]));
@@ -173,13 +185,15 @@ export function transition(state, input, { languageMode = "PRODUCTION" } = {}) {
   const progressKey = decision.derived.progressKey === "NONE" ? null : decision.derived.progressKey ?? informationEffect.progressKey;
   decision.progressKey = progressKey;
   const cause = reactionCause(next, intent, decision, informationEffect);
-  const event = { intent, playerText, marcusText, outcome: decision.outcome, before, after, deltas, reasons: decision.reasons, based: decision.based, derived: decision.derived, progressKey, informationCauses: informationEffect.causes, feedback: informationEffect.feedback, reactionCause: cause, characterId: "marcus", faces: null };
+  const event = { worldEventIds: committed.worldEventIds, intent, playerText, marcusText, outcome: decision.outcome, before, after, deltas, reasons: decision.reasons, based: decision.based, derived: decision.derived, progressKey, informationCauses: informationEffect.causes, feedback: informationEffect.feedback, reactionCause: cause, characterId: "marcus", faces: null };
   event.faces = buildFaceTurn(event, state.events.at(-1)?.faces?.responding ?? openingFace());
   next.events.push(event);
   return next;
 }
 
 export function projectState(state, csrf, { languageMode = "PRODUCTION" } = {}) {
+  state = withWorldEconomy(state);
+  const player = projectPlayerInformation(state);
   const { cash, debt, marcusStock, playerStock } = state.metrics;
   // Offer identity is needed for confirmation; internal lore bindings are Debug-only.
   const publicOffer = offer => {
@@ -201,7 +215,7 @@ export function projectState(state, csrf, { languageMode = "PRODUCTION" } = {}) 
   return { csrf,
     play: { runId: state.runId, version: state.events.length, seed: state.seed, status: state.status,
       character: { id: "marcus", name: "Marcus ‘Broker’ Hill" }, scenario: SCENARIO_OPTIONS[0],
-      situation: { summary: `You owe Marcus $${state.obligations.existing} on the old account. You want more Contra.${hasLoreFact(state, "MISSED_CHECKIN") && state.lore.knowledge.player.includes("MISSED_CHECKIN") ? " You missed yesterday's check-in." : ""}${hasLoreFact(state, state.lore?.privateFactId) && state.lore.knowledge.player.includes(state.lore.privateFactId) ? " Information you hold may affect this conversation; track what has been shared in Your edge." : ""}`, objective: "Suggested challenge: acquire at least two Contra units using some new credit. Compare cash retained, new debt and repayment time; you can choose a smaller deal or walk away." },
+      situation: { summary: `You owe Marcus $${state.obligations.existing} on the old account. You want more Contra.${hasLoreFact(state, "MISSED_CHECKIN") ? " You missed yesterday's check-in." : ""}${!!player.privateFactId ? " Information you hold may affect this conversation; track what has been shared in Your edge." : ""}`, objective: "Suggested challenge: acquire at least two Contra units using some new credit. Compare cash retained, new debt and repayment time; you can choose a smaller deal or walk away." },
       edge: edgeView(state),
       face: structuredClone(state.events.at(-1)?.faces?.responding ?? openingFace()),
       metrics: { cash, debt, marcusStock, playerStock }, obligations: state.obligations,

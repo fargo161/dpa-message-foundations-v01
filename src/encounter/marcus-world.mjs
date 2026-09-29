@@ -73,7 +73,7 @@ export function createMarcusWorld(seed, quirk = "final_say", options = {}) {
     append("DOCUMENT_PRESENTED", { holderId: "MARCUS", documentId: "L42", parts: ["body"], audienceIds: ["PLAYER"], sightlineIds: ["PLAYER", "MARCUS"] });
     append("STATEMENT", { speakerId: "MARCUS", audienceIds: ["PLAYER"], earshotIds: [], claimIds: ["L42:body:0"], resolution: "EXACT", delivery: { vibeId: "EA", intensity: "BALANCED", landed: 1 } });
   }
-  const worldProfiles = [neutralPlayerProfile("PLAYER"), { version: "world-profile@0.1", entityId: "MARCUS", role: "NPC", recognizes: ["DEPOT_MARK", "CLERK_SIGNATURE"], reception: structuredClone(PERSONALITY.reactions), policy: structuredClone(PERSONALITY.policy), variant: quirk }];
+  const worldProfiles = [neutralPlayerProfile("PLAYER"), { version: "world-profile@0.1", entityId: "MARCUS", role: "NPC", recognizes: ["DEPOT_MARK", "CLERK_SIGNATURE"], reception: structuredClone(PERSONALITY.reactions), policy: { ...structuredClone(PERSONALITY.policy), quirk: structuredClone(PERSONALITY.quirks[quirk]) }, variant: quirk }];
   validateProfiles(worldProfiles);
   return { world, worldProfiles, informationLocal: { progressKeys: [], negativeWindow: null } };
 }

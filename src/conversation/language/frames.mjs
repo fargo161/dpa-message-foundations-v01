@@ -31,7 +31,7 @@ export function buildPlayerFrame(state, intent) {
   const topic = action === "ASK" ? intent.topic : null;
   const oldDebt = state.obligations?.existing ?? state.metrics?.debt;
   requireLanguage(whole(oldDebt), "missing existing debt");
-  if (state.lore) {
+  if (state.world) {
     const eligibility = informationEligibility(state, intent);
     requireLanguage(eligibility.allowed, eligibility.reason);
   }
@@ -41,7 +41,7 @@ export function buildPlayerFrame(state, intent) {
   let informationText = "";
   let disclosure = "NONE";
   if (action === "ASK") {
-    informationText = state.lore ? informationPlayerText(state, intent) : "";
+    informationText = state.world ? informationPlayerText(state, intent) : "";
     requireLanguage(!!QUESTIONS[topic] || !!informationText, "unsupported question");
     if (topic === "CLARIFY_OFFER") requireLanguage(state.counteroffer?.terms, "no current offer to clarify");
     if (topic === "DISCLOSE_FULL") {
@@ -54,7 +54,7 @@ export function buildPlayerFrame(state, intent) {
     terms = structuredClone(validateLanguageTerms(intent.terms));
     requireLanguage(!intent.information || ["NONE", "OFFER_INFORMATION"].includes(intent.information), "unknown information selection");
     if (intent.information === "OFFER_INFORMATION") {
-      requireLanguage(state.lore && privateInformation(state), "speaker has no information to offer");
+      requireLanguage(state.world && privateInformation(state), "speaker has no information to offer");
       informationText = informationPlayerText(state, intent);
       disclosure = "CONDITIONAL_ONLY";
     }

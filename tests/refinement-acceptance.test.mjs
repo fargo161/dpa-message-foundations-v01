@@ -1,4 +1,5 @@
 import test from "node:test";
+import { projectMarcusLore } from "../src/encounter/marcus-world-adapter.mjs";
 import assert from "node:assert/strict";
 import { BASED_VIBES, DELIVERY_INTENSITIES } from "../src/based.mjs";
 import { createConversation, resolveConversation, previewConversation, projectConversation } from "../src/conversation/runtime.mjs";
@@ -60,7 +61,7 @@ test("refinement independent: revealed negative opening expires for next action 
   }
   assert.equal(state.events.length, 7);
   assert.equal(view(state).edge.opening.status, "ELAPSED");
-  assert.equal(state.lore.negativeWindow.consumedAt, null, "Projection handles deadline before lazy resolver expires it");
+  assert.equal(state.informationLocal.negativeWindow.consumedAt, null, "Projection handles deadline before lazy resolver expires it");
 });
 
 test("refinement independent: conditional information remains private until confirmation and edge identifies pending exchange", () => {
@@ -68,7 +69,7 @@ test("refinement independent: conditional information remains private until conf
   for (const topic of ["VERIFY_SOURCE", "PROBE_USEFULNESS"]) state = ask(state, topic);
   state = act(state, { action: "DEAL", terms: { units: 2, upfront: 41, repayment: 79, extra: 0, days: 7 }, information: "OFFER_INFORMATION" });
   assert.ok(state.counteroffer?.informationExchange);
-  assert.equal(state.lore.knowledge.marcus.includes(state.lore.privateFactId), false);
+  assert.equal(projectMarcusLore(state).knowledge.marcus.includes(projectMarcusLore(state).privateFactId), false);
   assert.match(JSON.stringify(view(state).edge), /confirm/i);
   const offer = structuredClone(state.counteroffer);
   const before = structuredClone(state);
@@ -78,7 +79,7 @@ test("refinement independent: conditional information remains private until conf
   assert.deepEqual(state, before);
   state = resolveConversation(state, input, options);
   assert.equal(state.events.at(-1).playerText, preview.playerText);
-  assert.ok(state.lore.knowledge.marcus.includes(state.lore.privateFactId));
+  assert.ok(projectMarcusLore(state).knowledge.marcus.includes(projectMarcusLore(state).privateFactId));
   assert.equal(view(state).edge.disclosure.id, "FULL");
 });
 

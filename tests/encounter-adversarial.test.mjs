@@ -1,3 +1,5 @@
+import { projectMarcusLore } from "../src/encounter/marcus-world-adapter.mjs";
+import { withoutFact, alterPrivateClaim, setOldDebt, setResources, prepareInformation, rewriteMarcusHistory } from "./helpers/marcus-world-interventions.mjs";
 import test from "node:test";
 import assert from "node:assert/strict";
 import { once } from "node:events";
@@ -51,9 +53,9 @@ test("adversarial: economics reject fabricated credit even at maximal confidence
     rejectedUnchanged(state, deal(state, { ...terms, ...changes }));
   }
   for (const changes of [{ marcusStock: 1 }, { playerStock: 99 }, { cash: 59 }]) {
-    const reduced = structuredClone(state); Object.assign(reduced.metrics, changes); rejectedUnchanged(reduced, deal(reduced));
+    const reduced = structuredClone(state); setResources(reduced, changes); rejectedUnchanged(reduced, deal(reduced));
   }
-  const capped = structuredClone(state); capped.obligations.existing = 99999; capped.metrics.debt = 99999;
+  const capped = structuredClone(state); setOldDebt(capped, 99999);
   rejectedUnchanged(capped, deal(capped));
 });
 
@@ -69,9 +71,9 @@ test("adversarial: offers move nothing, acceptance accounts once and rechecks re
   const state = offered(); const before = initial();
   for (const key of ["cash", "debt", "marcusStock", "playerStock"]) assert.equal(state.metrics[key], before.metrics[key]);
   for (const changes of [{ cash: 0 }, { marcusStock: 0 }, { playerStock: 100 }]) {
-    const reduced = structuredClone(state); Object.assign(reduced.metrics, changes); rejectedUnchanged(reduced, accept(reduced));
+    const reduced = structuredClone(state); setResources(reduced, changes); rejectedUnchanged(reduced, accept(reduced));
   }
-  const capped = structuredClone(state); capped.obligations.existing = 100000; rejectedUnchanged(capped, accept(capped));
+  const capped = structuredClone(state); setOldDebt(capped, 100000); rejectedUnchanged(capped, accept(capped));
   const proposal = state.counteroffer.terms; const done = transition(state, accept(state));
   assert.equal(done.status, "AGREED"); assert.equal(done.metrics.cash, 80 - proposal.upfront);
   assert.equal(done.metrics.marcusStock, 8 - proposal.units); assert.equal(done.metrics.playerStock, proposal.units);

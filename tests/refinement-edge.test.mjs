@@ -1,3 +1,5 @@
+import { projectMarcusLore } from "../src/encounter/marcus-world-adapter.mjs";
+import { withoutFact, alterPrivateClaim, setOldDebt, setResources, prepareInformation, rewriteMarcusHistory } from "./helpers/marcus-world-interventions.mjs";
 import test from "node:test";
 import assert from "node:assert/strict";
 import { edgeView } from "../src/conversation/edge.mjs";
@@ -9,14 +11,15 @@ import { resolveInformation } from "../src/encounter/information-policy.mjs";
 const initial = (seed = "lore-3") => createState(seed, "edge-refinement");
 const ask = topic => ({ action: "ASK", topic, vibeId: "EA", intensity: "BALANCED" });
 function step(state, intent) {
+  intent = { vibeId: "EA", intensity: "BALANCED", ...intent };
   const effect = resolveInformation(state, intent);
-  return { ...structuredClone(state), lore: effect.lore, events: [...state.events, { intent, informationCauses: effect.causes }] };
+  return { ...structuredClone(state), world: effect.world, informationLocal: effect.informationLocal, events: [...state.events, { intent, informationCauses: effect.causes }] };
 }
 const action = (state, topic) => keywordBank(state).flatMap(card => card.actions).find(item => item.intent.topic === topic);
 function opened() {
   let state = initial("lore-0");
   for (const topic of ["VERIFY_SOURCE", "PROBE_USEFULNESS", "QUESTION_RECORD", "DISCLOSE_FULL"]) state = step(state, ask(topic));
-  assert.ok(state.lore.negativeWindow);
+  assert.ok(projectMarcusLore(state).negativeWindow);
   return state;
 }
 
@@ -28,15 +31,16 @@ test("edge persists owned detail, uses observed evidence, and never projects NPC
   assert.equal(edge.relevance.id, "UNTESTED");
   state.metrics.tension = 99;
   state.quirk = { id: "SECRET_QUIRK" };
-  state.lore.beliefs.source = "CHECKED";
-  state.lore.beliefs.relevance = "POSSIBLY_USEFUL";
+  const detached = projectMarcusLore(state);
+  detached.beliefs.source = "CHECKED";
+  detached.beliefs.relevance = "POSSIBLY_USEFUL";
   assert.deepEqual(edgeView(state), edge);
   edge.observations.push("client mutation");
   assert.deepEqual(edgeView(before).observations, []);
   const safe = JSON.stringify(edgeView(state));
   for (const secret of ["SECRET_QUIRK", "scoreBonus", "tension", "PICKUP_NEED", "LEDGER_CLOSING", "knowledge", "beliefs"]) assert.ok(!safe.includes(secret));
   assert.equal(edgeView({ status: "OPEN" }), null);
-  state.lore.knowledge.player = state.lore.knowledge.player.filter(id => id !== state.lore.privateFactId);
+  withoutFact(state, projectMarcusLore(state).privateFactId);
   assert.equal(edgeView(state), null);
 });
 
@@ -71,7 +75,7 @@ test("opening advertises only remaining next-turn positions and used never impli
     assert.equal(edgeView(state).opening.remainingTurns, remaining);
   }
   assert.equal(state.events.length, 7);
-  assert.equal(state.lore.negativeWindow.expiredAt, undefined);
+  assert.equal(projectMarcusLore(state).negativeWindow.expiredAt, undefined);
   assert.equal(edgeView(state).opening.status, "ELAPSED");
   const consumed = step(opened(), { action: "DEAL", information: "NONE", vibeId: "BD", intensity: "OVERT" });
   assert.equal(edgeView(consumed).opening.status, "USED");

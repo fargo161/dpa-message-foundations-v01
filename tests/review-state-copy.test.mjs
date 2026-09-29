@@ -1,4 +1,5 @@
 import test from "node:test";
+import { projectMarcusLore } from "../src/encounter/marcus-world-adapter.mjs";
 import assert from "node:assert/strict";
 import { createState } from "../src/encounter/state.mjs";
 import { resolveInformation } from "../src/encounter/information-policy.mjs";
@@ -11,12 +12,13 @@ import { createBrokenPromiseState, transitionBrokenPromise, projectBrokenPromise
 const ask = topic => ({ action: "ASK", topic, vibeId: "EA", intensity: "BALANCED" });
 function step(state, intent) {
   const effect = resolveInformation(state, intent);
-  return { ...structuredClone(state), lore: effect.lore, events: [...state.events, { intent }] };
+  return { ...structuredClone(state), world: effect.world, informationLocal: effect.informationLocal,
+    events: [...state.events, { intent, worldEventIds: effect.worldEventIds }] };
 }
 
 test("information guidance tracks private, prepared and shared states without changing mechanics", () => {
   let state = createState("lore-3", "review-copy");
-  assert.equal(state.lore.variant, "POSITIVE");
+  assert.equal(projectMarcusLore(state).variant, "POSITIVE");
   const exchange = () => projectLore(state).informationOptions.find(item => item.id === "OFFER_INFORMATION");
   assert.equal(exchange().available, false);
   assert.match(exchange().reason, /source/);
@@ -48,7 +50,7 @@ test("late proposal stays expired while an on-time proposal spends the one openi
   assert.equal(edgeView(late).opening.status, "ELAPSED");
   assert.match(edgeView(late).opening.label, /expired before your proposal/);
   assert.equal(edgeView(step(prepared, proposal)).opening.status, "USED");
-  assert.equal(late.lore.disclosure, "FULL");
+  assert.equal(projectMarcusLore(late).disclosure, "FULL");
 });
 
 test("Avery current knowledge records the unverified explanation through ending", () => {

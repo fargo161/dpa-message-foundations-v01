@@ -1,4 +1,5 @@
 import test from "node:test";
+import { projectMarcusLore } from "../src/encounter/marcus-world-adapter.mjs";
 import assert from "node:assert/strict";
 import { createState } from "../src/encounter/state.mjs";
 import { transition, projectState } from "../src/encounter/engine.mjs";
@@ -25,9 +26,9 @@ function evidenceRoute() {
 
 test("polish: observed seven-turn route approves before transferring and settles exactly once", () => {
   const ready = evidenceRoute();
-  assert.equal(ready.lore.variant, "NEGATIVE");
+  assert.equal(projectMarcusLore(ready).variant, "NEGATIVE");
   assert.equal(ready.events.length, 5);
-  assert.equal(ready.lore.disclosure, "FULL");
+  assert.equal(projectMarcusLore(ready).disclosure, "FULL");
   const proposed = deal(ready);
   assert.equal(proposed.events.at(-1).outcome, "ACCEPT");
   assert.equal(proposed.status, "OPEN");
@@ -59,8 +60,8 @@ test("polish: same-seed three-turn no-information route preserves counteroffer t
   assert.equal(accepted.events.length, 3);
   assert.equal(accepted.status, "AGREED");
   assert.deepEqual(economy(accepted), { cash: 32, debt: 333, marcusStock: 6, playerStock: 2 });
-  assert.equal(accepted.lore.disclosure, "NONE");
-  assert.equal(accepted.lore.knowledge.marcus.includes(accepted.lore.privateFactId), false);
+  assert.equal(projectMarcusLore(accepted).disclosure, "NONE");
+  assert.equal(projectMarcusLore(accepted).knowledge.marcus.includes(projectMarcusLore(accepted).privateFactId), false);
 });
 
 test("polish: intervening unrelated turn invalidates acceptance without altering the ledger", () => {
@@ -92,18 +93,18 @@ test("polish: repeated state projection and JSON transport cannot reapply settle
 
 test("polish: consumed or expired evidence cannot be renewed by repeating the reveal", () => {
   const ready = evidenceRoute();
-  const openedAt = ready.lore.negativeWindow.openedAt;
+  const openedAt = ready.informationLocal.negativeWindow.openedAt;
   const consumed = deal(ready);
   assert.ok(consumed.events.at(-1).derived.informationBonus > 0);
   const repeated = ask(consumed, "DISCLOSE_FULL", { vibeId: "SA" });
-  assert.equal(repeated.lore.negativeWindow.openedAt, openedAt);
-  assert.equal(repeated.lore.negativeWindow.consumedAt, consumed.lore.negativeWindow.consumedAt);
+  assert.equal(repeated.informationLocal.negativeWindow.openedAt, openedAt);
+  assert.equal(repeated.informationLocal.negativeWindow.consumedAt, consumed.informationLocal.negativeWindow.consumedAt);
   assert.equal(deal(repeated).events.at(-1).derived.informationBonus, 0);
   let expired = ready;
   for (const topic of ["SMALL_TALK", "ACK_MISSED", "DEBT"]) expired = ask(expired, topic);
   expired = ask(expired, "DISCLOSE_FULL", { vibeId: "SA" });
-  assert.equal(expired.lore.negativeWindow.openedAt, openedAt);
-  assert.ok(expired.lore.negativeWindow.expiredAt);
-  assert.equal(expired.lore.disclosure, "FULL");
+  assert.equal(expired.informationLocal.negativeWindow.openedAt, openedAt);
+  assert.ok(expired.informationLocal.negativeWindow.expiredAt);
+  assert.equal(projectMarcusLore(expired).disclosure, "FULL");
   assert.equal(deal(expired).events.at(-1).derived.informationBonus, 0);
 });

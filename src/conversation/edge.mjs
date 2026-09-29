@@ -1,11 +1,13 @@
+import { projectPlayerInformation } from "../encounter/marcus-world-adapter.mjs";
 import { hasEvidence, privateInformation } from "../encounter/knowledge.mjs";
 import { keywordBank } from "./keyword-bank.mjs";
 
 const visibleEvidence = new Set(["SOURCE_VERIFIED", "RELEVANCE_OBSERVED", "RELEVANCE_UNCERTAIN", "RECORD_QUESTIONED"]);
 
 function openingView(state) {
-  const window = state.lore.negativeWindow;
-  if (!window) return state.lore.variant === "NEGATIVE" && state.lore.disclosure === "FULL"
+  const lore = projectPlayerInformation(state);
+  const window = lore.negativeWindow;
+  if (!window) return lore.privateFactId === "NEGATIVE_DISCREPANCY" && lore.disclosure === "FULL"
     ? { status: "NOT_OPENED", label: "No cooperative opening was offered. Checking the source cannot replay the reveal.", remainingTurns: null }
     : { status: "NONE", label: "No brief proposal opening has been offered.", remainingTurns: null };
   if (window.consumedAt !== null) {
@@ -25,7 +27,7 @@ function openingView(state) {
 export function edgeView(state) {
   const fact = privateInformation(state);
   if (!fact) return null;
-  const lore = state.lore;
+  const lore = projectPlayerInformation(state);
   const positive = fact.id === "POSITIVE_ROUTE";
   const keywordId = positive ? "collection-change" : "intake-mismatch";
   const sourceChecked = hasEvidence(state, "SOURCE_VERIFIED");

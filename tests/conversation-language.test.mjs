@@ -1,3 +1,5 @@
+import { projectMarcusLore } from "../src/encounter/marcus-world-adapter.mjs";
+import { withoutFact, alterPrivateClaim, setOldDebt, setResources, prepareInformation, rewriteMarcusHistory } from "./helpers/marcus-world-interventions.mjs";
 import test from "node:test";
 import assert from "node:assert/strict";
 import { BASED_VIBES, DELIVERY_INTENSITIES } from "../src/based.mjs";
@@ -14,7 +16,7 @@ const terms = { units: 2, upfront: 50, repayment: 70, extra: 4, days: 7 };
 const fresh = variant => {
   for (let index = 0; index < 100; index += 1) {
     const state = createState(`language-review-${index}`, "language-review-run");
-    if (state.lore.variant === variant) return state;
+    if (projectMarcusLore(state).variant === variant) return state;
   }
   throw new Error("missing deterministic variant fixture");
 };
@@ -22,7 +24,7 @@ const delivery = { vibeId: "EA", intensity: "BALANCED" };
 const options = { ...delivery, mode: "AUTHORING_PREVIEW" };
 const prepared = () => {
   const state = fresh("POSITIVE");
-  state.lore.evidence = [{ id: "SOURCE_VERIFIED" }, { id: "RELEVANCE_OBSERVED" }];
+  prepareInformation(state);
   return state;
 };
 
@@ -66,7 +68,7 @@ test("language: preview source, hint and conditional trade never reveal the oper
     const disclosed = buildPlayerFrame(state, { action: "ASK", topic: "DISCLOSE_FULL" });
     assert.equal(disclosed.semanticFacts.disclosure, "FULL");
     assert.ok(disclosed.text.includes(secret));
-    state.lore.knowledge.player = state.lore.knowledge.player.filter(id => id !== state.lore.privateFactId);
+    withoutFact(state, projectMarcusLore(state).privateFactId);
     assert.throws(() => buildPlayerFrame(state, { action: "ASK", topic: "DISCLOSE_FULL" }), /Language frame/);
   }
 });
@@ -74,7 +76,7 @@ test("language: preview source, hint and conditional trade never reveal the oper
 test("language: confirmation binds current exact offer and discloses the actual known proposition only then", () => {
   const state = prepared();
   const secret = privateInformation(state).proposition;
-  state.counteroffer = { id: "offer:3", version: 3, terms, informationExchange: { factId: state.lore.privateFactId, summary: "Exact depot collection instructions: gate, time window and docket; delivered on acceptance." } };
+  state.counteroffer = { id: "offer:3", version: 3, terms, informationExchange: { factId: projectMarcusLore(state).privateFactId, summary: "Exact depot collection instructions: gate, time window and docket; delivered on acceptance." } };
   const clarify = buildPlayerFrame(state, { action: "ASK", topic: "CLARIFY_OFFER" });
   assert.equal(clarify.semanticFacts.offerId, "offer:3");
   assert.ok(!JSON.stringify(clarify).includes(secret));
@@ -87,7 +89,7 @@ test("language: confirmation binds current exact offer and discloses the actual 
   assert.ok(frame.text.includes(secret));
   assert.ok(renderPlayerFrame(frame, { mode: "PRODUCTION" }).text.includes(secret));
   assert.equal(state.metrics.debt, 250);
-  assert.equal(state.lore.disclosure, "NONE");
+  assert.equal(projectMarcusLore(state).disclosure, "PARTIAL");
   state.counteroffer.informationExchange.factId = "UNKNOWN_FACT";
   assert.throws(() => buildPlayerFrame(state, { action: "ACCEPT" }), /Language frame/);
 });
@@ -154,7 +156,7 @@ test("language: NPC family selection follows resolved public reply, never player
   const frame = buildNpcFrame(state, intent, decision);
   assert.equal(frame.family, "RELEVANCE_PICKUP");
   const changed = structuredClone(state);
-  changed.lore.facts[changed.lore.privateFactId].proposition = "SECRET UNDISCLOSED FACT";
+  rewriteMarcusHistory(changed, event => event, claim => { if (claim.claimId === "R17:body:2") claim.proposition.args.value = "SECRET UNDISCLOSED FACT"; return claim; });
   assert.deepEqual(buildNpcFrame(changed, { ...intent, vibeId: "DB" }, decision), frame);
   for (const variantSeed of [0, 1]) assert.ok(!renderNpcFrame(frame, { mode: "AUTHORING_PREVIEW", variantSeed }).text.includes(privateInformation(state).proposition));
   assert.notEqual(buildNpcFrame(state, intent, { ...decision, outcome: "END" }).family, frame.family);

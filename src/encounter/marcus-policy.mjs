@@ -1,21 +1,20 @@
 import { BASED_VIBES } from "../based.mjs";
-import { PERSONALITY } from "./marcus-profile.mjs";
 
 const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
 const sameTerms = (a, b) => ["units", "upfront", "repayment", "extra", "days"].every((key) => a?.[key] === b?.[key]);
 // The financial part of the existing proposal score, with social interpretation
 // and information deliberately excluded. Use the same valuation for concessions.
-const financialValue = ({ units, upfront, repayment, extra, days }) =>
-  upfront / (units * PERSONALITY.policy.price) * 35 - repayment * 0.045
+const financialValue = ({ units, upfront, repayment, extra, days }, price) =>
+  upfront / (units * price) * 35 - repayment * 0.045
   + Math.min(extra, repayment * 0.2, 24) * 0.5 - (repayment > 0 ? days * 0.5 : 0);
 
 // Pure interpretation of validated intent. The engine owns hard validation and transfers.
 export function evaluateTurn(state, intent, information = { scoreBonus: 0, social: { confidence: 0, tension: 0 }, progressKey: null, exchange: null }) {
-  const config = PERSONALITY.policy;
-  const quirk = PERSONALITY.quirks[state.quirk];
+  const config = state.profile.policy;
+  const quirk = config.quirk;
   const context = intent.action === "DEAL" || intent.topic === "TERMS" ? "business"
     : ["DEBT", "RISK", "GUARANTEE", "ENTITLEMENT"].includes(intent.topic) ? "accountability" : "probing";
-  const reaction = PERSONALITY.reactions[intent.vibeId];
+  const reaction = state.profile.reception[intent.vibeId];
   const canonical = BASED_VIBES.find(({ vibeId }) => vibeId === intent.vibeId);
   if (!reaction || !canonical || !quirk || !Object.hasOwn(config.intensitySalience, intent.intensity)) throw new Error("Invalid policy metadata");
   const history = state.events.map((event) => event.intent).filter(Boolean);
@@ -36,7 +35,7 @@ export function evaluateTurn(state, intent, information = { scoreBonus: 0, socia
       const terms = intent.terms;
       const noWorse = terms.units <= last.units && terms.upfront >= last.upfront && terms.repayment <= last.repayment && terms.days <= last.days;
       const newRecord = terms.upfront > Math.max(...prior.map(t => t.upfront)) || terms.units < Math.min(...prior.map(t => t.units)) || terms.days < Math.min(...prior.map(t => t.days));
-      if (noWorse && newRecord && financialValue(terms) >= financialValue(last)) progressKey = `CONCESSION:${terms.units}:${terms.upfront}:${terms.days}`;
+      if (noWorse && newRecord && financialValue(terms, config.price) >= financialValue(last, config.price)) progressKey = `CONCESSION:${terms.units}:${terms.upfront}:${terms.days}`;
     }
   }
   const meaningfulProgress = !!progressKey && !state.events.some(event => event.progressKey === progressKey);
@@ -96,7 +95,7 @@ export function evaluateTurn(state, intent, information = { scoreBonus: 0, socia
   const price = units * config.price;
   const cashShare = upfront / price;
   const exposure = state.metrics.debt + repayment + extra;
-  const score = Math.round((financialValue(intent.terms) + confidence * 0.2 - tension * 0.22 + 4 + information.scoreBonus) * 100) / 100;
+  const score = Math.round((financialValue(intent.terms, config.price) + confidence * 0.2 - tension * 0.22 + 4 + information.scoreBonus) * 100) / 100;
   const creditDefensible = repayment === 0 || (cashShare >= config.minimumUpfrontShare && repayment <= config.maximumNewPrincipal && exposure <= config.maximumExposure && days <= config.maximumCreditDays);
   Object.assign(derived, { score, informationBonus: information.scoreBonus, cashShare, exposure, creditDefensible, maximumNewPrincipal: config.maximumNewPrincipal, maximumExposure: config.maximumExposure, maximumCreditDays: config.maximumCreditDays, projectedConfidence: confidence, projectedTension: tension });
   reasons.push(`Derived proposal score ${score}; approval needs ${config.acceptThreshold} and defensible credit.`, "Extra repayment receives limited credit: a large promise cannot replace cash or erase the old debt.");

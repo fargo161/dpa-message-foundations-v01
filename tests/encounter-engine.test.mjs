@@ -1,3 +1,5 @@
+import { projectMarcusLore } from "../src/encounter/marcus-world-adapter.mjs";
+import { withoutFact, alterPrivateClaim, setOldDebt, setResources, prepareInformation, rewriteMarcusHistory } from "./helpers/marcus-world-interventions.mjs";
 import test from "node:test";
 import assert from "node:assert/strict";
 import { createState } from "../src/encounter/state.mjs";
@@ -31,7 +33,7 @@ test("hard invalid terms never produce a turn or mutate state", () => {
     assert.throws(() => transition(s, intent(s, { action: "DEAL", terms: { ...terms, ...patch } })));
     assert.deepEqual(s, start());
   }
-  const highDebt = start(); highDebt.obligations.existing = 100000;
+  const highDebt = start(); setOldDebt(highDebt, 100000);
   assert.throws(() => validateTerms(highDebt, terms));
 });
 

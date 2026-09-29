@@ -1,4 +1,5 @@
 import test from "node:test";
+import { projectMarcusLore } from "../src/encounter/marcus-world-adapter.mjs";
 import assert from "node:assert/strict";
 import { createState } from "../src/encounter/state.mjs";
 import { transition, previewIntent } from "../src/encounter/engine.mjs";
@@ -7,7 +8,7 @@ import { renderAuthoredFixtureLine } from "../src/conversation/language/realizer
 function fresh(variant) {
   for (let index = 0; index < 100; index++) {
     const state = createState(`refinement-language-${index}`, "language-refinement");
-    if (state.lore.variant === variant) return state;
+    if (projectMarcusLore(state).variant === variant) return state;
   }
   throw new Error("No fixture");
 }
@@ -39,7 +40,7 @@ test("refinement language: late source and usefulness acknowledge irreversible d
       event = state.events.at(-1);
       assert.match(event.feedback, /cannot replay the reveal/);
       assert.doesNotMatch(event.feedback, /could now redirect/);
-      assert.equal(state.lore.negativeWindow, null);
+      assert.equal(state.informationLocal.negativeWindow, null);
     }
   }
 });
@@ -48,11 +49,11 @@ test("refinement language: repeated factual inquiries do not claim fresh progres
   for (const topic of ["SMALL_TALK", "ACK_MISSED", "VERIFY_SOURCE", "PROBE_USEFULNESS", "QUESTION_RECORD"]) {
     let state = fresh(topic === "QUESTION_RECORD" ? "NEGATIVE" : "POSITIVE");
     state = ask(state, topic);
-    const progress = [...state.lore.progressKeys];
+    const progress = [...state.informationLocal.progressKeys];
     state = ask(state, topic);
     assert.match(state.events.at(-1).feedback, /already/);
     assert.match(state.events.at(-1).feedback, /no new/);
-    assert.deepEqual(state.lore.progressKeys, progress);
+    assert.deepEqual(state.informationLocal.progressKeys, progress);
   }
 });
 

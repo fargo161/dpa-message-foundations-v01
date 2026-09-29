@@ -1,3 +1,4 @@
+import { projectMarcusInformation } from "../../encounter/marcus-world-adapter.mjs";
 import { describeTerms, requireLanguage } from "./frames.mjs";
 
 const sentence = text => /[.!?]$/.test(text.trim()) ? text.trim() : `${text.trim()}.`;
@@ -50,7 +51,7 @@ export function buildNpcFrame(state, intent, decision) {
   // The engine passes resolved metrics and history before appending this turn.
   // Emotional wording reflects that authored state, never changes it.
   const priorClarifications = state.events?.filter(event => event.intent.topic === "CLARIFY_OFFER").length ?? 0;
-  const context = { terms: "", exchange: "", debt: state.metrics?.debt, shared: state.lore?.disclosure === "FULL",
+  const context = { terms: "", exchange: "", debt: state.metrics?.debt, shared: (state.world && projectMarcusInformation(state).disclosure === "FULL"),
     patience: state.metrics?.patience, tension: state.metrics?.tension,
     repeatedClarification: intent.topic === "CLARIFY_OFFER" && priorClarifications > 0 };
   const causes = decision.informationCauses || [];
@@ -72,7 +73,7 @@ export function buildNpcFrame(state, intent, decision) {
     if (!family && evidence("SOURCE_VERIFIED")) family = "SOURCE_VERIFIED";
     if (!family && evidence("RELEVANCE_UNCERTAIN")) family = "RELEVANCE_UNCERTAIN";
     if (!family && evidence("RELEVANCE_OBSERVED")) family = causes.some(cause => cause.factIds?.includes("PICKUP_NEED")) ? "RELEVANCE_PICKUP" : "RELEVANCE_COUNT";
-    if (!family && has("PARTIAL_DISCLOSURE")) family = state.lore?.disclosure === "FULL" ? "PARTIAL_ALREADY_FULL" : "PARTIAL_WITHHELD";
+    if (!family && has("PARTIAL_DISCLOSURE")) family = (state.world && projectMarcusInformation(state).disclosure === "FULL") ? "PARTIAL_ALREADY_FULL" : "PARTIAL_WITHHELD";
     if (!family) family = ["TERMS", "DEBT", "RISK", "PRIORITIES", "FINAL_SAY", "GUARANTEE", "ENTITLEMENT"].includes(intent.topic) ? intent.topic : "GENERAL";
   }
   const suffixes = [];

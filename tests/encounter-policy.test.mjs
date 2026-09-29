@@ -2,11 +2,18 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { BASED_VIBES, DELIVERY_INTENSITIES } from "../src/based.mjs";
 import { PERSONALITY, selectQuirk } from "../src/encounter/marcus-profile.mjs";
-import { evaluateTurn } from "../src/encounter/marcus-policy.mjs";
+import { evaluateTurn as evaluatePolicy } from "../src/encounter/marcus-policy.mjs";
+import { marcusDecisionContext } from "../src/encounter/marcus-world-adapter.mjs";
 import { playerMessage, marcusMessage } from "../src/encounter/messages.mjs";
 import { createState } from "../src/encounter/state.mjs";
 
 const state = (quirk = "plain_dealing") => createState("policy-fixture", "policy-run", quirk);
+const evaluateTurn = (current, intent) => {
+  const context = marcusDecisionContext(current), before = structuredClone(context);
+  const result = evaluatePolicy(context, intent);
+  assert.deepEqual(context, before, "Policy cannot mutate its narrowed NPC input");
+  return result;
+};
 const ask = (topic = "TERMS", vibeId = "EA", intensity = "BALANCED") => ({ action: "ASK", topic, vibeId, intensity });
 const deal = (terms = { units: 2, upfront: 40, repayment: 80, extra: 12, days: 7 }, vibeId = "EA", intensity = "BALANCED") => ({ action: "DEAL", terms, vibeId, intensity });
 
@@ -46,8 +53,9 @@ test("cash, risk, repayment time and debt produce approval, distinct counters an
   assert.deepEqual(smaller.counterTerms, { units: 3, upfront: 80, repayment: 100, extra: 15, days: 10 });
   const refusal = evaluateTurn(state(), deal({ units: 8, upfront: 0, repayment: 480, extra: 0, days: 30 }));
   assert.equal(refusal.outcome, "REJECT");
-  const indebted = state(); indebted.metrics.debt = 650;
-  assert.equal(evaluateTurn(indebted, deal()).outcome, "REJECT");
+  // This is a policy-input simulation, not an edit to authoritative world economics.
+  const indebted = marcusDecisionContext(state()); indebted.metrics.debt = 650;
+  assert.equal(evaluatePolicy(indebted, deal()).outcome, "REJECT");
 });
 
 test("confidence cannot bypass practical limits and extravagant extra is not cash", () => {

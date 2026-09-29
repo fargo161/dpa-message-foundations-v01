@@ -32,7 +32,9 @@ function currentAttitudes(records) {
 function receivedFacts(records) {
   const claims = exact(records), facts = [];
   const propositions = records.flatMap(record => record.act.propositions);
-  if (propositions.some(item => item.keywordId === "OWES" && item.args.term === "OLD_ACCOUNT" && item.args.amount > 0)) facts.push("OLD_ACCOUNT");
+  const latestOldAccount = propositions.filter(item => item.keywordId === "OWES" && item.args.term === "OLD_ACCOUNT").at(-1);
+  // The fixed authored $250 sentence is unavailable when observed economics no longer support it.
+  if (latestOldAccount?.args.amount === 250) facts.push("OLD_ACCOUNT");
   if (propositions.some(item => item.keywordId === "OWNS" && item.args.subject === "MARCUS" && item.args.object === "CONTRA" && item.args.quantity > 0)) facts.push("STOCK_TITLE");
   if (records.some(record => record.act.commitmentId === "DEBT_CHECKIN" && record.act.kept === false)) facts.push("MISSED_CHECKIN");
   if (records.some(record => record.act.kind === "OCCURRENCE" && record.act.objectIds.includes("LOADING_SHIFT"))) facts.push("SHARED_LOADING_SHIFT");
@@ -104,14 +106,26 @@ export function projectMarcusInformation(state) {
   const beliefFor = predicate => beliefs.find(belief => candidates.some(claim => predicate(claim.proposition) && claim.question === belief.question));
   const source = beliefFor(proposition => proposition.keywordId === "ISSUED_BY" && proposition.args.subject === "R17");
   const count = beliefFor(proposition => proposition.keywordId === "HAS_ATTRIBUTE" && proposition.args.subject === "INTAKE" && proposition.args.attribute === "crates");
-  const sourceChecked = source?.stance === "BELIEVED" && source.rank >= 3;
+  const heldSource = candidates.find(candidate => candidate.claimId === source?.heldClaim)?.proposition;
+  const sourceChecked = source?.stance === "BELIEVED" && source.rank >= 3 && heldSource?.polarity === "ASSERTED" && heldSource.status === "ACTIVE" && heldSource.scope === "ACTUAL" && heldSource.args.object === "DEPOT";
   const disclosure = received.detailId ? "FULL" : exposure.some(item => item.entityId === "PLAYER" && ["COLLECTION_CHANGE", "COUNT_MISMATCH"].includes(item.category.categoryId)) ? "PARTIAL" : "NONE";
   const ledgerClosing = received.active.has("LEDGER_CLOSING"), pickupNeed = received.ids.includes("PICKUP_NEED"), recordPresent = received.ids.includes("RECORD_ASSERTION");
   const bodySupport = received.body.length ? Math.max(...beliefs.filter(belief => received.body.some(claim => claim.question === belief.question)).map(belief => belief.rank)) : 0;
+  const accepted = beliefs.filter(belief => belief.stance === "BELIEVED" && belief.resolution === "EXACT").map(belief => candidates.find(candidate => candidate.claimId === belief.heldClaim)?.proposition).filter(Boolean);
+  const quantity = (subject, object) => accepted.find(item => item.keywordId === "OWNS" && item.args.subject === subject && item.args.object === object)?.args.quantity ?? 0;
+  const economicMetrics = { cash: quantity("PLAYER", "CASH"), marcusStock: quantity("MARCUS", "CONTRA"), playerStock: quantity("PLAYER", "CONTRA"), debt: accepted.filter(item => item.keywordId === "OWES" && item.args.subject === "PLAYER" && item.args.object === "MARCUS").reduce((sum, item) => sum + (item.args.amount ?? 0), 0) };
   return { perceptions, beliefs, exposure, profile, attitudes, factIds: received.ids, privateFactId: received.detailId, bodyClaims: received.body,
-    sourceChecked, disclosure, ledgerClosing, pickupNeed, recordPresent, relevant: ledgerClosing && (pickupNeed || recordPresent),
+    sourceChecked, disclosure, ledgerClosing, pickupNeed, recordPresent, economicMetrics, relevant: ledgerClosing && (pickupNeed || recordPresent),
     content: !received.body.length ? "UNKNOWN" : sourceChecked && bodySupport >= 3 ? "DOCUMENT_SUPPORTED" : "RECEIVED_UNVERIFIED",
     record: !recordPresent ? "NOT_APPLICABLE" : count?.stance === "DISPUTED" ? "DISPUTED" : count?.challenged ? "CHALLENGED_UNVERIFIED" : "RECONCILED_CLAIM" };
+}
+
+/** The encounter policy receives no ledger, player perceptions or combined compatibility view. */
+export function marcusDecisionContext(state) {
+  const marcus = projectMarcusInformation(state);
+  return { profile: structuredClone(marcus.profile), quirk: marcus.profile.variant,
+    metrics: { ...marcus.economicMetrics, confidence: state.metrics.confidence, tension: state.metrics.tension, patience: state.metrics.patience },
+    events: state.events.map(({ intent, progressKey }) => ({ intent: structuredClone(intent), progressKey })) };
 }
 
 /** Detached compatibility observation for Debug/oracle only, never runtime authority. */

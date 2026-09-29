@@ -7,7 +7,7 @@ const entry = (id, proposition, details) => ({
   id, proposition, scope: "ACTUAL", status: "ACTIVE", actor: "PLAYER", target: "MARCUS",
   context: "MARCUS_CONTRA_NEGOTIATION", validity: "This encounter; no later-world simulation.",
   provenance: { sourceId: "marcus-lore-authored-v01", sourceRecordId: id, status: "NEW_AUTHORED_ENCOUNTER_CONTENT" },
-  initialKnowers: ["PLAYER", "MARCUS"], initialBelievers: ["PLAYER", "MARCUS"], playerVisible: true,
+  playerVisible: true,
   continuity: "The fact persists; acknowledgment does not erase history.", ...details,
 });
 
@@ -44,7 +44,7 @@ export const HISTORY_CONTENT = freeze({
     acceptanceScenario: "Remove SHARED_LOADING_SHIFT: SMALL_TALK is unavailable; direct business still works.",
   }),
   DIRECT_RECEIPT: entry("DIRECT_RECEIPT", "The player holds today's signed depot counterfoil R-17, received directly during collection; its header and signature can be checked without showing its exact detail.", {
-    target: "DEPOT_COUNTERFOIL", initialKnowers: ["PLAYER"], initialBelievers: ["PLAYER"],
+    target: "DEPOT_COUNTERFOIL",
     interest: "A checkable document gives Marcus a reason to consider the information beyond the player's unpaid promises.",
     mechanic: "Required for VERIFY_SOURCE and any prepared information benefit. Verification discloses only provenance, never the secret line.",
     use: "Show the dated header and signature while covering the operative line.", preconditions: ["Player knows active private fact"],
@@ -53,7 +53,7 @@ export const HISTORY_CONTENT = freeze({
     acceptanceScenario: "Remove DIRECT_RECEIPT: VERIFY_SOURCE unavailable and positive trade cannot become credible.",
   }),
   LEDGER_CLOSING: entry("LEDGER_CLOSING", "Marcus is closing today's short stock ledger before arranging tomorrow's collection.", {
-    actor: "MARCUS", initialKnowers: ["MARCUS"], initialBelievers: ["MARCUS"], playerVisible: false,
+    actor: "MARCUS", playerVisible: false,
     interest: "Collection accuracy and unresolved counts are relevant now rather than generic trivia.",
     mechanic: "Required context for PROBE_USEFULNESS, prepared positive exchange and a negative opportunity.",
     use: "Ask whether collection paperwork or an unresolved count would matter to today's decisions.", preconditions: ["Active private fact"],
@@ -62,7 +62,7 @@ export const HISTORY_CONTENT = freeze({
     acceptanceScenario: "Remove LEDGER_CLOSING: usefulness probe unavailable and neither information bonus is authorized.",
   }),
   POSITIVE_ROUTE: entry("POSITIVE_ROUTE", "Today's signed counterfoil says tomorrow's Contra collection moved to loading gate C, between 07:00 and 07:30, using docket R-17.", {
-    variant: "POSITIVE", initialKnowers: ["PLAYER"], initialBelievers: ["PLAYER"],
+    variant: "POSITIVE",
     interest: "The exact gate, window and docket can prevent a wasted collection; the player can trade those private details for better terms.",
     mechanic: "Enables partial/full disclosure and, after verification and relevance evidence, OFFER_INFORMATION with a bounded +8 proposal score.",
     use: "Offer a voluntary exchange or disclose freely; no adverse consequence is attached to refusal.", preconditions: ["DIRECT_RECEIPT", "LEDGER_CLOSING", "PICKUP_NEED for score bonus"],
@@ -72,7 +72,7 @@ export const HISTORY_CONTENT = freeze({
     acceptanceScenario: "Remove POSITIVE_ROUTE: disclosure and information exchange are unavailable; early full disclosure removes later trade value.",
   }),
   PICKUP_NEED: entry("PICKUP_NEED", "Marcus has tomorrow's collection to arrange and has not received the changed pickup instructions.", {
-    variant: "POSITIVE", actor: "MARCUS", initialKnowers: ["MARCUS"], initialBelievers: ["MARCUS"], playerVisible: false,
+    variant: "POSITIVE", actor: "MARCUS", playerVisible: false,
     interest: "Makes the particular route detail useful without equating the secret with cash.",
     mechanic: "Required for useful-relevance evidence and positive exchange bonus; absence makes a checked source insufficient.",
     use: "Probe usefulness without naming the exact route.", preconditions: ["LEDGER_CLOSING", "POSITIVE_ROUTE"],
@@ -81,7 +81,7 @@ export const HISTORY_CONTENT = freeze({
     acceptanceScenario: "Remove PICKUP_NEED: a probe yields no RELEVANCE_OBSERVED evidence; OFFER_INFORMATION stays unavailable.",
   }),
   NEGATIVE_DISCREPANCY: entry("NEGATIVE_DISCREPANCY", "Counterfoil R-17 records six crates returned against stock ledger entry L-42's eight: a two-crate mismatch. It does not establish theft or who caused the error.", {
-    variant: "NEGATIVE", initialKnowers: ["PLAYER"], initialBelievers: ["PLAYER"],
+    variant: "NEGATIVE",
     interest: "A documented mismatch challenges reconciliation and can redirect Marcus toward concluding a defensible deal while sorting his record.",
     mechanic: "Prepared full disclosure can open +6 on the first later DEAL within three subsequent turn positions; hostile/unprepared disclosure causes backlash.",
     use: "Ask a pointed record question, then disclose a discrepancy without a threat or demand.", preconditions: ["DIRECT_RECEIPT", "LEDGER_CLOSING", "RECORD_ASSERTION and prior record question for useful path"],
@@ -90,7 +90,7 @@ export const HISTORY_CONTENT = freeze({
     acceptanceScenario: "Remove NEGATIVE_DISCREPANCY: record question and disclosure become unavailable; no opening exists.",
   }),
   RECORD_ASSERTION: entry("RECORD_ASSERTION", "Marcus has said the signed intake summary is reconciled; he believes that eight-crate entry has been checked.", {
-    variant: "NEGATIVE", scope: "BELIEF", actor: "MARCUS", initialBelievers: ["MARCUS"],
+    variant: "NEGATIVE", scope: "BELIEF", actor: "MARCUS",
     provenance: { sourceId: "marcus-lore-authored-v01", sourceRecordId: "RECORD_ASSERTION", status: "DISPUTED_BELIEF" },
     interest: "The inconsistency matters because he is currently relying on that summary, not because embarrassment guarantees compliance.",
     mechanic: "Required for QUESTION_RECORD, useful relevance and negative opportunity. Full disclosure revises the belief to DISPUTED when source is verified.",

@@ -1,4 +1,5 @@
 import test from "node:test";
+import { projectMarcusLore } from "../src/encounter/marcus-world-adapter.mjs";
 import assert from "node:assert/strict";
 import { createEncounterServer } from "../scripts/encounter-server.mjs";
 import { createState } from "../src/encounter/state.mjs";
@@ -54,7 +55,7 @@ test("lore HTTP: disclosure replay, foreign runs, sessions and restart isolate k
   const restart = { requestId: `restart_${++serial}`, runId: a.view.play.runId, version: a.view.play.version, seed: a.view.play.seed };
   const fresh = await api.post(a, restart, "/api/restart"); assert.equal(fresh.status, 200); a.view = await fresh.json();
   assert.notEqual(a.view.play.runId, prior.play.runId); assert.equal(a.view.play.version, 0);
-  assert.notDeepEqual(a.view.debug.state.lore, prior.debug.state.lore);
+  assert.notDeepEqual(projectMarcusLore(a.view.debug.state), projectMarcusLore(prior.debug.state));
   assert.equal((await api.post(a, { ...disclose, requestId: `expired_${++serial}`, version: 0 })).status, 409);
   assert.deepEqual(await api.read(b), originalB);
 });
@@ -82,7 +83,7 @@ test("lore HTTP: clarification retains offer but disclosure invalidates it and a
 test("lore: information cannot authorize unavailable stock, fake cash or inconsistent obligation", () => {
   let state;
   for (let n = 0; n < 100; n++) { const seed = `lore-${n}`; const candidate = createState(seed, "economic-review", selectQuirk(seed));
-    if (candidate.lore.privateFactId === "POSITIVE_ROUTE") { state = candidate; break; } }
+    if (projectMarcusLore(candidate).privateFactId === "POSITIVE_ROUTE") { state = candidate; break; } }
   assert.ok(state);
   const apply = fields => ({ requestId: `hard_bound_${state.events.length}`, runId: state.runId, version: state.events.length,
     vibeId: "EA", intensity: "BALANCED", ...fields });
@@ -104,14 +105,14 @@ test("lore HTTP: conditional information is delivered atomically only by current
   for (const topic of ["VERIFY_SOURCE", "PROBE_USEFULNESS"]) await api.turn(client, { action: "ASK", topic });
   await api.turn(client, { action: "DEAL", terms: { units: 2, upfront: 41, repayment: 79, extra: 0, days: 7 }, information: "OFFER_INFORMATION" });
   const offer = structuredClone(client.view.play.counteroffer); assert.ok(offer.informationExchange);
-  assert.equal(client.view.debug.state.lore.knowledge.marcus.includes("POSITIVE_ROUTE"), false);
+  assert.equal(projectMarcusLore(client.view.debug.state).knowledge.marcus.includes("POSITIVE_ROUTE"), false);
   await api.turn(client, { action: "ASK", topic: "CLARIFY_OFFER" }); assert.deepEqual(client.view.play.counteroffer, offer);
   const malformed = input(client.view, { action: "ACCEPT", offerId: offer.id, offerVersion: offer.version, disclosure: "FULL" });
   assert.equal((await api.post(client, malformed)).status, 400); assert.deepEqual(await api.read(client), client.view);
   await api.turn(client, { action: "ACCEPT", offerId: offer.id, offerVersion: offer.version });
   assert.equal(client.view.play.status, "AGREED"); assert.equal(client.view.play.metrics.cash, 39); assert.equal(client.view.play.metrics.debt, 329);
-  assert.ok(client.view.debug.state.lore.knowledge.marcus.includes("POSITIVE_ROUTE"));
-  assert.equal(client.view.debug.state.lore.disclosure, "FULL"); assert.ok(client.view.play.lore.disclosed.length);
+  assert.ok(projectMarcusLore(client.view.debug.state).knowledge.marcus.includes("POSITIVE_ROUTE"));
+  assert.equal(projectMarcusLore(client.view.debug.state).disclosure, "FULL"); assert.ok(client.view.play.lore.disclosed.length);
   assert.ok(client.view.debug.latestTurn.reactionCause.consequences.transfersCommitted);
   assert.equal(Object.hasOwn(client.view.play.events.at(-1), "reactionCause"), false);
 });

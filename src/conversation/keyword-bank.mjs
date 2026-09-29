@@ -1,9 +1,11 @@
+import { projectPlayerInformation } from "../encounter/marcus-world-adapter.mjs";
+const playerInfo = state => state.world ? projectPlayerInformation(state) : null;
 import { TOPICS } from "../encounter/state.mjs";
 import { LORE_TOPICS } from "../encounter/history-content.mjs";
 import { hasLoreFact, informationEligibility, privateInformation } from "../encounter/knowledge.mjs";
 
 const topicLabels = new Map([...TOPICS, ...LORE_TOPICS].map(topic => [topic.id, topic.label]));
-const knows = (state, id) => hasLoreFact(state, id) && state.lore.knowledge.player.includes(id);
+const knows = (state, id) => hasLoreFact(state, id) && playerInfo(state).factIds.includes(id);
 
 // These are player-known subject instances, not additional foundation predicates.
 // The private NPC context remains in the existing eligibility policy, never cards.
@@ -64,7 +66,7 @@ function actionCard(state, key) {
   if (["ACCEPT", "CLARIFY_OFFER"].includes(key) && !state.counteroffer) eligibility = { allowed: false, reason: "No current offer is available." };
   if (state.status !== "OPEN") eligibility = { allowed: false, reason: "This encounter has ended; restart for another run." };
   let description = descriptions[key];
-  if (state.lore?.disclosure === "FULL") {
+  if (playerInfo(state)?.disclosure === "FULL") {
     const sharedDescriptions = {
       VERIFY_SOURCE: "Show the dated header and signature to check the source of the detail Marcus already has.",
       PROBE_USEFULNESS: "Ask whether the detail you already shared is useful to him.",
@@ -85,12 +87,12 @@ function actionCard(state, key) {
 function actionCompletion(state, key, intent) {
   if (intent.action !== "ASK" || key === "CLARIFY_OFFER") return null;
   const observedKeys = {
-    VERIFY_SOURCE: "evidence:DIRECT_RECEIPT", PROBE_USEFULNESS: `relevance:${state.lore.privateFactId}`,
+    VERIFY_SOURCE: "evidence:DIRECT_RECEIPT", PROBE_USEFULNESS: `relevance:${playerInfo(state).privateFactId}`,
     QUESTION_RECORD: "question:RECORD_ASSERTION", SMALL_TALK: "history:SHARED_LOADING_SHIFT", ACK_MISSED: "history:MISSED_CHECKIN",
   };
-  const done = key === "DISCLOSE_FULL" ? state.lore.disclosure === "FULL"
-    : key === "DISCLOSE_PARTIAL" ? state.lore.disclosure !== "NONE"
-      : observedKeys[key] ? state.lore.progressKeys.includes(observedKeys[key])
+  const done = key === "DISCLOSE_FULL" ? playerInfo(state).disclosure === "FULL"
+    : key === "DISCLOSE_PARTIAL" ? playerInfo(state).disclosure !== "NONE"
+      : observedKeys[key] ? playerInfo(state).progressKeys.includes(observedKeys[key])
         : state.events.some(event => event.intent?.action === "ASK" && event.intent.topic === key);
   const label = !done ? "Not yet discussed." : key === "DISCLOSE_FULL" ? "Exact detail already shared; repeating does not renew its value."
     : key === "DISCLOSE_PARTIAL" ? "Category already shared; another hint adds no new information."
@@ -105,18 +107,18 @@ function actionsFor(state, keys) {
     .filter(key => !informationMoves.has(key) || privateInformation(state))
     // Never reveal that another run contains a different private-information route.
     .filter(key => key !== "QUESTION_RECORD" || (knows(state, "RECORD_ASSERTION") && knows(state, "NEGATIVE_DISCREPANCY")))
-    .filter(key => key !== "EXCHANGE" || (knows(state, "POSITIVE_ROUTE") && state.lore.privateFactId === "POSITIVE_ROUTE"))
+    .filter(key => key !== "EXCHANGE" || (knows(state, "POSITIVE_ROUTE") && playerInfo(state).privateFactId === "POSITIVE_ROUTE"))
     .map(key => actionCard(state, key))
     .sort((left, right) => Number(right.available) - Number(left.available));
 }
 
 function subjectSummary(state, subject) {
   if (subject.fact === "RECORD_ASSERTION") return "Marcus said the signed intake summary was reconciled. Your counterfoil records a conflicting count; neither a signature nor a mismatch establishes blame.";
-  let text = state.lore.facts[subject.fact].proposition;
-  if (subject.fact === state.lore.privateFactId) {
-    text += state.lore.disclosure === "FULL"
+  let text = playerInfo(state).facts[subject.fact].proposition;
+  if (subject.fact === playerInfo(state).privateFactId) {
+    text += playerInfo(state).disclosure === "FULL"
       ? " You have already shared the exact detail. It cannot become private again."
-      : state.lore.disclosure === "PARTIAL"
+      : playerInfo(state).disclosure === "PARTIAL"
         ? " You have said what kind of information it is; the exact detail remains private."
         : " You have not shared the exact detail in this encounter.";
   }
@@ -126,7 +128,7 @@ function subjectSummary(state, subject) {
 /** Pure, player-safe subject projection. Term validation and resolution remain engine-owned. */
 export function keywordBank(state) {
   // Scenario-specific adapters can use this same output contract without importing Marcus lore.
-  if (!state?.lore) return [];
+  if (!state?.world) return [];
   const cards = subjects.filter(subject => knows(state, subject.fact)).map(subject => ({
     id: subject.id, label: subject.label, kind: subject.kind, summary: subjectSummary(state, subject), actions: actionsFor(state, subject.actions),
   }));

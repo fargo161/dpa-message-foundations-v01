@@ -1,4 +1,4 @@
-import { createLore } from "./knowledge.mjs";
+import { createMarcusWorld, projectMarcusEconomy } from "./marcus-world.mjs";
 
 export const METRIC_DEFINITIONS = [
   { key: "cash", label: "Player cash", min: 0, max: 100000, meaning: "Money available now; hoped-for profits are excluded." },
@@ -9,7 +9,7 @@ export const METRIC_DEFINITIONS = [
   { key: "tension", label: "Marcus tension", min: 0, max: 100, meaning: "How strained this conversation has become." },
   { key: "patience", label: "Marcus patience", min: 0, max: 20, meaning: "Finite room for opening, evidence and bargaining; repetition costs extra." },
 ];
-export const PRICE = 60;
+export { PRICE } from "./constants.mjs";
 export const TOPICS = [
   { id: "TERMS", label: "Ask what terms are possible" },
   { id: "DEBT", label: "Acknowledge the unpaid debt and uncertain profits" },
@@ -20,17 +20,14 @@ export const TOPICS = [
   { id: "ENTITLEMENT", label: "Ask why he will not simply trust you" },
 ];
 export function createState(seed, runId, quirk = "final_say") {
-  return { schemaVersion: "marcus-encounter@0.2", runId, seed, quirk, status: "OPEN", phase: "CONTACT", lore: createLore(seed),
-    metrics: { cash: 80, debt: 250, marcusStock: 8, playerStock: 0, confidence: 40, tension: 20, patience: 20 },
-    obligations: { existing: 250, principal: 0, extra: 0, days: null },
+  const compiled = createMarcusWorld(seed, quirk), economy = projectMarcusEconomy(compiled.world);
+  return { schemaVersion: "marcus-encounter@0.3", runId, seed, quirk, status: "OPEN", phase: "CONTACT", ...compiled,
+    metrics: { ...economy.metrics, confidence: 40, tension: 20, patience: 20 },
+    obligations: economy.obligations,
     proposal: null, counteroffer: null, agreement: null, events: [], clues: [] };
 }
 export function availableActions(state) {
   return ["ASK", "DEAL", "ACCEPT", "WALK"].map(action => ({ action,
     available: state.status === "OPEN" && (action !== "ACCEPT" || !!state.counteroffer),
     reason: state.status !== "OPEN" ? "This encounter has ended; restart for another run." : action === "ACCEPT" && !state.counteroffer ? "No current offer to accept." : "Available" }));
-}
-export function withdraw(state) {
-  if (state.status !== "OPEN") throw new Error("Encounter has ended.");
-  return { ...structuredClone(state), status: "WITHDRAWN", counteroffer: null };
 }
