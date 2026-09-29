@@ -112,6 +112,8 @@ Fixed NPC profiles are `{version:"world-profile@0.1",entityId,role:"NPC",recogni
 
 V1 uses only actually READ authenticating parts, stable recognized marks and the apparent issuer asserted by those read parts. It never checks DOCUMENT_ISSUED.issuerId to discover forgery. Union prior READs, require all authenticating parts and recognized marks, then derive ISSUED_BY support rank 3 and rerank that document's received body. A forged recognized mark can mislead, an unrecognized mark cannot authenticate, and verified issuer is not verified content. Player holdings and perceptions remain available without any player belief projection.
 
+Recognized source evidence and ordinary document-content support are separate. Conflicting recognized issuer evidence can be DISPUTED at rank 3 without granting rank 3 to the body. Later source disputes revoke that carrier's enhanced content support and trigger R6 at the new observation; independent statement or other-carrier support remains intact.
+
 Backstory expands to ordinary validated events; SEEN reuses an existing event/perception or augments an uncommitted event before append. Never edit a committed event or duplicate hard facts to teach someone. READ requires lawful possession/transfer history. Open truths resolve before play. C's generic selection helper must not replace Marcus's two existing seed algorithms.
 
 ## Marcus adapter/integration (D)

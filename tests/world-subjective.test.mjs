@@ -6,7 +6,8 @@ import { projectExposure } from "../src/world/exposure.mjs";
 import { compileBackstory } from "../src/world/backstory.mjs";
 import { selectOpenTruth } from "../src/world/open-truths.mjs";
 import { validateProfiles, neutralPlayerProfile, landDelivery } from "../src/world/profiles.mjs";
-import { canonicalQuestion } from "../src/world/claims.mjs";
+import { canonicalQuestion, createClaim } from "../src/world/claims.mjs";
+import { validateLedger } from "../src/world/event-validator.mjs";
 import { projectWorld } from "../src/world/projections.mjs";
 import { createAllKindsLedger } from "./helpers/world-kernel-fixture.mjs";
 import { emptyWorld, npcProfile, profileSamples, assertion, append, issue, transfer, read, show, say } from "./helpers/world-subjective-fixture.mjs";
@@ -140,6 +141,56 @@ test("V1 hypothetical issuer assertions cannot authenticate actual document cont
   issuerClaim.proposition.scope = "HYPOTHETICAL"; issuerClaim.question = canonicalQuestion(issuerClaim.proposition);
   assert.equal(countBelief(ledger).rank, 1);
   assert.equal(beliefOn(beliefs(ledger), issuerClaim.question).stance, "UNKNOWN");
+});
+
+test("V1 conflicting recognized authenticating issuers stay DISPUTED without upgrading the body", () => {
+  const ledger = structuredClone(show(transfer(issue(emptyWorld())), ["header", "signature", "body"]));
+  const origin = ledger.events.find(event => event.kind === "DOCUMENT_ISSUED");
+  origin.payload.parts.find(part => part.partId === "signature").claimIds.push("doc:rival-issuer");
+  ledger.claims.push(createClaim({ claimId: "doc:rival-issuer", proposition: assertion("ISSUED_BY", { subject: "doc", object: "forger" }), category: { categoryId: "issuer", label: "Document source" }, carrier: { documentId: "doc", partId: "signature" }, originEventId: origin.eventId }));
+  assert.equal(validateLedger(ledger), true);
+  const source = beliefOn(beliefs(ledger), canonicalQuestion(assertion("ISSUED_BY", { subject: "doc", object: "issuer" })));
+  assert.equal(source.stance, "DISPUTED"); assert.equal(source.rank, 3);
+  assert.deepEqual(source.competing, ["doc:issuer", "doc:rival-issuer"]);
+  assert.equal(countBelief(ledger).rank, 1);
+});
+
+function challengeDocumentSource(ledger) {
+  let changed = show(transfer(issue(ledger, { documentId: "other_doc" }), "other_doc"), ["header", "signature", "body"], ["marcus"], ["marcus"], "other_doc");
+  changed = structuredClone(changed);
+  const rival = changed.claims.find(claim => claim.claimId === "other_doc:count");
+  rival.proposition = assertion("ISSUED_BY", { subject: "doc", object: "forger" });
+  rival.question = canonicalQuestion(rival.proposition);
+  assert.equal(validateLedger(changed), true);
+  return changed;
+}
+
+test("R6 later source dispute downgrades previous body support instead of leaving stale rank3", () => {
+  const original = show(transfer(issue(emptyWorld())), ["header", "signature", "body"]);
+  assert.equal(countBelief(original).rank, 3);
+  const challenged = challengeDocumentSource(original);
+  const source = beliefOn(beliefs(challenged), canonicalQuestion(assertion("ISSUED_BY", { subject: "doc", object: "issuer" })));
+  assert.equal(source.stance, "DISPUTED"); assert.equal(source.rank, 3);
+  const body = countBelief(challenged);
+  assert.equal(body.stance, "BELIEVED"); assert.equal(body.rank, 1); assert.equal(body.heldClaim, "doc:count");
+  assert.ok(body.supportedBy.some(id => id.startsWith(challenged.events.at(-1).eventId)));
+});
+
+test("R6 carrier downgrade preserves independent trusted statement support", () => {
+  let ledger = show(transfer(issue(emptyWorld())), ["header", "signature", "body"]);
+  ledger = say(ledger, count(8), { claimId: "independent-count" });
+  const own = [assertion("TRUSTS", { subject: "marcus", object: "player" })];
+  assert.equal(beliefOn(beliefs(ledger, npcProfile(), own), countQuestion).rank, 3);
+  ledger = challengeDocumentSource(ledger);
+  const result = beliefOn(beliefs(ledger, npcProfile(), own), countQuestion);
+  assert.equal(result.stance, "BELIEVED"); assert.equal(result.rank, 2); assert.equal(result.heldClaim, "independent-count");
+  assert.equal(result.challenged, true); assert.deepEqual(result.competing, ["doc:count"]);
+});
+
+test("R6 stronger observed denial of the issuer cannot count as positive authenticity", () => {
+  let ledger = show(transfer(issue(emptyWorld())), ["header", "signature", "body"]);
+  ledger = append(ledger, "OCCURRENCE", { actorId: "marcus", participants: [{ entityId: "marcus", access: "ALL" }], objectIds: ["doc"], happened: [assertion("ISSUED_BY", { subject: "doc", object: "issuer" }, { polarity: "NEGATED" })] });
+  assert.equal(countBelief(ledger).rank, 1);
 });
 
 test("NPC presenter observes recipient exposure using only previously read displayed content", () => {
