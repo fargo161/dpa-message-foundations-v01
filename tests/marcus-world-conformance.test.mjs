@@ -17,7 +17,8 @@ import { validateProfiles, landDelivery } from "../src/world/profiles.mjs";
 import { oracleSnapshot, replayOracleRun } from "./helpers/marcus-world-model-oracle.mjs";
 
 const bytes = fs.readFileSync(new URL("./fixtures/marcus-world-model-baseline-v01.json", import.meta.url));
-const fixture = JSON.parse(bytes);
+const historicalFixture = JSON.parse(bytes);
+const fixture = JSON.parse(fs.readFileSync(new URL("./fixtures/marcus-r17-exchange-v01.json", import.meta.url)));
 const mode = { languageMode: "AUTHORING_PREVIEW" };
 const causes = ["CLERICAL_ERROR", "RUNNER_SHORTED", "DEPOT_MISCOUNT"];
 const json = value => JSON.stringify(value);
@@ -44,9 +45,11 @@ function rebuild(world) {
   return replay;
 }
 
-test("Independent C1/C2: immutable original 23 runs and 127 complete public/legacy/outcome snapshots", () => {
+test("Independent C1/C2: immutable historical fixture and 127 explicit R-17 migrated snapshots", () => {
   assert.equal(createHash("sha256").update(bytes).digest("hex"), "add6744c07ec5bcbaac77457c65f1381723642072657d21e7ade4865444acc46");
   assert.equal(fixture.runs.length, 23);
+  assert.equal(historicalFixture.runs.length, 23);
+  assert.equal(fixture.sourceFixtureSHA256, createHash("sha256").update(bytes).digest("hex"));
   let snapshots = 0;
   for (const run of fixture.runs) {
     const actual = replayOracleRun(run);
@@ -123,7 +126,7 @@ test("Independent C6: NPC context is narrowed; private attitude changes no playe
   const intent = { action: "ASK", topic: "TERMS", vibeId: "EA", intensity: "BALANCED" };
   assert.deepEqual(evaluateTurn(bounded, intent), evaluateTurn(context, intent));
   const engine = fs.readFileSync(new URL("../src/encounter/engine.mjs", import.meta.url), "utf8");
-  assert.ok(engine.includes("structuredClone({ social: informationEffect.social, progressKey: informationEffect.progressKey, scoreBonus: informationEffect.scoreBonus, exchange: informationEffect.exchange })"), "policy auxiliary argument must not expose world");
+  assert.ok(engine.includes("structuredClone({ social: informationEffect.social, progressKey: informationEffect.progressKey, scoreBonus: informationEffect.scoreBonus, exchange: informationEffect.exchange, r17Rate: informationEffect.r17Rate })"), "policy auxiliary argument contains a resolved rate scalar, never world or player knowledge");
 });
 
 test("Independent C7: each golden world replay plus fixed profiles reproduces byte-identical derived state", () => {
@@ -189,7 +192,8 @@ test("Independent C11: event-only authority, derived questions, no BACKSTORY cha
 });
 
 test("Independent atomic acceptance: exchange/settlement/closure share one commit; failed runtime and final-event append roll back", () => {
-  const run = fixture.runs.find(item => item.id === "positiveWithExchange");
+  const run = fixture.runs.find(item => item.inputs.at(-1).action === "ACCEPT" && item.snapshots.at(-2).outcome.counteroffer?.informationExchange);
+  assert.ok(run, "The migrated corpus must include a genuinely valuable confirmed exchange");
   let state = start(run);
   for (let index = 0; index < run.steps.length - 1; index++) state = advance(state, run, index);
   assert.equal(run.inputs.at(-1).action, "ACCEPT");
@@ -211,6 +215,7 @@ test("Independent atomic acceptance: exchange/settlement/closure share one commi
   assert.equal(new Set(batch.map(event => event.commitGroup)).size, 1); assert.ok(batch[0].commitGroup);
   assert.ok(batch.some(event => event.kind === "TRANSACTION"));
   assert.ok(batch.some(event => event.kind === "DOCUMENT_PRESENTED" && event.payload.parts.includes("body")));
+  assert.ok(batch.some(event => event.kind === "DOCUMENT_TRANSFERRED" && event.payload.documentId === "R17"));
   assert.equal(batch.at(-1).kind, "ENCOUNTER_CLOSED");
   const broken = structuredClone(batch); broken.at(-1).payload.outcome = "INVALID";
   assert.throws(() => appendCommit(state.world, broken, accepted.world.claims.filter(claim => batch.some(event => event.eventId === claim.originEventId))));

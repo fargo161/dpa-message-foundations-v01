@@ -22,7 +22,7 @@ const mode = { languageMode: "AUTHORING_PREVIEW" };
 const json = value => JSON.parse(JSON.stringify(value));
 const sha = value => createHash("sha256").update(value).digest("hex");
 const fixtureBytes = fs.readFileSync(new URL("./fixtures/marcus-world-model-baseline-v01.json", import.meta.url));
-const fixture = JSON.parse(fixtureBytes);
+const fixture = JSON.parse(fs.readFileSync(new URL("./fixtures/marcus-r17-exchange-v01.json", import.meta.url)));
 function sandbox() {
   const context = vm.createContext({ structuredClone, URL, TextEncoder, TextDecoder, console,
     crypto: { randomUUID: () => "frozen-marcus-oracle" },
@@ -155,5 +155,37 @@ test("actual local API restarts deterministic seeds, previews without mutation, 
     equal(normalizeAssets(moved.data), json(sourceRuntime.projectConversation(next, "LOCAL-OFFLINE", mode)), `${variant} turn API`);
     const reset = await embedded.api("/api/restart", { scenarioId: "marcus", seed: run.seed });
     equal(normalizeAssets(reset.data), normalizeAssets(restart.data), `${variant} restart reproducibility`);
+  }
+});
+
+test("actual embedded R-17 proof matches all 20 golden routes, including Show and Hint", () => {
+  const goldens = JSON.parse(fs.readFileSync(new URL("../docs/marcus-information-exchange-v01/GOLDEN_RUNS.json", import.meta.url), "utf8"));
+  const embedded = sandbox();
+  assert.equal(goldens.routes.length, 20);
+  for (const route of goldens.routes) {
+    const version = route.version === "GOOD" ? "POSITIVE" : "NEGATIVE";
+    const runId = `golden:${version}:${route.cares}:${route.scenario}`;
+    let source = sourceRuntime.createConversation("marcus", route.seed, runId);
+    let bundled = embedded.runtime.createConversation("marcus", route.seed, runId);
+    for (const [index, fields] of route.actions.entries()) {
+      const input = { requestId: `golden_${index}`, runId, version: source.events.length, vibeId: "EA", intensity: "BALANCED", ...fields };
+      source = sourceRuntime.resolveConversation(source, input, mode);
+      bundled = embedded.runtime.resolveConversation(bundled, input, mode);
+      equal(json(bundled), json(source), `${route.seed}:${route.scenario}:${index} source state`);
+      const projected = embedded.runtime.projectConversation(bundled, "golden-csrf", mode);
+      assert.equal(projected.play.extraChargeRate, route.expectedRates[index]);
+      assert.deepEqual(json(projected.play.edge.card), route.observations[index].card);
+    }
+    if (route.cares && ["HINT_TRADE", "BLIND_TRADE"].includes(route.scenario)) {
+      const offer = source.counteroffer;
+      const input = { requestId: "golden_confirm", runId, version: source.events.length, vibeId: "EA", intensity: "BALANCED", action: "ACCEPT", offerId: offer.id, offerVersion: offer.version };
+      source = sourceRuntime.resolveConversation(source, input, mode);
+      bundled = embedded.runtime.resolveConversation(bundled, input, mode);
+      equal(json(bundled), json(source), `${route.seed}:${route.scenario} completed exchange`);
+      const projected = embedded.runtime.projectConversation(bundled, "golden-csrf", mode);
+      assert.equal(projected.play.edge.card.id, "TRADED");
+      assert.equal(projected.play.edge.card.physicallyHeld, false);
+      assert.equal(projected.play.extraChargeRate, 8);
+    }
   }
 });

@@ -1,0 +1,4018 @@
+{
+  "schemaVersion": "r17-golden-runs@0.1",
+  "seeds": {
+    "POSITIVE:true": "r17-proof-0",
+    "POSITIVE:false": "r17-proof-1",
+    "NEGATIVE:false": "r17-proof-2",
+    "NEGATIVE:true": "r17-proof-19"
+  },
+  "terms": {
+    "units": 2,
+    "upfront": 70,
+    "repayment": 50,
+    "extra": 0,
+    "days": 7
+  },
+  "routes": [
+    {
+      "seed": "r17-proof-0",
+      "version": "GOOD",
+      "cares": true,
+      "scenario": "HOARD",
+      "initial": {
+        "turn": 0,
+        "rate": 16,
+        "card": {
+          "id": "HELD",
+          "label": "Held",
+          "physicallyHeld": true
+        },
+        "r17": {
+          "held": true,
+          "available": true,
+          "traded": false,
+          "hinted": false,
+          "shown": false,
+          "blindTradeFailed": false,
+          "interestKnown": false,
+          "knownMarcusInterest": null,
+          "tradeAttempts": []
+        },
+        "documentHolder": "PLAYER",
+        "disclosure": "NONE",
+        "sourceChecked": false,
+        "content": "UNKNOWN",
+        "bodyClaimIds": [],
+        "tradeOptionAvailable": true,
+        "offer": null,
+        "status": "OPEN",
+        "metrics": {
+          "cash": 80,
+          "debt": 250,
+          "marcusStock": 8,
+          "playerStock": 0
+        },
+        "reaction": null,
+        "respondingFace": null,
+        "marcusText": null,
+        "worldEventIds": []
+      },
+      "actions": [
+        {
+          "action": "DEAL",
+          "terms": {
+            "units": 2,
+            "upfront": 70,
+            "repayment": 50,
+            "extra": 0,
+            "days": 7
+          },
+          "information": "NONE"
+        }
+      ],
+      "expectedRates": [
+        16
+      ],
+      "observations": [
+        {
+          "turn": 1,
+          "rate": 16,
+          "card": {
+            "id": "HELD",
+            "label": "Held",
+            "physicallyHeld": true
+          },
+          "r17": {
+            "held": true,
+            "available": true,
+            "traded": false,
+            "hinted": false,
+            "shown": false,
+            "blindTradeFailed": false,
+            "interestKnown": false,
+            "knownMarcusInterest": null,
+            "tradeAttempts": []
+          },
+          "documentHolder": "PLAYER",
+          "disclosure": "NONE",
+          "sourceChecked": false,
+          "content": "UNKNOWN",
+          "bodyClaimIds": [],
+          "tradeOptionAvailable": true,
+          "offer": {
+            "id": "golden:POSITIVE:true:HOARD:offer:1",
+            "version": 1,
+            "terms": {
+              "units": 2,
+              "upfront": 70,
+              "repayment": 50,
+              "extra": 8,
+              "days": 7
+            },
+            "source": "MARCUS",
+            "informationExchange": null,
+            "extraChargeRate": 16
+          },
+          "status": "OPEN",
+          "metrics": {
+            "cash": 80,
+            "debt": 250,
+            "marcusStock": 8,
+            "playerStock": 0
+          },
+          "reaction": null,
+          "respondingFace": "WEIGHING_IT",
+          "marcusText": "Not on those terms. Here is what I will put my name to: 2 Contra units, $70 upfront, $50 in new credit plus $8 extra due in 7 days. Your existing debt is separate. Take a look before you decide. I can work with a clear approach like that.",
+          "worldEventIds": [
+            "world:r17-proof-0:13",
+            "world:r17-proof-0:14"
+          ]
+        }
+      ]
+    },
+    {
+      "seed": "r17-proof-0",
+      "version": "GOOD",
+      "cares": true,
+      "scenario": "SHOW",
+      "initial": {
+        "turn": 0,
+        "rate": 16,
+        "card": {
+          "id": "HELD",
+          "label": "Held",
+          "physicallyHeld": true
+        },
+        "r17": {
+          "held": true,
+          "available": true,
+          "traded": false,
+          "hinted": false,
+          "shown": false,
+          "blindTradeFailed": false,
+          "interestKnown": false,
+          "knownMarcusInterest": null,
+          "tradeAttempts": []
+        },
+        "documentHolder": "PLAYER",
+        "disclosure": "NONE",
+        "sourceChecked": false,
+        "content": "UNKNOWN",
+        "bodyClaimIds": [],
+        "tradeOptionAvailable": true,
+        "offer": null,
+        "status": "OPEN",
+        "metrics": {
+          "cash": 80,
+          "debt": 250,
+          "marcusStock": 8,
+          "playerStock": 0
+        },
+        "reaction": null,
+        "respondingFace": null,
+        "marcusText": null,
+        "worldEventIds": []
+      },
+      "actions": [
+        {
+          "action": "ASK",
+          "topic": "R17_SHOW"
+        },
+        {
+          "action": "DEAL",
+          "terms": {
+            "units": 2,
+            "upfront": 70,
+            "repayment": 50,
+            "extra": 0,
+            "days": 7
+          },
+          "information": "NONE"
+        },
+        {
+          "action": "DEAL",
+          "terms": {
+            "units": 2,
+            "upfront": 70,
+            "repayment": 50,
+            "extra": 0,
+            "days": 7
+          },
+          "information": "NONE"
+        }
+      ],
+      "expectedRates": [
+        13,
+        13,
+        13
+      ],
+      "observations": [
+        {
+          "turn": 1,
+          "rate": 13,
+          "card": {
+            "id": "SPENT",
+            "label": "Spent",
+            "physicallyHeld": true
+          },
+          "r17": {
+            "held": true,
+            "available": false,
+            "traded": false,
+            "hinted": false,
+            "shown": true,
+            "blindTradeFailed": false,
+            "interestKnown": false,
+            "knownMarcusInterest": null,
+            "tradeAttempts": []
+          },
+          "documentHolder": "PLAYER",
+          "disclosure": "FULL",
+          "sourceChecked": true,
+          "content": "DOCUMENT_SUPPORTED",
+          "bodyClaimIds": [
+            "R17:body:0",
+            "R17:body:1",
+            "R17:body:2"
+          ],
+          "tradeOptionAvailable": false,
+          "offer": null,
+          "status": "OPEN",
+          "metrics": {
+            "cash": 80,
+            "debt": 250,
+            "marcusStock": 8,
+            "playerStock": 0
+          },
+          "reaction": "SHOW",
+          "respondingFace": "WARM_ACKNOWLEDGMENT",
+          "marcusText": "The header and signature check out. I accept the detail on the paper. I'll give you three points of goodwill: 13% extra now. That doesn't establish who's responsible for any discrepancy.",
+          "worldEventIds": [
+            "world:r17-proof-0:13",
+            "world:r17-proof-0:14",
+            "world:r17-proof-0:15"
+          ]
+        },
+        {
+          "turn": 2,
+          "rate": 13,
+          "card": {
+            "id": "SPENT",
+            "label": "Spent",
+            "physicallyHeld": true
+          },
+          "r17": {
+            "held": true,
+            "available": false,
+            "traded": false,
+            "hinted": false,
+            "shown": true,
+            "blindTradeFailed": false,
+            "interestKnown": false,
+            "knownMarcusInterest": null,
+            "tradeAttempts": []
+          },
+          "documentHolder": "PLAYER",
+          "disclosure": "FULL",
+          "sourceChecked": true,
+          "content": "DOCUMENT_SUPPORTED",
+          "bodyClaimIds": [
+            "R17:body:0",
+            "R17:body:1",
+            "R17:body:2"
+          ],
+          "tradeOptionAvailable": false,
+          "offer": {
+            "id": "golden:POSITIVE:true:SHOW:offer:2",
+            "version": 2,
+            "terms": {
+              "units": 2,
+              "upfront": 70,
+              "repayment": 50,
+              "extra": 7,
+              "days": 7
+            },
+            "source": "MARCUS",
+            "informationExchange": null,
+            "extraChargeRate": 13
+          },
+          "status": "OPEN",
+          "metrics": {
+            "cash": 80,
+            "debt": 250,
+            "marcusStock": 8,
+            "playerStock": 0
+          },
+          "reaction": null,
+          "respondingFace": "WEIGHING_IT",
+          "marcusText": "I will not agree to your proposal. My counteroffer is 2 Contra units, $70 upfront, $50 in new credit plus $7 extra due in 7 days. The existing debt is separate. Review that before deciding. I can work with a clear approach like that.",
+          "worldEventIds": [
+            "world:r17-proof-0:16",
+            "world:r17-proof-0:17"
+          ]
+        },
+        {
+          "turn": 3,
+          "rate": 13,
+          "card": {
+            "id": "SPENT",
+            "label": "Spent",
+            "physicallyHeld": true
+          },
+          "r17": {
+            "held": true,
+            "available": false,
+            "traded": false,
+            "hinted": false,
+            "shown": true,
+            "blindTradeFailed": false,
+            "interestKnown": false,
+            "knownMarcusInterest": null,
+            "tradeAttempts": []
+          },
+          "documentHolder": "PLAYER",
+          "disclosure": "FULL",
+          "sourceChecked": true,
+          "content": "DOCUMENT_SUPPORTED",
+          "bodyClaimIds": [
+            "R17:body:0",
+            "R17:body:1",
+            "R17:body:2"
+          ],
+          "tradeOptionAvailable": false,
+          "offer": {
+            "id": "golden:POSITIVE:true:SHOW:offer:3",
+            "version": 3,
+            "terms": {
+              "units": 2,
+              "upfront": 70,
+              "repayment": 50,
+              "extra": 7,
+              "days": 7
+            },
+            "source": "MARCUS",
+            "informationExchange": null,
+            "extraChargeRate": 13
+          },
+          "status": "OPEN",
+          "metrics": {
+            "cash": 80,
+            "debt": 250,
+            "marcusStock": 8,
+            "playerStock": 0
+          },
+          "reaction": null,
+          "respondingFace": "WEIGHING_IT",
+          "marcusText": "Not on those terms. Here is what I will put my name to: 2 Contra units, $70 upfront, $50 in new credit plus $7 extra due in 7 days. Your existing debt is separate. Take a look before you decide.",
+          "worldEventIds": [
+            "world:r17-proof-0:18",
+            "world:r17-proof-0:19"
+          ]
+        }
+      ]
+    },
+    {
+      "seed": "r17-proof-0",
+      "version": "GOOD",
+      "cares": true,
+      "scenario": "HINT_TRADE",
+      "initial": {
+        "turn": 0,
+        "rate": 16,
+        "card": {
+          "id": "HELD",
+          "label": "Held",
+          "physicallyHeld": true
+        },
+        "r17": {
+          "held": true,
+          "available": true,
+          "traded": false,
+          "hinted": false,
+          "shown": false,
+          "blindTradeFailed": false,
+          "interestKnown": false,
+          "knownMarcusInterest": null,
+          "tradeAttempts": []
+        },
+        "documentHolder": "PLAYER",
+        "disclosure": "NONE",
+        "sourceChecked": false,
+        "content": "UNKNOWN",
+        "bodyClaimIds": [],
+        "tradeOptionAvailable": true,
+        "offer": null,
+        "status": "OPEN",
+        "metrics": {
+          "cash": 80,
+          "debt": 250,
+          "marcusStock": 8,
+          "playerStock": 0
+        },
+        "reaction": null,
+        "respondingFace": null,
+        "marcusText": null,
+        "worldEventIds": []
+      },
+      "actions": [
+        {
+          "action": "ASK",
+          "topic": "R17_HINT"
+        },
+        {
+          "action": "DEAL",
+          "terms": {
+            "units": 2,
+            "upfront": 70,
+            "repayment": 50,
+            "extra": 0,
+            "days": 7
+          },
+          "information": "OFFER_INFORMATION"
+        }
+      ],
+      "expectedRates": [
+        16,
+        8
+      ],
+      "observations": [
+        {
+          "turn": 1,
+          "rate": 16,
+          "card": {
+            "id": "HINTED",
+            "label": "Hinted",
+            "physicallyHeld": true
+          },
+          "r17": {
+            "held": true,
+            "available": true,
+            "traded": false,
+            "hinted": true,
+            "shown": false,
+            "blindTradeFailed": false,
+            "interestKnown": true,
+            "knownMarcusInterest": true,
+            "tradeAttempts": []
+          },
+          "documentHolder": "PLAYER",
+          "disclosure": "PARTIAL",
+          "sourceChecked": false,
+          "content": "UNKNOWN",
+          "bodyClaimIds": [],
+          "tradeOptionAvailable": true,
+          "offer": null,
+          "status": "OPEN",
+          "metrics": {
+            "cash": 80,
+            "debt": 250,
+            "marcusStock": 8,
+            "playerStock": 0
+          },
+          "reaction": "HINT_CARES",
+          "respondingFace": "LEANING_IN",
+          "marcusText": "Yes. I care about that information. Keep R-17's exact detail covered if you want to price it into the deal.",
+          "worldEventIds": [
+            "world:r17-proof-0:13",
+            "world:r17-proof-0:14"
+          ]
+        },
+        {
+          "turn": 2,
+          "rate": 8,
+          "card": {
+            "id": "HINTED",
+            "label": "Hinted",
+            "physicallyHeld": true
+          },
+          "r17": {
+            "held": true,
+            "available": true,
+            "traded": false,
+            "hinted": true,
+            "shown": false,
+            "blindTradeFailed": false,
+            "interestKnown": true,
+            "knownMarcusInterest": true,
+            "tradeAttempts": [
+              "r17:trade-attempt:2:known"
+            ]
+          },
+          "documentHolder": "PLAYER",
+          "disclosure": "PARTIAL",
+          "sourceChecked": false,
+          "content": "UNKNOWN",
+          "bodyClaimIds": [],
+          "tradeOptionAvailable": true,
+          "offer": {
+            "id": "golden:POSITIVE:true:HINT_TRADE:offer:2",
+            "version": 2,
+            "terms": {
+              "units": 2,
+              "upfront": 70,
+              "repayment": 50,
+              "extra": 4,
+              "days": 7
+            },
+            "source": "MARCUS",
+            "informationExchange": {
+              "factId": "POSITIVE_ROUTE",
+              "summary": "Counterfoil R-17 and its exact detail; transferred only on confirmation."
+            },
+            "extraChargeRate": 8
+          },
+          "status": "OPEN",
+          "metrics": {
+            "cash": 80,
+            "debt": 250,
+            "marcusStock": 8,
+            "playerStock": 0
+          },
+          "reaction": "TRADE_VALUABLE",
+          "respondingFace": "READY_TO_AGREE",
+          "marcusText": "R-17 has value to me. I'll go to 8% extra for this information offer, with the exchange completed on confirmation. Review these terms: 2 Contra units, $70 upfront, $50 in new credit plus $4 extra due in 7 days. The terms include the information exchange. I receive the private detail only when you confirm. I can work with a clear approach like that.",
+          "worldEventIds": [
+            "world:r17-proof-0:15",
+            "world:r17-proof-0:16"
+          ]
+        },
+        {
+          "turn": 3,
+          "rate": 8,
+          "card": {
+            "id": "TRADED",
+            "label": "Traded",
+            "physicallyHeld": false
+          },
+          "r17": {
+            "held": false,
+            "available": false,
+            "traded": true,
+            "hinted": true,
+            "shown": false,
+            "blindTradeFailed": false,
+            "interestKnown": true,
+            "knownMarcusInterest": true,
+            "tradeAttempts": [
+              "r17:trade-attempt:2:known"
+            ]
+          },
+          "documentHolder": "MARCUS",
+          "disclosure": "FULL",
+          "sourceChecked": true,
+          "content": "DOCUMENT_SUPPORTED",
+          "bodyClaimIds": [
+            "R17:body:0",
+            "R17:body:1",
+            "R17:body:2"
+          ],
+          "tradeOptionAvailable": false,
+          "offer": null,
+          "status": "AGREED",
+          "metrics": {
+            "cash": 10,
+            "debt": 304,
+            "marcusStock": 6,
+            "playerStock": 2
+          },
+          "reaction": null,
+          "respondingFace": "AGREEMENT_CLOSURE",
+          "marcusText": "Agreed. The stock is yours on the terms you just confirmed. The old account stays on the books.",
+          "worldEventIds": [
+            "world:r17-proof-0:17",
+            "world:r17-proof-0:18",
+            "world:r17-proof-0:19",
+            "world:r17-proof-0:20",
+            "world:r17-proof-0:21",
+            "world:r17-proof-0:22"
+          ]
+        }
+      ]
+    },
+    {
+      "seed": "r17-proof-0",
+      "version": "GOOD",
+      "cares": true,
+      "scenario": "BLIND_TRADE",
+      "initial": {
+        "turn": 0,
+        "rate": 16,
+        "card": {
+          "id": "HELD",
+          "label": "Held",
+          "physicallyHeld": true
+        },
+        "r17": {
+          "held": true,
+          "available": true,
+          "traded": false,
+          "hinted": false,
+          "shown": false,
+          "blindTradeFailed": false,
+          "interestKnown": false,
+          "knownMarcusInterest": null,
+          "tradeAttempts": []
+        },
+        "documentHolder": "PLAYER",
+        "disclosure": "NONE",
+        "sourceChecked": false,
+        "content": "UNKNOWN",
+        "bodyClaimIds": [],
+        "tradeOptionAvailable": true,
+        "offer": null,
+        "status": "OPEN",
+        "metrics": {
+          "cash": 80,
+          "debt": 250,
+          "marcusStock": 8,
+          "playerStock": 0
+        },
+        "reaction": null,
+        "respondingFace": null,
+        "marcusText": null,
+        "worldEventIds": []
+      },
+      "actions": [
+        {
+          "action": "DEAL",
+          "terms": {
+            "units": 2,
+            "upfront": 70,
+            "repayment": 50,
+            "extra": 0,
+            "days": 7
+          },
+          "information": "OFFER_INFORMATION"
+        }
+      ],
+      "expectedRates": [
+        8
+      ],
+      "observations": [
+        {
+          "turn": 1,
+          "rate": 8,
+          "card": {
+            "id": "HELD",
+            "label": "Held",
+            "physicallyHeld": true
+          },
+          "r17": {
+            "held": true,
+            "available": true,
+            "traded": false,
+            "hinted": false,
+            "shown": false,
+            "blindTradeFailed": false,
+            "interestKnown": true,
+            "knownMarcusInterest": true,
+            "tradeAttempts": [
+              "r17:trade-attempt:1:blind"
+            ]
+          },
+          "documentHolder": "PLAYER",
+          "disclosure": "PARTIAL",
+          "sourceChecked": false,
+          "content": "UNKNOWN",
+          "bodyClaimIds": [],
+          "tradeOptionAvailable": true,
+          "offer": {
+            "id": "golden:POSITIVE:true:BLIND_TRADE:offer:1",
+            "version": 1,
+            "terms": {
+              "units": 2,
+              "upfront": 70,
+              "repayment": 50,
+              "extra": 4,
+              "days": 7
+            },
+            "source": "MARCUS",
+            "informationExchange": {
+              "factId": "POSITIVE_ROUTE",
+              "summary": "Counterfoil R-17 and its exact detail; transferred only on confirmation."
+            },
+            "extraChargeRate": 8
+          },
+          "status": "OPEN",
+          "metrics": {
+            "cash": 80,
+            "debt": 250,
+            "marcusStock": 8,
+            "playerStock": 0
+          },
+          "reaction": "TRADE_VALUABLE",
+          "respondingFace": "READY_TO_AGREE",
+          "marcusText": "That information matters to me. With R-17 included, my minimum extra is 8%. I receive the document and detail only when you confirm. Review these terms: 2 Contra units, $70 upfront, $50 in new credit plus $4 extra due in 7 days. The terms include the information exchange. I receive the private detail only when you confirm. I can work with a clear approach like that.",
+          "worldEventIds": [
+            "world:r17-proof-0:13",
+            "world:r17-proof-0:14"
+          ]
+        },
+        {
+          "turn": 2,
+          "rate": 8,
+          "card": {
+            "id": "TRADED",
+            "label": "Traded",
+            "physicallyHeld": false
+          },
+          "r17": {
+            "held": false,
+            "available": false,
+            "traded": true,
+            "hinted": false,
+            "shown": false,
+            "blindTradeFailed": false,
+            "interestKnown": true,
+            "knownMarcusInterest": true,
+            "tradeAttempts": [
+              "r17:trade-attempt:1:blind"
+            ]
+          },
+          "documentHolder": "MARCUS",
+          "disclosure": "FULL",
+          "sourceChecked": true,
+          "content": "DOCUMENT_SUPPORTED",
+          "bodyClaimIds": [
+            "R17:body:0",
+            "R17:body:1",
+            "R17:body:2"
+          ],
+          "tradeOptionAvailable": false,
+          "offer": null,
+          "status": "AGREED",
+          "metrics": {
+            "cash": 10,
+            "debt": 304,
+            "marcusStock": 6,
+            "playerStock": 2
+          },
+          "reaction": null,
+          "respondingFace": "AGREEMENT_CLOSURE",
+          "marcusText": "That is agreed. The stock is yours under the terms you confirmed. The old account remains unpaid.",
+          "worldEventIds": [
+            "world:r17-proof-0:15",
+            "world:r17-proof-0:16",
+            "world:r17-proof-0:17",
+            "world:r17-proof-0:18",
+            "world:r17-proof-0:19",
+            "world:r17-proof-0:20"
+          ]
+        }
+      ]
+    },
+    {
+      "seed": "r17-proof-0",
+      "version": "GOOD",
+      "cares": true,
+      "scenario": "REMOVE_READD",
+      "initial": {
+        "turn": 0,
+        "rate": 16,
+        "card": {
+          "id": "HELD",
+          "label": "Held",
+          "physicallyHeld": true
+        },
+        "r17": {
+          "held": true,
+          "available": true,
+          "traded": false,
+          "hinted": false,
+          "shown": false,
+          "blindTradeFailed": false,
+          "interestKnown": false,
+          "knownMarcusInterest": null,
+          "tradeAttempts": []
+        },
+        "documentHolder": "PLAYER",
+        "disclosure": "NONE",
+        "sourceChecked": false,
+        "content": "UNKNOWN",
+        "bodyClaimIds": [],
+        "tradeOptionAvailable": true,
+        "offer": null,
+        "status": "OPEN",
+        "metrics": {
+          "cash": 80,
+          "debt": 250,
+          "marcusStock": 8,
+          "playerStock": 0
+        },
+        "reaction": null,
+        "respondingFace": null,
+        "marcusText": null,
+        "worldEventIds": []
+      },
+      "actions": [
+        {
+          "action": "DEAL",
+          "terms": {
+            "units": 2,
+            "upfront": 70,
+            "repayment": 50,
+            "extra": 0,
+            "days": 7
+          },
+          "information": "OFFER_INFORMATION"
+        },
+        {
+          "action": "DEAL",
+          "terms": {
+            "units": 2,
+            "upfront": 70,
+            "repayment": 50,
+            "extra": 0,
+            "days": 7
+          },
+          "information": "NONE"
+        },
+        {
+          "action": "DEAL",
+          "terms": {
+            "units": 2,
+            "upfront": 70,
+            "repayment": 50,
+            "extra": 0,
+            "days": 7
+          },
+          "information": "OFFER_INFORMATION"
+        }
+      ],
+      "expectedRates": [
+        8,
+        16,
+        8
+      ],
+      "observations": [
+        {
+          "turn": 1,
+          "rate": 8,
+          "card": {
+            "id": "HELD",
+            "label": "Held",
+            "physicallyHeld": true
+          },
+          "r17": {
+            "held": true,
+            "available": true,
+            "traded": false,
+            "hinted": false,
+            "shown": false,
+            "blindTradeFailed": false,
+            "interestKnown": true,
+            "knownMarcusInterest": true,
+            "tradeAttempts": [
+              "r17:trade-attempt:1:blind"
+            ]
+          },
+          "documentHolder": "PLAYER",
+          "disclosure": "PARTIAL",
+          "sourceChecked": false,
+          "content": "UNKNOWN",
+          "bodyClaimIds": [],
+          "tradeOptionAvailable": true,
+          "offer": {
+            "id": "golden:POSITIVE:true:REMOVE_READD:offer:1",
+            "version": 1,
+            "terms": {
+              "units": 2,
+              "upfront": 70,
+              "repayment": 50,
+              "extra": 4,
+              "days": 7
+            },
+            "source": "MARCUS",
+            "informationExchange": {
+              "factId": "POSITIVE_ROUTE",
+              "summary": "Counterfoil R-17 and its exact detail; transferred only on confirmation."
+            },
+            "extraChargeRate": 8
+          },
+          "status": "OPEN",
+          "metrics": {
+            "cash": 80,
+            "debt": 250,
+            "marcusStock": 8,
+            "playerStock": 0
+          },
+          "reaction": "TRADE_VALUABLE",
+          "respondingFace": "READY_TO_AGREE",
+          "marcusText": "That information matters to me. With R-17 included, my minimum extra is 8%. I receive the document and detail only when you confirm. Review these terms: 2 Contra units, $70 upfront, $50 in new credit plus $4 extra due in 7 days. The terms include the information exchange. I receive the private detail only when you confirm. I can work with a clear approach like that.",
+          "worldEventIds": [
+            "world:r17-proof-0:13",
+            "world:r17-proof-0:14"
+          ]
+        },
+        {
+          "turn": 2,
+          "rate": 16,
+          "card": {
+            "id": "HELD",
+            "label": "Held",
+            "physicallyHeld": true
+          },
+          "r17": {
+            "held": true,
+            "available": true,
+            "traded": false,
+            "hinted": false,
+            "shown": false,
+            "blindTradeFailed": false,
+            "interestKnown": true,
+            "knownMarcusInterest": true,
+            "tradeAttempts": [
+              "r17:trade-attempt:1:blind"
+            ]
+          },
+          "documentHolder": "PLAYER",
+          "disclosure": "PARTIAL",
+          "sourceChecked": false,
+          "content": "UNKNOWN",
+          "bodyClaimIds": [],
+          "tradeOptionAvailable": true,
+          "offer": {
+            "id": "golden:POSITIVE:true:REMOVE_READD:offer:2",
+            "version": 2,
+            "terms": {
+              "units": 2,
+              "upfront": 70,
+              "repayment": 50,
+              "extra": 8,
+              "days": 7
+            },
+            "source": "MARCUS",
+            "informationExchange": null,
+            "extraChargeRate": 16
+          },
+          "status": "OPEN",
+          "metrics": {
+            "cash": 80,
+            "debt": 250,
+            "marcusStock": 8,
+            "playerStock": 0
+          },
+          "reaction": null,
+          "respondingFace": "WEIGHING_IT",
+          "marcusText": "I will not agree to your proposal. My counteroffer is 2 Contra units, $70 upfront, $50 in new credit plus $8 extra due in 7 days. The existing debt is separate. Review that before deciding.",
+          "worldEventIds": [
+            "world:r17-proof-0:15",
+            "world:r17-proof-0:16"
+          ]
+        },
+        {
+          "turn": 3,
+          "rate": 8,
+          "card": {
+            "id": "HELD",
+            "label": "Held",
+            "physicallyHeld": true
+          },
+          "r17": {
+            "held": true,
+            "available": true,
+            "traded": false,
+            "hinted": false,
+            "shown": false,
+            "blindTradeFailed": false,
+            "interestKnown": true,
+            "knownMarcusInterest": true,
+            "tradeAttempts": [
+              "r17:trade-attempt:1:blind",
+              "r17:trade-attempt:3:known"
+            ]
+          },
+          "documentHolder": "PLAYER",
+          "disclosure": "PARTIAL",
+          "sourceChecked": false,
+          "content": "UNKNOWN",
+          "bodyClaimIds": [],
+          "tradeOptionAvailable": true,
+          "offer": {
+            "id": "golden:POSITIVE:true:REMOVE_READD:offer:3",
+            "version": 3,
+            "terms": {
+              "units": 2,
+              "upfront": 70,
+              "repayment": 50,
+              "extra": 4,
+              "days": 7
+            },
+            "source": "MARCUS",
+            "informationExchange": {
+              "factId": "POSITIVE_ROUTE",
+              "summary": "Counterfoil R-17 and its exact detail; transferred only on confirmation."
+            },
+            "extraChargeRate": 8
+          },
+          "status": "OPEN",
+          "metrics": {
+            "cash": 80,
+            "debt": 250,
+            "marcusStock": 8,
+            "playerStock": 0
+          },
+          "reaction": "TRADE_VALUABLE",
+          "respondingFace": "READY_TO_AGREE",
+          "marcusText": "That information matters to me. With R-17 included, my minimum extra is 8%. I receive the document and detail only when you confirm. Review these terms: 2 Contra units, $70 upfront, $50 in new credit plus $4 extra due in 7 days. The terms include the information exchange. I receive the private detail only when you confirm.",
+          "worldEventIds": [
+            "world:r17-proof-0:17",
+            "world:r17-proof-0:18"
+          ]
+        }
+      ]
+    },
+    {
+      "seed": "r17-proof-1",
+      "version": "GOOD",
+      "cares": false,
+      "scenario": "HOARD",
+      "initial": {
+        "turn": 0,
+        "rate": 16,
+        "card": {
+          "id": "HELD",
+          "label": "Held",
+          "physicallyHeld": true
+        },
+        "r17": {
+          "held": true,
+          "available": true,
+          "traded": false,
+          "hinted": false,
+          "shown": false,
+          "blindTradeFailed": false,
+          "interestKnown": false,
+          "knownMarcusInterest": null,
+          "tradeAttempts": []
+        },
+        "documentHolder": "PLAYER",
+        "disclosure": "NONE",
+        "sourceChecked": false,
+        "content": "UNKNOWN",
+        "bodyClaimIds": [],
+        "tradeOptionAvailable": true,
+        "offer": null,
+        "status": "OPEN",
+        "metrics": {
+          "cash": 80,
+          "debt": 250,
+          "marcusStock": 8,
+          "playerStock": 0
+        },
+        "reaction": null,
+        "respondingFace": null,
+        "marcusText": null,
+        "worldEventIds": []
+      },
+      "actions": [
+        {
+          "action": "DEAL",
+          "terms": {
+            "units": 2,
+            "upfront": 70,
+            "repayment": 50,
+            "extra": 0,
+            "days": 7
+          },
+          "information": "NONE"
+        }
+      ],
+      "expectedRates": [
+        16
+      ],
+      "observations": [
+        {
+          "turn": 1,
+          "rate": 16,
+          "card": {
+            "id": "HELD",
+            "label": "Held",
+            "physicallyHeld": true
+          },
+          "r17": {
+            "held": true,
+            "available": true,
+            "traded": false,
+            "hinted": false,
+            "shown": false,
+            "blindTradeFailed": false,
+            "interestKnown": false,
+            "knownMarcusInterest": null,
+            "tradeAttempts": []
+          },
+          "documentHolder": "PLAYER",
+          "disclosure": "NONE",
+          "sourceChecked": false,
+          "content": "UNKNOWN",
+          "bodyClaimIds": [],
+          "tradeOptionAvailable": true,
+          "offer": {
+            "id": "golden:POSITIVE:false:HOARD:offer:1",
+            "version": 1,
+            "terms": {
+              "units": 2,
+              "upfront": 70,
+              "repayment": 50,
+              "extra": 8,
+              "days": 7
+            },
+            "source": "MARCUS",
+            "informationExchange": null,
+            "extraChargeRate": 16
+          },
+          "status": "OPEN",
+          "metrics": {
+            "cash": 80,
+            "debt": 250,
+            "marcusStock": 8,
+            "playerStock": 0
+          },
+          "reaction": null,
+          "respondingFace": "WEIGHING_IT",
+          "marcusText": "Not on those terms. Here is what I will put my name to: 2 Contra units, $70 upfront, $50 in new credit plus $8 extra due in 7 days. Your existing debt is separate. Take a look before you decide. I can work with a clear approach like that.",
+          "worldEventIds": [
+            "world:r17-proof-1:14",
+            "world:r17-proof-1:15"
+          ]
+        }
+      ]
+    },
+    {
+      "seed": "r17-proof-1",
+      "version": "GOOD",
+      "cares": false,
+      "scenario": "SHOW",
+      "initial": {
+        "turn": 0,
+        "rate": 16,
+        "card": {
+          "id": "HELD",
+          "label": "Held",
+          "physicallyHeld": true
+        },
+        "r17": {
+          "held": true,
+          "available": true,
+          "traded": false,
+          "hinted": false,
+          "shown": false,
+          "blindTradeFailed": false,
+          "interestKnown": false,
+          "knownMarcusInterest": null,
+          "tradeAttempts": []
+        },
+        "documentHolder": "PLAYER",
+        "disclosure": "NONE",
+        "sourceChecked": false,
+        "content": "UNKNOWN",
+        "bodyClaimIds": [],
+        "tradeOptionAvailable": true,
+        "offer": null,
+        "status": "OPEN",
+        "metrics": {
+          "cash": 80,
+          "debt": 250,
+          "marcusStock": 8,
+          "playerStock": 0
+        },
+        "reaction": null,
+        "respondingFace": null,
+        "marcusText": null,
+        "worldEventIds": []
+      },
+      "actions": [
+        {
+          "action": "ASK",
+          "topic": "R17_SHOW"
+        },
+        {
+          "action": "DEAL",
+          "terms": {
+            "units": 2,
+            "upfront": 70,
+            "repayment": 50,
+            "extra": 0,
+            "days": 7
+          },
+          "information": "NONE"
+        },
+        {
+          "action": "DEAL",
+          "terms": {
+            "units": 2,
+            "upfront": 70,
+            "repayment": 50,
+            "extra": 0,
+            "days": 7
+          },
+          "information": "NONE"
+        }
+      ],
+      "expectedRates": [
+        13,
+        13,
+        13
+      ],
+      "observations": [
+        {
+          "turn": 1,
+          "rate": 13,
+          "card": {
+            "id": "SPENT",
+            "label": "Spent",
+            "physicallyHeld": true
+          },
+          "r17": {
+            "held": true,
+            "available": false,
+            "traded": false,
+            "hinted": false,
+            "shown": true,
+            "blindTradeFailed": false,
+            "interestKnown": false,
+            "knownMarcusInterest": null,
+            "tradeAttempts": []
+          },
+          "documentHolder": "PLAYER",
+          "disclosure": "FULL",
+          "sourceChecked": true,
+          "content": "DOCUMENT_SUPPORTED",
+          "bodyClaimIds": [
+            "R17:body:0",
+            "R17:body:1",
+            "R17:body:2"
+          ],
+          "tradeOptionAvailable": false,
+          "offer": null,
+          "status": "OPEN",
+          "metrics": {
+            "cash": 80,
+            "debt": 250,
+            "marcusStock": 8,
+            "playerStock": 0
+          },
+          "reaction": "SHOW",
+          "respondingFace": "WARM_ACKNOWLEDGMENT",
+          "marcusText": "The header and signature check out. I accept the detail on the paper. I'll give you three points of goodwill: 13% extra now. That doesn't establish who's responsible for any discrepancy.",
+          "worldEventIds": [
+            "world:r17-proof-1:14",
+            "world:r17-proof-1:15",
+            "world:r17-proof-1:16"
+          ]
+        },
+        {
+          "turn": 2,
+          "rate": 13,
+          "card": {
+            "id": "SPENT",
+            "label": "Spent",
+            "physicallyHeld": true
+          },
+          "r17": {
+            "held": true,
+            "available": false,
+            "traded": false,
+            "hinted": false,
+            "shown": true,
+            "blindTradeFailed": false,
+            "interestKnown": false,
+            "knownMarcusInterest": null,
+            "tradeAttempts": []
+          },
+          "documentHolder": "PLAYER",
+          "disclosure": "FULL",
+          "sourceChecked": true,
+          "content": "DOCUMENT_SUPPORTED",
+          "bodyClaimIds": [
+            "R17:body:0",
+            "R17:body:1",
+            "R17:body:2"
+          ],
+          "tradeOptionAvailable": false,
+          "offer": {
+            "id": "golden:POSITIVE:false:SHOW:offer:2",
+            "version": 2,
+            "terms": {
+              "units": 2,
+              "upfront": 70,
+              "repayment": 50,
+              "extra": 7,
+              "days": 7
+            },
+            "source": "MARCUS",
+            "informationExchange": null,
+            "extraChargeRate": 13
+          },
+          "status": "OPEN",
+          "metrics": {
+            "cash": 80,
+            "debt": 250,
+            "marcusStock": 8,
+            "playerStock": 0
+          },
+          "reaction": null,
+          "respondingFace": "WEIGHING_IT",
+          "marcusText": "I will not agree to your proposal. My counteroffer is 2 Contra units, $70 upfront, $50 in new credit plus $7 extra due in 7 days. The existing debt is separate. Review that before deciding. I can work with a clear approach like that.",
+          "worldEventIds": [
+            "world:r17-proof-1:17",
+            "world:r17-proof-1:18"
+          ]
+        },
+        {
+          "turn": 3,
+          "rate": 13,
+          "card": {
+            "id": "SPENT",
+            "label": "Spent",
+            "physicallyHeld": true
+          },
+          "r17": {
+            "held": true,
+            "available": false,
+            "traded": false,
+            "hinted": false,
+            "shown": true,
+            "blindTradeFailed": false,
+            "interestKnown": false,
+            "knownMarcusInterest": null,
+            "tradeAttempts": []
+          },
+          "documentHolder": "PLAYER",
+          "disclosure": "FULL",
+          "sourceChecked": true,
+          "content": "DOCUMENT_SUPPORTED",
+          "bodyClaimIds": [
+            "R17:body:0",
+            "R17:body:1",
+            "R17:body:2"
+          ],
+          "tradeOptionAvailable": false,
+          "offer": {
+            "id": "golden:POSITIVE:false:SHOW:offer:3",
+            "version": 3,
+            "terms": {
+              "units": 2,
+              "upfront": 70,
+              "repayment": 50,
+              "extra": 7,
+              "days": 7
+            },
+            "source": "MARCUS",
+            "informationExchange": null,
+            "extraChargeRate": 13
+          },
+          "status": "OPEN",
+          "metrics": {
+            "cash": 80,
+            "debt": 250,
+            "marcusStock": 8,
+            "playerStock": 0
+          },
+          "reaction": null,
+          "respondingFace": "WEIGHING_IT",
+          "marcusText": "Not on those terms. Here is what I will put my name to: 2 Contra units, $70 upfront, $50 in new credit plus $7 extra due in 7 days. Your existing debt is separate. Take a look before you decide.",
+          "worldEventIds": [
+            "world:r17-proof-1:19",
+            "world:r17-proof-1:20"
+          ]
+        }
+      ]
+    },
+    {
+      "seed": "r17-proof-1",
+      "version": "GOOD",
+      "cares": false,
+      "scenario": "HINT_TRADE",
+      "initial": {
+        "turn": 0,
+        "rate": 16,
+        "card": {
+          "id": "HELD",
+          "label": "Held",
+          "physicallyHeld": true
+        },
+        "r17": {
+          "held": true,
+          "available": true,
+          "traded": false,
+          "hinted": false,
+          "shown": false,
+          "blindTradeFailed": false,
+          "interestKnown": false,
+          "knownMarcusInterest": null,
+          "tradeAttempts": []
+        },
+        "documentHolder": "PLAYER",
+        "disclosure": "NONE",
+        "sourceChecked": false,
+        "content": "UNKNOWN",
+        "bodyClaimIds": [],
+        "tradeOptionAvailable": true,
+        "offer": null,
+        "status": "OPEN",
+        "metrics": {
+          "cash": 80,
+          "debt": 250,
+          "marcusStock": 8,
+          "playerStock": 0
+        },
+        "reaction": null,
+        "respondingFace": null,
+        "marcusText": null,
+        "worldEventIds": []
+      },
+      "actions": [
+        {
+          "action": "ASK",
+          "topic": "R17_HINT"
+        },
+        {
+          "action": "DEAL",
+          "terms": {
+            "units": 2,
+            "upfront": 70,
+            "repayment": 50,
+            "extra": 0,
+            "days": 7
+          },
+          "information": "OFFER_INFORMATION"
+        }
+      ],
+      "expectedRates": [
+        16,
+        16
+      ],
+      "observations": [
+        {
+          "turn": 1,
+          "rate": 16,
+          "card": {
+            "id": "HINTED",
+            "label": "Hinted",
+            "physicallyHeld": true
+          },
+          "r17": {
+            "held": true,
+            "available": true,
+            "traded": false,
+            "hinted": true,
+            "shown": false,
+            "blindTradeFailed": false,
+            "interestKnown": true,
+            "knownMarcusInterest": false,
+            "tradeAttempts": []
+          },
+          "documentHolder": "PLAYER",
+          "disclosure": "PARTIAL",
+          "sourceChecked": false,
+          "content": "UNKNOWN",
+          "bodyClaimIds": [],
+          "tradeOptionAvailable": true,
+          "offer": null,
+          "status": "OPEN",
+          "metrics": {
+            "cash": 80,
+            "debt": 250,
+            "marcusStock": 8,
+            "playerStock": 0
+          },
+          "reaction": "HINT_DOES_NOT_CARE",
+          "respondingFace": "ATTENTIVE",
+          "marcusText": "No. I don't need it. Depot already called me about the collection change.",
+          "worldEventIds": [
+            "world:r17-proof-1:14",
+            "world:r17-proof-1:15"
+          ]
+        },
+        {
+          "turn": 2,
+          "rate": 16,
+          "card": {
+            "id": "HINTED",
+            "label": "Hinted",
+            "physicallyHeld": true
+          },
+          "r17": {
+            "held": true,
+            "available": true,
+            "traded": false,
+            "hinted": true,
+            "shown": false,
+            "blindTradeFailed": false,
+            "interestKnown": true,
+            "knownMarcusInterest": false,
+            "tradeAttempts": [
+              "r17:trade-attempt:2:known"
+            ]
+          },
+          "documentHolder": "PLAYER",
+          "disclosure": "PARTIAL",
+          "sourceChecked": false,
+          "content": "UNKNOWN",
+          "bodyClaimIds": [],
+          "tradeOptionAvailable": true,
+          "offer": {
+            "id": "golden:POSITIVE:false:HINT_TRADE:offer:2",
+            "version": 2,
+            "terms": {
+              "units": 2,
+              "upfront": 70,
+              "repayment": 50,
+              "extra": 8,
+              "days": 7
+            },
+            "source": "MARCUS",
+            "informationExchange": null,
+            "extraChargeRate": 16
+          },
+          "status": "OPEN",
+          "metrics": {
+            "cash": 80,
+            "debt": 250,
+            "marcusStock": 8,
+            "playerStock": 0
+          },
+          "reaction": "TRADE_NO_VALUE",
+          "respondingFace": "ATTENTIVE",
+          "marcusText": "No information value in this offer. The extra-charge floor stays 16%. R-17 stays yours. Review these terms: 2 Contra units, $70 upfront, $50 in new credit plus $8 extra due in 7 days. I can work with a clear approach like that.",
+          "worldEventIds": [
+            "world:r17-proof-1:16",
+            "world:r17-proof-1:17"
+          ]
+        }
+      ]
+    },
+    {
+      "seed": "r17-proof-1",
+      "version": "GOOD",
+      "cares": false,
+      "scenario": "BLIND_TRADE",
+      "initial": {
+        "turn": 0,
+        "rate": 16,
+        "card": {
+          "id": "HELD",
+          "label": "Held",
+          "physicallyHeld": true
+        },
+        "r17": {
+          "held": true,
+          "available": true,
+          "traded": false,
+          "hinted": false,
+          "shown": false,
+          "blindTradeFailed": false,
+          "interestKnown": false,
+          "knownMarcusInterest": null,
+          "tradeAttempts": []
+        },
+        "documentHolder": "PLAYER",
+        "disclosure": "NONE",
+        "sourceChecked": false,
+        "content": "UNKNOWN",
+        "bodyClaimIds": [],
+        "tradeOptionAvailable": true,
+        "offer": null,
+        "status": "OPEN",
+        "metrics": {
+          "cash": 80,
+          "debt": 250,
+          "marcusStock": 8,
+          "playerStock": 0
+        },
+        "reaction": null,
+        "respondingFace": null,
+        "marcusText": null,
+        "worldEventIds": []
+      },
+      "actions": [
+        {
+          "action": "DEAL",
+          "terms": {
+            "units": 2,
+            "upfront": 70,
+            "repayment": 50,
+            "extra": 0,
+            "days": 7
+          },
+          "information": "OFFER_INFORMATION"
+        }
+      ],
+      "expectedRates": [
+        22
+      ],
+      "observations": [
+        {
+          "turn": 1,
+          "rate": 22,
+          "card": {
+            "id": "HELD",
+            "label": "Held",
+            "physicallyHeld": true
+          },
+          "r17": {
+            "held": true,
+            "available": true,
+            "traded": false,
+            "hinted": false,
+            "shown": false,
+            "blindTradeFailed": true,
+            "interestKnown": true,
+            "knownMarcusInterest": false,
+            "tradeAttempts": [
+              "r17:trade-attempt:1:blind"
+            ]
+          },
+          "documentHolder": "PLAYER",
+          "disclosure": "PARTIAL",
+          "sourceChecked": false,
+          "content": "UNKNOWN",
+          "bodyClaimIds": [],
+          "tradeOptionAvailable": true,
+          "offer": {
+            "id": "golden:POSITIVE:false:BLIND_TRADE:offer:1",
+            "version": 1,
+            "terms": {
+              "units": 2,
+              "upfront": 70,
+              "repayment": 50,
+              "extra": 11,
+              "days": 7
+            },
+            "source": "MARCUS",
+            "informationExchange": null,
+            "extraChargeRate": 22
+          },
+          "status": "OPEN",
+          "metrics": {
+            "cash": 80,
+            "debt": 250,
+            "marcusStock": 8,
+            "playerStock": 0
+          },
+          "reaction": "BLIND_TRADE_FAILURE",
+          "respondingFace": "GUARDED",
+          "marcusText": "You want me to pay for something I don't need? My minimum extra is 22% now. Keep R-17; you haven't shown me its detail. Review these terms: 2 Contra units, $70 upfront, $50 in new credit plus $11 extra due in 7 days. I can work with a clear approach like that.",
+          "worldEventIds": [
+            "world:r17-proof-1:14",
+            "world:r17-proof-1:15"
+          ]
+        }
+      ]
+    },
+    {
+      "seed": "r17-proof-1",
+      "version": "GOOD",
+      "cares": false,
+      "scenario": "FAILURE_REPEAT_HINT_SHOW",
+      "initial": {
+        "turn": 0,
+        "rate": 16,
+        "card": {
+          "id": "HELD",
+          "label": "Held",
+          "physicallyHeld": true
+        },
+        "r17": {
+          "held": true,
+          "available": true,
+          "traded": false,
+          "hinted": false,
+          "shown": false,
+          "blindTradeFailed": false,
+          "interestKnown": false,
+          "knownMarcusInterest": null,
+          "tradeAttempts": []
+        },
+        "documentHolder": "PLAYER",
+        "disclosure": "NONE",
+        "sourceChecked": false,
+        "content": "UNKNOWN",
+        "bodyClaimIds": [],
+        "tradeOptionAvailable": true,
+        "offer": null,
+        "status": "OPEN",
+        "metrics": {
+          "cash": 80,
+          "debt": 250,
+          "marcusStock": 8,
+          "playerStock": 0
+        },
+        "reaction": null,
+        "respondingFace": null,
+        "marcusText": null,
+        "worldEventIds": []
+      },
+      "actions": [
+        {
+          "action": "DEAL",
+          "terms": {
+            "units": 2,
+            "upfront": 70,
+            "repayment": 50,
+            "extra": 0,
+            "days": 7
+          },
+          "information": "OFFER_INFORMATION"
+        },
+        {
+          "action": "DEAL",
+          "terms": {
+            "units": 2,
+            "upfront": 70,
+            "repayment": 50,
+            "extra": 0,
+            "days": 7
+          },
+          "information": "OFFER_INFORMATION"
+        },
+        {
+          "action": "ASK",
+          "topic": "R17_HINT"
+        },
+        {
+          "action": "ASK",
+          "topic": "R17_SHOW"
+        },
+        {
+          "action": "DEAL",
+          "terms": {
+            "units": 2,
+            "upfront": 70,
+            "repayment": 50,
+            "extra": 0,
+            "days": 7
+          },
+          "information": "NONE"
+        }
+      ],
+      "expectedRates": [
+        22,
+        22,
+        22,
+        19,
+        19
+      ],
+      "observations": [
+        {
+          "turn": 1,
+          "rate": 22,
+          "card": {
+            "id": "HELD",
+            "label": "Held",
+            "physicallyHeld": true
+          },
+          "r17": {
+            "held": true,
+            "available": true,
+            "traded": false,
+            "hinted": false,
+            "shown": false,
+            "blindTradeFailed": true,
+            "interestKnown": true,
+            "knownMarcusInterest": false,
+            "tradeAttempts": [
+              "r17:trade-attempt:1:blind"
+            ]
+          },
+          "documentHolder": "PLAYER",
+          "disclosure": "PARTIAL",
+          "sourceChecked": false,
+          "content": "UNKNOWN",
+          "bodyClaimIds": [],
+          "tradeOptionAvailable": true,
+          "offer": {
+            "id": "golden:POSITIVE:false:FAILURE_REPEAT_HINT_SHOW:offer:1",
+            "version": 1,
+            "terms": {
+              "units": 2,
+              "upfront": 70,
+              "repayment": 50,
+              "extra": 11,
+              "days": 7
+            },
+            "source": "MARCUS",
+            "informationExchange": null,
+            "extraChargeRate": 22
+          },
+          "status": "OPEN",
+          "metrics": {
+            "cash": 80,
+            "debt": 250,
+            "marcusStock": 8,
+            "playerStock": 0
+          },
+          "reaction": "BLIND_TRADE_FAILURE",
+          "respondingFace": "GUARDED",
+          "marcusText": "You want me to pay for something I don't need? My minimum extra is 22% now. Keep R-17; you haven't shown me its detail. Review these terms: 2 Contra units, $70 upfront, $50 in new credit plus $11 extra due in 7 days. I can work with a clear approach like that.",
+          "worldEventIds": [
+            "world:r17-proof-1:14",
+            "world:r17-proof-1:15"
+          ]
+        },
+        {
+          "turn": 2,
+          "rate": 22,
+          "card": {
+            "id": "HELD",
+            "label": "Held",
+            "physicallyHeld": true
+          },
+          "r17": {
+            "held": true,
+            "available": true,
+            "traded": false,
+            "hinted": false,
+            "shown": false,
+            "blindTradeFailed": true,
+            "interestKnown": true,
+            "knownMarcusInterest": false,
+            "tradeAttempts": [
+              "r17:trade-attempt:1:blind",
+              "r17:trade-attempt:2:known"
+            ]
+          },
+          "documentHolder": "PLAYER",
+          "disclosure": "PARTIAL",
+          "sourceChecked": false,
+          "content": "UNKNOWN",
+          "bodyClaimIds": [],
+          "tradeOptionAvailable": true,
+          "offer": {
+            "id": "golden:POSITIVE:false:FAILURE_REPEAT_HINT_SHOW:offer:2",
+            "version": 2,
+            "terms": {
+              "units": 2,
+              "upfront": 70,
+              "repayment": 50,
+              "extra": 11,
+              "days": 7
+            },
+            "source": "MARCUS",
+            "informationExchange": null,
+            "extraChargeRate": 22
+          },
+          "status": "OPEN",
+          "metrics": {
+            "cash": 80,
+            "debt": 250,
+            "marcusStock": 8,
+            "playerStock": 0
+          },
+          "reaction": "TRADE_NO_VALUE",
+          "respondingFace": "ATTENTIVE",
+          "marcusText": "No information value in this offer. The extra-charge floor stays 22%. R-17 stays yours. Review these terms: 2 Contra units, $70 upfront, $50 in new credit plus $11 extra due in 7 days.",
+          "worldEventIds": [
+            "world:r17-proof-1:16",
+            "world:r17-proof-1:17"
+          ]
+        },
+        {
+          "turn": 3,
+          "rate": 22,
+          "card": {
+            "id": "HINTED",
+            "label": "Hinted",
+            "physicallyHeld": true
+          },
+          "r17": {
+            "held": true,
+            "available": true,
+            "traded": false,
+            "hinted": true,
+            "shown": false,
+            "blindTradeFailed": true,
+            "interestKnown": true,
+            "knownMarcusInterest": false,
+            "tradeAttempts": [
+              "r17:trade-attempt:1:blind",
+              "r17:trade-attempt:2:known"
+            ]
+          },
+          "documentHolder": "PLAYER",
+          "disclosure": "PARTIAL",
+          "sourceChecked": false,
+          "content": "UNKNOWN",
+          "bodyClaimIds": [],
+          "tradeOptionAvailable": true,
+          "offer": null,
+          "status": "OPEN",
+          "metrics": {
+            "cash": 80,
+            "debt": 250,
+            "marcusStock": 8,
+            "playerStock": 0
+          },
+          "reaction": "HINT_DOES_NOT_CARE",
+          "respondingFace": "ATTENTIVE",
+          "marcusText": "No. I don't need it. Depot already called me about the collection change.",
+          "worldEventIds": [
+            "world:r17-proof-1:18",
+            "world:r17-proof-1:19"
+          ]
+        },
+        {
+          "turn": 4,
+          "rate": 19,
+          "card": {
+            "id": "SPENT",
+            "label": "Spent",
+            "physicallyHeld": true
+          },
+          "r17": {
+            "held": true,
+            "available": false,
+            "traded": false,
+            "hinted": true,
+            "shown": true,
+            "blindTradeFailed": true,
+            "interestKnown": true,
+            "knownMarcusInterest": false,
+            "tradeAttempts": [
+              "r17:trade-attempt:1:blind",
+              "r17:trade-attempt:2:known"
+            ]
+          },
+          "documentHolder": "PLAYER",
+          "disclosure": "FULL",
+          "sourceChecked": true,
+          "content": "DOCUMENT_SUPPORTED",
+          "bodyClaimIds": [
+            "R17:body:0",
+            "R17:body:1",
+            "R17:body:2"
+          ],
+          "tradeOptionAvailable": false,
+          "offer": null,
+          "status": "OPEN",
+          "metrics": {
+            "cash": 80,
+            "debt": 250,
+            "marcusStock": 8,
+            "playerStock": 0
+          },
+          "reaction": "SHOW",
+          "respondingFace": "WARM_ACKNOWLEDGMENT",
+          "marcusText": "The source checks out, and I've read the detail. Three points off the extra charge: 19%. The paper doesn't establish wrongdoing.",
+          "worldEventIds": [
+            "world:r17-proof-1:20",
+            "world:r17-proof-1:21",
+            "world:r17-proof-1:22"
+          ]
+        },
+        {
+          "turn": 5,
+          "rate": 19,
+          "card": {
+            "id": "SPENT",
+            "label": "Spent",
+            "physicallyHeld": true
+          },
+          "r17": {
+            "held": true,
+            "available": false,
+            "traded": false,
+            "hinted": true,
+            "shown": true,
+            "blindTradeFailed": true,
+            "interestKnown": true,
+            "knownMarcusInterest": false,
+            "tradeAttempts": [
+              "r17:trade-attempt:1:blind",
+              "r17:trade-attempt:2:known"
+            ]
+          },
+          "documentHolder": "PLAYER",
+          "disclosure": "FULL",
+          "sourceChecked": true,
+          "content": "DOCUMENT_SUPPORTED",
+          "bodyClaimIds": [
+            "R17:body:0",
+            "R17:body:1",
+            "R17:body:2"
+          ],
+          "tradeOptionAvailable": false,
+          "offer": {
+            "id": "golden:POSITIVE:false:FAILURE_REPEAT_HINT_SHOW:offer:5",
+            "version": 5,
+            "terms": {
+              "units": 2,
+              "upfront": 70,
+              "repayment": 50,
+              "extra": 10,
+              "days": 7
+            },
+            "source": "MARCUS",
+            "informationExchange": null,
+            "extraChargeRate": 19
+          },
+          "status": "OPEN",
+          "metrics": {
+            "cash": 80,
+            "debt": 250,
+            "marcusStock": 8,
+            "playerStock": 0
+          },
+          "reaction": null,
+          "respondingFace": "WEIGHING_IT",
+          "marcusText": "Not on those terms. Here is what I will put my name to: 2 Contra units, $70 upfront, $50 in new credit plus $10 extra due in 7 days. Your existing debt is separate. Take a look before you decide.",
+          "worldEventIds": [
+            "world:r17-proof-1:23",
+            "world:r17-proof-1:24"
+          ]
+        }
+      ]
+    },
+    {
+      "seed": "r17-proof-2",
+      "version": "BAD",
+      "cares": false,
+      "scenario": "HOARD",
+      "initial": {
+        "turn": 0,
+        "rate": 16,
+        "card": {
+          "id": "HELD",
+          "label": "Held",
+          "physicallyHeld": true
+        },
+        "r17": {
+          "held": true,
+          "available": true,
+          "traded": false,
+          "hinted": false,
+          "shown": false,
+          "blindTradeFailed": false,
+          "interestKnown": false,
+          "knownMarcusInterest": null,
+          "tradeAttempts": []
+        },
+        "documentHolder": "PLAYER",
+        "disclosure": "NONE",
+        "sourceChecked": false,
+        "content": "UNKNOWN",
+        "bodyClaimIds": [],
+        "tradeOptionAvailable": true,
+        "offer": null,
+        "status": "OPEN",
+        "metrics": {
+          "cash": 80,
+          "debt": 250,
+          "marcusStock": 8,
+          "playerStock": 0
+        },
+        "reaction": null,
+        "respondingFace": null,
+        "marcusText": null,
+        "worldEventIds": []
+      },
+      "actions": [
+        {
+          "action": "DEAL",
+          "terms": {
+            "units": 2,
+            "upfront": 70,
+            "repayment": 50,
+            "extra": 0,
+            "days": 7
+          },
+          "information": "NONE"
+        }
+      ],
+      "expectedRates": [
+        16
+      ],
+      "observations": [
+        {
+          "turn": 1,
+          "rate": 16,
+          "card": {
+            "id": "HELD",
+            "label": "Held",
+            "physicallyHeld": true
+          },
+          "r17": {
+            "held": true,
+            "available": true,
+            "traded": false,
+            "hinted": false,
+            "shown": false,
+            "blindTradeFailed": false,
+            "interestKnown": false,
+            "knownMarcusInterest": null,
+            "tradeAttempts": []
+          },
+          "documentHolder": "PLAYER",
+          "disclosure": "NONE",
+          "sourceChecked": false,
+          "content": "UNKNOWN",
+          "bodyClaimIds": [],
+          "tradeOptionAvailable": true,
+          "offer": {
+            "id": "golden:NEGATIVE:false:HOARD:offer:1",
+            "version": 1,
+            "terms": {
+              "units": 2,
+              "upfront": 70,
+              "repayment": 50,
+              "extra": 8,
+              "days": 7
+            },
+            "source": "MARCUS",
+            "informationExchange": null,
+            "extraChargeRate": 16
+          },
+          "status": "OPEN",
+          "metrics": {
+            "cash": 80,
+            "debt": 250,
+            "marcusStock": 8,
+            "playerStock": 0
+          },
+          "reaction": null,
+          "respondingFace": "WEIGHING_IT",
+          "marcusText": "Not on those terms. Here is what I will put my name to: 2 Contra units, $70 upfront, $50 in new credit plus $8 extra due in 7 days. Your existing debt is separate. Take a look before you decide. I can work with a clear approach like that.",
+          "worldEventIds": [
+            "world:r17-proof-2:17",
+            "world:r17-proof-2:18"
+          ]
+        }
+      ]
+    },
+    {
+      "seed": "r17-proof-2",
+      "version": "BAD",
+      "cares": false,
+      "scenario": "SHOW",
+      "initial": {
+        "turn": 0,
+        "rate": 16,
+        "card": {
+          "id": "HELD",
+          "label": "Held",
+          "physicallyHeld": true
+        },
+        "r17": {
+          "held": true,
+          "available": true,
+          "traded": false,
+          "hinted": false,
+          "shown": false,
+          "blindTradeFailed": false,
+          "interestKnown": false,
+          "knownMarcusInterest": null,
+          "tradeAttempts": []
+        },
+        "documentHolder": "PLAYER",
+        "disclosure": "NONE",
+        "sourceChecked": false,
+        "content": "UNKNOWN",
+        "bodyClaimIds": [],
+        "tradeOptionAvailable": true,
+        "offer": null,
+        "status": "OPEN",
+        "metrics": {
+          "cash": 80,
+          "debt": 250,
+          "marcusStock": 8,
+          "playerStock": 0
+        },
+        "reaction": null,
+        "respondingFace": null,
+        "marcusText": null,
+        "worldEventIds": []
+      },
+      "actions": [
+        {
+          "action": "ASK",
+          "topic": "R17_SHOW"
+        },
+        {
+          "action": "DEAL",
+          "terms": {
+            "units": 2,
+            "upfront": 70,
+            "repayment": 50,
+            "extra": 0,
+            "days": 7
+          },
+          "information": "NONE"
+        },
+        {
+          "action": "DEAL",
+          "terms": {
+            "units": 2,
+            "upfront": 70,
+            "repayment": 50,
+            "extra": 0,
+            "days": 7
+          },
+          "information": "NONE"
+        }
+      ],
+      "expectedRates": [
+        13,
+        13,
+        13
+      ],
+      "observations": [
+        {
+          "turn": 1,
+          "rate": 13,
+          "card": {
+            "id": "SPENT",
+            "label": "Spent",
+            "physicallyHeld": true
+          },
+          "r17": {
+            "held": true,
+            "available": false,
+            "traded": false,
+            "hinted": false,
+            "shown": true,
+            "blindTradeFailed": false,
+            "interestKnown": false,
+            "knownMarcusInterest": null,
+            "tradeAttempts": []
+          },
+          "documentHolder": "PLAYER",
+          "disclosure": "FULL",
+          "sourceChecked": true,
+          "content": "DOCUMENT_SUPPORTED",
+          "bodyClaimIds": [
+            "R17:body:0"
+          ],
+          "tradeOptionAvailable": false,
+          "offer": null,
+          "status": "OPEN",
+          "metrics": {
+            "cash": 80,
+            "debt": 250,
+            "marcusStock": 8,
+            "playerStock": 0
+          },
+          "reaction": "SHOW",
+          "respondingFace": "WARM_ACKNOWLEDGMENT",
+          "marcusText": "The header and signature check out. I accept the detail on the paper. I'll give you three points of goodwill: 13% extra now. That doesn't establish who's responsible for any discrepancy.",
+          "worldEventIds": [
+            "world:r17-proof-2:17",
+            "world:r17-proof-2:18",
+            "world:r17-proof-2:19"
+          ]
+        },
+        {
+          "turn": 2,
+          "rate": 13,
+          "card": {
+            "id": "SPENT",
+            "label": "Spent",
+            "physicallyHeld": true
+          },
+          "r17": {
+            "held": true,
+            "available": false,
+            "traded": false,
+            "hinted": false,
+            "shown": true,
+            "blindTradeFailed": false,
+            "interestKnown": false,
+            "knownMarcusInterest": null,
+            "tradeAttempts": []
+          },
+          "documentHolder": "PLAYER",
+          "disclosure": "FULL",
+          "sourceChecked": true,
+          "content": "DOCUMENT_SUPPORTED",
+          "bodyClaimIds": [
+            "R17:body:0"
+          ],
+          "tradeOptionAvailable": false,
+          "offer": {
+            "id": "golden:NEGATIVE:false:SHOW:offer:2",
+            "version": 2,
+            "terms": {
+              "units": 2,
+              "upfront": 70,
+              "repayment": 50,
+              "extra": 7,
+              "days": 7
+            },
+            "source": "MARCUS",
+            "informationExchange": null,
+            "extraChargeRate": 13
+          },
+          "status": "OPEN",
+          "metrics": {
+            "cash": 80,
+            "debt": 250,
+            "marcusStock": 8,
+            "playerStock": 0
+          },
+          "reaction": null,
+          "respondingFace": "WEIGHING_IT",
+          "marcusText": "I will not agree to your proposal. My counteroffer is 2 Contra units, $70 upfront, $50 in new credit plus $7 extra due in 7 days. The existing debt is separate. Review that before deciding. I can work with a clear approach like that.",
+          "worldEventIds": [
+            "world:r17-proof-2:20",
+            "world:r17-proof-2:21"
+          ]
+        },
+        {
+          "turn": 3,
+          "rate": 13,
+          "card": {
+            "id": "SPENT",
+            "label": "Spent",
+            "physicallyHeld": true
+          },
+          "r17": {
+            "held": true,
+            "available": false,
+            "traded": false,
+            "hinted": false,
+            "shown": true,
+            "blindTradeFailed": false,
+            "interestKnown": false,
+            "knownMarcusInterest": null,
+            "tradeAttempts": []
+          },
+          "documentHolder": "PLAYER",
+          "disclosure": "FULL",
+          "sourceChecked": true,
+          "content": "DOCUMENT_SUPPORTED",
+          "bodyClaimIds": [
+            "R17:body:0"
+          ],
+          "tradeOptionAvailable": false,
+          "offer": {
+            "id": "golden:NEGATIVE:false:SHOW:offer:3",
+            "version": 3,
+            "terms": {
+              "units": 2,
+              "upfront": 70,
+              "repayment": 50,
+              "extra": 7,
+              "days": 7
+            },
+            "source": "MARCUS",
+            "informationExchange": null,
+            "extraChargeRate": 13
+          },
+          "status": "OPEN",
+          "metrics": {
+            "cash": 80,
+            "debt": 250,
+            "marcusStock": 8,
+            "playerStock": 0
+          },
+          "reaction": null,
+          "respondingFace": "WEIGHING_IT",
+          "marcusText": "Not on those terms. Here is what I will put my name to: 2 Contra units, $70 upfront, $50 in new credit plus $7 extra due in 7 days. Your existing debt is separate. Take a look before you decide.",
+          "worldEventIds": [
+            "world:r17-proof-2:22",
+            "world:r17-proof-2:23"
+          ]
+        }
+      ]
+    },
+    {
+      "seed": "r17-proof-2",
+      "version": "BAD",
+      "cares": false,
+      "scenario": "HINT_TRADE",
+      "initial": {
+        "turn": 0,
+        "rate": 16,
+        "card": {
+          "id": "HELD",
+          "label": "Held",
+          "physicallyHeld": true
+        },
+        "r17": {
+          "held": true,
+          "available": true,
+          "traded": false,
+          "hinted": false,
+          "shown": false,
+          "blindTradeFailed": false,
+          "interestKnown": false,
+          "knownMarcusInterest": null,
+          "tradeAttempts": []
+        },
+        "documentHolder": "PLAYER",
+        "disclosure": "NONE",
+        "sourceChecked": false,
+        "content": "UNKNOWN",
+        "bodyClaimIds": [],
+        "tradeOptionAvailable": true,
+        "offer": null,
+        "status": "OPEN",
+        "metrics": {
+          "cash": 80,
+          "debt": 250,
+          "marcusStock": 8,
+          "playerStock": 0
+        },
+        "reaction": null,
+        "respondingFace": null,
+        "marcusText": null,
+        "worldEventIds": []
+      },
+      "actions": [
+        {
+          "action": "ASK",
+          "topic": "R17_HINT"
+        },
+        {
+          "action": "DEAL",
+          "terms": {
+            "units": 2,
+            "upfront": 70,
+            "repayment": 50,
+            "extra": 0,
+            "days": 7
+          },
+          "information": "OFFER_INFORMATION"
+        }
+      ],
+      "expectedRates": [
+        16,
+        16
+      ],
+      "observations": [
+        {
+          "turn": 1,
+          "rate": 16,
+          "card": {
+            "id": "HINTED",
+            "label": "Hinted",
+            "physicallyHeld": true
+          },
+          "r17": {
+            "held": true,
+            "available": true,
+            "traded": false,
+            "hinted": true,
+            "shown": false,
+            "blindTradeFailed": false,
+            "interestKnown": true,
+            "knownMarcusInterest": false,
+            "tradeAttempts": []
+          },
+          "documentHolder": "PLAYER",
+          "disclosure": "PARTIAL",
+          "sourceChecked": false,
+          "content": "UNKNOWN",
+          "bodyClaimIds": [],
+          "tradeOptionAvailable": true,
+          "offer": null,
+          "status": "OPEN",
+          "metrics": {
+            "cash": 80,
+            "debt": 250,
+            "marcusStock": 8,
+            "playerStock": 0
+          },
+          "reaction": "HINT_DOES_NOT_CARE",
+          "respondingFace": "ATTENTIVE",
+          "marcusText": "No. I don't need it. My clerk's count has never been wrong. I'm not worried.",
+          "worldEventIds": [
+            "world:r17-proof-2:17",
+            "world:r17-proof-2:18"
+          ]
+        },
+        {
+          "turn": 2,
+          "rate": 16,
+          "card": {
+            "id": "HINTED",
+            "label": "Hinted",
+            "physicallyHeld": true
+          },
+          "r17": {
+            "held": true,
+            "available": true,
+            "traded": false,
+            "hinted": true,
+            "shown": false,
+            "blindTradeFailed": false,
+            "interestKnown": true,
+            "knownMarcusInterest": false,
+            "tradeAttempts": [
+              "r17:trade-attempt:2:known"
+            ]
+          },
+          "documentHolder": "PLAYER",
+          "disclosure": "PARTIAL",
+          "sourceChecked": false,
+          "content": "UNKNOWN",
+          "bodyClaimIds": [],
+          "tradeOptionAvailable": true,
+          "offer": {
+            "id": "golden:NEGATIVE:false:HINT_TRADE:offer:2",
+            "version": 2,
+            "terms": {
+              "units": 2,
+              "upfront": 70,
+              "repayment": 50,
+              "extra": 8,
+              "days": 7
+            },
+            "source": "MARCUS",
+            "informationExchange": null,
+            "extraChargeRate": 16
+          },
+          "status": "OPEN",
+          "metrics": {
+            "cash": 80,
+            "debt": 250,
+            "marcusStock": 8,
+            "playerStock": 0
+          },
+          "reaction": "TRADE_NO_VALUE",
+          "respondingFace": "ATTENTIVE",
+          "marcusText": "No information value in this offer. The extra-charge floor stays 16%. R-17 stays yours. Review these terms: 2 Contra units, $70 upfront, $50 in new credit plus $8 extra due in 7 days. I can work with a clear approach like that.",
+          "worldEventIds": [
+            "world:r17-proof-2:19",
+            "world:r17-proof-2:20"
+          ]
+        }
+      ]
+    },
+    {
+      "seed": "r17-proof-2",
+      "version": "BAD",
+      "cares": false,
+      "scenario": "BLIND_TRADE",
+      "initial": {
+        "turn": 0,
+        "rate": 16,
+        "card": {
+          "id": "HELD",
+          "label": "Held",
+          "physicallyHeld": true
+        },
+        "r17": {
+          "held": true,
+          "available": true,
+          "traded": false,
+          "hinted": false,
+          "shown": false,
+          "blindTradeFailed": false,
+          "interestKnown": false,
+          "knownMarcusInterest": null,
+          "tradeAttempts": []
+        },
+        "documentHolder": "PLAYER",
+        "disclosure": "NONE",
+        "sourceChecked": false,
+        "content": "UNKNOWN",
+        "bodyClaimIds": [],
+        "tradeOptionAvailable": true,
+        "offer": null,
+        "status": "OPEN",
+        "metrics": {
+          "cash": 80,
+          "debt": 250,
+          "marcusStock": 8,
+          "playerStock": 0
+        },
+        "reaction": null,
+        "respondingFace": null,
+        "marcusText": null,
+        "worldEventIds": []
+      },
+      "actions": [
+        {
+          "action": "DEAL",
+          "terms": {
+            "units": 2,
+            "upfront": 70,
+            "repayment": 50,
+            "extra": 0,
+            "days": 7
+          },
+          "information": "OFFER_INFORMATION"
+        }
+      ],
+      "expectedRates": [
+        22
+      ],
+      "observations": [
+        {
+          "turn": 1,
+          "rate": 22,
+          "card": {
+            "id": "HELD",
+            "label": "Held",
+            "physicallyHeld": true
+          },
+          "r17": {
+            "held": true,
+            "available": true,
+            "traded": false,
+            "hinted": false,
+            "shown": false,
+            "blindTradeFailed": true,
+            "interestKnown": true,
+            "knownMarcusInterest": false,
+            "tradeAttempts": [
+              "r17:trade-attempt:1:blind"
+            ]
+          },
+          "documentHolder": "PLAYER",
+          "disclosure": "PARTIAL",
+          "sourceChecked": false,
+          "content": "UNKNOWN",
+          "bodyClaimIds": [],
+          "tradeOptionAvailable": true,
+          "offer": {
+            "id": "golden:NEGATIVE:false:BLIND_TRADE:offer:1",
+            "version": 1,
+            "terms": {
+              "units": 2,
+              "upfront": 70,
+              "repayment": 50,
+              "extra": 11,
+              "days": 7
+            },
+            "source": "MARCUS",
+            "informationExchange": null,
+            "extraChargeRate": 22
+          },
+          "status": "OPEN",
+          "metrics": {
+            "cash": 80,
+            "debt": 250,
+            "marcusStock": 8,
+            "playerStock": 0
+          },
+          "reaction": "BLIND_TRADE_FAILURE",
+          "respondingFace": "GUARDED",
+          "marcusText": "You want me to pay for something I don't need? My minimum extra is 22% now. Keep R-17; you haven't shown me its detail. Review these terms: 2 Contra units, $70 upfront, $50 in new credit plus $11 extra due in 7 days. I can work with a clear approach like that.",
+          "worldEventIds": [
+            "world:r17-proof-2:17",
+            "world:r17-proof-2:18"
+          ]
+        }
+      ]
+    },
+    {
+      "seed": "r17-proof-2",
+      "version": "BAD",
+      "cares": false,
+      "scenario": "FAILURE_REPEAT_HINT_SHOW",
+      "initial": {
+        "turn": 0,
+        "rate": 16,
+        "card": {
+          "id": "HELD",
+          "label": "Held",
+          "physicallyHeld": true
+        },
+        "r17": {
+          "held": true,
+          "available": true,
+          "traded": false,
+          "hinted": false,
+          "shown": false,
+          "blindTradeFailed": false,
+          "interestKnown": false,
+          "knownMarcusInterest": null,
+          "tradeAttempts": []
+        },
+        "documentHolder": "PLAYER",
+        "disclosure": "NONE",
+        "sourceChecked": false,
+        "content": "UNKNOWN",
+        "bodyClaimIds": [],
+        "tradeOptionAvailable": true,
+        "offer": null,
+        "status": "OPEN",
+        "metrics": {
+          "cash": 80,
+          "debt": 250,
+          "marcusStock": 8,
+          "playerStock": 0
+        },
+        "reaction": null,
+        "respondingFace": null,
+        "marcusText": null,
+        "worldEventIds": []
+      },
+      "actions": [
+        {
+          "action": "DEAL",
+          "terms": {
+            "units": 2,
+            "upfront": 70,
+            "repayment": 50,
+            "extra": 0,
+            "days": 7
+          },
+          "information": "OFFER_INFORMATION"
+        },
+        {
+          "action": "DEAL",
+          "terms": {
+            "units": 2,
+            "upfront": 70,
+            "repayment": 50,
+            "extra": 0,
+            "days": 7
+          },
+          "information": "OFFER_INFORMATION"
+        },
+        {
+          "action": "ASK",
+          "topic": "R17_HINT"
+        },
+        {
+          "action": "ASK",
+          "topic": "R17_SHOW"
+        },
+        {
+          "action": "DEAL",
+          "terms": {
+            "units": 2,
+            "upfront": 70,
+            "repayment": 50,
+            "extra": 0,
+            "days": 7
+          },
+          "information": "NONE"
+        }
+      ],
+      "expectedRates": [
+        22,
+        22,
+        22,
+        19,
+        19
+      ],
+      "observations": [
+        {
+          "turn": 1,
+          "rate": 22,
+          "card": {
+            "id": "HELD",
+            "label": "Held",
+            "physicallyHeld": true
+          },
+          "r17": {
+            "held": true,
+            "available": true,
+            "traded": false,
+            "hinted": false,
+            "shown": false,
+            "blindTradeFailed": true,
+            "interestKnown": true,
+            "knownMarcusInterest": false,
+            "tradeAttempts": [
+              "r17:trade-attempt:1:blind"
+            ]
+          },
+          "documentHolder": "PLAYER",
+          "disclosure": "PARTIAL",
+          "sourceChecked": false,
+          "content": "UNKNOWN",
+          "bodyClaimIds": [],
+          "tradeOptionAvailable": true,
+          "offer": {
+            "id": "golden:NEGATIVE:false:FAILURE_REPEAT_HINT_SHOW:offer:1",
+            "version": 1,
+            "terms": {
+              "units": 2,
+              "upfront": 70,
+              "repayment": 50,
+              "extra": 11,
+              "days": 7
+            },
+            "source": "MARCUS",
+            "informationExchange": null,
+            "extraChargeRate": 22
+          },
+          "status": "OPEN",
+          "metrics": {
+            "cash": 80,
+            "debt": 250,
+            "marcusStock": 8,
+            "playerStock": 0
+          },
+          "reaction": "BLIND_TRADE_FAILURE",
+          "respondingFace": "GUARDED",
+          "marcusText": "You want me to pay for something I don't need? My minimum extra is 22% now. Keep R-17; you haven't shown me its detail. Review these terms: 2 Contra units, $70 upfront, $50 in new credit plus $11 extra due in 7 days. I can work with a clear approach like that.",
+          "worldEventIds": [
+            "world:r17-proof-2:17",
+            "world:r17-proof-2:18"
+          ]
+        },
+        {
+          "turn": 2,
+          "rate": 22,
+          "card": {
+            "id": "HELD",
+            "label": "Held",
+            "physicallyHeld": true
+          },
+          "r17": {
+            "held": true,
+            "available": true,
+            "traded": false,
+            "hinted": false,
+            "shown": false,
+            "blindTradeFailed": true,
+            "interestKnown": true,
+            "knownMarcusInterest": false,
+            "tradeAttempts": [
+              "r17:trade-attempt:1:blind",
+              "r17:trade-attempt:2:known"
+            ]
+          },
+          "documentHolder": "PLAYER",
+          "disclosure": "PARTIAL",
+          "sourceChecked": false,
+          "content": "UNKNOWN",
+          "bodyClaimIds": [],
+          "tradeOptionAvailable": true,
+          "offer": {
+            "id": "golden:NEGATIVE:false:FAILURE_REPEAT_HINT_SHOW:offer:2",
+            "version": 2,
+            "terms": {
+              "units": 2,
+              "upfront": 70,
+              "repayment": 50,
+              "extra": 11,
+              "days": 7
+            },
+            "source": "MARCUS",
+            "informationExchange": null,
+            "extraChargeRate": 22
+          },
+          "status": "OPEN",
+          "metrics": {
+            "cash": 80,
+            "debt": 250,
+            "marcusStock": 8,
+            "playerStock": 0
+          },
+          "reaction": "TRADE_NO_VALUE",
+          "respondingFace": "ATTENTIVE",
+          "marcusText": "No information value in this offer. The extra-charge floor stays 22%. R-17 stays yours. Review these terms: 2 Contra units, $70 upfront, $50 in new credit plus $11 extra due in 7 days.",
+          "worldEventIds": [
+            "world:r17-proof-2:19",
+            "world:r17-proof-2:20"
+          ]
+        },
+        {
+          "turn": 3,
+          "rate": 22,
+          "card": {
+            "id": "HINTED",
+            "label": "Hinted",
+            "physicallyHeld": true
+          },
+          "r17": {
+            "held": true,
+            "available": true,
+            "traded": false,
+            "hinted": true,
+            "shown": false,
+            "blindTradeFailed": true,
+            "interestKnown": true,
+            "knownMarcusInterest": false,
+            "tradeAttempts": [
+              "r17:trade-attempt:1:blind",
+              "r17:trade-attempt:2:known"
+            ]
+          },
+          "documentHolder": "PLAYER",
+          "disclosure": "PARTIAL",
+          "sourceChecked": false,
+          "content": "UNKNOWN",
+          "bodyClaimIds": [],
+          "tradeOptionAvailable": true,
+          "offer": null,
+          "status": "OPEN",
+          "metrics": {
+            "cash": 80,
+            "debt": 250,
+            "marcusStock": 8,
+            "playerStock": 0
+          },
+          "reaction": "HINT_DOES_NOT_CARE",
+          "respondingFace": "ATTENTIVE",
+          "marcusText": "No. I don't need it. My clerk's count has never been wrong. I'm not worried.",
+          "worldEventIds": [
+            "world:r17-proof-2:21",
+            "world:r17-proof-2:22"
+          ]
+        },
+        {
+          "turn": 4,
+          "rate": 19,
+          "card": {
+            "id": "SPENT",
+            "label": "Spent",
+            "physicallyHeld": true
+          },
+          "r17": {
+            "held": true,
+            "available": false,
+            "traded": false,
+            "hinted": true,
+            "shown": true,
+            "blindTradeFailed": true,
+            "interestKnown": true,
+            "knownMarcusInterest": false,
+            "tradeAttempts": [
+              "r17:trade-attempt:1:blind",
+              "r17:trade-attempt:2:known"
+            ]
+          },
+          "documentHolder": "PLAYER",
+          "disclosure": "FULL",
+          "sourceChecked": true,
+          "content": "DOCUMENT_SUPPORTED",
+          "bodyClaimIds": [
+            "R17:body:0"
+          ],
+          "tradeOptionAvailable": false,
+          "offer": null,
+          "status": "OPEN",
+          "metrics": {
+            "cash": 80,
+            "debt": 250,
+            "marcusStock": 8,
+            "playerStock": 0
+          },
+          "reaction": "SHOW",
+          "respondingFace": "WARM_ACKNOWLEDGMENT",
+          "marcusText": "The source checks out, and I've read the detail. Three points off the extra charge: 19%. The paper doesn't establish wrongdoing.",
+          "worldEventIds": [
+            "world:r17-proof-2:23",
+            "world:r17-proof-2:24",
+            "world:r17-proof-2:25"
+          ]
+        },
+        {
+          "turn": 5,
+          "rate": 19,
+          "card": {
+            "id": "SPENT",
+            "label": "Spent",
+            "physicallyHeld": true
+          },
+          "r17": {
+            "held": true,
+            "available": false,
+            "traded": false,
+            "hinted": true,
+            "shown": true,
+            "blindTradeFailed": true,
+            "interestKnown": true,
+            "knownMarcusInterest": false,
+            "tradeAttempts": [
+              "r17:trade-attempt:1:blind",
+              "r17:trade-attempt:2:known"
+            ]
+          },
+          "documentHolder": "PLAYER",
+          "disclosure": "FULL",
+          "sourceChecked": true,
+          "content": "DOCUMENT_SUPPORTED",
+          "bodyClaimIds": [
+            "R17:body:0"
+          ],
+          "tradeOptionAvailable": false,
+          "offer": {
+            "id": "golden:NEGATIVE:false:FAILURE_REPEAT_HINT_SHOW:offer:5",
+            "version": 5,
+            "terms": {
+              "units": 2,
+              "upfront": 70,
+              "repayment": 50,
+              "extra": 10,
+              "days": 7
+            },
+            "source": "MARCUS",
+            "informationExchange": null,
+            "extraChargeRate": 19
+          },
+          "status": "OPEN",
+          "metrics": {
+            "cash": 80,
+            "debt": 250,
+            "marcusStock": 8,
+            "playerStock": 0
+          },
+          "reaction": null,
+          "respondingFace": "WEIGHING_IT",
+          "marcusText": "Not on those terms. Here is what I will put my name to: 2 Contra units, $70 upfront, $50 in new credit plus $10 extra due in 7 days. Your existing debt is separate. Take a look before you decide.",
+          "worldEventIds": [
+            "world:r17-proof-2:26",
+            "world:r17-proof-2:27"
+          ]
+        }
+      ]
+    },
+    {
+      "seed": "r17-proof-19",
+      "version": "BAD",
+      "cares": true,
+      "scenario": "HOARD",
+      "initial": {
+        "turn": 0,
+        "rate": 16,
+        "card": {
+          "id": "HELD",
+          "label": "Held",
+          "physicallyHeld": true
+        },
+        "r17": {
+          "held": true,
+          "available": true,
+          "traded": false,
+          "hinted": false,
+          "shown": false,
+          "blindTradeFailed": false,
+          "interestKnown": false,
+          "knownMarcusInterest": null,
+          "tradeAttempts": []
+        },
+        "documentHolder": "PLAYER",
+        "disclosure": "NONE",
+        "sourceChecked": false,
+        "content": "UNKNOWN",
+        "bodyClaimIds": [],
+        "tradeOptionAvailable": true,
+        "offer": null,
+        "status": "OPEN",
+        "metrics": {
+          "cash": 80,
+          "debt": 250,
+          "marcusStock": 8,
+          "playerStock": 0
+        },
+        "reaction": null,
+        "respondingFace": null,
+        "marcusText": null,
+        "worldEventIds": []
+      },
+      "actions": [
+        {
+          "action": "DEAL",
+          "terms": {
+            "units": 2,
+            "upfront": 70,
+            "repayment": 50,
+            "extra": 0,
+            "days": 7
+          },
+          "information": "NONE"
+        }
+      ],
+      "expectedRates": [
+        16
+      ],
+      "observations": [
+        {
+          "turn": 1,
+          "rate": 16,
+          "card": {
+            "id": "HELD",
+            "label": "Held",
+            "physicallyHeld": true
+          },
+          "r17": {
+            "held": true,
+            "available": true,
+            "traded": false,
+            "hinted": false,
+            "shown": false,
+            "blindTradeFailed": false,
+            "interestKnown": false,
+            "knownMarcusInterest": null,
+            "tradeAttempts": []
+          },
+          "documentHolder": "PLAYER",
+          "disclosure": "NONE",
+          "sourceChecked": false,
+          "content": "UNKNOWN",
+          "bodyClaimIds": [],
+          "tradeOptionAvailable": true,
+          "offer": {
+            "id": "golden:NEGATIVE:true:HOARD:offer:1",
+            "version": 1,
+            "terms": {
+              "units": 2,
+              "upfront": 70,
+              "repayment": 50,
+              "extra": 8,
+              "days": 7
+            },
+            "source": "MARCUS",
+            "informationExchange": null,
+            "extraChargeRate": 16
+          },
+          "status": "OPEN",
+          "metrics": {
+            "cash": 80,
+            "debt": 250,
+            "marcusStock": 8,
+            "playerStock": 0
+          },
+          "reaction": null,
+          "respondingFace": "WEIGHING_IT",
+          "marcusText": "Not on those terms. Here is what I will put my name to: 2 Contra units, $70 upfront, $50 in new credit plus $8 extra due in 7 days. Your existing debt is separate. Take a look before you decide. I can work with a clear approach like that.",
+          "worldEventIds": [
+            "world:r17-proof-19:16",
+            "world:r17-proof-19:17"
+          ]
+        }
+      ]
+    },
+    {
+      "seed": "r17-proof-19",
+      "version": "BAD",
+      "cares": true,
+      "scenario": "SHOW",
+      "initial": {
+        "turn": 0,
+        "rate": 16,
+        "card": {
+          "id": "HELD",
+          "label": "Held",
+          "physicallyHeld": true
+        },
+        "r17": {
+          "held": true,
+          "available": true,
+          "traded": false,
+          "hinted": false,
+          "shown": false,
+          "blindTradeFailed": false,
+          "interestKnown": false,
+          "knownMarcusInterest": null,
+          "tradeAttempts": []
+        },
+        "documentHolder": "PLAYER",
+        "disclosure": "NONE",
+        "sourceChecked": false,
+        "content": "UNKNOWN",
+        "bodyClaimIds": [],
+        "tradeOptionAvailable": true,
+        "offer": null,
+        "status": "OPEN",
+        "metrics": {
+          "cash": 80,
+          "debt": 250,
+          "marcusStock": 8,
+          "playerStock": 0
+        },
+        "reaction": null,
+        "respondingFace": null,
+        "marcusText": null,
+        "worldEventIds": []
+      },
+      "actions": [
+        {
+          "action": "ASK",
+          "topic": "R17_SHOW"
+        },
+        {
+          "action": "DEAL",
+          "terms": {
+            "units": 2,
+            "upfront": 70,
+            "repayment": 50,
+            "extra": 0,
+            "days": 7
+          },
+          "information": "NONE"
+        },
+        {
+          "action": "DEAL",
+          "terms": {
+            "units": 2,
+            "upfront": 70,
+            "repayment": 50,
+            "extra": 0,
+            "days": 7
+          },
+          "information": "NONE"
+        }
+      ],
+      "expectedRates": [
+        13,
+        13,
+        13
+      ],
+      "observations": [
+        {
+          "turn": 1,
+          "rate": 13,
+          "card": {
+            "id": "SPENT",
+            "label": "Spent",
+            "physicallyHeld": true
+          },
+          "r17": {
+            "held": true,
+            "available": false,
+            "traded": false,
+            "hinted": false,
+            "shown": true,
+            "blindTradeFailed": false,
+            "interestKnown": false,
+            "knownMarcusInterest": null,
+            "tradeAttempts": []
+          },
+          "documentHolder": "PLAYER",
+          "disclosure": "FULL",
+          "sourceChecked": true,
+          "content": "DOCUMENT_SUPPORTED",
+          "bodyClaimIds": [
+            "R17:body:0"
+          ],
+          "tradeOptionAvailable": false,
+          "offer": null,
+          "status": "OPEN",
+          "metrics": {
+            "cash": 80,
+            "debt": 250,
+            "marcusStock": 8,
+            "playerStock": 0
+          },
+          "reaction": "SHOW",
+          "respondingFace": "WARM_ACKNOWLEDGMENT",
+          "marcusText": "The header and signature check out. I accept the detail on the paper. I'll give you three points of goodwill: 13% extra now. That doesn't establish who's responsible for any discrepancy.",
+          "worldEventIds": [
+            "world:r17-proof-19:16",
+            "world:r17-proof-19:17",
+            "world:r17-proof-19:18"
+          ]
+        },
+        {
+          "turn": 2,
+          "rate": 13,
+          "card": {
+            "id": "SPENT",
+            "label": "Spent",
+            "physicallyHeld": true
+          },
+          "r17": {
+            "held": true,
+            "available": false,
+            "traded": false,
+            "hinted": false,
+            "shown": true,
+            "blindTradeFailed": false,
+            "interestKnown": false,
+            "knownMarcusInterest": null,
+            "tradeAttempts": []
+          },
+          "documentHolder": "PLAYER",
+          "disclosure": "FULL",
+          "sourceChecked": true,
+          "content": "DOCUMENT_SUPPORTED",
+          "bodyClaimIds": [
+            "R17:body:0"
+          ],
+          "tradeOptionAvailable": false,
+          "offer": {
+            "id": "golden:NEGATIVE:true:SHOW:offer:2",
+            "version": 2,
+            "terms": {
+              "units": 2,
+              "upfront": 70,
+              "repayment": 50,
+              "extra": 7,
+              "days": 7
+            },
+            "source": "MARCUS",
+            "informationExchange": null,
+            "extraChargeRate": 13
+          },
+          "status": "OPEN",
+          "metrics": {
+            "cash": 80,
+            "debt": 250,
+            "marcusStock": 8,
+            "playerStock": 0
+          },
+          "reaction": null,
+          "respondingFace": "WEIGHING_IT",
+          "marcusText": "I will not agree to your proposal. My counteroffer is 2 Contra units, $70 upfront, $50 in new credit plus $7 extra due in 7 days. The existing debt is separate. Review that before deciding. I can work with a clear approach like that.",
+          "worldEventIds": [
+            "world:r17-proof-19:19",
+            "world:r17-proof-19:20"
+          ]
+        },
+        {
+          "turn": 3,
+          "rate": 13,
+          "card": {
+            "id": "SPENT",
+            "label": "Spent",
+            "physicallyHeld": true
+          },
+          "r17": {
+            "held": true,
+            "available": false,
+            "traded": false,
+            "hinted": false,
+            "shown": true,
+            "blindTradeFailed": false,
+            "interestKnown": false,
+            "knownMarcusInterest": null,
+            "tradeAttempts": []
+          },
+          "documentHolder": "PLAYER",
+          "disclosure": "FULL",
+          "sourceChecked": true,
+          "content": "DOCUMENT_SUPPORTED",
+          "bodyClaimIds": [
+            "R17:body:0"
+          ],
+          "tradeOptionAvailable": false,
+          "offer": {
+            "id": "golden:NEGATIVE:true:SHOW:offer:3",
+            "version": 3,
+            "terms": {
+              "units": 2,
+              "upfront": 70,
+              "repayment": 50,
+              "extra": 7,
+              "days": 7
+            },
+            "source": "MARCUS",
+            "informationExchange": null,
+            "extraChargeRate": 13
+          },
+          "status": "OPEN",
+          "metrics": {
+            "cash": 80,
+            "debt": 250,
+            "marcusStock": 8,
+            "playerStock": 0
+          },
+          "reaction": null,
+          "respondingFace": "WEIGHING_IT",
+          "marcusText": "Not on those terms. Here is what I will put my name to: 2 Contra units, $70 upfront, $50 in new credit plus $7 extra due in 7 days. Your existing debt is separate. Take a look before you decide.",
+          "worldEventIds": [
+            "world:r17-proof-19:21",
+            "world:r17-proof-19:22"
+          ]
+        }
+      ]
+    },
+    {
+      "seed": "r17-proof-19",
+      "version": "BAD",
+      "cares": true,
+      "scenario": "HINT_TRADE",
+      "initial": {
+        "turn": 0,
+        "rate": 16,
+        "card": {
+          "id": "HELD",
+          "label": "Held",
+          "physicallyHeld": true
+        },
+        "r17": {
+          "held": true,
+          "available": true,
+          "traded": false,
+          "hinted": false,
+          "shown": false,
+          "blindTradeFailed": false,
+          "interestKnown": false,
+          "knownMarcusInterest": null,
+          "tradeAttempts": []
+        },
+        "documentHolder": "PLAYER",
+        "disclosure": "NONE",
+        "sourceChecked": false,
+        "content": "UNKNOWN",
+        "bodyClaimIds": [],
+        "tradeOptionAvailable": true,
+        "offer": null,
+        "status": "OPEN",
+        "metrics": {
+          "cash": 80,
+          "debt": 250,
+          "marcusStock": 8,
+          "playerStock": 0
+        },
+        "reaction": null,
+        "respondingFace": null,
+        "marcusText": null,
+        "worldEventIds": []
+      },
+      "actions": [
+        {
+          "action": "ASK",
+          "topic": "R17_HINT"
+        },
+        {
+          "action": "DEAL",
+          "terms": {
+            "units": 2,
+            "upfront": 70,
+            "repayment": 50,
+            "extra": 0,
+            "days": 7
+          },
+          "information": "OFFER_INFORMATION"
+        }
+      ],
+      "expectedRates": [
+        16,
+        8
+      ],
+      "observations": [
+        {
+          "turn": 1,
+          "rate": 16,
+          "card": {
+            "id": "HINTED",
+            "label": "Hinted",
+            "physicallyHeld": true
+          },
+          "r17": {
+            "held": true,
+            "available": true,
+            "traded": false,
+            "hinted": true,
+            "shown": false,
+            "blindTradeFailed": false,
+            "interestKnown": true,
+            "knownMarcusInterest": true,
+            "tradeAttempts": []
+          },
+          "documentHolder": "PLAYER",
+          "disclosure": "PARTIAL",
+          "sourceChecked": false,
+          "content": "UNKNOWN",
+          "bodyClaimIds": [],
+          "tradeOptionAvailable": true,
+          "offer": null,
+          "status": "OPEN",
+          "metrics": {
+            "cash": 80,
+            "debt": 250,
+            "marcusStock": 8,
+            "playerStock": 0
+          },
+          "reaction": "HINT_CARES",
+          "respondingFace": "LEANING_IN",
+          "marcusText": "Yes. I care about that information. Keep R-17's exact detail covered if you want to price it into the deal.",
+          "worldEventIds": [
+            "world:r17-proof-19:16",
+            "world:r17-proof-19:17"
+          ]
+        },
+        {
+          "turn": 2,
+          "rate": 8,
+          "card": {
+            "id": "HINTED",
+            "label": "Hinted",
+            "physicallyHeld": true
+          },
+          "r17": {
+            "held": true,
+            "available": true,
+            "traded": false,
+            "hinted": true,
+            "shown": false,
+            "blindTradeFailed": false,
+            "interestKnown": true,
+            "knownMarcusInterest": true,
+            "tradeAttempts": [
+              "r17:trade-attempt:2:known"
+            ]
+          },
+          "documentHolder": "PLAYER",
+          "disclosure": "PARTIAL",
+          "sourceChecked": false,
+          "content": "UNKNOWN",
+          "bodyClaimIds": [],
+          "tradeOptionAvailable": true,
+          "offer": {
+            "id": "golden:NEGATIVE:true:HINT_TRADE:offer:2",
+            "version": 2,
+            "terms": {
+              "units": 2,
+              "upfront": 70,
+              "repayment": 50,
+              "extra": 4,
+              "days": 7
+            },
+            "source": "MARCUS",
+            "informationExchange": {
+              "factId": "NEGATIVE_DISCREPANCY",
+              "summary": "Counterfoil R-17 and its exact detail; transferred only on confirmation."
+            },
+            "extraChargeRate": 8
+          },
+          "status": "OPEN",
+          "metrics": {
+            "cash": 80,
+            "debt": 250,
+            "marcusStock": 8,
+            "playerStock": 0
+          },
+          "reaction": "TRADE_VALUABLE",
+          "respondingFace": "READY_TO_AGREE",
+          "marcusText": "R-17 has value to me. I'll go to 8% extra for this information offer, with the exchange completed on confirmation. Review these terms: 2 Contra units, $70 upfront, $50 in new credit plus $4 extra due in 7 days. The terms include the information exchange. I receive the private detail only when you confirm. I can work with a clear approach like that.",
+          "worldEventIds": [
+            "world:r17-proof-19:18",
+            "world:r17-proof-19:19"
+          ]
+        },
+        {
+          "turn": 3,
+          "rate": 8,
+          "card": {
+            "id": "TRADED",
+            "label": "Traded",
+            "physicallyHeld": false
+          },
+          "r17": {
+            "held": false,
+            "available": false,
+            "traded": true,
+            "hinted": true,
+            "shown": false,
+            "blindTradeFailed": false,
+            "interestKnown": true,
+            "knownMarcusInterest": true,
+            "tradeAttempts": [
+              "r17:trade-attempt:2:known"
+            ]
+          },
+          "documentHolder": "MARCUS",
+          "disclosure": "FULL",
+          "sourceChecked": true,
+          "content": "DOCUMENT_SUPPORTED",
+          "bodyClaimIds": [
+            "R17:body:0"
+          ],
+          "tradeOptionAvailable": false,
+          "offer": null,
+          "status": "AGREED",
+          "metrics": {
+            "cash": 10,
+            "debt": 304,
+            "marcusStock": 6,
+            "playerStock": 2
+          },
+          "reaction": null,
+          "respondingFace": "AGREEMENT_CLOSURE",
+          "marcusText": "Agreed. The stock is yours on the terms you just confirmed. The old account stays on the books.",
+          "worldEventIds": [
+            "world:r17-proof-19:20",
+            "world:r17-proof-19:21",
+            "world:r17-proof-19:22",
+            "world:r17-proof-19:23",
+            "world:r17-proof-19:24",
+            "world:r17-proof-19:25"
+          ]
+        }
+      ]
+    },
+    {
+      "seed": "r17-proof-19",
+      "version": "BAD",
+      "cares": true,
+      "scenario": "BLIND_TRADE",
+      "initial": {
+        "turn": 0,
+        "rate": 16,
+        "card": {
+          "id": "HELD",
+          "label": "Held",
+          "physicallyHeld": true
+        },
+        "r17": {
+          "held": true,
+          "available": true,
+          "traded": false,
+          "hinted": false,
+          "shown": false,
+          "blindTradeFailed": false,
+          "interestKnown": false,
+          "knownMarcusInterest": null,
+          "tradeAttempts": []
+        },
+        "documentHolder": "PLAYER",
+        "disclosure": "NONE",
+        "sourceChecked": false,
+        "content": "UNKNOWN",
+        "bodyClaimIds": [],
+        "tradeOptionAvailable": true,
+        "offer": null,
+        "status": "OPEN",
+        "metrics": {
+          "cash": 80,
+          "debt": 250,
+          "marcusStock": 8,
+          "playerStock": 0
+        },
+        "reaction": null,
+        "respondingFace": null,
+        "marcusText": null,
+        "worldEventIds": []
+      },
+      "actions": [
+        {
+          "action": "DEAL",
+          "terms": {
+            "units": 2,
+            "upfront": 70,
+            "repayment": 50,
+            "extra": 0,
+            "days": 7
+          },
+          "information": "OFFER_INFORMATION"
+        }
+      ],
+      "expectedRates": [
+        8
+      ],
+      "observations": [
+        {
+          "turn": 1,
+          "rate": 8,
+          "card": {
+            "id": "HELD",
+            "label": "Held",
+            "physicallyHeld": true
+          },
+          "r17": {
+            "held": true,
+            "available": true,
+            "traded": false,
+            "hinted": false,
+            "shown": false,
+            "blindTradeFailed": false,
+            "interestKnown": true,
+            "knownMarcusInterest": true,
+            "tradeAttempts": [
+              "r17:trade-attempt:1:blind"
+            ]
+          },
+          "documentHolder": "PLAYER",
+          "disclosure": "PARTIAL",
+          "sourceChecked": false,
+          "content": "UNKNOWN",
+          "bodyClaimIds": [],
+          "tradeOptionAvailable": true,
+          "offer": {
+            "id": "golden:NEGATIVE:true:BLIND_TRADE:offer:1",
+            "version": 1,
+            "terms": {
+              "units": 2,
+              "upfront": 70,
+              "repayment": 50,
+              "extra": 4,
+              "days": 7
+            },
+            "source": "MARCUS",
+            "informationExchange": {
+              "factId": "NEGATIVE_DISCREPANCY",
+              "summary": "Counterfoil R-17 and its exact detail; transferred only on confirmation."
+            },
+            "extraChargeRate": 8
+          },
+          "status": "OPEN",
+          "metrics": {
+            "cash": 80,
+            "debt": 250,
+            "marcusStock": 8,
+            "playerStock": 0
+          },
+          "reaction": "TRADE_VALUABLE",
+          "respondingFace": "READY_TO_AGREE",
+          "marcusText": "That information matters to me. With R-17 included, my minimum extra is 8%. I receive the document and detail only when you confirm. Review these terms: 2 Contra units, $70 upfront, $50 in new credit plus $4 extra due in 7 days. The terms include the information exchange. I receive the private detail only when you confirm. I can work with a clear approach like that.",
+          "worldEventIds": [
+            "world:r17-proof-19:16",
+            "world:r17-proof-19:17"
+          ]
+        },
+        {
+          "turn": 2,
+          "rate": 8,
+          "card": {
+            "id": "TRADED",
+            "label": "Traded",
+            "physicallyHeld": false
+          },
+          "r17": {
+            "held": false,
+            "available": false,
+            "traded": true,
+            "hinted": false,
+            "shown": false,
+            "blindTradeFailed": false,
+            "interestKnown": true,
+            "knownMarcusInterest": true,
+            "tradeAttempts": [
+              "r17:trade-attempt:1:blind"
+            ]
+          },
+          "documentHolder": "MARCUS",
+          "disclosure": "FULL",
+          "sourceChecked": true,
+          "content": "DOCUMENT_SUPPORTED",
+          "bodyClaimIds": [
+            "R17:body:0"
+          ],
+          "tradeOptionAvailable": false,
+          "offer": null,
+          "status": "AGREED",
+          "metrics": {
+            "cash": 10,
+            "debt": 304,
+            "marcusStock": 6,
+            "playerStock": 2
+          },
+          "reaction": null,
+          "respondingFace": "AGREEMENT_CLOSURE",
+          "marcusText": "That is agreed. The stock is yours under the terms you confirmed. The old account remains unpaid.",
+          "worldEventIds": [
+            "world:r17-proof-19:18",
+            "world:r17-proof-19:19",
+            "world:r17-proof-19:20",
+            "world:r17-proof-19:21",
+            "world:r17-proof-19:22",
+            "world:r17-proof-19:23"
+          ]
+        }
+      ]
+    },
+    {
+      "seed": "r17-proof-19",
+      "version": "BAD",
+      "cares": true,
+      "scenario": "REMOVE_READD",
+      "initial": {
+        "turn": 0,
+        "rate": 16,
+        "card": {
+          "id": "HELD",
+          "label": "Held",
+          "physicallyHeld": true
+        },
+        "r17": {
+          "held": true,
+          "available": true,
+          "traded": false,
+          "hinted": false,
+          "shown": false,
+          "blindTradeFailed": false,
+          "interestKnown": false,
+          "knownMarcusInterest": null,
+          "tradeAttempts": []
+        },
+        "documentHolder": "PLAYER",
+        "disclosure": "NONE",
+        "sourceChecked": false,
+        "content": "UNKNOWN",
+        "bodyClaimIds": [],
+        "tradeOptionAvailable": true,
+        "offer": null,
+        "status": "OPEN",
+        "metrics": {
+          "cash": 80,
+          "debt": 250,
+          "marcusStock": 8,
+          "playerStock": 0
+        },
+        "reaction": null,
+        "respondingFace": null,
+        "marcusText": null,
+        "worldEventIds": []
+      },
+      "actions": [
+        {
+          "action": "DEAL",
+          "terms": {
+            "units": 2,
+            "upfront": 70,
+            "repayment": 50,
+            "extra": 0,
+            "days": 7
+          },
+          "information": "OFFER_INFORMATION"
+        },
+        {
+          "action": "DEAL",
+          "terms": {
+            "units": 2,
+            "upfront": 70,
+            "repayment": 50,
+            "extra": 0,
+            "days": 7
+          },
+          "information": "NONE"
+        },
+        {
+          "action": "DEAL",
+          "terms": {
+            "units": 2,
+            "upfront": 70,
+            "repayment": 50,
+            "extra": 0,
+            "days": 7
+          },
+          "information": "OFFER_INFORMATION"
+        }
+      ],
+      "expectedRates": [
+        8,
+        16,
+        8
+      ],
+      "observations": [
+        {
+          "turn": 1,
+          "rate": 8,
+          "card": {
+            "id": "HELD",
+            "label": "Held",
+            "physicallyHeld": true
+          },
+          "r17": {
+            "held": true,
+            "available": true,
+            "traded": false,
+            "hinted": false,
+            "shown": false,
+            "blindTradeFailed": false,
+            "interestKnown": true,
+            "knownMarcusInterest": true,
+            "tradeAttempts": [
+              "r17:trade-attempt:1:blind"
+            ]
+          },
+          "documentHolder": "PLAYER",
+          "disclosure": "PARTIAL",
+          "sourceChecked": false,
+          "content": "UNKNOWN",
+          "bodyClaimIds": [],
+          "tradeOptionAvailable": true,
+          "offer": {
+            "id": "golden:NEGATIVE:true:REMOVE_READD:offer:1",
+            "version": 1,
+            "terms": {
+              "units": 2,
+              "upfront": 70,
+              "repayment": 50,
+              "extra": 4,
+              "days": 7
+            },
+            "source": "MARCUS",
+            "informationExchange": {
+              "factId": "NEGATIVE_DISCREPANCY",
+              "summary": "Counterfoil R-17 and its exact detail; transferred only on confirmation."
+            },
+            "extraChargeRate": 8
+          },
+          "status": "OPEN",
+          "metrics": {
+            "cash": 80,
+            "debt": 250,
+            "marcusStock": 8,
+            "playerStock": 0
+          },
+          "reaction": "TRADE_VALUABLE",
+          "respondingFace": "READY_TO_AGREE",
+          "marcusText": "That information matters to me. With R-17 included, my minimum extra is 8%. I receive the document and detail only when you confirm. Review these terms: 2 Contra units, $70 upfront, $50 in new credit plus $4 extra due in 7 days. The terms include the information exchange. I receive the private detail only when you confirm. I can work with a clear approach like that.",
+          "worldEventIds": [
+            "world:r17-proof-19:16",
+            "world:r17-proof-19:17"
+          ]
+        },
+        {
+          "turn": 2,
+          "rate": 16,
+          "card": {
+            "id": "HELD",
+            "label": "Held",
+            "physicallyHeld": true
+          },
+          "r17": {
+            "held": true,
+            "available": true,
+            "traded": false,
+            "hinted": false,
+            "shown": false,
+            "blindTradeFailed": false,
+            "interestKnown": true,
+            "knownMarcusInterest": true,
+            "tradeAttempts": [
+              "r17:trade-attempt:1:blind"
+            ]
+          },
+          "documentHolder": "PLAYER",
+          "disclosure": "PARTIAL",
+          "sourceChecked": false,
+          "content": "UNKNOWN",
+          "bodyClaimIds": [],
+          "tradeOptionAvailable": true,
+          "offer": {
+            "id": "golden:NEGATIVE:true:REMOVE_READD:offer:2",
+            "version": 2,
+            "terms": {
+              "units": 2,
+              "upfront": 70,
+              "repayment": 50,
+              "extra": 8,
+              "days": 7
+            },
+            "source": "MARCUS",
+            "informationExchange": null,
+            "extraChargeRate": 16
+          },
+          "status": "OPEN",
+          "metrics": {
+            "cash": 80,
+            "debt": 250,
+            "marcusStock": 8,
+            "playerStock": 0
+          },
+          "reaction": null,
+          "respondingFace": "WEIGHING_IT",
+          "marcusText": "I will not agree to your proposal. My counteroffer is 2 Contra units, $70 upfront, $50 in new credit plus $8 extra due in 7 days. The existing debt is separate. Review that before deciding.",
+          "worldEventIds": [
+            "world:r17-proof-19:18",
+            "world:r17-proof-19:19"
+          ]
+        },
+        {
+          "turn": 3,
+          "rate": 8,
+          "card": {
+            "id": "HELD",
+            "label": "Held",
+            "physicallyHeld": true
+          },
+          "r17": {
+            "held": true,
+            "available": true,
+            "traded": false,
+            "hinted": false,
+            "shown": false,
+            "blindTradeFailed": false,
+            "interestKnown": true,
+            "knownMarcusInterest": true,
+            "tradeAttempts": [
+              "r17:trade-attempt:1:blind",
+              "r17:trade-attempt:3:known"
+            ]
+          },
+          "documentHolder": "PLAYER",
+          "disclosure": "PARTIAL",
+          "sourceChecked": false,
+          "content": "UNKNOWN",
+          "bodyClaimIds": [],
+          "tradeOptionAvailable": true,
+          "offer": {
+            "id": "golden:NEGATIVE:true:REMOVE_READD:offer:3",
+            "version": 3,
+            "terms": {
+              "units": 2,
+              "upfront": 70,
+              "repayment": 50,
+              "extra": 4,
+              "days": 7
+            },
+            "source": "MARCUS",
+            "informationExchange": {
+              "factId": "NEGATIVE_DISCREPANCY",
+              "summary": "Counterfoil R-17 and its exact detail; transferred only on confirmation."
+            },
+            "extraChargeRate": 8
+          },
+          "status": "OPEN",
+          "metrics": {
+            "cash": 80,
+            "debt": 250,
+            "marcusStock": 8,
+            "playerStock": 0
+          },
+          "reaction": "TRADE_VALUABLE",
+          "respondingFace": "READY_TO_AGREE",
+          "marcusText": "That information matters to me. With R-17 included, my minimum extra is 8%. I receive the document and detail only when you confirm. Review these terms: 2 Contra units, $70 upfront, $50 in new credit plus $4 extra due in 7 days. The terms include the information exchange. I receive the private detail only when you confirm.",
+          "worldEventIds": [
+            "world:r17-proof-19:20",
+            "world:r17-proof-19:21"
+          ]
+        }
+      ]
+    }
+  ]
+}

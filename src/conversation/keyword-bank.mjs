@@ -14,10 +14,10 @@ const subjects = [
   { id: "old-account", fact: "OLD_ACCOUNT", label: "The old account", kind: "OBLIGATION", actions: ["DEBT", "ACK_MISSED", "GUARANTEE"] },
   { id: "missed-check-in", fact: "MISSED_CHECKIN", label: "Yesterday's missed check-in", kind: "HISTORY", actions: ["ACK_MISSED", "DEBT", "GUARANTEE"] },
   { id: "shared-shift", fact: "SHARED_LOADING_SHIFT", label: "Last week's loading shift", kind: "HISTORY", actions: ["SMALL_TALK"] },
-  { id: "depot-counterfoil", fact: "DIRECT_RECEIPT", label: "Signed counterfoil R-17", kind: "DOCUMENT", actions: ["VERIFY_SOURCE", "PROBE_USEFULNESS", "DISCLOSE_PARTIAL", "QUESTION_RECORD", "DISCLOSE_FULL", "EXCHANGE"] },
-  { id: "collection-change", fact: "POSITIVE_ROUTE", label: "Changed collection instructions", kind: "INFORMATION", actions: ["VERIFY_SOURCE", "PROBE_USEFULNESS", "EXCHANGE", "DISCLOSE_PARTIAL", "DISCLOSE_FULL"] },
-  { id: "intake-mismatch", fact: "NEGATIVE_DISCREPANCY", label: "The two-crate mismatch", kind: "INFORMATION", actions: ["VERIFY_SOURCE", "PROBE_USEFULNESS", "QUESTION_RECORD", "DISCLOSE_PARTIAL", "DISCLOSE_FULL", "PROPOSE"] },
-  { id: "reconciled-record", fact: "RECORD_ASSERTION", label: "The reconciliation claim", kind: "REPORTED_CLAIM", actions: ["QUESTION_RECORD", "VERIFY_SOURCE", "PROBE_USEFULNESS", "DISCLOSE_FULL"] },
+  { id: "depot-counterfoil", fact: "DIRECT_RECEIPT", label: "Signed counterfoil R-17", kind: "DOCUMENT", actions: ["R17_HINT", "R17_SHOW", "EXCHANGE"] },
+  { id: "collection-change", fact: "POSITIVE_ROUTE", label: "Changed collection instructions", kind: "INFORMATION", actions: ["R17_HINT", "R17_SHOW", "EXCHANGE"] },
+  { id: "intake-mismatch", fact: "NEGATIVE_DISCREPANCY", label: "The two-crate mismatch", kind: "INFORMATION", actions: ["R17_HINT", "R17_SHOW", "EXCHANGE"] },
+  { id: "reconciled-record", fact: "RECORD_ASSERTION", label: "The reconciliation claim", kind: "REPORTED_CLAIM", actions: ["PROPOSE"] },
 ];
 
 const requiredKnown = {
@@ -26,8 +26,10 @@ const requiredKnown = {
   SMALL_TALK: ["SHARED_LOADING_SHIFT"], VERIFY_SOURCE: ["DIRECT_RECEIPT"],
   QUESTION_RECORD: ["RECORD_ASSERTION", "NEGATIVE_DISCREPANCY"],
 };
-const informationMoves = new Set(["VERIFY_SOURCE", "PROBE_USEFULNESS", "QUESTION_RECORD", "DISCLOSE_PARTIAL", "DISCLOSE_FULL", "EXCHANGE"]);
+const informationMoves = new Set(["R17_HINT", "R17_SHOW", "VERIFY_SOURCE", "PROBE_USEFULNESS", "QUESTION_RECORD", "DISCLOSE_PARTIAL", "DISCLOSE_FULL", "EXCHANGE"]);
 const descriptions = {
+  R17_HINT: "Learn whether Marcus cares. Keep the detail private and R-17 usable; the extra charge does not change.",
+  R17_SHOW: "Show the source and detail together. Spend R-17's leverage for three percentage points of lasting goodwill.",
   TERMS: "Ask about possible terms before making a proposal.",
   DEBT: "Acknowledge the unpaid account without treating hoped-for profits as cash.",
   RISK: "Recognize that releasing stock on credit would put Marcus's money at risk.",
@@ -51,7 +53,7 @@ const descriptions = {
 
 function authoredMove(key) {
   if (key === "PROPOSE") return { id: "propose-terms", label: "Build an offer", intent: { action: "DEAL", information: "NONE" } };
-  if (key === "EXCHANGE") return { id: "offer-information", label: "Trade the private detail with the offer", intent: { action: "DEAL", information: "OFFER_INFORMATION" } };
+  if (key === "EXCHANGE") return { id: "offer-information", label: "Trade", intent: { action: "DEAL", information: "OFFER_INFORMATION" } };
   if (key === "ACCEPT") return { id: "accept-offer", label: "Confirm the current offer", intent: { action: "ACCEPT" } };
   if (key === "WALK") return { id: "walk-away", label: "Walk away", intent: { action: "WALK" } };
   return { id: `ask-${key.toLowerCase().replaceAll("_", "-")}`, label: topicLabels.get(key) ?? "Clarify the current offer", intent: { action: "ASK", topic: key } };
@@ -87,10 +89,11 @@ function actionCard(state, key) {
 function actionCompletion(state, key, intent) {
   if (intent.action !== "ASK" || key === "CLARIFY_OFFER") return null;
   const observedKeys = {
+    R17_HINT: "r17:hint", R17_SHOW: "r17:shown",
     VERIFY_SOURCE: "evidence:DIRECT_RECEIPT", PROBE_USEFULNESS: `relevance:${playerInfo(state).privateFactId}`,
     QUESTION_RECORD: "question:RECORD_ASSERTION", SMALL_TALK: "history:SHARED_LOADING_SHIFT", ACK_MISSED: "history:MISSED_CHECKIN",
   };
-  const done = key === "DISCLOSE_FULL" ? playerInfo(state).disclosure === "FULL"
+  const done = key === "R17_HINT" ? playerInfo(state).r17.interestKnown : key === "DISCLOSE_FULL" ? playerInfo(state).disclosure === "FULL"
     : key === "DISCLOSE_PARTIAL" ? playerInfo(state).disclosure !== "NONE"
       : observedKeys[key] ? playerInfo(state).progressKeys.includes(observedKeys[key])
         : state.events.some(event => event.intent?.action === "ASK" && event.intent.topic === key);
@@ -107,7 +110,7 @@ function actionsFor(state, keys) {
     .filter(key => !informationMoves.has(key) || privateInformation(state))
     // Never reveal that another run contains a different private-information route.
     .filter(key => key !== "QUESTION_RECORD" || (knows(state, "RECORD_ASSERTION") && knows(state, "NEGATIVE_DISCREPANCY")))
-    .filter(key => key !== "EXCHANGE" || (knows(state, "POSITIVE_ROUTE") && playerInfo(state).privateFactId === "POSITIVE_ROUTE"))
+    .filter(key => key !== "EXCHANGE" || Boolean(playerInfo(state).privateFactId))
     .map(key => actionCard(state, key))
     .sort((left, right) => Number(right.available) - Number(left.available));
 }

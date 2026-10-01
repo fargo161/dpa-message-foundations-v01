@@ -1,0 +1,25 @@
+✔ R-17 surface exposes exactly Hint, Show and Trade for both content versions (1914.7122ms)
+✔ R-17 builder availability follows ownership and leverage rather than interest or preparation (4714.9552ms)
+✔ R-17 previews do not probe, spend, transfer, penalize or select future reactions (111.6558ms)
+✔ R-17 reactions distinctly express interest, disinterest, Show goodwill, concession and annoyance (136.9718ms)
+✔ actual UI render functions show Held, Spent, Traded, retained-card penalty and authoritative percentages (1168.049ms)
+✔ UI element references resolve to unique markup or explicitly created IDs (1.3385ms)
+✔ receipt uses settled cash and exact accepted terms, never internal metadata or stale draft (3.8641ms)
+✔ live offer retains exact terms, information condition, and replacement warning (0.9164ms)
+✔ acceptance binds the current offer identity, not the editable draft (0.9589ms)
+✔ compact actions preserve every authored choice in menu and completed choices in Revisit (2.019ms)
+✔ restart discards unsent terms and old accessibility announcement (0.7707ms)
+✔ inspecting and editing offer amounts does not select a different speech act (0.7768ms)
+✔ all-vibes shortcut opens existing menu directly on BASED without selecting an action (0.7674ms)
+✔ manual face mode waits for explicit continuation without scheduling a timer (1.0036ms)
+✔ skip and replay remain outside the disabled turn fieldset; no automatic acceptance submission (0.4654ms)
+✔ presentation holds response until skip and finishes exactly once (0.4933ms)
+✔ cancelled presentation does not expose a stale response (0.2984ms)
+ℹ tests 17
+ℹ suites 0
+ℹ pass 17
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 9128.9998

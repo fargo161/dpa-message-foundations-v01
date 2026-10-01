@@ -2,7 +2,7 @@ import { projectMarcusLore } from "../src/encounter/marcus-world-adapter.mjs";
 import { withoutFact, alterPrivateClaim, setOldDebt, setResources, prepareInformation, rewriteMarcusHistory } from "./helpers/marcus-world-interventions.mjs";
 import test from "node:test";
 import assert from "node:assert/strict";
-import { edgeView } from "../src/conversation/edge.mjs";
+import { edgeView, legacyEdgeView } from "../src/conversation/edge.mjs";
 import { keywordBank } from "../src/conversation/keyword-bank.mjs";
 import { resolveContextAction } from "../src/conversation/context-actions.mjs";
 import { createState } from "../src/encounter/state.mjs";
@@ -27,7 +27,8 @@ test("edge persists owned detail, uses observed evidence, and never projects NPC
   const state = initial(), before = structuredClone(state);
   const edge = edgeView(state);
   assert.match(edge.detail, /gate C/);
-  assert.equal(edge.source.id, "UNCHECKED");
+  assert.equal(edge.card.id, "HELD");
+  assert.equal(edge.source, undefined);
   assert.equal(edge.relevance.id, "UNTESTED");
   state.metrics.tension = 99;
   state.quirk = { id: "SECRET_QUIRK" };
@@ -44,42 +45,41 @@ test("edge persists owned detail, uses observed evidence, and never projects NPC
   assert.equal(edgeView(state), null);
 });
 
-test("positive edge guides source, relevance and conditional exchange without spending information", () => {
+test("positive edge guides Hint and conditional Trade; Show spends the card", () => {
   let state = initial();
-  assert.equal(edgeView(state).action.contextActionId, "ask-verify-source");
-  state = step(state, ask("VERIFY_SOURCE"));
-  assert.equal(edgeView(state).source.id, "CHECKED");
-  assert.equal(edgeView(state).action.contextActionId, "ask-probe-usefulness");
-  state = step(state, ask("PROBE_USEFULNESS"));
+  assert.equal(edgeView(state).action.contextActionId, "ask-r17-hint");
+  state = step(state, ask("R17_HINT"));
   const ready = edgeView(state);
   assert.equal(ready.disclosure.id, "PARTIAL");
   assert.equal(ready.action.contextActionId, "offer-information");
-  assert.equal(ready.relevance.id, "OBSERVED");
-  assert.equal(ready.observations.length, 2);
+  assert.equal(ready.relevance.id, "CARES");
+  assert.equal(ready.observations.length, 1);
   assert.deepEqual(resolveContextAction(state, ready.action.keywordId, ready.action.contextActionId), { action: "DEAL", information: "OFFER_INFORMATION" });
   state = step(state, { action: "DEAL", information: "OFFER_INFORMATION", vibeId: "EA", intensity: "BALANCED" });
   assert.equal(edgeView(state).disclosure.id, "PARTIAL");
-  state = step(state, ask("DISCLOSE_FULL"));
+  state = step(state, ask("R17_SHOW"));
   assert.equal(edgeView(state).disclosure.id, "FULL");
+  assert.equal(edgeView(state).card.id, "SPENT");
   assert.equal(edgeView(state).action.contextActionId, "propose-terms");
 });
 
 test("opening advertises only remaining next-turn positions and used never implies reward", () => {
   let state = opened();
-  assert.equal(edgeView(state).opening.remainingTurns, 3);
+  assert.equal(legacyEdgeView(state).opening.remainingTurns, 3);
+  assert.equal(edgeView(state).opening, undefined);
   const snapshot = structuredClone(state);
   edgeView(state); keywordBank(state);
   assert.deepEqual(state, snapshot);
   for (const remaining of [2, 1, 0]) {
     state = step(state, ask("PRIORITIES"));
-    assert.equal(edgeView(state).opening.remainingTurns, remaining);
+    assert.equal(legacyEdgeView(state).opening.remainingTurns, remaining);
   }
   assert.equal(state.events.length, 7);
   assert.equal(projectMarcusLore(state).negativeWindow.expiredAt, undefined);
-  assert.equal(edgeView(state).opening.status, "ELAPSED");
+  assert.equal(legacyEdgeView(state).opening.status, "ELAPSED");
   const consumed = step(opened(), { action: "DEAL", information: "NONE", vibeId: "BD", intensity: "OVERT" });
-  assert.equal(edgeView(consumed).opening.status, "USED");
-  assert.match(edgeView(consumed).opening.label, /does not mean a concession/);
+  assert.equal(legacyEdgeView(consumed).opening.status, "USED");
+  assert.match(legacyEdgeView(consumed).opening.label, /does not mean a concession/);
 });
 
 test("pending conditional offer is remembered and its clarification is preferred to replacement", () => {
@@ -90,15 +90,15 @@ test("pending conditional offer is remembered and its clarification is preferred
   assert.equal(edge.disclosure.id, "PARTIAL");
   assert.equal(edge.action.keywordId, "current-offer");
   assert.equal(edge.action.contextActionId, "ask-clarify-offer");
-  assert.ok(edge.observations.some(text => /remains private until you confirm/.test(text)));
+  assert.ok(edge.observations.some(text => /remains yours and private until you confirm/.test(text)));
   assert.deepEqual(resolveContextAction(state, edge.action.keywordId, edge.action.contextActionId), { action: "ASK", topic: "CLARIFY_OFFER" });
 });
 
 test("early reveal and late preparation do not advertise a recreated opening", () => {
   let state = step(initial("lore-0"), ask("DISCLOSE_FULL"));
-  assert.equal(edgeView(state).opening.status, "NOT_OPENED");
+  assert.equal(legacyEdgeView(state).opening.status, "NOT_OPENED");
   for (const topic of ["VERIFY_SOURCE", "PROBE_USEFULNESS", "QUESTION_RECORD"]) state = step(state, ask(topic));
-  assert.equal(edgeView(state).opening.status, "NOT_OPENED");
+  assert.equal(legacyEdgeView(state).opening.status, "NOT_OPENED");
   assert.equal(edgeView(state).disclosure.id, "FULL");
   state.status = "ENDED";
   assert.equal(edgeView(state).action, null);
@@ -106,14 +106,12 @@ test("early reveal and late preparation do not advertise a recreated opening", (
 
 test("completed steps stay selectable, cross-topic hints count, and private browsing changes nothing", () => {
   let state = initial();
-  assert.equal(action(state, "VERIFY_SOURCE").completion.done, false);
-  state = step(state, ask("VERIFY_SOURCE"));
-  const checked = action(state, "VERIFY_SOURCE");
+  assert.equal(action(state, "R17_HINT").completion.done, false);
+  state = step(state, ask("R17_HINT"));
+  const checked = action(state, "R17_HINT");
   assert.equal(checked.completion.done, true);
   assert.equal(checked.available, true);
-  state = step(state, ask("PROBE_USEFULNESS"));
-  assert.equal(action(state, "DISCLOSE_PARTIAL").completion.done, true);
-  assert.equal(action(state, "DISCLOSE_FULL").completion.done, false);
+  assert.equal(action(state, "R17_SHOW").completion.done, false);
   const before = structuredClone(state);
   keywordBank(state); edgeView(state);
   assert.deepEqual(state, before);

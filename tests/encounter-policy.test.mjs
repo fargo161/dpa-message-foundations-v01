@@ -47,10 +47,10 @@ test("cash, risk, repayment time and debt produce approval, distinct counters an
   assert.equal(evaluateTurn(state(), deal({ units: 2, upfront: 60, repayment: 60, extra: 12, days: 7 })).outcome, "ACCEPT");
   const counter = evaluateTurn(state(), deal());
   assert.equal(counter.outcome, "COUNTER");
-  assert.deepEqual(counter.counterTerms, { units: 2, upfront: 48, repayment: 72, extra: 11, days: 7 });
+  assert.deepEqual(counter.counterTerms, { units: 2, upfront: 48, repayment: 72, extra: 12, days: 7 });
   const smaller = evaluateTurn(state(), deal({ units: 4, upfront: 80, repayment: 160, extra: 24, days: 20 }));
   assert.equal(smaller.outcome, "COUNTER");
-  assert.deepEqual(smaller.counterTerms, { units: 3, upfront: 80, repayment: 100, extra: 15, days: 10 });
+  assert.deepEqual(smaller.counterTerms, { units: 3, upfront: 80, repayment: 100, extra: 16, days: 10 });
   const refusal = evaluateTurn(state(), deal({ units: 8, upfront: 0, repayment: 480, extra: 0, days: 30 }));
   assert.equal(refusal.outcome, "REJECT");
   // This is a policy-input simulation, not an edit to authoritative world economics.

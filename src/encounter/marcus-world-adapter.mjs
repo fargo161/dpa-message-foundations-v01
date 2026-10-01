@@ -91,7 +91,15 @@ export function projectPlayerInformation(state) {
     if (record.act.outgoingPresentation?.documentId === "R17" && record.act.outgoingPresentation.partIds.includes("body") && record.act.outgoingPresentation.audienceIds.includes("MARCUS")) disclosure = "FULL";
   }
   const evidence = evidenceFrom(perceptions, privateFactId === "POSITIVE_ROUTE");
-  return { perceptions, holdings, factIds: received.ids, bodyClaims: received.body, privateFactId, disclosure, evidence,
+  const interestReply = perceptions.filter(record => record.channel === "TOLD" && record.act.actorId === "MARCUS")
+    .flatMap(record => record.claimsReceived).filter(claim => ["R17_CARES", "R17_DOES_NOT_CARE"].includes(claim.category.categoryId)).at(-1);
+  const traded = perceptions.some(record => record.act.kind === "DOCUMENT_TRANSFERRED" && record.act.documentId === "R17" && record.act.fromId === "PLAYER" && record.act.toId === "MARCUS");
+  const keys = state.informationLocal.progressKeys;
+  const r17 = { held: holdings.includes("R17"), available: holdings.includes("R17") && disclosure !== "FULL", traded,
+    hinted: keys.includes("r17:hint"), shown: keys.includes("r17:shown"), blindTradeFailed: keys.includes("r17:blind-failure"),
+    interestKnown: Boolean(interestReply), knownMarcusInterest: interestReply ? interestReply.category.categoryId === "R17_CARES" : null,
+    tradeAttempts: keys.filter(key => key.startsWith("r17:trade-attempt:")) };
+  return { perceptions, holdings, factIds: received.ids, bodyClaims: received.body, privateFactId, r17FactId: received.detailId, r17, disclosure, evidence,
     facts: Object.fromEntries(received.ids.map(id => [id, structuredClone(HISTORY_CONTENT[id])])),
     progressKeys: structuredClone(state.informationLocal.progressKeys), negativeWindow: structuredClone(state.informationLocal.negativeWindow) };
 }
@@ -114,7 +122,8 @@ export function projectMarcusInformation(state) {
   const accepted = beliefs.filter(belief => belief.stance === "BELIEVED" && belief.resolution === "EXACT").map(belief => candidates.find(candidate => candidate.claimId === belief.heldClaim)?.proposition).filter(Boolean);
   const quantity = (subject, object) => accepted.find(item => item.keywordId === "OWNS" && item.args.subject === subject && item.args.object === object)?.args.quantity ?? 0;
   const economicMetrics = { cash: quantity("PLAYER", "CASH"), marcusStock: quantity("MARCUS", "CONTRA"), playerStock: quantity("PLAYER", "CONTRA"), debt: accepted.filter(item => item.keywordId === "OWES" && item.args.subject === "PLAYER" && item.args.object === "MARCUS").reduce((sum, item) => sum + (item.args.amount ?? 0), 0) };
-  return { perceptions, beliefs, exposure, profile, attitudes, factIds: received.ids, privateFactId: received.detailId, bodyClaims: received.body,
+  const interest = attitudes.find(item => item.keywordId === "NEEDS" && item.args.object === "R17");
+  return { perceptions, beliefs, exposure, profile, attitudes, caresAboutR17: interest?.polarity === "ASSERTED", factIds: received.ids, privateFactId: received.detailId, bodyClaims: received.body,
     sourceChecked, disclosure, ledgerClosing, pickupNeed, recordPresent, economicMetrics, relevant: ledgerClosing && (pickupNeed || recordPresent),
     content: !received.body.length ? "UNKNOWN" : sourceChecked && bodySupport >= 3 ? "DOCUMENT_SUPPORTED" : "RECEIVED_UNVERIFIED",
     record: !recordPresent ? "NOT_APPLICABLE" : count?.stance === "DISPUTED" ? "DISPUTED" : count?.challenged ? "CHALLENGED_UNVERIFIED" : "RECONCILED_CLAIM" };
@@ -145,7 +154,7 @@ export function projectMarcusLore(state) {
       if (id && !aware.includes(id)) aware.push(id);
     }
   }
-  return { schemaVersion: "marcus-lore@0.1", variant: player.privateFactId === "POSITIVE_ROUTE" ? "POSITIVE" : "NEGATIVE", facts: Object.fromEntries(allIds.map(id => [id, structuredClone(HISTORY_CONTENT[id])])), privateFactId: player.privateFactId,
+  return { schemaVersion: "marcus-lore@0.1", variant: player.r17FactId === "POSITIVE_ROUTE" ? "POSITIVE" : "NEGATIVE", facts: Object.fromEntries(allIds.map(id => [id, structuredClone(HISTORY_CONTENT[id])])), privateFactId: player.privateFactId,
     knowledge: { player: player.factIds, marcus: marcusKnown, marcusAwarePlayerKnows: aware },
     beliefs: { source: marcus.sourceChecked ? "CHECKED" : "UNCHECKED", relevance: player.evidence.some(item => item.id === "RELEVANCE_OBSERVED") ? "POSSIBLY_USEFUL" : player.evidence.some(item => item.id === "RELEVANCE_UNCERTAIN") ? "NOT_ESTABLISHED" : "UNTESTED", content: marcus.content, record: marcus.record },
     disclosure: marcus.disclosure, evidence: player.evidence, progressKeys: structuredClone(state.informationLocal.progressKeys), negativeWindow: structuredClone(state.informationLocal.negativeWindow) };

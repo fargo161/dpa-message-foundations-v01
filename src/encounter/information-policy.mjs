@@ -3,6 +3,7 @@ import { hasEvidence, informationEligibility } from "./knowledge.mjs";
 
 import { advanceMarcusWorld } from "./marcus-world.mjs";
 import { projectPlayerInformation, projectMarcusInformation } from "./marcus-world-adapter.mjs";
+import { resolveR17Rate, R17_EXTRA_CHARGE } from "./constants.mjs";
 
 const addOnce = (list, value) => { if (!list.includes(value)) list.push(value); };
 const hostile = intent => ["BA", "BS", "BE", "BD", "AB", "AD", "DB", "DA", "DS", "DE"].includes(intent.vibeId);
@@ -22,8 +23,9 @@ export function resolveInformation(state, intent) {
   const positive = player.privateFactId === "POSITIVE_ROUTE";
   const hasNpcFact = id => marcus.factIds.includes(id);
   const turn = state.events.length + 1;
-  /** @type {{world:any,informationLocal:any,worldEventIds:string[],scoreBonus:number,social:{confidence:number,tension:number},progressKey:string|null,causes:any[],feedback:string,exchange:null|{factId:string,summary:string}}} */
-  const result = { ...worldEffect, scoreBonus: 0, social: { confidence: 0, tension: 0 }, progressKey: null, causes: [], feedback: "", exchange: null };
+  /** @type {{world:any,informationLocal:any,worldEventIds:string[],scoreBonus:number,social:{confidence:number,tension:number},progressKey:string|null,causes:any[],feedback:string,exchange:null|{factId:string,summary:string},r17Rate:number,r17Reaction:string|null}} */
+  const result = { ...worldEffect, scoreBonus: 0, social: { confidence: 0, tension: 0 }, progressKey: null, causes: [], feedback: "", exchange: null,
+    r17Rate: resolveR17Rate({ ...nextPlayer.r17, includesInformation: intent.action === "DEAL" && intent.information === "OFFER_INFORMATION", cares: nextMarcus.caresAboutR17 }), r17Reaction: null };
   const cause = (kind, factIds, consequence, evidenceIds = []) => result.causes.push({ kind, factIds, evidenceIds, consequence, turn });
   const progress = key => {
     if (lore.progressKeys.includes(key)) { cause("TOPIC_EXHAUSTED", [], "This fact or topic already supplied its one-time progress."); return false; }
@@ -37,7 +39,41 @@ export function resolveInformation(state, intent) {
     addOnce(lore.progressKeys, `hint:${lore.privateFactId}`);
     return newlyShared;
   };
-  const disclose = () => cause("FULL_DISCLOSURE", [lore.privateFactId], "Marcus has received the exact operative detail; private exchange value is spent.");
+  const disclose = () => cause("FULL_DISCLOSURE", [player.privateFactId], "Marcus has received the exact operative detail; private exchange value is spent.");
+  const proofTrade = intent.action === "DEAL" && intent.information === "OFFER_INFORMATION";
+  if (["R17_HINT", "R17_SHOW"].includes(intent.topic) || proofTrade) {
+    const interestLine = nextMarcus.caresAboutR17 ? "Yes. I care about that information."
+      : positive ? "No. I don't need it. Depot already called me about the collection change."
+        : "No. I don't need it. My clerk's count has never been wrong. I'm not worried.";
+    if (intent.topic === "R17_HINT") {
+      result.r17Reaction = nextMarcus.caresAboutR17 ? "HINT_CARES" : "HINT_DOES_NOT_CARE";
+      result.progressKey = player.r17.interestKnown ? null : "r17:interest-learned";
+      result.feedback = `${interestLine} The detail remains private; R-17 remains held. The extra charge is ${result.r17Rate}%.`;
+      cause("R17_HINT", [player.privateFactId], "Only the category is shared; Marcus's interest is honestly learned. No economic modifier is applied.");
+    } else if (intent.topic === "R17_SHOW") {
+      if (!nextMarcus.sourceChecked || nextMarcus.content !== "DOCUMENT_SUPPORTED") throw new Error("R-17 Show did not establish document-supported knowledge.");
+      result.r17Reaction = "SHOW"; result.progressKey = "r17:shown";
+      result.feedback = `Marcus checks the header and signature and accepts the detail. R-17 is Spent. Three percentage points of goodwill apply; the extra charge is ${result.r17Rate}%.${nextPlayer.r17.blindTradeFailed ? " The earlier blind-trade penalty remains." : ""}`;
+      cause("R17_SHOWN", [player.privateFactId, "DIRECT_RECEIPT"], "Source and detail are read atomically. Show goodwill persists separately from any failed-blind-trade penalty.");
+    } else {
+      const blind = !player.r17.hinted && !player.r17.interestKnown;
+      if (blind && !nextMarcus.caresAboutR17) {
+        result.r17Reaction = "BLIND_TRADE_FAILURE";
+        result.feedback = "You want me to pay for something I don't need? The extra charge is 22%. You keep R-17; its detail remains private. This penalty persists.";
+        cause("R17_BLIND_TRADE_FAILED", [player.privateFactId], "The first unwanted blind attempt applies one persistent six-point penalty and reveals Marcus's disinterest without transferring the detail.");
+      } else if (result.r17Rate === R17_EXTRA_CHARGE.TRADE_SUCCESS) {
+        result.r17Reaction = "TRADE_VALUABLE";
+        result.exchange = { factId: player.privateFactId, summary: "Counterfoil R-17 and its exact detail; transferred only on confirmation." };
+        result.feedback = "Marcus values R-17. The current information offer earns an 8% extra-charge floor. The document and its detail remain yours until confirmation; removing it from a later offer removes this value.";
+        cause("R17_VALUABLE_TRADE", [player.privateFactId], "Eight percent applies to this offer only. No score bonus or other term is granted.");
+      } else {
+        result.r17Reaction = "TRADE_NO_VALUE";
+        result.feedback = `${interestLine} This offer gets no information value. R-17 remains held and private; the extra charge is ${result.r17Rate}%.`;
+        cause("R17_TRADE_NO_VALUE", [player.privateFactId], "No information exchange is accepted. Existing encounter modifiers are retained without adding or removing a penalty.");
+      }
+    }
+    return result;
+  }
   if (lore.negativeWindow && lore.negativeWindow.consumedAt === null && !lore.negativeWindow.expiredAt && turn > lore.negativeWindow.expiresAt) {
     lore.negativeWindow.expiredAt = turn;
     cause("OPPORTUNITY_EXPIRED", [lore.negativeWindow.factId], "The brief negotiating opening expired without a proposal.");
@@ -46,9 +82,9 @@ export function resolveInformation(state, intent) {
   if (intent.action === "ACCEPT") {
     if (state.counteroffer?.informationExchange) {
       disclose();
-      addOnce(lore.progressKeys, `exchange:${lore.privateFactId}`);
-      cause("INFORMATION_EXCHANGE_COMPLETED", [lore.privateFactId, "DIRECT_RECEIPT", "PICKUP_NEED"], "The agreed information is delivered in the same authoritative acceptance as cash and stock.");
-      result.feedback = "The agreed collection detail has now been delivered to Marcus with the completed transaction.";
+      addOnce(lore.progressKeys, `exchange:${player.privateFactId}`);
+      cause("INFORMATION_EXCHANGE_COMPLETED", [player.privateFactId, "DIRECT_RECEIPT"], "The agreed document and detail are transferred in the same authoritative acceptance as cash and stock.");
+      result.feedback = "Counterfoil R-17 and its agreed detail have now been delivered to Marcus with the completed transaction.";
     }
     return result;
   }

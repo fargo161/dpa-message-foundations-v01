@@ -4,6 +4,7 @@ import assert from "node:assert/strict";
 import { createEncounterServer } from "../scripts/encounter-server.mjs";
 import { createState } from "../src/encounter/state.mjs";
 import { selectQuirk } from "../src/encounter/marcus-profile.mjs";
+import { r17Interest } from "../src/encounter/marcus-world.mjs";
 
 const slots = ["left_brow", "left_eye", "mouth", "right_brow", "right_eye"];
 const eyeIds = new Set(["2eff921f4373", "f1b2a234411e"]);
@@ -83,7 +84,7 @@ test("conversation: both knowledge variants and all three quirks complete contex
   const api = await serve(t);
   for (const [combination, seed] of combinations) {
     await api.commit("/api/restart", api.body({ seed }));
-    for (const topic of ["PRIORITIES", "VERIFY_SOURCE", "PROBE_USEFULNESS"]) {
+    for (const topic of ["PRIORITIES", "R17_HINT", "DEBT"]) {
       await api.commit("/api/turn", api.body(speaking(contextual(api.view, topic))));
     }
     const terms = { units: 2, upfront: 60, repayment: 60, extra: 12, days: 7 };
@@ -127,13 +128,13 @@ test("conversation: delivery previews preserve conditional information and exact
   let seed;
   for (let i = 0; i < 50; i++) {
     const candidate = `conditional-preview-${i}`;
-    if (projectMarcusLore(createState(candidate, "preview-proof", selectQuirk(candidate))).variant === "POSITIVE") { seed = candidate; break; }
+    if (projectMarcusLore(createState(candidate, "preview-proof", selectQuirk(candidate))).variant === "POSITIVE" && r17Interest(candidate)) { seed = candidate; break; }
   }
   assert.ok(seed);
   await api.commit("/api/restart", api.body({ seed }));
   const factId = projectMarcusLore(api.view.debug.state).privateFactId;
   const detail = projectMarcusLore(api.view.debug.state).facts[factId].proposition;
-  for (const topic of ["VERIFY_SOURCE", "PROBE_USEFULNESS"]) await api.commit("/api/turn", api.body(speaking(contextual(api.view, topic))));
+  await api.commit("/api/turn", api.body(speaking(contextual(api.view, "R17_HINT"))));
   const terms = { units: 2, upfront: 41, repayment: 79, extra: 0, days: 7 };
   const before = structuredClone(api.view);
   for (const vibe of api.view.options.vibes) for (const intensity of api.view.options.intensities) {

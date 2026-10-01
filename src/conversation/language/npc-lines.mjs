@@ -6,6 +6,12 @@ const sentence = text => /[.!?]$/.test(text.trim()) ? text.trim() : `${text.trim
 // Two authored phrasings of the same resolved family. No raw lore or future
 // policy is read; polishing a line never changes which reply family resolves.
 export const NPC_REPLY_FAMILIES = Object.freeze({
+  R17_HINT_CARES: () => ["Yes. I care about that information. Keep R-17's exact detail covered if you want to price it into the deal.", "Yes, that matters to me. You can keep the detail private and put R-17 in your offer."],
+  R17_HINT_DOES_NOT_CARE: c => c.positive ? ["No. I don't need it. Depot already called me about the collection change.", "I don't care about buying that information. Depot already called me about the collection change."] : ["No. I don't need it. My clerk's count has never been wrong. I'm not worried.", "I don't care about buying that information. I trust my clerk's count. I'm not worried."],
+  R17_SHOW: c => [`The header and signature check out. I accept the detail on the paper. I'll give you three points of goodwill: ${c.r17Rate}% extra now. That doesn't establish who's responsible for any discrepancy.`, `The source checks out, and I've read the detail. Three points off the extra charge: ${c.r17Rate}%. The paper doesn't establish wrongdoing.`],
+  R17_TRADE_VALUABLE: () => ["That information matters to me. With R-17 included, my minimum extra is 8%. I receive the document and detail only when you confirm.", "R-17 has value to me. I'll go to 8% extra for this information offer, with the exchange completed on confirmation."],
+  R17_BLIND_TRADE_FAILURE: () => ["You want me to pay for something I don't need? My minimum extra is 22% now. Keep R-17; you haven't shown me its detail.", "You priced in information I don't want. That doesn't impress me. It's 22% extra now, and you keep R-17."],
+  R17_TRADE_NO_VALUE: c => [`I don't value that information. It earns no concession. My minimum extra remains ${c.r17Rate}%; keep R-17.`, `No information value in this offer. The extra-charge floor stays ${c.r17Rate}%. R-17 stays yours.`],
   WALK: () => ["Then we leave it here. The old debt still stands.", "We will leave it there, then. You still owe the old debt."],
   AGREED: () => ["Agreed. The stock is yours on the terms you just confirmed. The old account stays on the books.", "That is agreed. The stock is yours under the terms you confirmed. The old account remains unpaid."],
   END: (c = {}) => c.patience === 0
@@ -52,6 +58,7 @@ export function buildNpcFrame(state, intent, decision) {
   // Emotional wording reflects that authored state, never changes it.
   const priorClarifications = state.events?.filter(event => event.intent.topic === "CLARIFY_OFFER").length ?? 0;
   const context = { terms: "", exchange: "", debt: state.metrics?.debt, shared: (state.world && projectMarcusInformation(state).disclosure === "FULL"),
+    positive: decision.informationCauses?.some(cause => cause.factIds?.includes("POSITIVE_ROUTE")), r17Rate: decision.r17Rate ?? decision.derived?.extraChargeRate ?? 16,
     patience: state.metrics?.patience, tension: state.metrics?.tension,
     repeatedClarification: intent.topic === "CLARIFY_OFFER" && priorClarifications > 0 };
   const causes = decision.informationCauses || [];
@@ -59,6 +66,7 @@ export function buildNpcFrame(state, intent, decision) {
   const evidence = id => causes.some(cause => cause.evidenceIds?.includes(id));
   if (intent.action === "WALK") family = "WALK";
   else if (intent.action === "ACCEPT") family = "AGREED";
+  else if (decision.r17Reaction || decision.reactionCause?.consequences?.r17Reaction) family = `R17_${decision.r17Reaction ?? decision.reactionCause.consequences.r17Reaction}`;
   else if (decision.outcome === "END") family = "END";
   else if (intent.topic === "CLARIFY_OFFER" && state.counteroffer) {
     family = "CLARIFY";
@@ -77,6 +85,7 @@ export function buildNpcFrame(state, intent, decision) {
     if (!family) family = ["TERMS", "DEBT", "RISK", "PRIORITIES", "FINAL_SAY", "GUARANTEE", "ENTITLEMENT"].includes(intent.topic) ? intent.topic : "GENERAL";
   }
   const suffixes = [];
+  if (family.startsWith("R17_") && state.counteroffer) suffixes.push(`Review these terms: ${describeTerms(state.counteroffer.terms)}.`);
   // Preserve the early-return behavior of the existing canonical responder.
   if (!["WALK", "AGREED", "END", "CLARIFY", "REPEATED_ASK"].includes(family)) {
     if (state.counteroffer?.informationExchange && ["ACCEPT", "COUNTER"].includes(decision.outcome)) suffixes.push("The terms include the information exchange. I receive the private detail only when you confirm.");

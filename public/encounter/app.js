@@ -26,6 +26,7 @@ const allVibes = node("button", "All 20 BASED vibes ↗"); allVibes.id = "all-vi
 allVibes.setAttribute("aria-haspopup", "dialog");
 document.querySelector(".delivery-section>.hint").replaceChildren(allVibes);
 const faceRenderer = createFaceRenderer($("portrait"));
+const r17Rate = node("p"); r17Rate.id = "r17-rate"; $("edge-note").after(r17Rate);
 const character = () => snapshot?.play.character || { id: "marcus", name: "Marcus" };
 const keywords = () => snapshot?.options.keywords || [];
 const selectedKeyword = () => keywords().find(entry => entry.id === keywordId);
@@ -70,10 +71,12 @@ function renderEdge() {
   const edge = snapshot.play.edge, box = $("edge-note"); box.replaceChildren();
   if (!edge) { box.append(node("strong", "What you know"), node("p", snapshot.play.situation?.summary || "Review the conversation for what has been said.")); return; }
   box.append(node("strong", edge.title));
-  for (const [label, status] of [["Disclosure", edge.disclosure], ["Source", edge.source], ["Relevance", edge.relevance]]) {
+  if (edge.card?.label) box.append(node("p", `Your edge: ${edge.card.label}`));
+  if (edge.note) box.append(node("p", edge.note));
+  for (const [label, status] of [["Disclosure", edge.disclosure], ["Source", edge.source], ["Interest", edge.relevance]]) {
     if (status?.label) {
       const short = label === "Source" ? (status.shortLabel || (status.id === "CHECKED" ? "Source checked" : "Not checked"))
-        : label === "Relevance" ? ({ OBSERVED: "Possible use, no promise", UNCERTAIN: "No current use identified", UNTESTED: "Not asked yet" }[status.id] || status.label) : status.label;
+        : label === "Interest" ? ({ OBSERVED: "Possible use, no promise", UNCERTAIN: "No current use identified", UNTESTED: "Not asked yet" }[status.id] || status.label) : status.label;
       box.append(node("p", `${label}: ${short}`));
     }
   }
@@ -250,6 +253,7 @@ function renderOffer() {
   box.append(node("p", current.source === "APPROVED_PROPOSAL" ? `${character().name} approved this. Confirm below to accept.` : `${character().name} offers these terms.`), termTable(current.terms));
   box.append(node("p", `Confirmation transfers ${current.terms.upfront} cash and ${current.terms.units} Contra, adding ${current.terms.repayment} principal and ${current.terms.extra} additional repayment due within ${current.terms.days} days. Existing debt remains owed.`));
   box.append(node("p", `After confirmation: ${snapshot.play.metrics.cash - current.terms.upfront} cash retained; ${current.terms.repayment + current.terms.extra} new repayment due.`));
+  if (Number.isFinite(current.extraChargeRate)) box.append(node("p", `Marcus's minimum extra charge: ${current.extraChargeRate}% of new principal.`));
   const proposal = [...snapshot.play.events].reverse().find(event => event.action === "DEAL");
   if (proposal && current.source !== "APPROVED_PROPOSAL") {
     const comparison = node("details"); comparison.append(node("summary", "Compare with your last spoken proposal"), node("p", proposal.playerText)); box.append(comparison);
@@ -297,6 +301,8 @@ function renderPlay() {
   $("subject-label").parentElement.hidden = play.status !== "OPEN";
   $("walk").hidden = play.status !== "OPEN"; $("walk-reason").hidden = play.status !== "OPEN";
   $("price-note").textContent = commercial() ? `${snapshot.options.price} PER CONTRA · OLD DEBT SEPARATE` : "SUBJECT · INTENTION · DELIVERY";
+  $("r17-rate").hidden = !Number.isFinite(play.extraChargeRate);
+  $("r17-rate").textContent = Number.isFinite(play.extraChargeRate) ? `Marcus's minimum extra charge: ${play.extraChargeRate}% of new principal.` : "";
   renderOffer(); renderKeywords(); updateDraft();
   $("conversation").replaceChildren(...play.events.map((event, index) => { const article = node("article"); article.append(node("h3", `Turn ${index + 1}`), node("p", `You: ${event.playerText}`), node("p", `${who.name}: ${event.marcusText}`)); if (event.feedback) { const feedback = node("p", event.feedback); feedback.className = "turn-feedback"; article.append(feedback); } if (event.faces) { const inspect = node("button", "Inspect both reactions"); inspect.type = "button"; inspect.dataset.interact = ""; inspect.addEventListener("click", () => inspectFaces(event, index)); article.append(inspect); } return article; }));
   $("resolution").hidden = play.status === "OPEN";

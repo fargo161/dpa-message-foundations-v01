@@ -70,7 +70,7 @@ test("cards distinguish reported claims and exact owned information without reve
 test("all eligible authored ASK topics and ordinary actions remain reachable including risky moves", () => {
   for (const seed of ["lore-0", "lore-3"]) {
     const state = initial(seed), actions = keywordBank(state).flatMap(item => item.actions);
-    for (const topic of [...TOPICS, ...LORE_TOPICS]) {
+    for (const topic of [...TOPICS, ...LORE_TOPICS.filter(topic => ["SMALL_TALK", "ACK_MISSED", "R17_HINT", "R17_SHOW"].includes(topic.id))]) {
       if (informationEligibility(state, ask(topic.id)).allowed) assert.ok(actions.some(action => action.available && action.intent.topic === topic.id), `${seed}:${topic.id}`);
     }
     for (const action of ["DEAL", "WALK"]) assert.ok(actions.some(item => item.available && item.intent.action === action));
@@ -87,7 +87,7 @@ test("all eligible authored ASK topics and ordinary actions remain reachable inc
 test("subject-action resolver rejects cross-subject, unknown, unavailable and mutated selections", () => {
   const state = initial(), before = structuredClone(state);
   assert.deepEqual(resolveContextAction(state, "old-account", "ask-debt"), { action: "ASK", topic: "DEBT" });
-  for (const pair of [["old-account", "ask-disclose-full"], ["LEDGER_CLOSING", "ask-probe-usefulness"], ["collection-change", "offer-information"], ["__proto__", "constructor"], [null, "ask-debt"]]) {
+  for (const pair of [["old-account", "ask-r17-show"], ["LEDGER_CLOSING", "ask-probe-usefulness"], ["collection-change", "ask-verify-source"], ["__proto__", "constructor"], [null, "ask-debt"]]) {
     assert.throws(() => resolveContextAction(state, ...pair));
   }
   const selection = resolveContextAction(state, "old-account", "ask-debt");
@@ -96,10 +96,10 @@ test("subject-action resolver rejects cross-subject, unknown, unavailable and mu
   assert.deepEqual(state, before);
 });
 
-test("positive information action follows existing preparation and cannot restore disclosed value", () => {
+test("positive information Trade is available while held, including after Hint, and cannot restore spent value", () => {
   const state = initial();
-  assert.equal(move(state, "collection-change", "offer-information").available, false);
-  const prepared = prepare(state), before = structuredClone(prepared);
+  assert.equal(move(state, "collection-change", "offer-information").available, true);
+  const prepared = step(state, ask("R17_HINT")), before = structuredClone(prepared);
   const intent = resolveContextAction(prepared, "collection-change", "offer-information");
   assert.deepEqual(intent, { action: "DEAL", information: "OFFER_INFORMATION" });
   assert.deepEqual(prepared, before);
@@ -107,25 +107,26 @@ test("positive information action follows existing preparation and cannot restor
   assert.equal(projectMarcusLore(offered).disclosure, "PARTIAL");
   assert.ok(!projectMarcusLore(offered).knowledge.marcus.includes(projectMarcusLore(offered).privateFactId));
   assert.match(card(offered, "collection-change").summary, /remains private/);
-  const disclosed = step(prepared, resolveContextAction(prepared, "collection-change", "ask-disclose-full"));
+  const disclosed = step(prepared, resolveContextAction(prepared, "collection-change", "ask-r17-show"));
   assert.equal(move(disclosed, "collection-change", "offer-information").available, false);
   assert.match(card(disclosed, "collection-change").summary, /already shared/);
   assert.throws(() => resolveContextAction(prepare(disclosed), "collection-change", "offer-information"));
 });
 
-test("negative contextual route preserves prepared one-use opening and no browsing side effects", () => {
+test("negative contextual Hint and Show spend leverage without exposing the deferred opportunity ladder", () => {
   let state = initial("lore-0");
-  for (const actionId of ["ask-verify-source", "ask-probe-usefulness", "ask-question-record", "ask-disclose-full"]) {
+  for (const actionId of ["ask-r17-hint", "ask-r17-show"]) {
     const intent = resolveContextAction(state, "intake-mismatch", actionId);
     state = step(state, { ...intent, vibeId: "EA", intensity: "BALANCED" });
   }
-  assert.ok(projectMarcusLore(state).negativeWindow);
+  assert.equal(projectMarcusLore(state).negativeWindow, null);
   const before = structuredClone(state);
   keywordBank(state); keywordBank(state);
   assert.deepEqual(state, before);
-  const intent = resolveContextAction(state, "intake-mismatch", "propose-terms");
+  const intent = resolveContextAction(state, "contra-stock", "propose-terms");
   const first = resolveInformation(state, { ...intent, vibeId: "EA", intensity: "BALANCED" });
-  assert.equal(first.scoreBonus, 6);
+  assert.equal(first.scoreBonus, 0);
+  assert.equal(first.r17Rate, 13);
   const used = step(state, { ...intent, vibeId: "EA", intensity: "BALANCED" });
   assert.equal(resolveInformation(used, { ...intent, vibeId: "EA", intensity: "BALANCED" }).scoreBonus, 0);
 });

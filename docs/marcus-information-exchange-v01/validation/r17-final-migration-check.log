@@ -1,0 +1,33 @@
+✔ frozen Marcus oracle has the pre-migration byte hash and complete recovered corpus (7.226ms)
+✔ C1/C2 R-17 migrated Marcus behavior: positiveWithoutExchange (790.3667ms)
+✔ C1/C2 R-17 migrated Marcus behavior: positiveWithExchange (1196.083ms)
+✔ C1/C2 R-17 migrated Marcus behavior: positiveEarlyGiveaway (671.2646ms)
+✔ C1/C2 R-17 migrated Marcus behavior: negativeWithOpening (1748.4852ms)
+✔ C1/C2 R-17 migrated Marcus behavior: negativeWithoutOpening (1427.3931ms)
+✔ C1/C2 R-17 migrated Marcus behavior: negativeBacklash (321.798ms)
+✔ C1/C2 R-17 migrated Marcus behavior: negativeExpired (3060.1388ms)
+✔ C1/C2 R-17 migrated Marcus behavior: sixExchangeLateConcession (1421.4374ms)
+✔ C1/C2 R-17 migrated Marcus behavior: directCredit (429.1495ms)
+✔ C1/C2 R-17 migrated Marcus behavior: limitedCashPurchase (405.0183ms)
+✔ C1/C2 R-17 migrated Marcus behavior: worsenedRiskRegression (408.3511ms)
+✔ C1/C2 R-17 migrated Marcus behavior: combination-POSITIVE-final_say-EA (924.4898ms)
+✔ C1/C2 R-17 migrated Marcus behavior: combination-POSITIVE-final_say-SE (877.5932ms)
+✔ C1/C2 R-17 migrated Marcus behavior: combination-POSITIVE-plain_dealing-EA (840.8723ms)
+✔ C1/C2 R-17 migrated Marcus behavior: combination-POSITIVE-plain_dealing-SE (872.4819ms)
+✔ C1/C2 R-17 migrated Marcus behavior: combination-POSITIVE-recognition-EA (888.4108ms)
+✔ C1/C2 R-17 migrated Marcus behavior: combination-POSITIVE-recognition-SE (888.3681ms)
+✔ C1/C2 R-17 migrated Marcus behavior: combination-NEGATIVE-final_say-EA (1820.5215ms)
+✔ C1/C2 R-17 migrated Marcus behavior: combination-NEGATIVE-final_say-SE (1859.5687ms)
+✔ C1/C2 R-17 migrated Marcus behavior: combination-NEGATIVE-plain_dealing-EA (1764.7418ms)
+✔ C1/C2 R-17 migrated Marcus behavior: combination-NEGATIVE-plain_dealing-SE (1736.6517ms)
+✔ C1/C2 R-17 migrated Marcus behavior: combination-NEGATIVE-recognition-EA (1753.6779ms)
+✔ C1/C2 R-17 migrated Marcus behavior: combination-NEGATIVE-recognition-SE (1748.0176ms)
+✔ every changed historical snapshot has an explicit rule and path migration record (125.8692ms)
+ℹ tests 25
+ℹ suites 0
+ℹ pass 25
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 29161.8119

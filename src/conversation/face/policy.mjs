@@ -24,7 +24,7 @@ export function receptionPreset(intent, previousResponse) {
   }
   if (action === "DEAL") return "HEARING_TERMS";
   if (action === "ASK") {
-    if (["DISCLOSE_FULL", "DISCLOSE_PARTIAL", "VERIFY_SOURCE", "ACK_MISSED", "DEBT"].includes(topic)) return "DETAIL_RECEIVED";
+    if (["R17_SHOW", "R17_HINT", "DISCLOSE_FULL", "DISCLOSE_PARTIAL", "VERIFY_SOURCE", "ACK_MISSED", "DEBT"].includes(topic)) return "DETAIL_RECEIVED";
     if (["QUESTION_RECORD", "ENTITLEMENT", "GUARANTEE"].includes(topic)) return "QUESTIONING";
     return "HEARING_TERMS";
   }
@@ -45,6 +45,7 @@ function responseContext(event) {
     transfersCommitted: consequences?.transfersCommitted === true,
     currentOffer: Boolean(continuity?.currentOffer),
     clarificationPreservedOffer: continuity?.clarificationPreservedOffer === true,
+    r17Reaction: consequences?.r17Reaction ?? null,
     confidenceDelta: Number.isFinite(event.deltas?.confidence) ? event.deltas.confidence : 0,
     tensionDelta: Number.isFinite(event.deltas?.tension) ? event.deltas.tension : 0,
   };
@@ -53,6 +54,8 @@ function responseContext(event) {
 function responsePreset(context, previousResponse) {
   const { action, topic, outcome, status, confidenceDelta, tensionDelta } = context;
   if (action === "ACCEPT" && outcome === "AGREED" && status === "AGREED" && context.transfersCommitted) return "AGREEMENT_CLOSURE";
+  const informationFaces = { HINT_CARES: "LEANING_IN", HINT_DOES_NOT_CARE: "ATTENTIVE", SHOW: "WARM_ACKNOWLEDGMENT", TRADE_VALUABLE: "READY_TO_AGREE", BLIND_TRADE_FAILURE: "GUARDED", TRADE_NO_VALUE: "ATTENTIVE" };
+  if (context.r17Reaction && informationFaces[context.r17Reaction]) return informationFaces[context.r17Reaction];
   if (["WITHDRAWN", "END"].includes(outcome) || ["WITHDRAWN", "ENDED"].includes(status)) return "DRAWING_BOUNDARY";
   if (action === "ASK" && topic === "CLARIFY_OFFER" && outcome === "ANSWER" && context.clarificationPreservedOffer && context.currentOffer) {
     return previousResponse.presetId;

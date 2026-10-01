@@ -162,14 +162,16 @@ test("adversarial HTTP: only prototype assets/routes are served", async () => wi
   assert.equal((await fetch(`${base}/api/state`, { method: "POST" })).status, 405);
 }));
 
-test("adversarial: context, prior risk acknowledgment and delivery change actual decisions", () => {
+test("adversarial: context and risk acknowledgment improve assessment while the fee floor still holds", () => {
   const state = createState("recognition-review", "context-run", "recognition");
   const borderline = { units: 2, upfront: 60, repayment: 60, extra: 0, days: 7 };
   const direct = transition(state, deal(state, borderline));
   const acknowledged = transition(state, intent(state, { topic: "RISK", vibeId: "SE" }));
   const later = transition(acknowledged, deal(acknowledged, borderline));
-  assert.equal(direct.events.at(-1).outcome, "COUNTER"); assert.equal(later.events.at(-1).outcome, "ACCEPT");
-  assert.deepEqual(later.counteroffer.terms, borderline); assert.ok(acknowledged.clues.length > 0);
+  assert.equal(direct.events.at(-1).outcome, "COUNTER"); assert.equal(later.events.at(-1).outcome, "COUNTER");
+  assert.ok(direct.events.at(-1).derived.score < direct.events.at(-1).derived.acceptThreshold);
+  assert.ok(later.events.at(-1).derived.score >= later.events.at(-1).derived.acceptThreshold);
+  assert.deepEqual(later.counteroffer.terms, { ...borderline, extra: 10 }); assert.ok(acknowledged.clues.length > 0);
   const businessEA = transition(state, deal(state, terms));
   const businessSE = transition(state, deal(state, terms, { vibeId: "SE" }));
   const riskEA = transition(state, intent(state, { topic: "RISK" }));

@@ -132,8 +132,8 @@ test("language: malformed, unknown and altered frames fail closed", () => {
 });
 
 test("language: all authored NPC families have two distinct deterministic review phrasings", () => {
-  const context = { terms: describeTerms(terms), exchange: "Exact collection instructions delivered on confirmation", debt: 250 };
-  assert.equal(Object.keys(NPC_REPLY_FAMILIES).length, 31);
+  const context = { terms: describeTerms(terms), exchange: "Exact collection instructions delivered on confirmation", debt: 250, r17Rate: 19, positive: true };
+  assert.equal(Object.keys(NPC_REPLY_FAMILIES).length, 37);
   for (const [family, realize] of Object.entries(NPC_REPLY_FAMILIES)) {
     const alternatives = realize(context);
     assert.equal(alternatives.length, 2);

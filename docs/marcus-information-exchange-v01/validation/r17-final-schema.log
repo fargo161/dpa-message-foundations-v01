@@ -1,0 +1,5 @@
+
+> dpa-message-foundations@0.1.0 schema:validate
+> node scripts/validate-schemas.mjs
+
+schema-validation-ok: 16 keywords, mechanics state/action/transition/capacity, BASED/TPL, semantic request, acquisition manifest, 13 world-event kinds, claims and fixed profiles

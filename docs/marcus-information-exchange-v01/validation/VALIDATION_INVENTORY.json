@@ -1,0 +1,148 @@
+{
+  "schemaVersion": "r17-validation-evidence@0.1",
+  "branch": "codex/r17-information-exchange-v01",
+  "startingHEAD": "bdecd96eb310deebc15cb231a305c45f4569831e",
+  "endingHEAD": "bdecd96eb310deebc15cb231a305c45f4569831e",
+  "baselinePassed": 391,
+  "finalPortablePassed": 425,
+  "standalonePassed": 6,
+  "files": [
+    {
+      "path": "r17-baseline-20260930.log",
+      "bytes": 42551,
+      "sha256": "48d34b996bc78b87c6589bee63acafda600d8ba32fa7bd354481b1b7aab2f12e"
+    },
+    {
+      "path": "r17-npm-ci-20260930.log",
+      "bytes": 27,
+      "sha256": "4ade6920f584271b8923e9aa41344c9373c7e257272848cf33d60e6422c9db99"
+    },
+    {
+      "path": "r17-final-test.log",
+      "bytes": 50686,
+      "sha256": "a27fff8304ec484c9dc1da6e3c82f8c6ecdfb962cdea56ee60b2a323f7dad72f"
+    },
+    {
+      "path": "r17-final-lint.log",
+      "bytes": 158,
+      "sha256": "00363d492fb3796593e16b9371fed5836be759a1edc3156ab46c7419d9c0e044"
+    },
+    {
+      "path": "r17-final-typecheck.log",
+      "bytes": 140,
+      "sha256": "5c7ba3d8fb82f08953e09e4839622149bb5597092b46789dd7f21a7b13ebaf9c"
+    },
+    {
+      "path": "r17-final-schema.log",
+      "bytes": 269,
+      "sha256": "a29959ed17943f58ad7f56675a17b497407aa0a7b820dfc701c704d344208914"
+    },
+    {
+      "path": "r17-final-build.log",
+      "bytes": 129,
+      "sha256": "7f0046ea2ee0d0aa8740230325815a3f2425ae3e8b66da506d20ee534d5a58c5"
+    },
+    {
+      "path": "r17-final-freshness.log",
+      "bytes": 65,
+      "sha256": "28b2711f849090701c6a88e3a88bdc5e1a3a70105776f11356547ba88355646b"
+    },
+    {
+      "path": "r17-snapshot-capture.log",
+      "bytes": 1264,
+      "sha256": "b51a63b2591b6485d18d167fa55fdc0011b0f14ac80bc5556f16cf00afcd4c9c"
+    },
+    {
+      "path": "r17-golden-capture.log",
+      "bytes": 200,
+      "sha256": "a728bc2e102c043c4fe2c53eb774843cd6a5a0ec6b5d126a5b2cf571f670463c"
+    },
+    {
+      "path": "r17-standalone-build.log",
+      "bytes": 177,
+      "sha256": "00bda776c94f1050fc31de94838cf5242a84cbb6c37e8d135624828b1d86096c"
+    },
+    {
+      "path": "r17-standalone-parity.log",
+      "bytes": 1798,
+      "sha256": "b6bc6f6605769f1f3e9a276cab22665ca6d70bb824cead5413d263fa1410f13b"
+    },
+    {
+      "path": "r17-final-ui-check.log",
+      "bytes": 1775,
+      "sha256": "e21e7e86a9a902c77277b331d2d0fb249a331a77b8471de414925c2a3d8b7e1a"
+    },
+    {
+      "path": "r17-final-migration-check.log",
+      "bytes": 2253,
+      "sha256": "aaab912e833a4111d4d30b911214e73172bbcd8657c5c6fb69dc88241c054c8f"
+    },
+    {
+      "path": "r17-blind-failure-22.jpg",
+      "bytes": 278685,
+      "sha256": "10a738641c9da6072d46cf664a991aa342176ff7ad6c47f4ef83228beedac848"
+    },
+    {
+      "path": "r17-failure-show-19.jpg",
+      "bytes": 252306,
+      "sha256": "006de3cb59b746243e431e6e26ddff02a620572305b919db93b4744ba9c8b7d0"
+    },
+    {
+      "path": "r17-completed-trade-8.jpg",
+      "bytes": 154315,
+      "sha256": "8ad5e93a3ec47bd1bf20b84d85b735a8984cf85a4b10fb6ea7c52efb1de10f21"
+    },
+    {
+      "path": "r17-completed-trade-dom.txt",
+      "bytes": 3641,
+      "sha256": "5ed08f580bf42c4376d5fa1408f8ea6a49fa688e86fbf593b3948eed3ebcc32f"
+    }
+  ],
+  "preservedTempFiles": [
+    {
+      "path": "C:\\Users\\mcdon\\Documents\\ChatGPT\\dpa-message-foundations-v01\\Temp\\UnityLockfile",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "C:\\Users\\mcdon\\Documents\\ChatGPT\\dpa-message-foundations-v01\\Temp\\post-merge-gate\\build.log",
+      "bytes": 124,
+      "sha256": "fa22908c2aa835ca61a6981b0bbdaeb8ffb4fded0065336d849d7c29514ea977"
+    },
+    {
+      "path": "C:\\Users\\mcdon\\Documents\\ChatGPT\\dpa-message-foundations-v01\\Temp\\post-merge-gate\\ci.log",
+      "bytes": 141,
+      "sha256": "6717ae85c763f727f006e34abc9810ca1d15ba1e26b800f072351609cbecc013"
+    },
+    {
+      "path": "C:\\Users\\mcdon\\Documents\\ChatGPT\\dpa-message-foundations-v01\\Temp\\post-merge-gate\\conformance.log",
+      "bytes": 2780,
+      "sha256": "43e850fab3b9ea7a5122f2a6ab4d5c3437f472c7c244df8c55a4315cb0610f50"
+    },
+    {
+      "path": "C:\\Users\\mcdon\\Documents\\ChatGPT\\dpa-message-foundations-v01\\Temp\\post-merge-gate\\generated.log",
+      "bytes": 64,
+      "sha256": "68e096ef3acfe6ca439b1deb30a658d0e7f0741f3acbe09a26a782ddfaa6cb67"
+    },
+    {
+      "path": "C:\\Users\\mcdon\\Documents\\ChatGPT\\dpa-message-foundations-v01\\Temp\\post-merge-gate\\lint.log",
+      "bytes": 153,
+      "sha256": "646cbe0ffd6beaa58d97ff710d70ea1270f1584b611bc9ff138b850d1921b22f"
+    },
+    {
+      "path": "C:\\Users\\mcdon\\Documents\\ChatGPT\\dpa-message-foundations-v01\\Temp\\post-merge-gate\\schema.log",
+      "bytes": 264,
+      "sha256": "b2897f34b8296fdf008cd69d422f0e2eeb5c5fc69d788c9f4c51f0504ce319a0"
+    },
+    {
+      "path": "C:\\Users\\mcdon\\Documents\\ChatGPT\\dpa-message-foundations-v01\\Temp\\post-merge-gate\\test.log",
+      "bytes": 42144,
+      "sha256": "e79b8590e92759dc67f03423762b693db0bd289a9c3200b359893fc945034427"
+    },
+    {
+      "path": "C:\\Users\\mcdon\\Documents\\ChatGPT\\dpa-message-foundations-v01\\Temp\\post-merge-gate\\typecheck.log",
+      "bytes": 135,
+      "sha256": "dda304bdb27c78c036259ab1e7907d5f752decac6a127d56fbf4bbbcf2a2449b"
+    }
+  ]
+}

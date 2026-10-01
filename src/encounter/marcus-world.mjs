@@ -15,6 +15,12 @@ export function worldAssertion(id, keywordId, args, scope = "ACTUAL") {
   return { assertionId: id, keywordId, args, scope, polarity: "ASSERTED", status: "ACTIVE", contextIds: [], validFrom: "2026-09-01T00:00:00Z", validUntil: null,
     provenance: { sourceId: "marcus-world-authored-v01", sourceVersion: "0.1.3", sourceRecordId: id, transformVersion: "marcus-world@0.1", licenseId: "PROJECT_AUTHORED" } };
 }
+export function r17Interest(seed) {
+  let hash = 2166136261;
+  for (const character of `marcus-r17-interest-v1:${seed}`) hash = Math.imul(hash ^ character.codePointAt(0), 16777619) >>> 0;
+  hash = Math.imul(hash ^ (hash >>> 16), 2246822507) >>> 0;
+  return Boolean(((hash ^ (hash >>> 13)) >>> 0) % 2);
+}
 const entities = [
   ...["PLAYER", "MARCUS", "DEPOT", "CLERK"].map(entityId => ({ entityId, type: "ACTOR", role: entityId === "PLAYER" ? "PLAYER" : "NPC" })),
   ...["COUNTER", "DEPOT_YARD", "GATE_C"].map(entityId => ({ entityId, type: "LOCATION" })),
@@ -75,6 +81,10 @@ export function createMarcusWorld(seed, quirk = "final_say", options = {}) {
   }
   const worldProfiles = [neutralPlayerProfile("PLAYER"), { version: "world-profile@0.1", entityId: "MARCUS", role: "NPC", recognizes: ["DEPOT_MARK", "CLERK_SIGNATURE"], reception: structuredClone(PERSONALITY.reactions), policy: { ...structuredClone(PERSONALITY.policy), quirk: structuredClone(PERSONALITY.quirks[quirk]) }, variant: quirk }];
   validateProfiles(worldProfiles);
+  // Interest is an independent fixed attitude, never receipt of the document body.
+  const cares = r17Interest(seed);
+  append("ATTITUDE_SET", { holderId: "MARCUS", assertion: { ...worldAssertion("r17-interest", "NEEDS", { subject: "MARCUS", object: "R17" }), polarity: cares ? "ASSERTED" : "NEGATED" } }, { presentIds: ["MARCUS"], observability: "PRIVATE", provenance: { kind: "SEED", sourceRef: "R17_INTEREST" } });
+  if (!cares) append("ATTITUDE_SET", { holderId: "MARCUS", assertion: worldAssertion(positive ? "collection-change-already-heard" : "clerk-count-trusted", "TRUSTS", { subject: "MARCUS", object: positive ? "DEPOT" : "CLERK" }) }, { presentIds: ["MARCUS"], observability: "PRIVATE" });
   return { world, worldProfiles, informationLocal: { progressKeys: [], negativeWindow: null } };
 }
 
@@ -100,12 +110,31 @@ export function advanceMarcusWorld(state, intent, outcome = {}) {
   const once = key => { if (local.progressKeys.includes(key)) return false; local.progressKeys.push(key); return true; };
   const hint = () => once(`hint:${player.privateFactId}`);
   const privateIds = player.bodyClaims.map(claim => claim.claimId);
-  const hints = ["PROBE_USEFULNESS", "QUESTION_RECORD", "DISCLOSE_PARTIAL"].includes(intent.topic) || intent.action === "DEAL" && intent.information === "OFFER_INFORMATION";
+  const hints = ["R17_HINT", "PROBE_USEFULNESS", "QUESTION_RECORD", "DISCLOSE_PARTIAL"].includes(intent.topic) || intent.action === "DEAL" && intent.information === "OFFER_INFORMATION";
   if (intent.topic === "GUARANTEE") statement("PLAYER", [`prediction:${turn}`], "EXACT", { proposition: worldAssertion(`prediction:${turn}`, "OWNS", { subject: "PLAYER", object: "CASH" }, "HYPOTHETICAL"), category: category("FUTURE_PROFIT", "Claim about future profits") });
   else statement("PLAYER", hints ? privateIds : [], hints ? "CATEGORY" : "EXACT");
   if (local.negativeWindow && local.negativeWindow.consumedAt === null && !local.negativeWindow.expiredAt && turn > local.negativeWindow.expiresAt) local.negativeWindow.expiredAt = turn;
   let replied = false;
   if (hints) hint();
+  const proofTrade = intent.action === "DEAL" && intent.information === "OFFER_INFORMATION";
+  if (intent.topic === "R17_HINT" || proofTrade) {
+    const blind = proofTrade && !player.r17.hinted && !player.r17.interestKnown;
+    if (intent.topic === "R17_HINT") once("r17:hint");
+    if (proofTrade) {
+      once(`r17:trade-attempt:${turn}:${blind ? "blind" : "known"}`);
+      if (blind && !marcus.caresAboutR17) once("r17:blind-failure");
+    }
+    const interest = { ...worldAssertion(`r17-interest-reply:${turn}`, "NEEDS", { subject: "MARCUS", object: "R17" }), polarity: marcus.caresAboutR17 ? "ASSERTED" : "NEGATED" };
+    reply(marcus.caresAboutR17 ? "R17_CARES" : "R17_DOES_NOT_CARE", interest, "Marcus's interest in R-17");
+    replied = true;
+  }
+  if (intent.topic === "R17_SHOW") {
+    // P6 READ plus recognized marks supplies V1/R6 support in this same commit.
+    present(["header", "signature", "body"]);
+    once("r17:shown"); once(`disclosure:${player.privateFactId}`);
+    reply("SOURCE_VERIFIED", worldAssertion(`r17-show-source:${turn}`, "ISSUED_BY", { subject: "R17", object: "DEPOT" }), "Source verification reply");
+    replied = true;
+  }
   if (intent.topic === "SMALL_TALK") once("history:SHARED_LOADING_SHIFT");
   if (intent.topic === "ACK_MISSED") once("history:MISSED_CHECKIN");
   if (intent.topic === "VERIFY_SOURCE") {
@@ -127,7 +156,11 @@ export function advanceMarcusWorld(state, intent, outcome = {}) {
   if (intent.action === "ACCEPT") {
     const terms = state.counteroffer.terms;
     add("TRANSACTION", { fromId: "MARCUS", toId: "PLAYER", hardEffects: [delta("PLAYER", "CASH", -terms.upfront), delta("MARCUS", "CASH", terms.upfront), delta("MARCUS", "CONTRA", -terms.units), delta("PLAYER", "CONTRA", terms.units), { kind: "OBLIGATION_SET", obligationId: "NEW_ACCOUNT", debtorId: "PLAYER", creditorId: "MARCUS", principal: terms.repayment, extra: terms.extra, days: terms.days, status: "OPEN" }] });
-    if (state.counteroffer.informationExchange) { present(["body"]); once(`exchange:${player.privateFactId}`); }
+    if (state.counteroffer.informationExchange) {
+      present(["header", "signature", "body"]);
+      add("DOCUMENT_TRANSFERRED", { documentId: "R17", fromId: "PLAYER", toId: "MARCUS" });
+      once(`exchange:${player.privateFactId}`);
+    }
   }
   if (!replied) statement("MARCUS");
   if (["AGREED", "WITHDRAWN", "ENDED"].includes(outcome.status)) add("ENCOUNTER_CLOSED", { encounterId: state.runId, participantIds: ["PLAYER", "MARCUS"], outcome: outcome.status });

@@ -44,10 +44,10 @@ export function buildPlayerFrame(state, intent) {
     informationText = state.world ? informationPlayerText(state, intent) : "";
     requireLanguage(!!QUESTIONS[topic] || !!informationText, "unsupported question");
     if (topic === "CLARIFY_OFFER") requireLanguage(state.counteroffer?.terms, "no current offer to clarify");
-    if (topic === "DISCLOSE_FULL") {
+    if (["R17_SHOW", "DISCLOSE_FULL"].includes(topic)) {
       requireLanguage(privateInformation(state), "speaker does not know the private detail");
       disclosure = "FULL";
-    } else if (topic === "DISCLOSE_PARTIAL") disclosure = "CATEGORY";
+    } else if (["R17_HINT", "DISCLOSE_PARTIAL"].includes(topic)) disclosure = "CATEGORY";
     else if (topic === "VERIFY_SOURCE") disclosure = "SOURCE_ONLY";
   }
   if (action === "DEAL") {

@@ -6,7 +6,7 @@ import { transition, projectState } from "../src/encounter/engine.mjs";
 import { selectQuirk } from "../src/encounter/marcus-profile.mjs";
 
 const seed = "5e13a70495eb";
-const terms = { units: 2, upfront: 40, repayment: 80, extra: 10, days: 7 };
+const terms = { units: 2, upfront: 40, repayment: 80, extra: 13, days: 7 };
 const start = () => createState(seed, "polish-regression", selectQuirk(seed));
 const input = (state, fields) => ({ requestId: `polish_${state.events.length}`, runId: state.runId,
   version: state.events.length, vibeId: "EA", intensity: "BALANCED", ...fields });
@@ -39,8 +39,8 @@ test("polish: observed seven-turn route approves before transferring and settles
   assert.equal(accepted.status, "AGREED");
   assert.equal(accepted.counteroffer, null);
   assert.deepEqual(accepted.agreement.terms, terms);
-  assert.deepEqual(economy(accepted), { cash: 40, debt: 340, marcusStock: 6, playerStock: 2 });
-  assert.deepEqual(accepted.obligations, { existing: 250, principal: 80, extra: 10, days: 7 });
+  assert.deepEqual(economy(accepted), { cash: 40, debt: 343, marcusStock: 6, playerStock: 2 });
+  assert.deepEqual(accepted.obligations, { existing: 250, principal: 80, extra: 13, days: 7 });
   const before = structuredClone(accepted);
   assert.throws(() => transition(accepted, acceptance(proposed)));
   assert.throws(() => step(accepted, { action: "ACCEPT", offerId: proposed.counteroffer.id, offerVersion: proposed.counteroffer.version }));
@@ -50,7 +50,7 @@ test("polish: observed seven-turn route approves before transferring and settles
 test("polish: same-seed three-turn no-information route preserves counteroffer through clarification", () => {
   const proposed = deal(start());
   assert.equal(proposed.events.at(-1).outcome, "COUNTER");
-  assert.deepEqual(proposed.counteroffer.terms, { units: 2, upfront: 48, repayment: 72, extra: 11, days: 7 });
+  assert.deepEqual(proposed.counteroffer.terms, { units: 2, upfront: 48, repayment: 72, extra: 12, days: 7 });
   assert.deepEqual(economy(proposed), economy(start()));
   const clarified = ask(proposed, "CLARIFY_OFFER");
   assert.deepEqual(clarified.counteroffer, proposed.counteroffer);
@@ -59,7 +59,7 @@ test("polish: same-seed three-turn no-information route preserves counteroffer t
   const accepted = transition(clarified, acceptance(clarified));
   assert.equal(accepted.events.length, 3);
   assert.equal(accepted.status, "AGREED");
-  assert.deepEqual(economy(accepted), { cash: 32, debt: 333, marcusStock: 6, playerStock: 2 });
+  assert.deepEqual(economy(accepted), { cash: 32, debt: 334, marcusStock: 6, playerStock: 2 });
   assert.equal(projectMarcusLore(accepted).disclosure, "NONE");
   assert.equal(projectMarcusLore(accepted).knowledge.marcus.includes(projectMarcusLore(accepted).privateFactId), false);
 });
@@ -82,7 +82,7 @@ test("polish: repeated state projection and JSON transport cannot reapply settle
   const before = structuredClone(accepted);
   for (let n = 0; n < 3; n++) {
     const view = JSON.parse(JSON.stringify(projectState(accepted, "polish-csrf")));
-    assert.deepEqual(view.play.metrics, { cash: 40, debt: 340, marcusStock: 6, playerStock: 2 });
+    assert.deepEqual(view.play.metrics, { cash: 40, debt: 343, marcusStock: 6, playerStock: 2 });
     assert.equal(view.play.status, "AGREED");
     assert.deepEqual(view.play.agreement.terms, terms);
     assert.equal(view.play.obligations.existing + view.play.obligations.principal + view.play.obligations.extra, view.play.metrics.debt);

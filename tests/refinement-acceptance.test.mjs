@@ -1,5 +1,6 @@
 import test from "node:test";
 import { projectMarcusLore } from "../src/encounter/marcus-world-adapter.mjs";
+import { legacyEdgeView } from "../src/conversation/edge.mjs";
 import assert from "node:assert/strict";
 import { BASED_VIBES, DELIVERY_INTENSITIES } from "../src/based.mjs";
 import { createConversation, resolveConversation, previewConversation, projectConversation } from "../src/conversation/runtime.mjs";
@@ -34,14 +35,14 @@ test("refinement independent: edge is persistent player-safe information, indepe
     let state = fresh(seed);
     const initial = edgeView(state);
     assert.ok(initial.title && initial.detail);
-    assert.deepEqual(Object.keys(initial).sort(), ["action", "detail", "disclosure", "observations", "opening", "relevance", "source", "title"]);
+    assert.deepEqual(Object.keys(initial).sort(), ["action", "card", "detail", "disclosure", "note", "observations", "relevance", "title"]);
     const altered = structuredClone(state);
     altered.quirk = "final_say";
     altered.metrics.confidence = 1;
     altered.metrics.tension = 89;
     altered.metrics.patience = 2;
     assert.deepEqual(edgeView(altered), initial, "Public edge must not reveal private temperament or scores");
-    state = ask(state, "VERIFY_SOURCE");
+    state = ask(state, "R17_HINT");
     assert.equal(view(state).edge.title, initial.title);
     state = ask(state, "DEBT");
     assert.equal(view(state).edge.title, initial.title, "Talking about debt cannot replace held-information panel");
@@ -53,20 +54,21 @@ test("refinement independent: revealed negative opening expires for next action 
   let state = fresh();
   for (const topic of ["VERIFY_SOURCE", "PROBE_USEFULNESS", "QUESTION_RECORD", "DISCLOSE_FULL"]) state = ask(state, topic);
   assert.equal(state.events.length, 4);
-  assert.equal(view(state).edge.opening.status, "AVAILABLE");
-  assert.equal(view(state).edge.opening.remainingTurns, 3);
+  assert.equal(view(state).edge.opening, undefined);
+  assert.equal(legacyEdgeView(state).opening.status, "AVAILABLE");
+  assert.equal(legacyEdgeView(state).opening.remainingTurns, 3);
   for (const [topic, remaining] of [["DEBT", 2], ["RISK", 1], ["PRIORITIES", 0]]) {
     state = ask(state, topic);
-    assert.equal(view(state).edge.opening.remainingTurns, remaining);
+    assert.equal(legacyEdgeView(state).opening.remainingTurns, remaining);
   }
   assert.equal(state.events.length, 7);
-  assert.equal(view(state).edge.opening.status, "ELAPSED");
+  assert.equal(legacyEdgeView(state).opening.status, "ELAPSED");
   assert.equal(state.informationLocal.negativeWindow.consumedAt, null, "Projection handles deadline before lazy resolver expires it");
 });
 
 test("refinement independent: conditional information remains private until confirmation and edge identifies pending exchange", () => {
-  let state = fresh("conversation-coverage-9");
-  for (const topic of ["VERIFY_SOURCE", "PROBE_USEFULNESS"]) state = ask(state, topic);
+  let state = ask(fresh("lore-3"), "R17_HINT");
+  const factId = projectMarcusLore(state).privateFactId;
   state = act(state, { action: "DEAL", terms: { units: 2, upfront: 41, repayment: 79, extra: 0, days: 7 }, information: "OFFER_INFORMATION" });
   assert.ok(state.counteroffer?.informationExchange);
   assert.equal(projectMarcusLore(state).knowledge.marcus.includes(projectMarcusLore(state).privateFactId), false);
@@ -79,8 +81,11 @@ test("refinement independent: conditional information remains private until conf
   assert.deepEqual(state, before);
   state = resolveConversation(state, input, options);
   assert.equal(state.events.at(-1).playerText, preview.playerText);
-  assert.ok(projectMarcusLore(state).knowledge.marcus.includes(projectMarcusLore(state).privateFactId));
+  assert.ok(projectMarcusLore(state).knowledge.marcus.includes(factId));
+  assert.equal(projectMarcusLore(state).privateFactId, null);
   assert.equal(view(state).edge.disclosure.id, "FULL");
+  assert.equal(view(state).edge.card.id, "TRADED");
+  assert.equal(view(state).edge.card.physicallyHeld, false);
 });
 
 test("refinement independent: late and repeated preparation cannot imply restored secrecy or progress", () => {
@@ -89,14 +94,15 @@ test("refinement independent: late and repeated preparation cannot imply restore
   assert.doesNotMatch(preview.playerText, /keeping.*covered|still.*private/i);
   assert.match(preview.playerText, /already|shared|showed|disclosed/i);
   for (const topic of ["VERIFY_SOURCE", "PROBE_USEFULNESS", "QUESTION_RECORD"]) state = ask(state, topic);
-  assert.equal(view(state).edge.opening.status, "NOT_OPENED");
+  assert.equal(legacyEdgeView(state).opening.status, "NOT_OPENED");
   assert.match(state.events.at(-1).feedback, /cannot.*replay|cannot.*fresh|cannot.*opening/i);
   state = ask(state, "PROBE_USEFULNESS");
   assert.match(state.events.at(-1).feedback, /already|repeat/i);
   assert.match(state.events.at(-1).feedback, /no new/);
   const cards = projectConversation(state, "test-csrf", options).options.keywords;
   const repeated = cards.flatMap(card => card.actions).filter(action => action.intent.topic === "PROBE_USEFULNESS");
-  assert.ok(repeated.length && repeated.every(action => action.completion?.done));
+  assert.equal(repeated.length, 0, "Deferred preparation is absent from the proof surface");
+  assert.ok(cards.flatMap(card => card.actions).filter(action => ["R17_HINT", "R17_SHOW"].includes(action.intent.topic)).every(action => !action.available));
 });
 
 test("refinement independent: mixed economic deterioration earns no concession progress", () => {

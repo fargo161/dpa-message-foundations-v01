@@ -27,13 +27,15 @@ export function informationEligibility(state, intent) {
   if (intent.action === "DEAL") {
     if (!intent.information || intent.information === "NONE") return yes();
     if (intent.information !== "OFFER_INFORMATION") return no("Unknown information option.");
-    if (!privateInformation(state) || lore.privateFactId !== "POSITIVE_ROUTE") return no("You have no suitable private collection detail to offer in exchange.");
+    if (!privateInformation(state) || !lore.r17.held) return no("You do not hold R-17 to trade.");
     if (lore.disclosure === "FULL") return no("Marcus already has the exact information; it is no longer private exchange value.");
-    if (!hasLoreFact(state, "DIRECT_RECEIPT") || !hasEvidence(state, "SOURCE_VERIFIED")) return no("First establish the source without giving away the detail.");
-    if (!hasEvidence(state, "RELEVANCE_OBSERVED")) return no("You have not established a useful reason for him to trade for this detail.");
-    return yes("Offer the exact collection detail with the terms; it is delivered only when you confirm an agreement.");
+    return yes("Attach counterfoil R-17; it stays yours until you confirm the exchange. Hint first to learn whether Marcus cares.");
   }
   if (intent.action !== "ASK") return yes();
+  if (["R17_HINT", "R17_SHOW"].includes(intent.topic)) {
+    if (!privateInformation(state) || !lore.r17.available) return no("R-17 is no longer available: it has been spent or traded.");
+    return yes(intent.topic === "R17_HINT" ? "Learn whether Marcus cares, keeping the detail private. No fee change." : "Show the source and detail together; spend R-17's leverage for three percentage points of goodwill.");
+  }
   const requirements = {
     DEBT: ["OLD_ACCOUNT"], GUARANTEE: ["OLD_ACCOUNT"], RISK: ["STOCK_TITLE"], ENTITLEMENT: ["STOCK_TITLE"], TERMS: ["STOCK_TITLE"],
     SMALL_TALK: ["SHARED_LOADING_SHIFT"], ACK_MISSED: ["OLD_ACCOUNT", "MISSED_CHECKIN"],
@@ -54,8 +56,10 @@ export function informationPlayerText(state, intent) {
   const lore = state.world ? projectPlayerInformation(state) : null;
   const positive = lore?.privateFactId === "POSITIVE_ROUTE";
   const shared = lore?.disclosure === "FULL";
-  if (intent.action === "DEAL" && intent.information === "OFFER_INFORMATION") return "I offer the exact collection instructions with these terms, to be shared if we both agree. You are free to decline.";
+  if (intent.action === "DEAL" && intent.information === "OFFER_INFORMATION") return "I offer counterfoil R-17 and its exact detail with these terms, to be transferred only if we both agree. You are free to decline.";
   const phrases = {
+    R17_HINT: positive ? "I have a document about a collection change. Do you care about that information? I'm keeping the detail covered." : "I have a document about an intake-count mismatch. Do you care about that information? I'm keeping the detail covered.",
+    R17_SHOW: `Here is counterfoil R-17, its header and signature, and the exact detail: ${privateInformation(state)?.proposition ?? "No private detail is available."}`,
     SMALL_TALK: "How has the loading been since that shift we worked together last week?",
     ACK_MISSED: "I missed yesterday's check-in about the unpaid account. I should have shown up. Can we discuss what comes next?",
     VERIFY_SOURCE: shared ? "Here's today's depot header and signature on my counterfoil. Do they check out as the source of the detail I already showed you?" : "Here's today's depot header and signature on my counterfoil. I'm keeping the detail covered. Does the source check out?",
@@ -80,6 +84,6 @@ export function projectLore(state) {
   const eligibility = informationEligibility(state, { action: "DEAL", information: "OFFER_INFORMATION" });
   return { briefing, playerKnowledge, disclosed, evidence: lore.evidence.map(item => item.text), informationOptions: [
     { id: "NONE", label: "Keep information outside this proposal", available: state.status === "OPEN", reason: "No information exchange is attached." },
-    { id: "OFFER_INFORMATION", label: "Trade the private collection detail with these terms", available: eligibility.allowed, reason: eligibility.reason },
+    { id: "OFFER_INFORMATION", label: "Trade counterfoil R-17 with these terms", available: eligibility.allowed, reason: eligibility.reason },
   ] };
 }

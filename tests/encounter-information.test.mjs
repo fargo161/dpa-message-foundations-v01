@@ -1,4 +1,5 @@
-import { projectMarcusLore } from "../src/encounter/marcus-world-adapter.mjs";
+import { projectMarcusLore, projectMarcusInformation } from "../src/encounter/marcus-world-adapter.mjs";
+import { r17ExtraFloor } from "../src/encounter/constants.mjs";
 import { withoutFact, alterPrivateClaim, setOldDebt, setResources, prepareInformation, rewriteMarcusHistory } from "./helpers/marcus-world-interventions.mjs";
 import test from "node:test";
 import assert from "node:assert/strict";
@@ -14,10 +15,10 @@ const ask = (state, topic, extra = {}) => transition(state, input(state, { actio
 const deal = (state, terms, information = "NONE") => transition(state, input(state, { action: "DEAL", terms, information }));
 const accept = state => transition(state, input(state, { action: "ACCEPT", offerId: state.counteroffer.id, offerVersion: state.counteroffer.version }));
 const privateId = variant => variant === "POSITIVE" ? "POSITIVE_ROUTE" : "NEGATIVE_DISCREPANCY";
-function start(variant = "POSITIVE", quirk = "recognition") {
+function start(variant = "POSITIVE", quirk = "recognition", cares = undefined) {
   for (let n = 0; n < 300; n++) {
     const seed = `independent-lore-${n}`; const state = createState(seed, "information-review", selectQuirk(seed));
-    if (projectMarcusLore(state).privateFactId === privateId(variant) && state.quirk === quirk) return state;
+    if (projectMarcusLore(state).privateFactId === privateId(variant) && state.quirk === quirk && (cares === undefined || projectMarcusInformation(state).caresAboutR17 === cares)) return state;
   }
   assert.fail(`Unreachable combination ${variant}/${quirk}`);
 }
@@ -67,20 +68,21 @@ test("information: every meaningful lore fact has a present/absent gameplay pair
   const ready = prepare(need); const irrelevant = prepare(noNeed);
   const exchange = { action: "DEAL", terms, information: "OFFER_INFORMATION" };
   assert.equal(informationEligibility(ready, input(ready, exchange)).allowed, true);
-  assert.equal(informationEligibility(irrelevant, input(irrelevant, exchange)).allowed, false);
-  assert.throws(() => deal(irrelevant, terms, "OFFER_INFORMATION"));
+  assert.equal(informationEligibility(irrelevant, input(irrelevant, exchange)).allowed, true);
+  assert.doesNotThrow(() => deal(irrelevant, terms, "OFFER_INFORMATION"));
   assert.deepEqual([...Object.keys(pairs), "PICKUP_NEED"].sort(), Object.keys(HISTORY_CONTENT).sort());
 });
 
 test("information: a positive exchange improves actual terms and only acceptance delivers detail", () => {
-  const matched = { units: 2, upfront: 41, repayment: 79, extra: 0, days: 7 };
-  const ready = prepare(start()); const plain = deal(ready, matched); const exchange = deal(ready, matched, "OFFER_INFORMATION");
-  assert.equal(plain.events.at(-1).outcome, "COUNTER"); assert.equal(exchange.events.at(-1).outcome, "ACCEPT");
-  assert.deepEqual(exchange.counteroffer.terms, matched); assert.ok(exchange.counteroffer.informationExchange);
+  const matched = { units: 2, upfront: 70, repayment: 50, extra: 0, days: 7 };
+  const ready = ask(start("POSITIVE", "recognition", true), "R17_HINT"); const plain = deal(ready, matched); const exchange = deal(ready, matched, "OFFER_INFORMATION");
+  assert.equal(plain.events.at(-1).outcome, "COUNTER"); assert.equal(exchange.events.at(-1).outcome, "COUNTER");
+  assert.deepEqual(plain.counteroffer.terms, { ...matched, extra: 8 });
+  assert.deepEqual(exchange.counteroffer.terms, { ...matched, extra: 4 }); assert.ok(exchange.counteroffer.informationExchange);
   assert.ok(!JSON.stringify(projectState(exchange, "csrf").play).includes("POSITIVE_ROUTE"));
   assert.equal(projectMarcusLore(exchange).knowledge.marcus.includes("POSITIVE_ROUTE"), false);
   const clarified = ask(exchange, "CLARIFY_OFFER"); assert.deepEqual(clarified.counteroffer, exchange.counteroffer);
-  for (const factId of ["STOCK_TITLE", "DIRECT_RECEIPT", "POSITIVE_ROUTE"]) {
+  for (const factId of ["STOCK_TITLE", "POSITIVE_ROUTE"]) {
     const noLongerEligible = structuredClone(clarified); withoutFact(noLongerEligible, factId);
     const original = structuredClone(noLongerEligible); assert.throws(() => accept(noLongerEligible));
     assert.deepEqual(noLongerEligible, original, `${factId} failed acceptance changed state`);
@@ -91,7 +93,7 @@ test("information: a positive exchange improves actual terms and only acceptance
   assert.equal(accept(changedNeed).status, "AGREED");
   const accepted = accept(clarified); assert.equal(accepted.status, "AGREED"); assert.ok(projectMarcusLore(accepted).knowledge.marcus.includes("POSITIVE_ROUTE"));
   assert.ok(!JSON.stringify(projectState(accepted, "csrf").play).includes("POSITIVE_ROUTE"));
-  assert.equal(accepted.metrics.debt, 329); assert.equal(accepted.metrics.cash, 39);
+  assert.equal(accepted.metrics.debt, 304); assert.equal(accepted.metrics.cash, 10);
   const withdrawn = transition(exchange, input(exchange, { action: "WALK" }));
   assert.equal(projectMarcusLore(withdrawn).knowledge.marcus.includes("POSITIVE_ROUTE"), false);
   const rejected = deal(ready, { units: 8, upfront: 0, repayment: 480, extra: 0, days: 30 }, "OFFER_INFORMATION");
@@ -119,7 +121,7 @@ test("information: negative disclosure gives one bounded useful opportunity or b
   const noOpening = structuredClone(useful); noOpening.informationLocal.negativeWindow = null;
   let paired;
   for (let upfront = 24; upfront <= 80; upfront++) {
-    const proposal = { units: 2, upfront, repayment: 120 - upfront, extra: 0, days: 7 };
+    const proposal = { units: 2, upfront, repayment: 120 - upfront, extra: r17ExtraFloor(120 - upfront, 16), days: 7 };
     const withInfo = deal(useful, proposal); const without = deal(noOpening, proposal);
     if (withInfo.events.at(-1).outcome === "ACCEPT" && without.events.at(-1).outcome !== "ACCEPT") { paired = { withInfo, without, proposal }; break; }
   }
@@ -166,12 +168,13 @@ test("information: each variant and quirk supports a seeded useful information r
   const results = [];
   for (const variant of ["POSITIVE", "NEGATIVE"]) for (const quirk of ["final_say", "plain_dealing", "recognition"]) {
     for (const vibeId of ["EA", "SE"]) {
-      let state = start(variant, quirk);
+      let state = start(variant, quirk, true);
       for (const topic of ["VERIFY_SOURCE", "PROBE_USEFULNESS"]) state = ask(state, topic, { vibeId });
       if (variant === "NEGATIVE") for (const topic of ["QUESTION_RECORD", "DISCLOSE_FULL"]) state = ask(state, topic, { vibeId });
       const proposal = { units: 2, upfront: 50, repayment: 70, extra: 4, days: 7 };
       state = transition(state, input(state, { action: "DEAL", terms: proposal, information: variant === "POSITIVE" ? "OFFER_INFORMATION" : "NONE", vibeId }));
-      assert.ok(state.events.at(-1).derived.informationBonus > 0); assert.ok(state.counteroffer);
+      assert.equal(state.events.at(-1).derived.informationBonus, variant === "POSITIVE" ? 0 : 6); assert.ok(state.counteroffer);
+      if (variant === "POSITIVE") assert.equal(state.events.at(-1).derived.extraChargeRate, 8);
       state = accept(state); assert.equal(state.status, "AGREED");
       assert.ok(state.metrics.playerStock >= 2); assert.ok(state.obligations.principal > 0);
       results.push({ variant, quirk, seed: state.seed, vibeId, metrics: state.metrics, terms: state.agreement.terms });

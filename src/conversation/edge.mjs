@@ -24,7 +24,7 @@ function openingView(state) {
 }
 
 /** Working memory of player-owned information and witnessed responses, never an NPC score readout. */
-export function edgeView(state) {
+export function legacyEdgeView(state) {
   const fact = privateInformation(state);
   if (!fact) return null;
   const lore = projectPlayerInformation(state);
@@ -78,4 +78,31 @@ export function edgeView(state) {
     opening,
     action,
   };
+}
+
+/** Proof surface; possession and transfer history remain independent of disclosure. */
+export function edgeView(state) {
+  if (!state?.world) return null;
+  const player = projectPlayerInformation(state), fact = player.facts[player.r17FactId];
+  if (!fact) return null;
+  const r17 = player.r17;
+  const lifecycle = r17.traded ? "Traded" : !r17.available ? "Spent" : r17.hinted ? "Hinted" : "Held";
+  const observations = [];
+  if (r17.blindTradeFailed) observations.push("The failed blind Trade adds six percentage points for this encounter. Editing or removing R-17 cannot erase it.");
+  if (r17.shown) observations.push("Show goodwill subtracts three percentage points for this encounter, alongside any earlier penalty.");
+  if (r17.interestKnown) observations.push(r17.knownMarcusInterest ? "Marcus has told you he cares about R-17." : "Marcus has told you he does not care about R-17.");
+  if (state.counteroffer?.informationExchange) observations.push("R-17 remains yours and private until you confirm this information exchange. Replacing the offer removes its temporary trade value.");
+  const bank = keywordBank(state);
+  const keyword = bank.find(card => card.id === (player.r17FactId === "POSITIVE_ROUTE" ? "collection-change" : "intake-mismatch"));
+  const desired = !r17.interestKnown ? "ask-r17-hint" : r17.knownMarcusInterest ? "offer-information" : "ask-r17-show";
+  const move = keyword?.actions.find(action => action.id === desired && action.available);
+  const ordinary = bank.find(card => card.id === "contra-stock")?.actions.find(action => action.id === "propose-terms" && action.available);
+  const clarify = bank.find(card => card.id === "current-offer")?.actions.find(action => action.id === "ask-clarify-offer" && action.available);
+  return { title: "Counterfoil R-17", detail: fact.proposition,
+    card: { id: lifecycle.toUpperCase(), label: lifecycle, physicallyHeld: r17.held },
+    disclosure: { id: player.disclosure, label: player.disclosure === "FULL" ? "Exact detail shared." : player.disclosure === "PARTIAL" ? "Category shared; exact detail private." : "Exact detail private; category not shared." },
+    relevance: { id: r17.interestKnown ? r17.knownMarcusInterest ? "CARES" : "DOES_NOT_CARE" : "UNTESTED", label: r17.interestKnown ? r17.knownMarcusInterest ? "Marcus cares." : "Marcus does not care." : "Interest unknown. Hint is a safe probe." },
+    note: r17.blindTradeFailed ? `${r17.held ? "R-17 is still physically held. " : ""}The blind-trade penalty remains active.` : "",
+    observations,
+    action: state.status !== "OPEN" ? null : clarify ? { keywordId: "current-offer", contextActionId: clarify.id, label: clarify.label } : move ? { keywordId: keyword.id, contextActionId: move.id, label: move.label } : ordinary ? { keywordId: "contra-stock", contextActionId: ordinary.id, label: ordinary.label } : null };
 }

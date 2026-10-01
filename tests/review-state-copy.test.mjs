@@ -5,7 +5,7 @@ import { createState } from "../src/encounter/state.mjs";
 import { resolveInformation } from "../src/encounter/information-policy.mjs";
 import { loreOptions, projectLore } from "../src/encounter/knowledge.mjs";
 import { keywordBank } from "../src/conversation/keyword-bank.mjs";
-import { edgeView } from "../src/conversation/edge.mjs";
+import { edgeView, legacyEdgeView } from "../src/conversation/edge.mjs";
 import { conversationView } from "../src/encounter/conversation.mjs";
 import { createBrokenPromiseState, transitionBrokenPromise, projectBrokenPromise } from "../src/conversation/scenarios.mjs";
 
@@ -16,24 +16,22 @@ function step(state, intent) {
     events: [...state.events, { intent, worldEventIds: effect.worldEventIds }] };
 }
 
-test("information guidance tracks private, prepared and shared states without changing mechanics", () => {
+test("information guidance tracks held, Hinted and Spent states without changing mechanics", () => {
   let state = createState("lore-3", "review-copy");
   assert.equal(projectMarcusLore(state).variant, "POSITIVE");
   const exchange = () => projectLore(state).informationOptions.find(item => item.id === "OFFER_INFORMATION");
-  assert.equal(exchange().available, false);
-  assert.match(exchange().reason, /source/);
-  state = step(state, ask("VERIFY_SOURCE"));
-  assert.doesNotMatch(edgeView(state).source.label, /wrongdoing/);
-  assert.match(exchange().reason, /useful reason/);
-  state = step(state, ask("PROBE_USEFULNESS"));
   assert.equal(exchange().available, true);
-  state = step(state, ask("DISCLOSE_FULL"));
+  assert.equal(edgeView(state).card.id, "HELD");
+  state = step(state, ask("R17_HINT"));
+  assert.equal(edgeView(state).card.id, "HINTED");
+  assert.equal(exchange().available, true);
+  state = step(state, ask("R17_SHOW"));
+  assert.equal(edgeView(state).card.id, "SPENT");
   assert.equal(exchange().available, false);
   assert.match(exchange().reason, /already has/);
   const before = structuredClone(state);
   const source = keywordBank(state).flatMap(card => card.actions).find(action => action.intent.topic === "VERIFY_SOURCE");
-  assert.match(source.label, /already shared/);
-  assert.doesNotMatch(source.description, /keeping|covered/);
+  assert.equal(source, undefined, "Source verification remains internal rather than a public step");
   assert.match(loreOptions(state).find(topic => topic.id === "VERIFY_SOURCE").label, /already shared/);
   assert.match(projectLore(state).briefing.at(-1), /Marcus now has/);
   assert.deepEqual(state, before);
@@ -43,13 +41,14 @@ test("late proposal stays expired while an on-time proposal spends the one openi
   let prepared = createState("lore-0", "review-expiry");
   for (const topic of ["VERIFY_SOURCE", "PROBE_USEFULNESS", "QUESTION_RECORD", "DISCLOSE_FULL"]) prepared = step(prepared, ask(topic));
   let late = step(step(prepared, ask("PRIORITIES")), ask("DEBT"));
-  assert.match(edgeView(late).opening.label, /1 turn remains/);
+  assert.match(legacyEdgeView(late).opening.label, /1 turn remains/);
   late = step(late, ask("PRIORITIES"));
   const proposal = { action: "DEAL", information: "NONE", vibeId: "EA", intensity: "BALANCED" };
   late = step(late, proposal);
-  assert.equal(edgeView(late).opening.status, "ELAPSED");
-  assert.match(edgeView(late).opening.label, /expired before your proposal/);
-  assert.equal(edgeView(step(prepared, proposal)).opening.status, "USED");
+  assert.equal(legacyEdgeView(late).opening.status, "ELAPSED");
+  assert.match(legacyEdgeView(late).opening.label, /expired before your proposal/);
+  assert.equal(legacyEdgeView(step(prepared, proposal)).opening.status, "USED");
+  assert.equal(edgeView(late).opening, undefined);
   assert.equal(projectMarcusLore(late).disclosure, "FULL");
 });
 

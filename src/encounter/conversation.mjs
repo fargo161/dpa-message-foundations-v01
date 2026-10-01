@@ -86,6 +86,7 @@ export function reactionCause(state, intent, decision, informationEffect = {}) {
       outcome: decision.outcome,
       reasons: structuredClone(decision.reasons || []),
       feedback: decision.feedback || informationEffect.feedback || "",
+      r17Reaction: informationEffect.r17Reaction ?? null,
       requestedSocialChange: structuredClone(decision.social || {}),
       appliedDeltaLocation: "The same event's before, after and deltas fields are authoritative after clamping.",
       informationCauses: structuredClone(informationCauses),

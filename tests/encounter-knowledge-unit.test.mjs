@@ -78,16 +78,16 @@ test("every meaningful fact has a concrete absence consequence, not merely alter
   const present = prepare(), absent = initial(); withoutFact(absent, "PICKUP_NEED");
   const absentPrepared = prepare(absent);
   assert.equal(informationEligibility(present, deal("OFFER_INFORMATION")).allowed, true);
-  assert.equal(informationEligibility(absentPrepared, deal("OFFER_INFORMATION")).allowed, false);
+  assert.equal(informationEligibility(absentPrepared, deal("OFFER_INFORMATION")).allowed, true, "Held R-17 does not require a preparation gate");
   assert.equal(projectMarcusLore(absentPrepared).evidence.some(item => item.id === "RELEVANCE_OBSERVED"), false);
 });
 
-test("a previously observed use keeps the player option available but a cancelled NPC need supplies no new bonus", () => {
+test("a cancelled collection need does not rewrite independently seeded R-17 interest or award a score bonus", () => {
   const state = prepare();
   withoutFact(state, "PICKUP_NEED");
   assert.equal(informationEligibility(state, deal("OFFER_INFORMATION")).allowed, true);
   const effect = resolveInformation(state, deal("OFFER_INFORMATION"));
-  assert.equal(effect.scoreBonus, 0); assert.equal(effect.exchange, null);
+  assert.equal(effect.scoreBonus, 0); assert.equal(effect.r17Rate, 8); assert.ok(effect.exchange);
 });
 
 test("an observed stronger source denial cannot count as checked authenticity", () => {
@@ -95,7 +95,8 @@ test("an observed stronger source denial cannot count as checked authenticity", 
   assert.equal(projectMarcusLore(state).beliefs.source, "UNCHECKED");
   assert.equal(informationEligibility(state, deal("OFFER_INFORMATION")).allowed, true, "The player has not perceived the private denial");
   const effect = resolveInformation(state, deal("OFFER_INFORMATION"));
-  assert.equal(effect.scoreBonus, 0); assert.equal(effect.exchange, null);
+  assert.equal(effect.scoreBonus, 0); assert.equal(effect.r17Rate, 8); assert.ok(effect.exchange);
+  assert.equal(projectMarcusLore({ ...state, ...effect }).beliefs.source, "UNCHECKED", "Offering a trade does not fake source authentication");
 });
 
 test("inactive, wrongly scoped or player-unknown facts cannot authorize private information", () => {
@@ -120,7 +121,7 @@ test("verification and partial disclosure never give Marcus the covered exact pr
 test("positive offer is voluntary, conditional and delivers exact information only at confirmation", () => {
   const state = prepare(); const before = structuredClone(state);
   const result = resolveInformation(state, deal("OFFER_INFORMATION"));
-  assert.deepEqual(state, before); assert.equal(result.scoreBonus, 8);
+  assert.deepEqual(state, before); assert.equal(result.scoreBonus, 0); assert.equal(result.r17Rate, 8);
   assert.equal(result.exchange.factId, "POSITIVE_ROUTE");
   assert.ok(!projectMarcusLore({ ...state, ...result }).knowledge.marcus.includes("POSITIVE_ROUTE"));
   assert.match(informationPlayerText(state, deal("OFFER_INFORMATION")), /free to decline/);

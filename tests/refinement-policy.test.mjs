@@ -66,7 +66,7 @@ test("shared probe route: hostile delivery cannot buy a fee-only counterdiscount
 test("genuine security counters and the established credit ceiling remain unchanged", () => {
   const state = createState("policy-fixture", "refinement-policy", "plain_dealing");
   const counter = evaluateTurn(state, deal({ units: 2, upfront: 40, repayment: 80, extra: 12, days: 7 }));
-  assert.deepEqual(counter.counterTerms, { units: 2, upfront: 48, repayment: 72, extra: 11, days: 7 });
+  assert.deepEqual(counter.counterTerms, { units: 2, upfront: 48, repayment: 72, extra: 12, days: 7 });
   const excessive = evaluateTurn(state, deal({ units: 8, upfront: 0, repayment: 480, extra: 9999, days: 30 }));
   assert.equal(excessive.derived.creditDefensible, false);
   assert.notEqual(excessive.outcome, "ACCEPT");

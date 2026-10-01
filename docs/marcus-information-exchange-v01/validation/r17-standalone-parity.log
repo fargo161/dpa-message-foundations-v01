@@ -1,0 +1,46 @@
+TAP version 13
+# Subtest: standalone is classic-script parseable with all 28 exact source face assets and no network entrypoints
+ok 1 - standalone is classic-script parseable with all 28 exact source face assets and no network entrypoints
+  ---
+  duration_ms: 23.6919
+  type: 'test'
+  ...
+# Subtest: standalone module graph and non-import source bodies match the migrated source with only browser substitutions
+ok 2 - standalone module graph and non-import source bodies match the migrated source with only browser substitutions
+  ---
+  duration_ms: 22.0476
+  type: 'test'
+  ...
+# Subtest: standalone inventory independently matches output bytes, normalized source inputs and substitution contracts
+ok 3 - standalone inventory independently matches output bytes, normalized source inputs and substitution contracts
+  ---
+  duration_ms: 9.6709
+  type: 'test'
+  ...
+# Subtest: actual embedded runtime equals migrated source and frozen oracle over all 23 routes/127 snapshots
+ok 4 - actual embedded runtime equals migrated source and frozen oracle over all 23 routes/127 snapshots
+  ---
+  duration_ms: 50967.8012
+  type: 'test'
+  ...
+# Subtest: actual local API restarts deterministic seeds, previews without mutation, commits and resets both variants
+ok 5 - actual local API restarts deterministic seeds, previews without mutation, commits and resets both variants
+  ---
+  duration_ms: 2244.4186
+  type: 'test'
+  ...
+# Subtest: actual embedded R-17 proof matches all 20 golden routes, including Show and Hint
+ok 6 - actual embedded R-17 proof matches all 20 golden routes, including Show and Hint
+  ---
+  duration_ms: 16541.7381
+  type: 'test'
+  ...
+1..6
+# tests 6
+# suites 0
+# pass 6
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 70944.7618

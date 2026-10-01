@@ -100,7 +100,7 @@ test("lore: information cannot authorize unavailable stock, fake cash or inconsi
 test("lore HTTP: conditional information is delivered atomically only by current exact acceptance", async t => {
   const api = await serve(t); const client = await api.session();
   const restart = await api.post(client, { requestId: `positive_seed_${++serial}`, runId: client.view.play.runId,
-    version: client.view.play.version, seed: "independent-lore-2" }, "/api/restart");
+    version: client.view.play.version, seed: "lore-3" }, "/api/restart");
   assert.equal(restart.status, 200); client.view = await restart.json();
   for (const topic of ["VERIFY_SOURCE", "PROBE_USEFULNESS"]) await api.turn(client, { action: "ASK", topic });
   await api.turn(client, { action: "DEAL", terms: { units: 2, upfront: 41, repayment: 79, extra: 0, days: 7 }, information: "OFFER_INFORMATION" });
@@ -110,7 +110,11 @@ test("lore HTTP: conditional information is delivered atomically only by current
   const malformed = input(client.view, { action: "ACCEPT", offerId: offer.id, offerVersion: offer.version, disclosure: "FULL" });
   assert.equal((await api.post(client, malformed)).status, 400); assert.deepEqual(await api.read(client), client.view);
   await api.turn(client, { action: "ACCEPT", offerId: offer.id, offerVersion: offer.version });
-  assert.equal(client.view.play.status, "AGREED"); assert.equal(client.view.play.metrics.cash, 39); assert.equal(client.view.play.metrics.debt, 329);
+  assert.equal(client.view.play.status, "AGREED");
+  assert.equal(client.view.play.metrics.cash, 80 - offer.terms.upfront);
+  assert.equal(client.view.play.metrics.debt, 250 + offer.terms.repayment + offer.terms.extra);
+  assert.equal(offer.extraChargeRate, 8);
+  assert.equal(offer.terms.extra, Math.ceil(offer.terms.repayment * 8 / 100));
   assert.ok(projectMarcusLore(client.view.debug.state).knowledge.marcus.includes("POSITIVE_ROUTE"));
   assert.equal(projectMarcusLore(client.view.debug.state).disclosure, "FULL"); assert.ok(client.view.play.lore.disclosed.length);
   assert.ok(client.view.debug.latestTurn.reactionCause.consequences.transfersCommitted);

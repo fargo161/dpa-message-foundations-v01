@@ -6,7 +6,7 @@ import { projectMarcusLore, projectPlayerInformation, projectMarcusInformation }
 import { createLedger, createEvent, appendCommit } from "../src/world/ledger.mjs";
 import { createClaim } from "../src/world/claims.mjs";
 
-const fixture = JSON.parse(fs.readFileSync(new URL("./fixtures/marcus-world-model-baseline-v01.json", import.meta.url)));
+const fixture = JSON.parse(fs.readFileSync(new URL("./fixtures/marcus-r17-exchange-v01.json", import.meta.url), "utf8"));
 const legacyKeys = ["knowledge", "beliefs", "disclosure", "evidence", "privateFactId", "progressKeys", "negativeWindow"];
 function worldState(run) {
   const initial = run.snapshots[0].outcome;
@@ -80,8 +80,10 @@ test("A later private need cancellation replaces its earlier value in Marcus's o
   state.world = appendCommit(state.world, [createEvent(state.world, "ATTITUDE_SET", { holderId: "MARCUS", assertion }, { placeId: "COUNTER", presentIds: ["MARCUS"], observability: "PRIVATE" })]);
   const view = projectMarcusInformation(state);
   assert.equal(view.pickupNeed, false); assert.equal(view.relevant, false);
-  assert.equal(view.attitudes.filter(item => item.keywordId === "NEEDS").length, 1);
-  assert.equal(view.attitudes.find(item => item.keywordId === "NEEDS").polarity, "NEGATED");
+  const collectionNeeds = view.attitudes.filter(item => item.keywordId === "NEEDS" && item.args.object === "COLLECTION_ARRANGED");
+  assert.equal(collectionNeeds.length, 1);
+  assert.equal(collectionNeeds[0].polarity, "NEGATED");
+  assert.equal(view.caresAboutR17, projectMarcusInformation(initialWorld("POSITIVE")).caresAboutR17);
   assert.deepEqual(projectPlayerInformation(state), before);
 });
 test("A lone R17 docket cannot reveal unread gate and time, and one count cannot reveal a mismatch", () => {
