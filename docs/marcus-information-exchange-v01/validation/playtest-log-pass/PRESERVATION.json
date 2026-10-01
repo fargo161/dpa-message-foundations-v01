@@ -1,0 +1,102 @@
+{
+  "protected": [
+    {
+      "path": "tests/fixtures/marcus-world-model-baseline-v01.json",
+      "before": "add6744c07ec5bcbaac77457c65f1381723642072657d21e7ade4865444acc46",
+      "after": "add6744c07ec5bcbaac77457c65f1381723642072657d21e7ade4865444acc46",
+      "unchanged": true
+    },
+    {
+      "path": "tests/fixtures/marcus-r17-exchange-v01.json",
+      "before": "6741d86c72de15911d425263e6ffa9ed57582241f01e77bcb738d3179bfa6f39",
+      "after": "6741d86c72de15911d425263e6ffa9ed57582241f01e77bcb738d3179bfa6f39",
+      "unchanged": true
+    },
+    {
+      "path": "docs/marcus-information-exchange-v01/GOLDEN_RUNS.json",
+      "before": "b4cc594b732bc89e238b44cb82c62e47345afe9d5edbeaf4d996f9a1c3f79823",
+      "after": "b4cc594b732bc89e238b44cb82c62e47345afe9d5edbeaf4d996f9a1c3f79823",
+      "unchanged": true
+    },
+    {
+      "path": "docs/marcus-information-exchange-v01/SNAPSHOT_MIGRATION.md",
+      "before": "795e04f27f4b4bfbfc6243a0cacbfb18d5846642d4351cf84ebf1cde4fe57a35",
+      "after": "795e04f27f4b4bfbfc6243a0cacbfb18d5846642d4351cf84ebf1cde4fe57a35",
+      "unchanged": true
+    },
+    {
+      "path": "docs/marcus-information-exchange-v01/SNAPSHOT_MIGRATION.json",
+      "before": "f926a3dff367e854521268f07dc76a0c9245e5c61f76c7c77e4d4ba18bd3edb6",
+      "after": "f926a3dff367e854521268f07dc76a0c9245e5c61f76c7c77e4d4ba18bd3edb6",
+      "unchanged": true
+    },
+    {
+      "path": "docs/marcus-information-exchange-v01/EXTRA_CHARGE_MIGRATION.md",
+      "before": "e5daca19e63ce61ab6f4f9751e95d781391562bcac521babed6342741bf08215",
+      "after": "e5daca19e63ce61ab6f4f9751e95d781391562bcac521babed6342741bf08215",
+      "unchanged": true
+    },
+    {
+      "path": "docs/marcus-information-exchange-v01/EXTRA_CHARGE_MIGRATION.json",
+      "before": "b8856fb778586976360fc678cacbbe728ca7138034ba25a8ebea951c4d3eb0bb",
+      "after": "b8856fb778586976360fc678cacbbe728ca7138034ba25a8ebea951c4d3eb0bb",
+      "unchanged": true
+    }
+  ],
+  "temp": [
+    {
+      "path": "Temp/post-merge-gate/build.log",
+      "before": "fa22908c2aa835ca61a6981b0bbdaeb8ffb4fded0065336d849d7c29514ea977",
+      "after": "fa22908c2aa835ca61a6981b0bbdaeb8ffb4fded0065336d849d7c29514ea977",
+      "unchanged": true
+    },
+    {
+      "path": "Temp/post-merge-gate/ci.log",
+      "before": "6717ae85c763f727f006e34abc9810ca1d15ba1e26b800f072351609cbecc013",
+      "after": "6717ae85c763f727f006e34abc9810ca1d15ba1e26b800f072351609cbecc013",
+      "unchanged": true
+    },
+    {
+      "path": "Temp/post-merge-gate/conformance.log",
+      "before": "43e850fab3b9ea7a5122f2a6ab4d5c3437f472c7c244df8c55a4315cb0610f50",
+      "after": "43e850fab3b9ea7a5122f2a6ab4d5c3437f472c7c244df8c55a4315cb0610f50",
+      "unchanged": true
+    },
+    {
+      "path": "Temp/post-merge-gate/generated.log",
+      "before": "68e096ef3acfe6ca439b1deb30a658d0e7f0741f3acbe09a26a782ddfaa6cb67",
+      "after": "68e096ef3acfe6ca439b1deb30a658d0e7f0741f3acbe09a26a782ddfaa6cb67",
+      "unchanged": true
+    },
+    {
+      "path": "Temp/post-merge-gate/lint.log",
+      "before": "646cbe0ffd6beaa58d97ff710d70ea1270f1584b611bc9ff138b850d1921b22f",
+      "after": "646cbe0ffd6beaa58d97ff710d70ea1270f1584b611bc9ff138b850d1921b22f",
+      "unchanged": true
+    },
+    {
+      "path": "Temp/post-merge-gate/schema.log",
+      "before": "b2897f34b8296fdf008cd69d422f0e2eeb5c5fc69d788c9f4c51f0504ce319a0",
+      "after": "b2897f34b8296fdf008cd69d422f0e2eeb5c5fc69d788c9f4c51f0504ce319a0",
+      "unchanged": true
+    },
+    {
+      "path": "Temp/post-merge-gate/test.log",
+      "before": "e79b8590e92759dc67f03423762b693db0bd289a9c3200b359893fc945034427",
+      "after": "e79b8590e92759dc67f03423762b693db0bd289a9c3200b359893fc945034427",
+      "unchanged": true
+    },
+    {
+      "path": "Temp/post-merge-gate/typecheck.log",
+      "before": "dda304bdb27c78c036259ab1e7907d5f752decac6a127d56fbf4bbbcf2a2449b",
+      "after": "dda304bdb27c78c036259ab1e7907d5f752decac6a127d56fbf4bbbcf2a2449b",
+      "unchanged": true
+    },
+    {
+      "path": "Temp/UnityLockfile",
+      "before": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "after": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "unchanged": true
+    }
+  ]
+}

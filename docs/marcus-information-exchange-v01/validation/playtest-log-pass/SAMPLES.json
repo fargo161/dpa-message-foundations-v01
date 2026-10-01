@@ -1,0 +1,18 @@
+[
+  {
+    "basename": "2026-10-01_18-25-28-0400_r17-proof-0_e546d598-f77b-4ab1-8538-eafe48da398f",
+    "status": "AGREED",
+    "runId": "e546d598-f77b-4ab1-8538-eafe48da398f",
+    "turns": 3,
+    "records": 250,
+    "diagnostics": []
+  },
+  {
+    "basename": "2026-10-01_18-33-09-0400_playtest-walk-away_efbd784d-4e9c-4f14-b021-680f54056b55",
+    "status": "WITHDRAWN",
+    "runId": "efbd784d-4e9c-4f14-b021-680f54056b55",
+    "turns": 1,
+    "records": 60,
+    "diagnostics": []
+  }
+]

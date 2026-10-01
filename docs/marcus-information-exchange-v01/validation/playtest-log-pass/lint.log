@@ -1,0 +1,5 @@
+
+> dpa-message-foundations@0.1.0 lint
+> node scripts/lint.mjs
+
+lint-ok: ESLint static correctness rules passed for src/, scripts/, and public/encounter/

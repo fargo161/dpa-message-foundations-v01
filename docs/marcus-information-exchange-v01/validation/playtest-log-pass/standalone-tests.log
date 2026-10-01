@@ -1,0 +1,31 @@
+✔ standalone packaging is byte-reproducible and parses with the same world engine (534.1116ms)
+✔ packaged source/ plus thin rebuild wrapper defaults are independent of host paths (545.8209ms)
+✔ a missing required asset fails without replacing a previous deliverable (533.9854ms)
+✔ an unexpected transport substitution count fails loudly (584.9413ms)
+✔ unresolved reexports and unknown named bindings are rejected (837.33ms)
+✔ unapproved Node dependencies and residual network calls are rejected (1021.8525ms)
+Playtest storage unavailable.
+Playtest storage unavailable.
+Playtest storage unavailable.
+Playtest storage unavailable.
+Playtest storage unavailable.
+Playtest storage unavailable.
+Playtest storage unavailable.
+Playtest storage unavailable.
+✔ standalone is classic-script parseable with all 28 exact source face assets and no network entrypoints (31.9517ms)
+✔ standalone module graph and non-import source bodies match the migrated source with only browser substitutions (41.6769ms)
+✔ standalone inventory independently matches output bytes, normalized source inputs and substitution contracts (12.6862ms)
+✔ actual embedded runtime equals migrated source and frozen oracle over all 23 routes/127 snapshots (115541.5086ms)
+✔ actual local API restarts deterministic seeds, previews without mutation, commits and resets both variants (7153.8831ms)
+✔ actual offline recorder and download exports match the shared server model with fixed metadata and clock (5540.8465ms)
+✔ offline storage failures preserve gameplay and do not restore state from a saved log (2449.8294ms)
+✔ actual embedded R-17 proof matches all 20 golden routes, including Show and Hint (32538.3359ms)
+✔ embedded exact-extra regression and blind exposure preview match source with networking forbidden (1268.1747ms)
+ℹ tests 15
+ℹ suites 0
+ℹ pass 15
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 167053.0273

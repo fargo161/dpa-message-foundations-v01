@@ -1,0 +1,23 @@
+warning: in the working copy of '.gitignore', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'data/generated/based-tpl-foundation.json', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'data/generated/foundation-inspection.json', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'data/source-manifest.json', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'docs/marcus-information-exchange-v01/IMPLEMENTATION_REPORT.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'docs/marcus-information-exchange-v01/PLAYTEST.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'public/encounter/app.js', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'public/encounter/delivery-chart.js', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'public/encounter/index.html', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'scripts/encounter-server.mjs', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'scripts/test-portable.mjs', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'tests/standalone-build.test.mjs', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'tests/standalone-parity.test.mjs', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'tools/build_standalone.py', LF will be replaced by CRLF the next time Git touches it
+✔ raw corpus bytes are not tracked and candidate text contains no secrets or private paths (575.1333ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 1
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1636.7794

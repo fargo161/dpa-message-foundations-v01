@@ -1,0 +1,18 @@
+- main:
+  - heading "TRAPSTAR" [level=1]
+  - paragraph: Read the room. Choose your words.
+  - paragraph: Marcus — the Contra deal
+  - navigation "Conversation controls":
+    - button "More things to say ↗"
+    - button "Conversation log"
+    - button "Play"
+    - button "Debug" [active] [pressed]
+  - status: Choose your words and delivery. Sending spends a turn; browsing does not.
+  - button "Download run log"
+  - region "Debug":
+    - heading "Observed Debug" [level=2]
+    - paragraph: Player-observed diagnostics only. Private run facts are available in downloaded logs. This view does not change the encounter.
+    - generic: "{ \"definitions\": [ { \"key\": \"cash\", \"label\": \"Player cash\", \"min\": 0, \"max\": 100000, \"meaning\": \"Money available now; hoped-for profits are excluded.\" }, { \"key\": \"debt\", \"label\": \"Outstanding debt\", \"min\": 0, \"max\": 100000, \"meaning\": \"Existing debt plus accepted new principal and extra repayment.\" }, { \"key\": \"marcusStock\", \"label\": \"Marcus Contra\", \"min\": 0, \"max\": 100, \"meaning\": \"Units Marcus can transfer.\" }, { \"key\": \"playerStock\", \"label\": \"Player Contra\", \"min\": 0, \"max\": 100, \"meaning\": \"Units already transferred to you.\" }, { \"key\": \"confidence\", \"label\": \"Marcus confidence\", \"min\": 0, \"max\": 100, \"meaning\": \"How credible he finds your commitment.\" }, { \"key\": \"tension\", \"label\": \"Marcus tension\", \"min\": 0, \"max\": 100, \"meaning\": \"How strained this conversation has become.\" }, { \"key\": \"patience\", \"label\": \"Marcus patience\", \"min\": 0, \"max\": 20, \"meaning\": \"Finite room for opening, evidence and bargaining; repetition costs extra.\" } ], \"observed\": { \"status\": \"OPEN\", \"metrics\": { \"cash\": 80, \"debt\": 250, \"marcusStock\": 8, \"playerStock\": 0 }, \"edge\": { \"title\": \"Counterfoil R-17\", \"detail\": \"Counterfoil R-17 records six crates returned against stock ledger entry L-42's eight: a two-crate mismatch. It does not establish theft or who caused the error.\", \"card\": { \"id\": \"HELD\", \"label\": \"Held\", \"physicallyHeld\": true }, \"disclosure\": { \"id\": \"NONE\", \"label\": \"Exact detail private; category not shared.\" }, \"relevance\": { \"id\": \"UNTESTED\", \"label\": \"Interest unknown. Hint is a safe probe.\" }, \"note\": \"\", \"observations\": [], \"action\": { \"keywordId\": \"intake-mismatch\", \"contextActionId\": \"ask-r17-hint\", \"label\": \"Hint\" } }, \"r17RateContext\": { \"shown\": false, \"blindTradeFailed\": false, \"available\": true, \"interestKnown\": false, \"knownMarcusInterest\": null }, \"extraChargeRate\": 16, \"proposal\": null, \"offer\": null, \"agreement\": null, \"latestVisibleTurn\": null } }"
+  - generic "Restart / choose test conversation"
+  - option "Marcus — the Contra deal" [selected]
+  - option "Avery — the broken promise (fixture)"

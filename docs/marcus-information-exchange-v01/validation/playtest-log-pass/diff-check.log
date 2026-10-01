@@ -1,0 +1,14 @@
+warning: in the working copy of '.gitignore', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'data/generated/based-tpl-foundation.json', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'data/generated/foundation-inspection.json', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'docs/marcus-information-exchange-v01/IMPLEMENTATION_REPORT.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'docs/marcus-information-exchange-v01/PLAYTEST.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'public/encounter/app.js', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'public/encounter/delivery-chart.js', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'public/encounter/index.html', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'scripts/encounter-server.mjs', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'scripts/test-portable.mjs', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'tests/standalone-build.test.mjs', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'tests/standalone-parity.test.mjs', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'tools/build_standalone.py', LF will be replaced by CRLF the next time Git touches it
+PASS: git diff --check

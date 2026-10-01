@@ -6,6 +6,8 @@ import vm from "node:vm";
 import { fileURLToPath } from "node:url";
 import { createHash } from "node:crypto";
 import * as sourceRuntime from "../src/conversation/runtime.mjs";
+import { createRunRecorder } from "../src/playtest/recorder.mjs";
+import { renderLogMarkdown } from "../src/playtest/markdown.mjs";
 
 // Dedicated packaging test: node tests/standalone-parity.test.mjs HTML_PATH
 // or MARCUS_STANDALONE_HTML=... node --test tests/standalone-parity.test.mjs.
@@ -23,10 +25,11 @@ const json = value => JSON.parse(JSON.stringify(value));
 const sha = value => createHash("sha256").update(value).digest("hex");
 const fixtureBytes = fs.readFileSync(new URL("./fixtures/marcus-world-model-baseline-v01.json", import.meta.url));
 const fixture = JSON.parse(fs.readFileSync(new URL("./fixtures/marcus-r17-exchange-v01.json", import.meta.url)));
-function sandbox() {
+function sandbox(extra = {}) {
   const context = vm.createContext({ structuredClone, URL, TextEncoder, TextDecoder, console,
     crypto: { randomUUID: () => "frozen-marcus-oracle" },
     fetch() { throw new Error("NETWORK_FORBIDDEN"); }, XMLHttpRequest: class { constructor() { throw new Error("NETWORK_FORBIDDEN"); } },
+    ...extra,
   });
   vm.runInContext(core, context);
   return { context, runtime: vm.runInContext('__req("src/conversation/runtime.mjs")', context),
@@ -77,7 +80,7 @@ test("standalone module graph and non-import source bodies match the migrated so
     const source = fs.readFileSync(path.join(root, name), "utf8");
     for (const match of source.matchAll(/^\s*(?:import|export)\s+(?:[^;\n]*?\s+from\s+)?["']([^"']+)["']/gm)) visit(resolve(name, match[1]));
   }
-  for (const entry of ["src/conversation/runtime.mjs", "src/encounter/engine.mjs", "public/encounter/delivery-chart.js", "public/encounter/face-renderer.js", "public/encounter/turn-player.js"]) visit(entry);
+  for (const entry of ["src/conversation/runtime.mjs", "src/encounter/engine.mjs", "public/encounter/delivery-chart.js", "public/encounter/face-renderer.js", "public/encounter/turn-player.js", "src/playtest/recorder.mjs", "src/playtest/markdown.mjs", "public/encounter/playtest-log.js"]) visit(entry);
   assert.deepEqual([...modules.keys()].sort(), [...expected].sort());
   for (const [name, compiled] of modules) {
     let source = fs.readFileSync(path.join(root, name), "utf8").replaceAll("\r\n", "\n");
@@ -105,7 +108,7 @@ test("standalone inventory independently matches output bytes, normalized source
   }
   assert.equal(inventory.assets.length, 28);
   const counts = Object.fromEntries(inventory.substitutions.map(item => [item.label, item.actual]));
-  assert.deepEqual(counts, { "embedded face image guard": 1, "unused Node authored-anchor URL": 1, "POST local adapter": 1, "GET local adapter": 1, "file-context UUID": 2, "inline CSS": 1, "remove module script transport": 1, "inline script": 1 });
+  assert.deepEqual(counts, { "embedded face image guard": 1, "unused Node authored-anchor URL": 1, "POST local adapter": 1, "GET local adapter": 1, "file-context UUID": 2, "playtest offline transport": 1, "inline CSS": 1, "remove module script transport": 1, "inline script": 1 });
   assert.ok(inventory.substitutions.every(item => item.actual === item.expected));
   assert.ok(!JSON.stringify(inventory).includes(root), "inventory must not depend on host paths");
 });
@@ -156,6 +159,45 @@ test("actual local API restarts deterministic seeds, previews without mutation, 
     const reset = await embedded.api("/api/restart", { scenarioId: "marcus", seed: run.seed });
     equal(normalizeAssets(reset.data), normalizeAssets(restart.data), `${variant} restart reproducibility`);
   }
+});
+
+test("actual offline recorder and download exports match the shared server model with fixed metadata and clock", async () => {
+  const epoch = Date.parse("2026-10-01T22:05:12Z");
+  class FixedDate extends Date { constructor(value = epoch) { super(value); } static now() { return epoch; } }
+  const embedded = sandbox({ Date: FixedDate });
+  await embedded.api("/api/restart", { scenarioId: "marcus", seed: "r17-proof-0" });
+  let state = json(embedded.getState());
+  const metadata = json(vm.runInContext("__MARCUS_BUILD_INFO", embedded.context));
+  const recorder = createRunRecorder(state, { clock: () => epoch, build: metadata, view: sourceRuntime.projectConversation(state, "LOG-ONLY", mode) });
+  const steps = [{ action: "ASK", topic: "R17_HINT" }, { action: "DEAL", information: "OFFER_INFORMATION", terms: { units: 2, upfront: 70, repayment: 50, extra: 9999, days: 7 } }, { action: "ACCEPT" }];
+  for (const [index, fields] of steps.entries()) {
+    const command = { requestId: `offline_log_${index}`, runId: state.runId, version: state.events.length, vibeId: "EA", intensity: "BALANCED", ...fields };
+    if (command.action === "ACCEPT") Object.assign(command, { offerId: state.counteroffer.id, offerVersion: state.counteroffer.version });
+    const before = state; state = sourceRuntime.resolveConversation(state, command, mode); recorder.turn(before, state, command, sourceRuntime.projectConversation(state, "LOG-ONLY", mode));
+    const actual = await embedded.api("/api/turn", command); assert.equal(actual.status, 200); equal(json(embedded.getState()), json(state), "observed offline transition");
+  }
+  const downloads = [], blobs = [];
+  const doc = { addEventListener() {}, removeEventListener() {}, querySelectorAll: () => [], body: { append() {} }, createElement: () => ({ click() { downloads.push(this.download); }, remove() {} }) };
+  const win = { Blob, URL: { createObjectURL(blob) { blobs.push(blob); return "blob:local-run"; }, revokeObjectURL() {} }, navigator: { userAgent: "offline-test" }, innerWidth: 1000, innerHeight: 700, setInterval: () => 1, clearInterval() {}, setTimeout: callback => callback() };
+  const observerFactory = vm.runInContext('__req("public/encounter/playtest-log.js").createPlaytestObserver', embedded.context);
+  const observer = observerFactory({ doc, win, clock: () => epoch, getContext: () => ({ snapshot: sourceRuntime.projectConversation(state, "LOCAL-OFFLINE", mode) }), transport: async (path, options) => {
+    const body = options.body ? JSON.parse(options.body) : {}; if (options.method === "POST") recorder.ingest(body);
+    const result = await embedded.api(path, body); return { ok: result.status === 200, json: async () => result.data, text: async () => result.text, headers: { get: () => result.basename } };
+  } });
+  observer.bind(sourceRuntime.projectConversation(state, "LOCAL-OFFLINE", mode));
+  await observer.download("json"); const jsonAtDownload = recorder.assemble();
+  await observer.download("md"); const mdAtDownload = renderLogMarkdown(recorder.assemble());
+  assert.deepEqual(JSON.parse(await blobs[0].text()), jsonAtDownload); assert.equal(await blobs[1].text(), mdAtDownload);
+  assert.match(downloads[0], /-0400_r17-proof-0_.*\.json$/); assert.match(downloads[1], /\.md$/);
+  assert.equal(jsonAtDownload.turns[1].normalizedTerms.extra, 4); assert.equal(jsonAtDownload.header.endStatus, "AGREED"); observer.destroy();
+});
+
+test("offline storage failures preserve gameplay and do not restore state from a saved log", async () => {
+  const embedded = sandbox({ localStorage: { getItem() { throw new Error("STORAGE_FORBIDDEN"); }, setItem() { throw new Error("STORAGE_FORBIDDEN"); } } });
+  const response = await embedded.api("/api/restart", { scenarioId: "marcus", seed: "r17-proof-2" }); assert.equal(response.status, 200);
+  const state = embedded.getState(), command = { requestId: "offline_storage_walk", runId: state.runId, version: 0, vibeId: "EA", intensity: "BALANCED", action: "WALK" };
+  const result = await embedded.api("/api/turn", command); assert.equal(result.status, 200); assert.equal(result.data.play.status, "WITHDRAWN");
+  const exported = await embedded.api("/api/playtest-log.json", {}); assert.equal(exported.status, 200); assert.equal(exported.data.header.endStatus, "WITHDRAWN");
 });
 
 test("actual embedded R-17 proof matches all 20 golden routes, including Show and Hint", () => {

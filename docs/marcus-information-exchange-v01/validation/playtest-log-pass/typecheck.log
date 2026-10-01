@@ -1,0 +1,5 @@
+
+> dpa-message-foundations@0.1.0 typecheck
+> node scripts/typecheck.mjs
+
+typecheck-ok: TypeScript checkJs passed for src/ and scripts/

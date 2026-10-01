@@ -1,0 +1,62 @@
+- main:
+  - heading "TRAPSTAR" [level=1]
+  - paragraph: Read the room. Choose your words.
+  - paragraph: Marcus — the Contra deal
+  - navigation "Conversation controls":
+    - button "More things to say ↗" [disabled]
+    - button "Conversation log"
+    - button "Play" [pressed]
+    - button "Debug"
+  - status: Conversation complete. Your result is shown below.
+  - button "Download run log"
+  - region "Play":
+    - status: "Marcus ‘Broker’ Hill: Then we leave it here. The old debt still stands. The brows form an uneven angle; the eyes face forward and one side of the mouth tenses."
+    - checkbox "Hold hearing face until I continue"
+    - text: Hold hearing face until I continue
+    - button "Replay reactions"
+    - group "Compose your conversation turn":
+      - generic: Compose your conversation turn
+      - region "Read and interact":
+        - 'img "Marcus ‘Broker’ Hill: The brows form an uneven angle; the eyes face forward and one side of the mouth tenses."':
+        - generic: MARCUS ‘BROKER’ HILL
+        - generic "Facial turn sequence":
+          - generic: 01 · HEARS YOU
+          - generic: 02 · RESPONDS
+        - heading "Marcus ‘Broker’ Hill" [level=2]
+        - generic: You walked away
+        - paragraph: "You: Okay… I am walking away from this negotiation."
+        - blockquote: Then we leave it here. The old debt still stands.
+        - generic "Face description"
+        - heading "Conversation complete" [level=2]
+        - paragraph: "Cash: $80. Your Contra: 0. Total owed: $250."
+        - paragraph: Marcus's confidence in your commitment ended unchanged relative to the opening.
+        - paragraph: Tension in the conversation ended unchanged relative to the opening.
+        - paragraph: You ended the negotiation voluntarily.
+        - complementary:
+          - heading "Your edge" [level=2]
+          - strong: Counterfoil R-17
+          - paragraph: "Your edge: Held"
+          - paragraph: "Disclosure: Exact detail private; category not shared."
+          - paragraph: "Interest: Not asked yet"
+          - generic "Exact evidence and observations"
+          - paragraph: "Marcus's extra charge: 16% of new principal."
+          - generic: Cash
+          - strong: "80"
+          - generic: Total owed
+          - strong: "250"
+          - generic: Their Contra
+          - strong: "8"
+          - generic: Your Contra
+          - strong: "0"
+          - generic "Before you speak"
+    - button "Download run log"
+    - button "Compare both reactions"
+  - generic "Restart / choose test conversation"
+  - generic: Conversation
+  - combobox "Conversation":
+    - option "Marcus — the Contra deal" [selected]
+    - option "Avery — the broken promise (fixture)"
+  - generic: Run seed
+  - textbox "Run seed": playtest-walk-away
+  - paragraph: Restart replaces this encounter. The same seed and choices reproduce its results.
+  - button "Restart encounter"

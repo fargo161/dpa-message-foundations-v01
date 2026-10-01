@@ -4,7 +4,7 @@ Implemented the locked brief, Section 35 and user requirements A–G. All requir
 
 ## Repository state
 
-- Repository: `C:/Users/mcdon/Documents/ChatGPT/dpa-message-foundations-v01` (fargo161/dpa-message-foundations-v01).
+- Repository: `dpa-message-foundations-v01` (fargo161/dpa-message-foundations-v01).
 - Current branch: `codex/r17-information-exchange-v01`, newly created from `bdecd96` after successful `git fetch --all --prune`.
 - Starting HEAD: `bdecd96eb310deebc15cb231a305c45f4569831e`.
 - Ending HEAD: `bdecd96eb310deebc15cb231a305c45f4569831e`. Implementation and deliverables remain local, uncommitted on the new branch. No push.
@@ -36,7 +36,7 @@ The pre-change baseline was run afresh on the new branch before edits. It passed
 
 Build-generated foundation reports remain semantically identical to HEAD. Git may show their refreshed working-tree files because of Windows line-ending/stat normalization; no foundation content was changed.
 
-Logs and browser evidence live in [validation](C:/Users/mcdon/Documents/ChatGPT/dpa-message-foundations-v01/docs/marcus-information-exchange-v01/validation/). The final UI check was run after the browser-discovered percentage-placement correction. Subsequent report-generator typing and migration-rule wording corrections do not change runtime mechanics.
+Logs and browser evidence live in [validation](validation/). The final UI check was run after the browser-discovered percentage-placement correction. Subsequent report-generator typing and migration-rule wording corrections do not change runtime mechanics.
 
 ## Mechanics and precedence
 
@@ -95,7 +95,7 @@ The strong-approval regression explicitly verifies a proposal with extra $10 aft
 | BAD | Does not care | `r17-proof-2` |
 | BAD | Cares | `r17-proof-19` |
 
-Full observations, ownership, supported knowledge, rate, exact offers, reactions and event IDs are in [GOLDEN_RUNS.json](C:/Users/mcdon/Documents/ChatGPT/dpa-message-foundations-v01/docs/marcus-information-exchange-v01/GOLDEN_RUNS.json).
+Full observations, ownership, supported knowledge, rate, exact offers, reactions and event IDs are in [GOLDEN_RUNS.json](GOLDEN_RUNS.json).
 
 ## Existing tests and frozen fixture
 
@@ -103,17 +103,17 @@ All 391 pre-existing tests remain represented. Tests encoding the old public lad
 
 The historical fixture remains byte-for-byte unchanged, SHA-256 `add6744c07ec5bcbaac77457c65f1381723642072657d21e7ade4865444acc46`. Its 23 routes / 127 snapshots are preserved, and a separate R-17 expected fixture replays those same routes.
 
-**127 of 127 historical snapshots have changed expectations**, including opening projections because the public actions/availability and historical receipt copy changed. [SNAPSHOT_MIGRATION.md](C:/Users/mcdon/Documents/ChatGPT/dpa-message-foundations-v01/docs/marcus-information-exchange-v01/SNAPSHOT_MIGRATION.md) lists every snapshot by run and turn and its governing rules. [SNAPSHOT_MIGRATION.json](C:/Users/mcdon/Documents/ChatGPT/dpa-message-foundations-v01/docs/marcus-information-exchange-v01/SNAPSHOT_MIGRATION.json) records each changed path, original value, new value and rule IDs. A regression independently checks complete path coverage.
+**127 of 127 historical snapshots have changed expectations**, including opening projections because the public actions/availability and historical receipt copy changed. [SNAPSHOT_MIGRATION.md](SNAPSHOT_MIGRATION.md) lists every snapshot by run and turn and its governing rules. [SNAPSHOT_MIGRATION.json](SNAPSHOT_MIGRATION.json) records each changed path, original value, new value and rule IDs. A regression independently checks complete path coverage.
 
 ## Actual browser playtest and standalone delivery
 
 The running local encounter at http://127.0.0.1:4175/ was exercised through ordinary menu, draft, preview, send and confirmation controls for all four seeds. Observed: exactly three R-17 controls; dropdown availability initially/after Hint; GOOD honest disinterest; unwanted hinted Trade 16%; failed BAD blind Trade 22% with private retained document; Show and later ordinary offer 19%; BAD valuable blind Trade 8% followed by removal to 16%; GOOD Hint 16% followed by valuable Trade 8%, then confirmed Traded.
 
-The completed GOOD exchange showed two Contra, cash $10, new repayment $54 in seven days and total owed $304; old debt remained $250. The percentage stayed visible with the builder collapsed. See [PLAYTEST.md](C:/Users/mcdon/Documents/ChatGPT/dpa-message-foundations-v01/docs/marcus-information-exchange-v01/PLAYTEST.md) and saved screenshots.
+The completed GOOD exchange showed two Contra, cash $10, new repayment $54 in seven days and total owed $304; old debt remained $250. The percentage stayed visible with the builder collapsed. See [PLAYTEST.md](PLAYTEST.md) and saved screenshots.
 
 The standalone HTML is 717,949 bytes, SHA-256 `48f5047ca12248726bb01832fdc33e3234064fbcf702ec020cb1b85dc6d53cd6`. It embeds the same 44 source modules and 28 exact supplied face assets, has no network entrypoints and passed execution with network forbidden. Its inventory validates source bytes and the existing browser substitutions.
 
-The in-app browser refused the standalone `file://` URL because only HTTP/HTTPS are allowed. Direct file-browser launch is therefore unverified in this session; no bypass was attempted. Runtime/source/asset parity, all 20 new R-17 routes in the network-forbidden embedded runtime, and the actual running UI were verified separately. Open [Marcus_Encounter.html](C:/Users/mcdon/Documents/ChatGPT/dpa-message-foundations-v01/dist/marcus-information-exchange-v01/Marcus_Encounter.html) in a normal browser for direct file play.
+The in-app browser refused the standalone `file://` URL because only HTTP/HTTPS are allowed. Direct file-browser launch is therefore unverified in this session; no bypass was attempted. Runtime/source/asset parity, all 20 new R-17 routes in the network-forbidden embedded runtime, and the actual running UI were verified separately. Open [Marcus_Encounter.html](../../dist/marcus-information-exchange-v01/Marcus_Encounter.html) in a normal browser for direct file play.
 
 ## Changed and created files
 
@@ -121,51 +121,51 @@ Every implementation/test/artifact path and purpose is listed below. Validation 
 
 | File | Purpose |
 | --- | --- |
-| [public/encounter/app.js](C:/Users/mcdon/Documents/ChatGPT/dpa-message-foundations-v01/public/encounter/app.js) | Render Held/Hinted/Spent/Traded and retained-card notes; show the percentage beside Your Edge and in current offers. |
-| [scripts/test-portable.mjs](C:/Users/mcdon/Documents/ChatGPT/dpa-message-foundations-v01/scripts/test-portable.mjs) | Register both new R-17 test files in the normal portable suite. |
-| [src/conversation/edge.mjs](C:/Users/mcdon/Documents/ChatGPT/dpa-message-foundations-v01/src/conversation/edge.mjs) | Derive the proof card from player observations and transfer history; retain the deferred legacy edge projector. |
-| [src/conversation/face/policy.mjs](C:/Users/mcdon/Documents/ChatGPT/dpa-message-foundations-v01/src/conversation/face/policy.mjs) | Map resolved R-17 reactions to five distinct existing face presets. |
-| [src/conversation/keyword-bank.mjs](C:/Users/mcdon/Documents/ChatGPT/dpa-message-foundations-v01/src/conversation/keyword-bank.mjs) | Expose only Hint/Show/Trade for R-17, including redundant Hint and possession-based availability. |
-| [src/conversation/language/frames.mjs](C:/Users/mcdon/Documents/ChatGPT/dpa-message-foundations-v01/src/conversation/language/frames.mjs) | Bind Hint to category disclosure and Show to full disclosure. |
-| [src/conversation/language/npc-lines.mjs](C:/Users/mcdon/Documents/ChatGPT/dpa-message-foundations-v01/src/conversation/language/npc-lines.mjs) | Add six deterministic reply families; preserve exact fees and private-detail boundaries. |
-| [src/encounter/constants.mjs](C:/Users/mcdon/Documents/ChatGPT/dpa-message-foundations-v01/src/encounter/constants.mjs) | Centralize rate resolution and ceiling rounding for approval and counters. |
-| [src/encounter/conversation.mjs](C:/Users/mcdon/Documents/ChatGPT/dpa-message-foundations-v01/src/encounter/conversation.mjs) | Record the resolved R-17 reaction in committed diagnostic causes. |
-| [src/encounter/engine.mjs](C:/Users/mcdon/Documents/ChatGPT/dpa-message-foundations-v01/src/encounter/engine.mjs) | Pass the scalar rate into policy, bind offers to their rate, expose public percentage and debug R-17 state, filter public topics. |
-| [src/encounter/history-content.mjs](C:/Users/mcdon/Documents/ChatGPT/dpa-message-foundations-v01/src/encounter/history-content.mjs) | Add Hint/Show topics; describe receipt as historical acquisition so transfer does not imply continued possession. |
-| [src/encounter/information-policy.mjs](C:/Users/mcdon/Documents/ChatGPT/dpa-message-foundations-v01/src/encounter/information-policy.mjs) | Resolve deterministic proof actions ahead of deferred gates; persist independent consequences; grant no proof score bonus. |
-| [src/encounter/knowledge.mjs](C:/Users/mcdon/Documents/ChatGPT/dpa-message-foundations-v01/src/encounter/knowledge.mjs) | Make both variants tradeable while held and unspent; format new action semantics and availability. |
-| [src/encounter/marcus-policy.mjs](C:/Users/mcdon/Documents/ChatGPT/dpa-message-foundations-v01/src/encounter/marcus-policy.mjs) | Enforce the extra-charge floor before approval and in counters while retaining existing credit, score and hostile-discount conditions. |
-| [src/encounter/marcus-world-adapter.mjs](C:/Users/mcdon/Documents/ChatGPT/dpa-message-foundations-v01/src/encounter/marcus-world-adapter.mjs) | Project fixed private interest, observed player interest, independent mechanic facts and historical transfer. |
-| [src/encounter/marcus-world.mjs](C:/Users/mcdon/Documents/ChatGPT/dpa-message-foundations-v01/src/encounter/marcus-world.mjs) | Seed private attitudes independently; stage category replies, coherent Show reads and real acceptance transfer in existing ledger commits. |
-| [scripts/capture-r17-migration.mjs](C:/Users/mcdon/Documents/ChatGPT/dpa-message-foundations-v01/scripts/capture-r17-migration.mjs) | Replay the historical corpus, preserve its hash and write the new fixture plus complete snapshot differences. |
-| [scripts/capture-r17-goldens.mjs](C:/Users/mcdon/Documents/ChatGPT/dpa-message-foundations-v01/scripts/capture-r17-goldens.mjs) | Assert and capture 20 golden routes across the four seed combinations. |
-| [tests/encounter-r17-exchange.test.mjs](C:/Users/mcdon/Documents/ChatGPT/dpa-message-foundations-v01/tests/encounter-r17-exchange.test.mjs) | 28 new mechanic tests: all combinations, rates, rounding, floor, ledger support, transfer, precedence and all 60 delivery coordinates. |
-| [tests/conversation-r17-exchange.test.mjs](C:/Users/mcdon/Documents/ChatGPT/dpa-message-foundations-v01/tests/conversation-r17-exchange.test.mjs) | Five new public/UI tests: exact actions, availability, pure previews, distinct faces and actual renderer outputs. |
-| [tests/conversation-acceptance.test.mjs](C:/Users/mcdon/Documents/ChatGPT/dpa-message-foundations-v01/tests/conversation-acceptance.test.mjs) | Use public Hint in acceptance routes and select genuinely valuable information for the conditional preview. |
-| [tests/conversation-keyword-bank.test.mjs](C:/Users/mcdon/Documents/ChatGPT/dpa-message-foundations-v01/tests/conversation-keyword-bank.test.mjs) | Replace old surface preparation assumptions with Hint/Show/Trade; keep safe projection and resolver checks. |
-| [tests/conversation-language.test.mjs](C:/Users/mcdon/Documents/ChatGPT/dpa-message-foundations-v01/tests/conversation-language.test.mjs) | Validate all 37 authored NPC families and numeric equivalence. |
-| [tests/encounter-adversarial.test.mjs](C:/Users/mcdon/Documents/ChatGPT/dpa-message-foundations-v01/tests/encounter-adversarial.test.mjs) | Retain assessment/delivery distinctions while preventing below-floor approval after risk acknowledgment. |
-| [tests/encounter-information.test.mjs](C:/Users/mcdon/Documents/ChatGPT/dpa-message-foundations-v01/tests/encounter-information.test.mjs) | Compare matching terms with only extra changed; retain source/belief/backlash/window tests and respect the new floor. |
-| [tests/encounter-knowledge-unit.test.mjs](C:/Users/mcdon/Documents/ChatGPT/dpa-message-foundations-v01/tests/encounter-knowledge-unit.test.mjs) | Separate held-card Trade from deferred preparation and independently seeded interest; keep deeper knowledge interventions. |
-| [tests/encounter-lore-adversarial.test.mjs](C:/Users/mcdon/Documents/ChatGPT/dpa-message-foundations-v01/tests/encounter-lore-adversarial.test.mjs) | Use a cares seed for atomic exchange and validate settlement from exact floor-compliant offer terms. |
-| [tests/encounter-policy.test.mjs](C:/Users/mcdon/Documents/ChatGPT/dpa-message-foundations-v01/tests/encounter-policy.test.mjs) | Update ordinary counter expectations to 16% with ceiling rounding. |
-| [tests/encounter-polish-regression.test.mjs](C:/Users/mcdon/Documents/ChatGPT/dpa-message-foundations-v01/tests/encounter-polish-regression.test.mjs) | Use floor-compliant approval and exact 16% settlement; retain once-only transfers and deferred window checks. |
-| [tests/marcus-world-conformance.test.mjs](C:/Users/mcdon/Documents/ChatGPT/dpa-message-foundations-v01/tests/marcus-world-conformance.test.mjs) | Replay the migrated fixture, preserve original hash, verify the narrow rate scalar and genuine valuable atomic transfer. |
-| [tests/marcus-world-model-baseline.test.mjs](C:/Users/mcdon/Documents/ChatGPT/dpa-message-foundations-v01/tests/marcus-world-model-baseline.test.mjs) | Keep the historical fixture immutable; verify new expectations and complete per-path migration coverage (one additional test). |
-| [tests/marcus-world-projection.test.mjs](C:/Users/mcdon/Documents/ChatGPT/dpa-message-foundations-v01/tests/marcus-world-projection.test.mjs) | Independently derive migrated ledger projections; distinguish collection NEEDS from R-17 interest. |
-| [tests/refinement-acceptance.test.mjs](C:/Users/mcdon/Documents/ChatGPT/dpa-message-foundations-v01/tests/refinement-acceptance.test.mjs) | Verify new public edge fields and real Traded state; keep deferred opening tests on the legacy projector. |
-| [tests/refinement-edge.test.mjs](C:/Users/mcdon/Documents/ChatGPT/dpa-message-foundations-v01/tests/refinement-edge.test.mjs) | Verify proof guidance and lifecycle; retain deferred opening expiry/consumption checks internally. |
-| [tests/refinement-policy.test.mjs](C:/Users/mcdon/Documents/ChatGPT/dpa-message-foundations-v01/tests/refinement-policy.test.mjs) | Update the ordinary counter's whole-dollar extra expectation. |
-| [tests/review-state-copy.test.mjs](C:/Users/mcdon/Documents/ChatGPT/dpa-message-foundations-v01/tests/review-state-copy.test.mjs) | Verify held/Hinted/Spent copy and retain late-opening internal coverage. |
-| [tests/standalone-parity.test.mjs](C:/Users/mcdon/Documents/ChatGPT/dpa-message-foundations-v01/tests/standalone-parity.test.mjs) | Compare embedded runtime to the migrated oracle and all 20 new proof golden routes while asserting the historical fixture hash. |
-| [tests/fixtures/marcus-r17-exchange-v01.json](C:/Users/mcdon/Documents/ChatGPT/dpa-message-foundations-v01/tests/fixtures/marcus-r17-exchange-v01.json) | New expected corpus for the same 23 historical routes and 127 snapshots; original fixture untouched. |
-| [docs/marcus-information-exchange-v01/IMPLEMENTATION_REPORT.md](C:/Users/mcdon/Documents/ChatGPT/dpa-message-foundations-v01/docs/marcus-information-exchange-v01/IMPLEMENTATION_REPORT.md) | Complete implementation, scope and validation report. |
-| [docs/marcus-information-exchange-v01/PLAYTEST.md](C:/Users/mcdon/Documents/ChatGPT/dpa-message-foundations-v01/docs/marcus-information-exchange-v01/PLAYTEST.md) | Actual browser actions, observations, screenshots and file-protocol limitation. |
-| [docs/marcus-information-exchange-v01/GOLDEN_RUNS.json](C:/Users/mcdon/Documents/ChatGPT/dpa-message-foundations-v01/docs/marcus-information-exchange-v01/GOLDEN_RUNS.json) | 20 asserted deterministic routes with observed rates, cards, possession, knowledge, offers and reactions. |
-| [docs/marcus-information-exchange-v01/SNAPSHOT_MIGRATION.md](C:/Users/mcdon/Documents/ChatGPT/dpa-message-foundations-v01/docs/marcus-information-exchange-v01/SNAPSHOT_MIGRATION.md) | Every changed historical snapshot and the rules changing its expectation. |
-| [docs/marcus-information-exchange-v01/SNAPSHOT_MIGRATION.json](C:/Users/mcdon/Documents/ChatGPT/dpa-message-foundations-v01/docs/marcus-information-exchange-v01/SNAPSHOT_MIGRATION.json) | Every changed snapshot path, before/after value and applicable rule IDs. |
-| [dist/marcus-information-exchange-v01/Marcus_Encounter.html](C:/Users/mcdon/Documents/ChatGPT/dpa-message-foundations-v01/dist/marcus-information-exchange-v01/Marcus_Encounter.html) | Offline playable build from the same source runtime, with all 28 face assets embedded (ignored build output). |
-| [dist/marcus-information-exchange-v01/BUILD_INVENTORY.json](C:/Users/mcdon/Documents/ChatGPT/dpa-message-foundations-v01/dist/marcus-information-exchange-v01/BUILD_INVENTORY.json) | Hashes, byte counts, module graph and browser-substitution contracts for the standalone build (ignored build output). |
+| [public/encounter/app.js](../../public/encounter/app.js) | Render Held/Hinted/Spent/Traded and retained-card notes; show the percentage beside Your Edge and in current offers. |
+| [scripts/test-portable.mjs](../../scripts/test-portable.mjs) | Register both new R-17 test files in the normal portable suite. |
+| [src/conversation/edge.mjs](../../src/conversation/edge.mjs) | Derive the proof card from player observations and transfer history; retain the deferred legacy edge projector. |
+| [src/conversation/face/policy.mjs](../../src/conversation/face/policy.mjs) | Map resolved R-17 reactions to five distinct existing face presets. |
+| [src/conversation/keyword-bank.mjs](../../src/conversation/keyword-bank.mjs) | Expose only Hint/Show/Trade for R-17, including redundant Hint and possession-based availability. |
+| [src/conversation/language/frames.mjs](../../src/conversation/language/frames.mjs) | Bind Hint to category disclosure and Show to full disclosure. |
+| [src/conversation/language/npc-lines.mjs](../../src/conversation/language/npc-lines.mjs) | Add six deterministic reply families; preserve exact fees and private-detail boundaries. |
+| [src/encounter/constants.mjs](../../src/encounter/constants.mjs) | Centralize rate resolution and ceiling rounding for approval and counters. |
+| [src/encounter/conversation.mjs](../../src/encounter/conversation.mjs) | Record the resolved R-17 reaction in committed diagnostic causes. |
+| [src/encounter/engine.mjs](../../src/encounter/engine.mjs) | Pass the scalar rate into policy, bind offers to their rate, expose public percentage and debug R-17 state, filter public topics. |
+| [src/encounter/history-content.mjs](../../src/encounter/history-content.mjs) | Add Hint/Show topics; describe receipt as historical acquisition so transfer does not imply continued possession. |
+| [src/encounter/information-policy.mjs](../../src/encounter/information-policy.mjs) | Resolve deterministic proof actions ahead of deferred gates; persist independent consequences; grant no proof score bonus. |
+| [src/encounter/knowledge.mjs](../../src/encounter/knowledge.mjs) | Make both variants tradeable while held and unspent; format new action semantics and availability. |
+| [src/encounter/marcus-policy.mjs](../../src/encounter/marcus-policy.mjs) | Enforce the extra-charge floor before approval and in counters while retaining existing credit, score and hostile-discount conditions. |
+| [src/encounter/marcus-world-adapter.mjs](../../src/encounter/marcus-world-adapter.mjs) | Project fixed private interest, observed player interest, independent mechanic facts and historical transfer. |
+| [src/encounter/marcus-world.mjs](../../src/encounter/marcus-world.mjs) | Seed private attitudes independently; stage category replies, coherent Show reads and real acceptance transfer in existing ledger commits. |
+| [scripts/capture-r17-migration.mjs](../../scripts/capture-r17-migration.mjs) | Replay the historical corpus, preserve its hash and write the new fixture plus complete snapshot differences. |
+| [scripts/capture-r17-goldens.mjs](../../scripts/capture-r17-goldens.mjs) | Assert and capture 20 golden routes across the four seed combinations. |
+| [tests/encounter-r17-exchange.test.mjs](../../tests/encounter-r17-exchange.test.mjs) | 28 new mechanic tests: all combinations, rates, rounding, floor, ledger support, transfer, precedence and all 60 delivery coordinates. |
+| [tests/conversation-r17-exchange.test.mjs](../../tests/conversation-r17-exchange.test.mjs) | Five new public/UI tests: exact actions, availability, pure previews, distinct faces and actual renderer outputs. |
+| [tests/conversation-acceptance.test.mjs](../../tests/conversation-acceptance.test.mjs) | Use public Hint in acceptance routes and select genuinely valuable information for the conditional preview. |
+| [tests/conversation-keyword-bank.test.mjs](../../tests/conversation-keyword-bank.test.mjs) | Replace old surface preparation assumptions with Hint/Show/Trade; keep safe projection and resolver checks. |
+| [tests/conversation-language.test.mjs](../../tests/conversation-language.test.mjs) | Validate all 37 authored NPC families and numeric equivalence. |
+| [tests/encounter-adversarial.test.mjs](../../tests/encounter-adversarial.test.mjs) | Retain assessment/delivery distinctions while preventing below-floor approval after risk acknowledgment. |
+| [tests/encounter-information.test.mjs](../../tests/encounter-information.test.mjs) | Compare matching terms with only extra changed; retain source/belief/backlash/window tests and respect the new floor. |
+| [tests/encounter-knowledge-unit.test.mjs](../../tests/encounter-knowledge-unit.test.mjs) | Separate held-card Trade from deferred preparation and independently seeded interest; keep deeper knowledge interventions. |
+| [tests/encounter-lore-adversarial.test.mjs](../../tests/encounter-lore-adversarial.test.mjs) | Use a cares seed for atomic exchange and validate settlement from exact floor-compliant offer terms. |
+| [tests/encounter-policy.test.mjs](../../tests/encounter-policy.test.mjs) | Update ordinary counter expectations to 16% with ceiling rounding. |
+| [tests/encounter-polish-regression.test.mjs](../../tests/encounter-polish-regression.test.mjs) | Use floor-compliant approval and exact 16% settlement; retain once-only transfers and deferred window checks. |
+| [tests/marcus-world-conformance.test.mjs](../../tests/marcus-world-conformance.test.mjs) | Replay the migrated fixture, preserve original hash, verify the narrow rate scalar and genuine valuable atomic transfer. |
+| [tests/marcus-world-model-baseline.test.mjs](../../tests/marcus-world-model-baseline.test.mjs) | Keep the historical fixture immutable; verify new expectations and complete per-path migration coverage (one additional test). |
+| [tests/marcus-world-projection.test.mjs](../../tests/marcus-world-projection.test.mjs) | Independently derive migrated ledger projections; distinguish collection NEEDS from R-17 interest. |
+| [tests/refinement-acceptance.test.mjs](../../tests/refinement-acceptance.test.mjs) | Verify new public edge fields and real Traded state; keep deferred opening tests on the legacy projector. |
+| [tests/refinement-edge.test.mjs](../../tests/refinement-edge.test.mjs) | Verify proof guidance and lifecycle; retain deferred opening expiry/consumption checks internally. |
+| [tests/refinement-policy.test.mjs](../../tests/refinement-policy.test.mjs) | Update the ordinary counter's whole-dollar extra expectation. |
+| [tests/review-state-copy.test.mjs](../../tests/review-state-copy.test.mjs) | Verify held/Hinted/Spent copy and retain late-opening internal coverage. |
+| [tests/standalone-parity.test.mjs](../../tests/standalone-parity.test.mjs) | Compare embedded runtime to the migrated oracle and all 20 new proof golden routes while asserting the historical fixture hash. |
+| [tests/fixtures/marcus-r17-exchange-v01.json](../../tests/fixtures/marcus-r17-exchange-v01.json) | New expected corpus for the same 23 historical routes and 127 snapshots; original fixture untouched. |
+| [docs/marcus-information-exchange-v01/IMPLEMENTATION_REPORT.md](IMPLEMENTATION_REPORT.md) | Complete implementation, scope and validation report. |
+| [docs/marcus-information-exchange-v01/PLAYTEST.md](PLAYTEST.md) | Actual browser actions, observations, screenshots and file-protocol limitation. |
+| [docs/marcus-information-exchange-v01/GOLDEN_RUNS.json](GOLDEN_RUNS.json) | 20 asserted deterministic routes with observed rates, cards, possession, knowledge, offers and reactions. |
+| [docs/marcus-information-exchange-v01/SNAPSHOT_MIGRATION.md](SNAPSHOT_MIGRATION.md) | Every changed historical snapshot and the rules changing its expectation. |
+| [docs/marcus-information-exchange-v01/SNAPSHOT_MIGRATION.json](SNAPSHOT_MIGRATION.json) | Every changed snapshot path, before/after value and applicable rule IDs. |
+| [dist/marcus-information-exchange-v01/Marcus_Encounter.html](../../dist/marcus-information-exchange-v01/Marcus_Encounter.html) | Offline playable build from the same source runtime, with all 28 face assets embedded (ignored build output). |
+| [dist/marcus-information-exchange-v01/BUILD_INVENTORY.json](../../dist/marcus-information-exchange-v01/BUILD_INVENTORY.json) | Hashes, byte counts, module graph and browser-substitution contracts for the standalone build (ignored build output). |
 
 ## Scope and problems
 
@@ -248,7 +248,7 @@ Real browser checks at http://127.0.0.1:4175/ verified the known 8% builder and 
 
 ### Changed files and reasons
 
-Paths below are relative to `C:/Users/mcdon/Documents/ChatGPT/dpa-message-foundations-v01`.
+Paths below are relative to `dpa-message-foundations-v01`.
 
 | Source / tooling file | Purpose |
 | --- | --- |
@@ -318,3 +318,73 @@ Development runs caught the explicitly superseded fee, counter, debt and dialogu
 ### Boundaries retained
 
 No changes to rate values, rate precedence/persistence or Section 35; no changes to Hint/Show/Trade availability, interest seeding, Your Edge lifecycle, face policy or world ledger implementation. Show continues to establish document support without proving wrongdoing, and completed Trade genuinely transfers R-17. No counter units/cash/deadline retuning, source/belief/staleness/backlash/bluff/multiple-card expansion, BASED/TPL changes, external corpus work or push.
+
+## Playtest run log pass — 2026-10-01
+
+Implemented the approved observational logger on `codex/r17-information-exchange-v01`, starting from `58f018eb475c3a86d9b35e612d73cec3b99ad31f`. The single local checkpoint is titled `Add playtest run log`; its resulting SHA is supplied in the handoff. No push. The approved [preflight](PLAYTEST_LOG_PREFLIGHT.md) now contains repository-relative paths only. Earlier sections' machine-specific links were also converted to relative references.
+
+### Delivered behavior and files
+
+The dev CLI automatically starts one append-only JSONL stream plus assembled JSON and Markdown per run in ignored `playtest-logs/`. Shared `src/playtest/recorder.mjs` records committed engine events and assembles headers, turns, correlated browser observations and endings. Shared `src/playtest/markdown.mjs` renders local/UTC metadata, a private SPOILERS block, ordered timeline, full turns and receipt. Node-only `scripts/playtest-log-store.mjs` serializes bounded writes, syncs appends, atomically replaces assembled files, validates containment and recovers complete lines from partial streams.
+
+`scripts/encounter-server.mjs` enables logging for the real CLI and keeps test servers opt-in. It provides session/origin/CSRF-protected UI ingestion and authenticated current-run attachment exports. State assignment still precedes observation; disk writes run in a caught queue. Log retries never consume gameplay request IDs. New `public/encounter/playtest-log.js` observes delegated controls, panels, committed draft edits, allowlisted visible screens, explicit preview/send/error/face callbacks and format downloads. Queue loss has export diagnostics; closed dialog controls are excluded from visible choices.
+
+Small hooks in `public/encounter/app.js`, `delivery-chart.js` and `index.html` connect that observer. Debug now renders an allowlist of player-observed diagnostics rather than raw private state. Private version/interest/quirk enter files directly, never the added DOM. JSON/Markdown choices are available during play and after a result. The live check found the end control inherited the terminal fieldset's disabled state; the final implementation moves that control outside the fieldset and verifies it is enabled.
+
+`tools/build_standalone.py` embeds the same recorder/renderer, a local logging API, safe build metadata and guarded localStorage. Previous saved partial logs remain explicitly exportable without restoring gameplay. Its classic-script/no-network audit remains intact. `.gitignore` excludes real logs. No package or dependency was added; the lockfile is unchanged.
+
+New portable tests are `tests/playtest-recorder.test.mjs` (9), `playtest-log-server.test.mjs` (8) and `playtest-log-ui.test.mjs` (6), registered in `scripts/test-portable.mjs`. Existing standalone build/parity tests retain their behavioral assertions and add metadata contracts and actual embedded export/storage checks. The portable total rises by 23, from 435 to 458. Two additional dedicated standalone parity checks bring that suite to 9; six packaging checks run beside it.
+
+Schema, limits, record authority, timestamps, lifecycle, privacy and recovery are documented in [PLAYTEST_LOG_SCHEMA.md](PLAYTEST_LOG_SCHEMA.md). Copied real samples, gate receipts, DOM/viewport evidence and hash inventories live in [validation/playtest-log-pass/](validation/playtest-log-pass/VALIDATION_INVENTORY.json). Every committed text file in this pass is checked for private paths; raw machine-specific console locations are omitted or converted before copying evidence.
+
+### Validation
+
+The first attempted baseline was 434/435: the existing private-path test correctly rejected this preflight's absolute references. Implementation stopped. After the user's approved fix, a fresh complete baseline passed 435/435, with 0 failures/skips (214663.9024 ms). The old 435-pass log was not used as the baseline.
+
+| Gate | Result |
+| --- | --- |
+| Fresh corrected baseline | 435 passed, 0 failed, 0 skipped |
+| `npm ci --no-audit --no-fund` | Pass; 78 locked packages; lockfile unchanged |
+| Final full portable suite | 458 passed, 0 failed, 0 skipped; 215345.8832 ms |
+| Lint / typecheck / schema validation | Pass |
+| Build / generated freshness | Pass; freshness checked after each build |
+| Dedicated packaging + actual embedded parity | 15 passed, 0 failed, 0 skipped (6 packaging + 9 parity); 167053.0273 ms |
+| Logging on/off equivalence | All 23 frozen routes / 127 snapshots and all 20 golden runs unchanged |
+| Offline bundle | 47 modules, 28 exact face assets, 758589 bytes; no network entrypoints |
+| Offline SHA-256 | `3043b90cf58b8a8bcdcaf893d28f72ab95f7b4cf67d681dbf7c2a165218d5767` |
+| Seven protected artifacts | Byte-identical; fixtures, goldens and both migration pairs untouched |
+| `Temp/` | All 9 files preserved, same lengths and SHA-256 |
+| Candidate private-path check / diff whitespace check | Pass |
+
+Coverage exercises local offsets/UTC, deterministic naming, clock rollback/order, UI deduplication/injection/quotas, all private version/interest combinations, logging failures, current/late/terminal/replaced runs, partial stream recovery, traversal and symlink defenses, CSRF/origin/request caps, replay isolation, actual face phases, blind draft display, export Blob contents/filenames, offline storage failure and shared server/offline export equivalence. Automated disk tests use temporary directories and leave the repository log root alone.
+
+The standalone was built and validated before the local checkpoint; its embedded build metadata accurately records starting SHA `58f018eb475c3a86d9b35e612d73cec3b99ad31f` with a dirty worktree. The full final source passes the gates above. Tests intentionally exercising denied storage print console diagnostics; those expected messages are not gameplay failures.
+
+### Real browser samples
+
+| Run | Verified result |
+| --- | --- |
+| `r17-proof-0`, Hint → Trade → confirm | 3 turns; AGREED; 2 Contra, $70 cash now, $50 principal + $4 extra, 7 days; $10 cash retained, $54 new repayment, $304 owed; standard extra $8; exact $4 savings line; Your edge Traded |
+| `playtest-walk-away`, prepare → send | 1 turn; WITHDRAWN; $80 cash, 0 player stock, $250 owed; R-17 Held, exact detail private, interest unasked |
+
+Both three-file sets contain actual authoritative turns, browser observations and receiving/responding face timings. Agreement has six face observations and walk-away has two. Local/UTC start values are `2026-10-01T18:25:28.228-04:00` / `2026-10-01T22:25:28.228Z` and `2026-10-01T18:33:09.250-04:00` / `2026-10-01T22:33:09.250Z`. Sample basenames use `-0400`. Neither sample reports recorder diagnostics. Reload continued the completed server run, and its later replacement preserved AGREED. JSON and Markdown export clicks are recorded without exposing file spoilers on screen. Filtered Debug was inspected before play.
+
+Excerpt from the real agreement Markdown:
+
+> Status: AGREED
+>
+> Marcus: Agreed. The stock is yours on the terms you just confirmed. The old account stays on the books.
+>
+> R-17 saved you $4 on the extra charge.
+
+The underlying Markdown retains the full structured turn and end summary, not only this excerpt. Sample identities and copied file counts are in [SAMPLES.json](validation/playtest-log-pass/SAMPLES.json); byte receipts are in [VALIDATION_INVENTORY.json](validation/playtest-log-pass/VALIDATION_INVENTORY.json) and [PRESERVATION.json](validation/playtest-log-pass/PRESERVATION.json).
+
+Copied text evidence normalizes line endings to LF and removes trailing whitespace/extra terminal blank lines. JSON values and Markdown content are otherwise retained. Inventory hashes describe these committed copies, not the ignored live files.
+
+### Limits and retained boundaries
+
+The in-app browser's Blob-download event timed out, although clicks reached the recorder with no console warnings and the JSON/Markdown controls worked. This pass therefore does not claim a completed browser save. Actual shared/embedded export bytes, Blob MIME/content/name behavior and protected HTTP exports pass automated checks. Direct standalone `file` navigation was blocked by the browser URL policy; it was not bypassed. Embedded classic-script execution, all frozen/golden routes and no-network exports were tested instead. Full-page screenshot capture was unavailable; saved viewport captures were visually checked.
+
+Abrupt termination can lose unacknowledged UI observations; successfully appended complete records survive recovery. Local storage is best effort and does not restore gameplay. Limits can stop logging while the encounter continues. The existing raw developer API diagnostics and inspectable offline memory are outside the rendered-DOM privacy guarantee.
+
+No gameplay engine, rate/floor/rounding/normalization, standard-16 scoring, blind-limit behavior, Section 35, Hint/Show/Trade eligibility, seeded attitudes, ledger events, document possession/disclosure, social mechanics, language or face selection changed. No fixture/golden/migration capture was run. Both pre-existing generated-file changes and `Temp/` remain outside this commit. No external corpus work, telemetry service or push.

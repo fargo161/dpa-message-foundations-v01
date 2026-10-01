@@ -9,12 +9,15 @@ import hashlib
 import json
 import re
 import sys
+import os
+import subprocess
 
 VERSION = "marcus-world-model-standalone@0.1"
 ENTRIES = ["src/conversation/runtime.mjs", "public/encounter/delivery-chart.js",
            "public/encounter/face-renderer.js", "public/encounter/turn-player.js"]
 PUBLIC_IMPORTS = {"/delivery-options.mjs": "src/conversation/delivery-options.mjs",
                   "/r17-rates.mjs": "src/encounter/constants.mjs",
+                  "/playtest-log.js": "public/encounter/playtest-log.js",
                   **{f"/{name}.js": f"public/encounter/{name}.js"
                      for name in ["delivery-chart", "face-renderer", "turn-player"]}}
 BUILTINS = {"node:fs": {"readFileSync"}, "node:url": {"fileURLToPath"}}
@@ -191,7 +194,18 @@ function __req(id){
 LOCAL_API = r'''
 // BEGIN_MARCUS_LOCAL_API
 const { createConversation, resolveConversation, previewConversation, projectConversation } = __req("src/conversation/runtime.mjs");
+const { createRunRecorder } = __req("src/playtest/recorder.mjs");
+const { renderLogMarkdown } = __req("src/playtest/markdown.mjs");
 let __localState = null;
+let __localLog = null;
+const __localLogs = new Map();
+const __logStorageKey = "marcus-playtest-current@0.1";
+let __previousLog = null;
+try { const value = globalThis.localStorage?.getItem(__logStorageKey); if(value) { const saved=JSON.parse(value); if(saved?.schemaVersion==="marcus-playtest-log@0.1") __previousLog=saved; } } catch { console.warn("Playtest storage unavailable."); }
+globalThis.__MARCUS_PLAYTEST_PREVIOUS=Boolean(__previousLog);
+function __saveLog(){ try { if(__localLog){ const text=JSON.stringify(__localLog.assemble()); if(text.length<=2097152) globalThis.localStorage?.setItem(__logStorageKey,text); else console.warn("Playtest storage limit reached."); } } catch { console.warn("Playtest storage unavailable."); } }
+function __observe(fn){ try { fn(); } catch { console.warn("Playtest observation unavailable."); } }
+function __startLog(){ __observe(()=>{ __localLog=createRunRecorder(__localState,{build:__MARCUS_BUILD_INFO,view:projectConversation(__localState,"LOG-ONLY",{languageMode:"AUTHORING_PREVIEW"})}); __localLogs.set(__localState.runId,__localLog); if(__localLogs.size>64) __localLogs.delete(__localLogs.keys().next().value); __localLog.setSink(()=>__saveLog()); __saveLog(); }); }
 let __localSeedCounter = 0;
 function __uuid(){ return globalThis.crypto?.randomUUID?.() || (Date.now().toString(36)+Math.random().toString(36).slice(2)); }
 function __seed(){ __localSeedCounter++; return "local-"+Date.now().toString(36)+"-"+__localSeedCounter; }
@@ -206,19 +220,29 @@ function __hydrateAssets(snapshot){
   return snapshot;
 }
 function __project(){ return __hydrateAssets(projectConversation(__localState,"LOCAL-OFFLINE",{languageMode:"AUTHORING_PREVIEW"})); }
-function __ensureState(){ if(!__localState) __localState=createConversation("marcus",__seed(),__uuid()); }
+function __ensureState(){ if(!__localState){ __localState=createConversation("marcus",__seed(),__uuid()); __startLog(); } }
 async function __localApi(path, body){
   try{
     __ensureState();
     if(path==="/api/state") return {status:200,data:__project()};
+    if(path==="/api/playtest-log"){ const log=__localLogs.get(body.runId); if(!log) return {status:404,data:{error:"Unknown log run."}}; const accepted=log.ingest(body); __saveLog(); return {status:200,data:{accepted,persisted:true}}; }
+    if(["/api/playtest-log.json","/api/playtest-log.md","/api/playtest-log.previous.json","/api/playtest-log.previous.md"].includes(path)){
+      const log=path.includes(".previous")?__previousLog:__localLog?.assemble();
+      if(!log) return {status:404,data:{error:"Run log unavailable."}};
+      const md=path.endsWith(".md"); return {status:200,data:log,text:md?renderLogMarkdown(log):JSON.stringify(log,null,2)+"\n",basename:log.header.fileBase};
+    }
     if(path==="/api/preview") return {status:200,data:previewConversation(__localState,body,{languageMode:"AUTHORING_PREVIEW"})};
     if(path==="/api/restart"){
       const scenarioId=body.scenarioId||"marcus", seed=String(body.seed||__seed());
+      __observe(()=>__localLog?.end("REPLACED")); __saveLog();
       __localState=createConversation(scenarioId,seed,__uuid());
+      __startLog();
       return {status:200,data:__project()};
     }
     if(path==="/api/turn"){
+      const before=__localState;
       __localState=resolveConversation(__localState,body,{languageMode:"AUTHORING_PREVIEW"});
+      __observe(()=>__localLog?.turn(before,__localState,body,projectConversation(__localState,"LOG-ONLY",{languageMode:"AUTHORING_PREVIEW"}))); __saveLog();
       return {status:200,data:__project()};
     }
     return {status:404,data:{error:"Not found."}};
@@ -227,7 +251,7 @@ async function __localApi(path, body){
 async function localFetch(path, options={}){
   let body={}; if(options.body){ try{body=JSON.parse(options.body)}catch{} }
   const r=await __localApi(path,body);
-  return { ok:r.status>=200&&r.status<300, status:r.status, async json(){return r.data;} };
+  return { ok:r.status>=200&&r.status<300, status:r.status, headers:{get(name){return name.toLowerCase()==="x-playtest-basename"?r.basename:null;}}, async json(){return r.data;}, async text(){return r.text??JSON.stringify(r.data);} };
 }
 // END_MARCUS_LOCAL_API
 '''
@@ -250,6 +274,19 @@ def build(source, output):
     for entry in ENTRIES:
         bundle.collect(entry)
     bundle.collect("public/encounter/app.js")
+    bundle.collect("src/playtest/recorder.mjs")
+    bundle.collect("src/playtest/markdown.mjs")
+    package = json.loads(bundle.read("package.json"))
+    supplied = os.environ.get("MARCUS_BUILD_INFO")
+    build_info = json.loads(supplied) if supplied else {"mode": "standalone", "packageName": package["name"], "packageVersion": package["version"], "commitFull": None, "commitShort": None, "dirty": None}
+    if not supplied:
+        try:
+            sha = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=source, stderr=subprocess.DEVNULL, text=True).strip()
+            if re.fullmatch(r"[a-f0-9]{40}", sha):
+                build_info.update(commitFull=sha, commitShort=sha[:7], dirty=bool(subprocess.check_output(["git", "status", "--porcelain"], cwd=source, stderr=subprocess.DEVNULL, text=True).strip()))
+        except (OSError, subprocess.CalledProcessError):
+            pass
+    build_info = {key: build_info.get(key) for key in ["mode", "packageName", "packageVersion", "commitFull", "commitShort", "dirty"]}
     definitions = []
     for path in sorted(bundle.sources):
         if path == "public/encounter/app.js":
@@ -275,13 +312,14 @@ def build(source, output):
         assets[url] = "data:image/webp;base64," + base64.b64encode(data).decode("ascii")
         asset_receipts.append({"path": "public/encounter" + url, "bytes": len(data), "sha256": digest(data)})
     app = bundle.sources["public/encounter/app.js"]
-    if len(list(IMPORT.finditer(app))) != 4:
-        raise ValueError("Browser app import contract expected four imports")
+    if len(list(IMPORT.finditer(app))) != 5:
+        raise ValueError("Browser app import contract expected five imports")
     app = bundle.transform("public/encounter/app.js", app, export_module=False)
     for old, new, count, label in [('await fetch(path,', 'await localFetch(path,', 1, 'POST local adapter'),
                                   ('await fetch("/api/state",', 'await localFetch("/api/state",', 1, 'GET local adapter'),
                                   ('crypto.randomUUID()', '__uuid()', 2, 'file-context UUID')]:
         app = checked_replace(app, old, new, count, label, bundle.receipts)
+    app = checked_replace(app, 'globalThis.fetch(path, options)', 'localFetch(path, options)', 1, 'playtest offline transport', bundle.receipts)
     index = bundle.read("public/encounter/index.html")
     css = bundle.read("public/encounter/style.css") + "\n" + bundle.read("public/encounter/delivery-chart.css")
     if re.search(r"</style", css, re.I):
@@ -289,7 +327,7 @@ def build(source, output):
     index = checked_replace(index, '<link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="/delivery-chart.css">', '<style>' + css + '</style>', 1, 'inline CSS', bundle.receipts)
     index = checked_replace(index, '<script type="module" src="/app.js"></script>', '', 1, 'remove module script transport', bundle.receipts)
     runtime = REGISTRY + "\n".join(definitions) + "\n// END_MARCUS_MODULE_REGISTRY\n"
-    runtime += "globalThis.__MARCUS_ASSET_DATA = " + js(assets) + ";\n" + LOCAL_API
+    runtime += "globalThis.__MARCUS_ASSET_DATA = " + js(assets) + ";\nconst __MARCUS_BUILD_INFO = " + js(build_info) + ";\n" + LOCAL_API
     script = runtime + "\n// BEGIN_MARCUS_EXISTING_UI\n" + app + "\n// END_MARCUS_EXISTING_UI\n"
     audit_no_network(script, index, css)
     script = re.sub(r"</script", r"<\/script", script, flags=re.I)
@@ -297,7 +335,7 @@ def build(source, output):
     index = checked_replace(index, '</body>', badge + '\n<script>\n' + script + '\n</script>\n</body>', 1, 'inline script', bundle.receipts)
     html_bytes = index.encode("utf-8")
     inventory = {"schemaVersion": VERSION, "html": {"path": "Marcus_Encounter.html", "bytes": len(html_bytes), "sha256": digest(html_bytes)},
-                 "sourceEncoding": "UTF-8 normalized to LF before hashing and embedding", "modules": sorted(bundle.sources),
+                 "sourceEncoding": "UTF-8 normalized to LF before hashing and embedding", "modules": sorted(bundle.sources), "buildInfo": build_info,
                  "moduleGraph": sorted(bundle.edges, key=lambda edge: (edge["from"], edge["to"], edge["kind"])),
                  "sourceInputs": [bundle.inputs[name] for name in sorted(bundle.inputs)], "assets": asset_receipts,
                  "nodeStubAllowlist": {name: sorted(exports) for name, exports in BUILTINS.items()},

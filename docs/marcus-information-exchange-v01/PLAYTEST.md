@@ -15,11 +15,11 @@ The initial percentage label was found under an existing hidden heading and move
 
 ## Saved evidence
 
-![Blind failure at 22%, card physically retained](C:/Users/mcdon/Documents/ChatGPT/dpa-message-foundations-v01/docs/marcus-information-exchange-v01/validation/r17-blind-failure-22.jpg)
+![Blind failure at 22%, card physically retained](validation/r17-blind-failure-22.jpg)
 
-![Failure then Show and later ordinary offer at 19%](C:/Users/mcdon/Documents/ChatGPT/dpa-message-foundations-v01/docs/marcus-information-exchange-v01/validation/r17-failure-show-19.jpg)
+![Failure then Show and later ordinary offer at 19%](validation/r17-failure-show-19.jpg)
 
-![Completed exchange showing Traded and 8%](C:/Users/mcdon/Documents/ChatGPT/dpa-message-foundations-v01/docs/marcus-information-exchange-v01/validation/r17-completed-trade-8.jpg)
+![Completed exchange showing Traded and 8%](validation/r17-completed-trade-8.jpg)
 
 The completed view's DOM snapshot is saved as `validation/r17-completed-trade-dom.txt`.
 
@@ -43,6 +43,22 @@ The engine regression additionally submits $20 on the final $115 principal and p
 
 New screenshots: `validation/r17-locked-extra-pass/ui-known-8.jpg`, `ui-blind-two-outcomes.jpg`, `ui-failed-22.jpg`, `ui-completed-savings.jpg`. Three DOM snapshots accompany the blind, failed and completed observations. Full-page capture was unavailable on later screens; viewport captures were positioned and visually checked for the relevant fee/comparison/savings text.
 
-![Completed exact-charge agreement and savings](C:/Users/mcdon/Documents/ChatGPT/dpa-message-foundations-v01/docs/marcus-information-exchange-v01/validation/r17-locked-extra-pass/ui-completed-savings.jpg)
+![Completed exact-charge agreement and savings](validation/r17-locked-extra-pass/ui-completed-savings.jpg)
 
 The rebuilt standalone passes seven dedicated checks, including the added exact-extra regression and blind-limit parity with network calls forbidden. The source-UI/file-protocol distinction recorded above still applies.
+
+## Playtest logger — 2026-10-01
+
+Run `npm run encounter:dev` and use `http://127.0.0.1:4175/`. Each created run automatically maintains `.events.jsonl`, `.json` and `.md` siblings in ignored `playtest-logs/`. Names use local start time with UTC offset, seed and run ID. Headers retain local and UTC time. Restarting an open run records REPLACED; terminal results survive later restarts.
+
+Use Download run log during play or after the result, then choose JSON or Markdown. Downloads contain developer spoilers; the rendered Play/Observed Debug views contain no logger private block. Files save wherever the browser chooses. The offline HTML in `dist/marcus-information-exchange-v01/Marcus_Encounter.html` uses the same recorder/renderer with an in-process API and no network. Guarded localStorage preserves a previous partial log for export only.
+
+The actual browser agreement proof used `r17-proof-0`: Hint, then Trade at 2 units/$70 cash/$50 principal/7 days, then confirm. Result: 2 Contra, $10 cash, $54 new repayment, $304 owed, R-17 Traded and $4 saved. The `playtest-walk-away` proof retained $80 cash, 0 player stock, $250 owed and undisclosed R-17. All six automatic sample files, three DOM snapshots, viewport images and gate receipts are under `validation/playtest-log-pass/`.
+
+![Completed playtest agreement](validation/playtest-log-pass/browser-agreement.jpg)
+
+![Walk-away playtest](validation/playtest-log-pass/browser-walk-away.jpg)
+
+The end-screen button is outside the disabled terminal turn fieldset and was clicked successfully. The in-app browser did not surface a completed Blob download event; direct file navigation was blocked by its URL policy. Those browser save/file checks are recorded as limitations, while protected HTTP and actual embedded export tests passed. Logger errors remain console-only; interrupted runs honestly remain incomplete.
+
+See [schema](PLAYTEST_LOG_SCHEMA.md), [full report](IMPLEMENTATION_REPORT.md) and [validation inventory](validation/playtest-log-pass/VALIDATION_INVENTORY.json). Evidence committed here contains repository-relative references or omitted local paths. Real ignored logs are never staged wholesale. Rates, scoring, settlement, Section 35 and frozen expectations remain unchanged.

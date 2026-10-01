@@ -10,7 +10,7 @@ const INTENSITY_SUMMARIES = {
   OVERT: "Make the selected manner strongly apparent.",
 };
 
-export function createDeliveryChart(container, { vibes, intensities, onChange, storage, chartContainer }) {
+export function createDeliveryChart(container, { vibes, intensities, onChange, storage, chartContainer, onObserve }) {
   const doc = container.ownerDocument;
   const ids = vibes.map((vibe) => vibe.vibeId);
   if (ids.length !== 20 || new Set(ids).size !== 20 || CUES.some(([cue]) => CUES.some(([other]) => cue !== other && !ids.includes(cue + other)))) {
@@ -150,6 +150,7 @@ export function createDeliveryChart(container, { vibes, intensities, onChange, s
     if (next.vibeId === selection.vibeId && next.intensity === selection.intensity) return;
     selection = next;
     renderSelection();
+    try { onObserve?.({ kind: "Picked delivery", target: button.dataset.vibe || button.dataset.intensity, label: button.textContent, value: { ...selection }, location: menuRoot?.contains(button) ? "all-vibes" : "shortcuts", orderShown: [...shortcuts.querySelectorAll("[data-vibe]")].map(item => item.dataset.vibe) }); } catch { console.warn("Playtest delivery observation unavailable."); }
     if (typeof onChange === "function") onChange({ ...selection });
   }
   function handleMode() {

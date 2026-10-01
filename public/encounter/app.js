@@ -2,6 +2,7 @@ import { createDeliveryChart } from "/delivery-chart.js";
 import { createFaceRenderer } from "/face-renderer.js";
 import { createTurnPlayer } from "/turn-player.js";
 import { r17DraftCharges, r17StandardExtra } from "/r17-rates.mjs";
+import { createPlaytestObserver, filteredDebug } from "/playtest-log.js";
 
 const $ = id => document.getElementById(id);
 const node = (tag, text) => { const element = document.createElement(tag); if (text !== undefined) element.textContent = String(text); return element; };
@@ -10,6 +11,7 @@ const names = { cash: "Cash", debt: "Total owed", marcusStock: "Their Contra", p
 let snapshot = null, busy = false, synchronized = false, view = "play", delivery = null;
 let keywordId = null, actionId = null, preview = null, previewSequence = 0, previewTimer = null;
 let pendingSnapshot = null;
+const observer = createPlaytestObserver({ getContext: () => ({ snapshot, selection: delivery?.getSelection() ?? null }), transport: (path, options) => globalThis.fetch(path, options) });
 // Presentation only: keep the exact offer and send controls outside the collapsible draft.
 const builder = node("details"), builderSummary = node("summary", "Build an offer");
 builder.id = "offer-builder"; builder.append(builderSummary, document.querySelector(".proposal"));
@@ -18,6 +20,8 @@ const revisit = node("details"); revisit.id = "revisit"; revisit.append(node("su
 $("context-actions").after(revisit);
 $("npc-line").before($("player-line"));
 $("npc-line").after($("resolution"));
+// The completed-turn fieldset is disabled; keep its export control outside it.
+$("turn-form").after($("download-run-log-end"));
 const faceDetails = node("details"); faceDetails.className = "face-description";
 faceDetails.append(node("summary", "Face description"), $("face-caption")); $("npc-line").after(faceDetails);
 $("accept").textContent = "Choose these terms";
@@ -35,7 +39,7 @@ const selectedAction = () => selectedKeyword()?.actions.find(entry => entry.id =
 const offer = () => snapshot?.play.counteroffer;
 const commercial = () => snapshot?.play.scenario?.kind !== "CONVERSATION" && snapshot?.options.price != null;
 const available = action => snapshot?.play.availableActions?.find(entry => entry.action === action)?.available === true;
-function notice(text, error = false) { $("notice").textContent = text; $("notice").classList.toggle("error", error); }
+function notice(text, error = false) { $("notice").textContent = text; $("notice").classList.toggle("error", error); if (error) observer.record("UI_ERROR", { message: text }); }
 function publicDetails(value) {
   const box = node("div");
   if (value == null) return box;
@@ -95,12 +99,14 @@ const turnPlayer = createTurnPlayer({
     $("npc-line").textContent = "…";
     renderFace(event.faces?.receiving || snapshot.play.face, "receiving");
     $("skip").hidden = false; $("skip").focus(); notice(`${character().name} hears you.`);
+    observer.record("FACE_PRESENTED", { turn: event.turnRef?.index, phase: "receiving", face: event.faces?.receiving }); observer.screen("hearing", { turn: event.turnRef?.index, phase: "receiving" });
   },
   onResponding(event) {
     if (pendingSnapshot) { applySnapshot(pendingSnapshot); pendingSnapshot = null; }
     renderFace(event.faces?.responding || snapshot.play.face, "responding");
     $("npc-line").textContent = event.marcusText;
     $("response-announcement").textContent = `${character().name}: ${event.marcusText} ${event.faces?.responding?.visibleCaption || ""} ${event.feedback || ""}`;
+    observer.record("FACE_PRESENTED", { turn: event.turnRef?.index, phase: "responding", face: event.faces?.responding }); observer.screen("responding"); void observer.flush();
   },
   onFinish() { $("skip").hidden = true; },
 });
@@ -134,6 +140,7 @@ function chooseFound(found) { if (found) chooseAction(found.keyword.id, found.ac
 function chooseAction(subject, action) {
   if (busy || !synchronized) return;
   keywordId = subject; actionId = action;
+  observer.record("UI_ACTION", { kind: "Selected move", target: actionId, label: selectedAction()?.label, keywordId, contextActionId: actionId, available: selectedAction()?.available, intent: selectedAction()?.intent });
   const chosen = selectedAction();
   builder.open = chosen?.intent.action === "DEAL";
   if (chosen?.intent.action === "DEAL") $("information").value = chosen.intent.information || "NONE";
@@ -141,6 +148,7 @@ function chooseAction(subject, action) {
 }
 function actionButton(keyword, action, full) {
   const button = node("button", action.label); button.type = "button";
+  button.dataset.playtestAction = action.id;
   button.disabled = !action.available; button.setAttribute("aria-pressed", String(keyword.id === keywordId && action.id === actionId));
   button.title = action.reason || action.description;
   if (full) button.append(node("small", action.available ? action.description : action.reason));
@@ -177,7 +185,7 @@ function renderKeywords() {
 }
 function fillOptions() {
   const options = snapshot.options;
-  if (!delivery) delivery = createDeliveryChart($("delivery-main"), { vibes: options.vibes, intensities: options.intensities, chartContainer: $("based-chart-menu"), onChange: () => schedulePreview() });
+  if (!delivery) delivery = createDeliveryChart($("delivery-main"), { vibes: options.vibes, intensities: options.intensities, chartContainer: $("based-chart-menu"), onChange: () => schedulePreview(), onObserve: data => observer.record("UI_ACTION", data) });
   if (!$("delivery-settings")) {
     const settings = node("details"); settings.id = "delivery-settings"; settings.append(node("summary", "Delivery shortcuts & help"));
     [".dc-intro", ".dc-toolbar", ".dc-shortcut-note", ".dc-storage-note"].forEach(selector => { const element = $("delivery-main").querySelector(selector); if (element) settings.append(element); });
@@ -239,6 +247,7 @@ async function post(path, body) {
 async function requestPreview(sequence) {
   const fields = intentFields(); if (!fields || busy || sequence !== previewSequence) return;
   const key = draftKey(); const body = { requestId: crypto.randomUUID(), runId: snapshot.play.runId, version: snapshot.play.version, ...fields };
+  observer.record("PREVIEW_REQUESTED", { requestId: body.requestId, intent: fields });
   try {
     const data = await post("/api/preview", body);
     if (sequence !== previewSequence || busy || key !== draftKey() || data.runId !== snapshot.play.runId || data.version !== snapshot.play.version) return;
@@ -247,9 +256,11 @@ async function requestPreview(sequence) {
     const manner = data.deliveryDescription;
     if (manner) $("delivery-description").replaceChildren(node("strong", manner.label));
     if (fields.topic === "CLARIFY_OFFER") $("draft-warning").textContent = "Asking keeps these exact terms open, but spends a turn and may test his patience.";
+    observer.record("PREVIEW_SHOWN", { requestId: body.requestId, playerLine: data.playerText, delivery: fields.vibeId, intensity: fields.intensity }); observer.screen("preview");
   } catch (error) {
     if (sequence !== previewSequence || key !== draftKey()) return;
     preview = null; $("player-preview").textContent = error.message; $("preview-state").textContent = "Draft needs attention";
+    observer.record("UI_ERROR", { message: error.message });
   }
   refreshControls();
 }
@@ -319,16 +330,18 @@ function renderPlay() {
   renderOffer(); renderKeywords(); updateDraft();
   $("conversation").replaceChildren(...play.events.map((event, index) => { const article = node("article"); article.append(node("h3", `Turn ${index + 1}`), node("p", `You: ${event.playerText}`), node("p", `${who.name}: ${event.marcusText}`)); if (event.feedback) { const feedback = node("p", event.feedback); feedback.className = "turn-feedback"; article.append(feedback); } if (event.faces) { const inspect = node("button", "Inspect both reactions"); inspect.type = "button"; inspect.dataset.interact = ""; inspect.addEventListener("click", () => inspectFaces(event, index)); article.append(inspect); } return article; }));
   $("resolution").hidden = play.status === "OPEN";
+  $("download-run-log-end").hidden = play.status === "OPEN";
   renderReceipt();
   if (play.status !== "OPEN") revisit.hidden = true;
   $("walk-reason").textContent = play.availableActions?.find(entry => entry.action === "WALK")?.reason || "";
 }
 function renderDebug() {
   if (view !== "debug" || !snapshot) return;
-  $("debug-content").replaceChildren(node("pre", JSON.stringify({ definitions: snapshot.options.metricDefinitions, ...snapshot.debug }, null, 2)));
+  $("debug-content").replaceChildren(node("pre", JSON.stringify(filteredDebug(snapshot), null, 2)));
 }
 function applySnapshot(data) {
   invalidatePreview(); snapshot = data; synchronized = true;
+  observer.bind(data);
   if ($("seed").dataset.run !== data.play.runId) { $("seed").value = data.play.seed; $("seed").dataset.run = data.play.runId; keywordId = null; actionId = null; }
   fillOptions();
   if (offer() && available("ACCEPT")) {
@@ -336,6 +349,7 @@ function applySnapshot(data) {
     if (accept) { keywordId = accept.keyword.id; actionId = accept.action.id; builder.open = false; }
   }
   renderPlay(); renderDebug(); refreshControls();
+  observer.screen("snapshot applied");
 }
 function resetDraft() {
   termKeys.forEach(key => { $(key).value = $(key).defaultValue; });
@@ -359,6 +373,7 @@ async function load() {
 }
 async function submit(path, body) {
   if (busy || !synchronized || !snapshot) return;
+  observer.record("TURN_SENT", { turn: snapshot.play.version + 1, action: path === "/api/restart" ? "RESTART" : body.action, requestId: body.requestId, intent: body }); void observer.flush();
   busy = true; invalidatePreview(); closeMenu(); refreshControls(); notice(path === "/api/restart" ? "Starting a fresh conversation…" : "Sending your words…");
   try {
     const data = await post(path, body);
@@ -374,7 +389,7 @@ async function submit(path, body) {
     synchronized = false; turnPlayer.cancel(); pendingSnapshot = null; $("skip").hidden = true;
     try { await getState(); $("reload").hidden = true; notice(`${error.message} Current state reloaded. Review it before sending again.`, true); }
     catch { $("reload").hidden = false; notice(`${error.message} Result uncertain. Reload state before continuing; this action will not be resent automatically.`, true); }
-  } finally { busy = false; refreshControls(); schedulePreview(); focusResponse(); }
+  } finally { busy = false; refreshControls(); schedulePreview(); focusResponse(); observer.screen("send complete"); void observer.flush(); }
 }
 function closeMenu() { if ($("conversation-menu").open) $("conversation-menu").close(); $("more").setAttribute("aria-expanded", "false"); }
 $("more").addEventListener("click", () => { if (busy) return; $("conversation-menu").showModal(); $("more").setAttribute("aria-expanded", "true"); $("keywords-tab").focus(); });
@@ -401,4 +416,5 @@ $("replay").addEventListener("click", async () => {
 $("inspect-last").addEventListener("click", () => inspectFaces(snapshot.play.events.at(-1), snapshot.play.events.length - 1));
 $("close-face-review").addEventListener("click", () => $("face-review").close());
 $("face-review").addEventListener("close", () => $("inspect-last").focus());
+observer.setupDownloads();
 void load();

@@ -1,0 +1,141 @@
+{
+  "schemaVersion": "playtest-log-validation@0.1",
+  "textEncoding": "UTF-8 LF; hashes describe Git-staged bytes",
+  "files": [
+    {
+      "path": "docs/marcus-information-exchange-v01/validation/playtest-log-pass/2026-10-01_18-25-28-0400_r17-proof-0_e546d598-f77b-4ab1-8538-eafe48da398f.events.jsonl",
+      "bytes": 487551,
+      "sha256": "eb75163719cebc9b3fced1e88a1f5b932454d5166e1356d284ea91876687b8fe"
+    },
+    {
+      "path": "docs/marcus-information-exchange-v01/validation/playtest-log-pass/2026-10-01_18-25-28-0400_r17-proof-0_e546d598-f77b-4ab1-8538-eafe48da398f.json",
+      "bytes": 1333684,
+      "sha256": "26eedca6099a00640406018d5964fca1cdafeca4702dfdea8f1510cbf5610267"
+    },
+    {
+      "path": "docs/marcus-information-exchange-v01/validation/playtest-log-pass/2026-10-01_18-25-28-0400_r17-proof-0_e546d598-f77b-4ab1-8538-eafe48da398f.md",
+      "bytes": 531090,
+      "sha256": "0a0b1094fdd7f9979a5e3dbfa306bf980a805df784597133b9fd05429e086d26"
+    },
+    {
+      "path": "docs/marcus-information-exchange-v01/validation/playtest-log-pass/2026-10-01_18-33-09-0400_playtest-walk-away_efbd784d-4e9c-4f14-b021-680f54056b55.events.jsonl",
+      "bytes": 100034,
+      "sha256": "dea5a63e8d3e1d4ca73ee40737db56ce9aff1f65be8337da5c51636ab58d2b96"
+    },
+    {
+      "path": "docs/marcus-information-exchange-v01/validation/playtest-log-pass/2026-10-01_18-33-09-0400_playtest-walk-away_efbd784d-4e9c-4f14-b021-680f54056b55.json",
+      "bytes": 253166,
+      "sha256": "93673135a8812697b576de1756196e5558ca2e258094f72d577a29fe4beca36c"
+    },
+    {
+      "path": "docs/marcus-information-exchange-v01/validation/playtest-log-pass/2026-10-01_18-33-09-0400_playtest-walk-away_efbd784d-4e9c-4f14-b021-680f54056b55.md",
+      "bytes": 81571,
+      "sha256": "5de0f14bdeb1eaf18a96d982cd6f6afe77cd1a7a62826817f5732c10a90d3e73"
+    },
+    {
+      "path": "docs/marcus-information-exchange-v01/validation/playtest-log-pass/baseline-portable.log",
+      "bytes": 47446,
+      "sha256": "588eccd31c610d971708af62470a2b33f0f427b8efc4016eec8dba13a9b55b63"
+    },
+    {
+      "path": "docs/marcus-information-exchange-v01/validation/playtest-log-pass/browser-agreement-dom.txt",
+      "bytes": 3215,
+      "sha256": "656603ab4e2816c319d4c807f6606560799a10304fc57119237ba39ff41cacc5"
+    },
+    {
+      "path": "docs/marcus-information-exchange-v01/validation/playtest-log-pass/browser-agreement.jpg",
+      "bytes": 87446,
+      "sha256": "d75de8044377a7307eb80571f552a0059e9b3469a2a4dbc8bf4cf5f5a08a2cbf"
+    },
+    {
+      "path": "docs/marcus-information-exchange-v01/validation/playtest-log-pass/browser-debug-dom.txt",
+      "bytes": 2903,
+      "sha256": "a246cc3002091f9a46e99b4ad4020a7d412502895f8f4f2d20e4dfd782ec84dd"
+    },
+    {
+      "path": "docs/marcus-information-exchange-v01/validation/playtest-log-pass/browser-debug.jpg",
+      "bytes": 56912,
+      "sha256": "d369e411fb3d4643c08cce5cc678a496a633b876e232bff3da9fe5cec722c1d7"
+    },
+    {
+      "path": "docs/marcus-information-exchange-v01/validation/playtest-log-pass/browser-walk-away-dom.txt",
+      "bytes": 2931,
+      "sha256": "3de5bdb42bff7730b2f834ab66a9475eb71cfbabcb1dbd3d70293229c8dfe46e"
+    },
+    {
+      "path": "docs/marcus-information-exchange-v01/validation/playtest-log-pass/browser-walk-away.jpg",
+      "bytes": 73013,
+      "sha256": "38f0cf0d2d07a92e306df4b5e30853d1dc28331621e3c2a51b7a0ee276d7e5f2"
+    },
+    {
+      "path": "docs/marcus-information-exchange-v01/validation/playtest-log-pass/build.log",
+      "bytes": 124,
+      "sha256": "fa22908c2aa835ca61a6981b0bbdaeb8ffb4fded0065336d849d7c29514ea977"
+    },
+    {
+      "path": "docs/marcus-information-exchange-v01/validation/playtest-log-pass/diff-check.log",
+      "bytes": 1657,
+      "sha256": "3a5ed66284c1e6d67c78a2050bd7b17085862c9e008ac2fc9d9eceb457e820e7"
+    },
+    {
+      "path": "docs/marcus-information-exchange-v01/validation/playtest-log-pass/freshness.log",
+      "bytes": 64,
+      "sha256": "68e096ef3acfe6ca439b1deb30a658d0e7f0741f3acbe09a26a782ddfaa6cb67"
+    },
+    {
+      "path": "docs/marcus-information-exchange-v01/validation/playtest-log-pass/full-test.log",
+      "bytes": 51115,
+      "sha256": "d1c73af8444bd9fa298a8ac90b56d3d355afe482fd936b500638452495605405"
+    },
+    {
+      "path": "docs/marcus-information-exchange-v01/validation/playtest-log-pass/lint.log",
+      "bytes": 153,
+      "sha256": "646cbe0ffd6beaa58d97ff710d70ea1270f1584b611bc9ff138b850d1921b22f"
+    },
+    {
+      "path": "docs/marcus-information-exchange-v01/validation/playtest-log-pass/npm-ci.log",
+      "bytes": 25,
+      "sha256": "f197e7251398bce505bcf5365809dc306f9451fc10be688552d99a4f15e839ed"
+    },
+    {
+      "path": "docs/marcus-information-exchange-v01/validation/playtest-log-pass/PRESERVATION.json",
+      "bytes": 4251,
+      "sha256": "252e97d575078bc3a6f8be77b7b3e68040ec780dde37e4c5a83bd3517737fd9a"
+    },
+    {
+      "path": "docs/marcus-information-exchange-v01/validation/playtest-log-pass/private-path.log",
+      "bytes": 1972,
+      "sha256": "96f2f37ce10f3a6ebae89ccbef77e65c40eefe666c5edacb711cb715d5249145"
+    },
+    {
+      "path": "docs/marcus-information-exchange-v01/validation/playtest-log-pass/SAMPLES.json",
+      "bytes": 486,
+      "sha256": "1b29c09a3208b2cefe064f6b4f349f3647e3d6eb5a1e1236ff896efee39d5e44"
+    },
+    {
+      "path": "docs/marcus-information-exchange-v01/validation/playtest-log-pass/schema.log",
+      "bytes": 264,
+      "sha256": "b2897f34b8296fdf008cd69d422f0e2eeb5c5fc69d788c9f4c51f0504ce319a0"
+    },
+    {
+      "path": "docs/marcus-information-exchange-v01/validation/playtest-log-pass/standalone-build.log",
+      "bytes": 176,
+      "sha256": "41b423c3c504acd2421cad8f2ffa0b3d79362ac281c2965a990295a77805b920"
+    },
+    {
+      "path": "docs/marcus-information-exchange-v01/validation/playtest-log-pass/standalone-freshness.log",
+      "bytes": 64,
+      "sha256": "68e096ef3acfe6ca439b1deb30a658d0e7f0741f3acbe09a26a782ddfaa6cb67"
+    },
+    {
+      "path": "docs/marcus-information-exchange-v01/validation/playtest-log-pass/standalone-tests.log",
+      "bytes": 1935,
+      "sha256": "d513aa85c8a7947c6858a2904917ee2c532c2c61281edb9f9aca3102effca939"
+    },
+    {
+      "path": "docs/marcus-information-exchange-v01/validation/playtest-log-pass/typecheck.log",
+      "bytes": 135,
+      "sha256": "dda304bdb27c78c036259ab1e7907d5f752decac6a127d56fbf4bbbcf2a2449b"
+    }
+  ]
+}

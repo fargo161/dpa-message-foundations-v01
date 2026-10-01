@@ -15,9 +15,11 @@ const scratchParent = process.env.MARCUS_STANDALONE_WORK ?? path.join(os.tmpdir(
 fs.mkdirSync(scratchParent, { recursive: true });
 const scratch = fs.mkdtempSync(path.join(scratchParent, "run-"));
 const python = process.env.MARCUS_PYTHON ?? "python";
+// Inject the same optional build metadata into real and mirrored-source builds.
+const frozenBuild = JSON.stringify({ mode: "standalone", packageName: "dpa-message-foundations", packageVersion: "0.1.0", commitFull: "1".repeat(40), commitShort: "1111111", dirty: true });
 const builder = path.join(root, "tools", "build_standalone.py");
 const hash = data => createHash("sha256").update(data).digest("hex");
-const result = (source, output, tool = builder, args = true) => spawnSync(python, [tool, ...(args ? ["--source", source, "--output", output] : [])], { encoding: "utf8", cwd: root });
+const result = (source, output, tool = builder, args = true) => spawnSync(python, [tool, ...(args ? ["--source", source, "--output", output] : [])], { encoding: "utf8", cwd: root, env: { ...process.env, MARCUS_BUILD_INFO: frozenBuild } });
 const baselineOutput = path.join(scratch, "baseline");
 const first = result(root, baselineOutput);
 assert.equal(first.status, 0, `Python builder prerequisite failed: ${first.error ?? first.stderr}`);
