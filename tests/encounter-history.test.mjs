@@ -78,7 +78,7 @@ test("lore history: limited cash purchase and intended credit outcome stay disti
   const cash = accept(propose(start(), { units: 1, upfront: 60, repayment: 0, extra: 0, days: 1 }));
   const credit = accept(propose(start(), goodTerms));
   assert.equal(cash.metrics.playerStock, 1); assert.equal(cash.metrics.cash, 20); assert.equal(cash.metrics.debt, 250);
-  assert.equal(credit.metrics.playerStock, 2); assert.equal(credit.metrics.cash, 20); assert.equal(credit.metrics.debt, 322);
+  assert.equal(credit.metrics.playerStock, 2); assert.equal(credit.metrics.cash, 20); assert.equal(credit.metrics.debt, 320);
   const cashQuality = projectState(cash, "csrf").play.conversation.outcomeQuality;
   const creditQuality = projectState(credit, "csrf").play.conversation.outcomeQuality;
   assert.equal(cashQuality.creditObjectiveMet, false); assert.equal(creditQuality.creditObjectiveMet, true);

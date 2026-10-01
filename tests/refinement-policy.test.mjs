@@ -19,11 +19,11 @@ const afterProposal = () => {
   return state;
 };
 
-test("one more dollar of security cannot disguise removing the whole fee as fresh concession", () => {
+test("one more dollar of security is assessed independently of submitted extra", () => {
   const result = evaluateTurn(afterProposal(), deal({ ...original, upfront: 61, repayment: 179, extra: 0 }));
-  assert.equal(result.derived.meaningfulProgress, false);
-  assert.equal(result.derived.progressKey, "NONE");
-  assert.ok(result.social.confidence <= 0);
+  assert.equal(result.derived.meaningfulProgress, true);
+  assert.match(result.derived.progressKey, /^CONCESSION:/);
+  assert.deepEqual(result, evaluateTurn(afterProposal(), deal({ ...original, upfront: 61, repayment: 179, extra: 1000 })));
 });
 
 test("a justified lower fee can remain progress when cash and principal improve enough", () => {

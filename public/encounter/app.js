@@ -1,6 +1,7 @@
 import { createDeliveryChart } from "/delivery-chart.js";
 import { createFaceRenderer } from "/face-renderer.js";
 import { createTurnPlayer } from "/turn-player.js";
+import { r17DraftCharges, r17StandardExtra } from "/r17-rates.mjs";
 
 const $ = id => document.getElementById(id);
 const node = (tag, text) => { const element = document.createElement(tag); if (text !== undefined) element.textContent = String(text); return element; };
@@ -197,9 +198,16 @@ function updateDraft() {
   const input = draftTerms(), expected = input.units * snapshot.options.price - input.upfront;
   $("repayment").value = commercial() && Number.isFinite(expected) ? String(expected) : "";
   const terms = draftTerms();
+  const charges = Number.isSafeInteger(expected) && expected >= 0 ? r17DraftCharges(expected, snapshot.play.r17RateContext, $("information").value === "OFFER_INFORMATION") : [];
+  const blind = charges.length > 1, charge = charges[0];
+  $("extra").value = charge ? String(charge.extra) : "";
+  terms.extra = charge?.extra ?? NaN;
+  $("extra-display").textContent = blind ? `$${charges[0].extra} · ${charges[0].rate}% if he values R-17 · $${charges[1].extra} · ${charges[1].rate}% if he doesn't` : charge ? `$${charge.extra} · ${charge.rate}% of new credit` : "Enter valid new credit.";
+  $("extra-comparison").hidden = !charge || blind || charge.rate === 16;
+  $("extra-comparison").textContent = charge && !blind && charge.rate !== 16 ? `Standard charge without R-17: $${r17StandardExtra(expected)} · 16%` : "";
   const isDeal = selectedAction()?.intent.action === "DEAL";
   $("upfront").setCustomValidity(isDeal && expected < 0 ? "Cash now cannot exceed the price of the requested Contra." : "");
-  $("draft-summary").textContent = snapshot.play.status !== "OPEN" ? "" : Number.isFinite(expected) ? `Keep $${snapshot.play.metrics.cash - terms.upfront} cash. Repay $${terms.repayment + terms.extra} in ${terms.days} days ($${terms.repayment} credit + $${terms.extra} extra). Old debt stays owed.` : "Enter whole-number terms.";
+  $("draft-summary").textContent = snapshot.play.status !== "OPEN" ? "" : charge ? blind ? `Keep $${snapshot.play.metrics.cash - terms.upfront} cash. Repay $${expected + charges[0].extra} if he values R-17, or $${expected + charges[1].extra} if he doesn't, in ${terms.days} days. Old debt stays owed.` : `Keep $${snapshot.play.metrics.cash - terms.upfront} cash. Repay $${terms.repayment + terms.extra} in ${terms.days} days ($${terms.repayment} credit + $${terms.extra} extra). Old debt stays owed.` : "Enter whole-number terms.";
   const information = snapshot.options.informationOptions?.find(entry => entry.id === $("information").value);
   const exchange = snapshot.options.informationOptions?.find(entry => entry.id === "OFFER_INFORMATION");
   $("information-reason").textContent = [information?.reason, information?.id !== "OFFER_INFORMATION" && exchange?.available === false ? exchange.reason : ""].filter(Boolean).join(" ");
@@ -253,7 +261,10 @@ function renderOffer() {
   box.append(node("p", current.source === "APPROVED_PROPOSAL" ? `${character().name} approved this. Confirm below to accept.` : `${character().name} offers these terms.`), termTable(current.terms));
   box.append(node("p", `Confirmation transfers ${current.terms.upfront} cash and ${current.terms.units} Contra, adding ${current.terms.repayment} principal and ${current.terms.extra} additional repayment due within ${current.terms.days} days. Existing debt remains owed.`));
   box.append(node("p", `After confirmation: ${snapshot.play.metrics.cash - current.terms.upfront} cash retained; ${current.terms.repayment + current.terms.extra} new repayment due.`));
-  if (Number.isFinite(current.extraChargeRate)) box.append(node("p", `Marcus's minimum extra charge: ${current.extraChargeRate}% of new principal.`));
+  if (Number.isFinite(current.extraChargeRate)) {
+    box.append(node("p", `Extra: $${current.terms.extra} · ${current.extraChargeRate}% of new credit.`));
+    if (current.extraChargeRate !== 16) box.append(node("p", `Standard charge without R-17: $${r17StandardExtra(current.terms.repayment)} · 16%`));
+  }
   const proposal = [...snapshot.play.events].reverse().find(event => event.action === "DEAL");
   if (proposal && current.source !== "APPROVED_PROPOSAL") {
     const comparison = node("details"); comparison.append(node("summary", "Compare with your last spoken proposal"), node("p", proposal.playerText)); box.append(comparison);
@@ -271,6 +282,8 @@ function renderReceipt() {
       const item = node("div"); item.append(node("span", label), node("strong", value)); totals.append(item);
     }
     $("agreement").append(totals, node("p", `Old debt: $${play.obligations?.existing ?? play.agreement.obligations?.existing ?? 0}. New credit: $${terms.repayment} + $${terms.extra} extra. The old debt is still owed.`));
+    const saved = r17StandardExtra(terms.repayment) - terms.extra;
+    if (saved !== 0) $("agreement").append(node("p", saved > 0 ? `R-17 saved you $${saved} on the extra charge.` : `Your R-17 play cost you $${-saved} on the extra charge.`));
     const receipt = node("details"); receipt.append(node("summary", "Accepted terms"), termTable(terms));
     if (play.agreement.informationExchange?.summary) receipt.append(node("p", play.agreement.informationExchange.summary));
     $("agreement").append(receipt);
@@ -302,7 +315,7 @@ function renderPlay() {
   $("walk").hidden = play.status !== "OPEN"; $("walk-reason").hidden = play.status !== "OPEN";
   $("price-note").textContent = commercial() ? `${snapshot.options.price} PER CONTRA · OLD DEBT SEPARATE` : "SUBJECT · INTENTION · DELIVERY";
   $("r17-rate").hidden = !Number.isFinite(play.extraChargeRate);
-  $("r17-rate").textContent = Number.isFinite(play.extraChargeRate) ? `Marcus's minimum extra charge: ${play.extraChargeRate}% of new principal.` : "";
+  $("r17-rate").textContent = Number.isFinite(play.extraChargeRate) ? `Marcus's extra charge: ${play.extraChargeRate}% of new principal.` : "";
   renderOffer(); renderKeywords(); updateDraft();
   $("conversation").replaceChildren(...play.events.map((event, index) => { const article = node("article"); article.append(node("h3", `Turn ${index + 1}`), node("p", `You: ${event.playerText}`), node("p", `${who.name}: ${event.marcusText}`)); if (event.feedback) { const feedback = node("p", event.feedback); feedback.className = "turn-feedback"; article.append(feedback); } if (event.faces) { const inspect = node("button", "Inspect both reactions"); inspect.type = "button"; inspect.dataset.interact = ""; inspect.addEventListener("click", () => inspectFaces(event, index)); article.append(inspect); } return article; }));
   $("resolution").hidden = play.status === "OPEN";

@@ -14,6 +14,7 @@ VERSION = "marcus-world-model-standalone@0.1"
 ENTRIES = ["src/conversation/runtime.mjs", "public/encounter/delivery-chart.js",
            "public/encounter/face-renderer.js", "public/encounter/turn-player.js"]
 PUBLIC_IMPORTS = {"/delivery-options.mjs": "src/conversation/delivery-options.mjs",
+                  "/r17-rates.mjs": "src/encounter/constants.mjs",
                   **{f"/{name}.js": f"public/encounter/{name}.js"
                      for name in ["delivery-chart", "face-renderer", "turn-player"]}}
 BUILTINS = {"node:fs": {"readFileSync"}, "node:url": {"fileURLToPath"}}
@@ -274,8 +275,8 @@ def build(source, output):
         assets[url] = "data:image/webp;base64," + base64.b64encode(data).decode("ascii")
         asset_receipts.append({"path": "public/encounter" + url, "bytes": len(data), "sha256": digest(data)})
     app = bundle.sources["public/encounter/app.js"]
-    if len(list(IMPORT.finditer(app))) != 3:
-        raise ValueError("Browser app import contract expected three imports")
+    if len(list(IMPORT.finditer(app))) != 4:
+        raise ValueError("Browser app import contract expected four imports")
     app = bundle.transform("public/encounter/app.js", app, export_module=False)
     for old, new, count, label in [('await fetch(path,', 'await localFetch(path,', 1, 'POST local adapter'),
                                   ('await fetch("/api/state",', 'await localFetch("/api/state",', 1, 'GET local adapter'),

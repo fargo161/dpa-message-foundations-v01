@@ -53,6 +53,10 @@ export function createEncounterServer({ languageMode = "AUTHORING_PREVIEW" } = {
         const data = await readFile(new URL("../src/conversation/delivery-options.mjs", import.meta.url));
         res.writeHead(200, { "Content-Type": "text/javascript; charset=utf-8" }); res.end(data); return;
       }
+      if (req.method === "GET" && path === "/r17-rates.mjs") {
+        const data = await readFile(new URL("../src/encounter/constants.mjs", import.meta.url));
+        res.writeHead(200, { "Content-Type": "text/javascript; charset=utf-8" }); res.end(data); return;
+      }
       if (req.method === "GET" && STATIC.has(path)) {
         const [file, type] = STATIC.get(path);
         const data = await readFile(new URL(`../public/encounter/${file}`, import.meta.url));

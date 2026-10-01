@@ -44,3 +44,28 @@ test("every changed historical snapshot has an explicit rule and path migration 
     }
   }
 });
+
+test("exact-extra migration lists all 127 snapshots and reconstructs the prior expectation hashes", () => {
+  const migration = JSON.parse(fs.readFileSync(new URL("../docs/marcus-information-exchange-v01/EXTRA_CHARGE_MIGRATION.json", import.meta.url)));
+  assert.equal(migration.startingCommit, "e7aa831bb5237b2f6e8b0b439b4a8efd56d1bf7b");
+  assert.equal(migration.historicalFixtureSHA256, createHash("sha256").update(bytes).digest("hex"));
+  assert.equal(migration.snapshots.length, 127);
+  const canonical = value => Array.isArray(value) ? value.map(canonical) : value && typeof value === "object" ? Object.fromEntries(Object.keys(value).sort().map(key => [key, canonical(value[key])])) : value;
+  const hash = value => createHash("sha256").update(JSON.stringify(canonical(value))).digest("hex");
+  for (const run of proof.runs) for (const [index, after] of run.snapshots.entries()) {
+    const row = migration.snapshots.find(item => item.runId === run.id && item.snapshotIndex === index);
+    assert.equal(row.afterSHA256, hash(after));
+    assert.equal(row.changed, row.differences.length > 0);
+    const before = structuredClone(after);
+    for (const difference of row.differences) {
+      assert.ok(difference.ruleIds.length > 0 && difference.ruleIds.every(id => migration.rules[id]));
+      const parts = difference.path.split("/").slice(1), key = parts.pop();
+      const parent = parts.reduce((value, part) => value[part], before);
+      if (difference.afterPresent) assert.deepEqual(parent[key], difference.after);
+      else assert.equal(Object.hasOwn(parent, key), false);
+      if (difference.beforePresent) parent[key] = structuredClone(difference.before);
+      else delete parent[key];
+    }
+    assert.equal(row.beforeSHA256, hash(before), `${run.id}:${index}: every changed prior expectation is accounted for`);
+  }
+});

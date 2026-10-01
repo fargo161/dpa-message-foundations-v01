@@ -176,3 +176,145 @@ Every implementation/test/artifact path and purpose is listed below. Validation 
 **Follow-up candidates:** retuning the named rates or expanding the information economy requires a later authorized pass. None was implemented.
 
 This pass does not expand authenticity workflow, belief scoring, staleness, backlash, deception/bluffing, multiple cards, NPC-to-player card exchange, BASED/TPL, another NPC or unrelated deal terms. R-17 directly changes extra only; resulting settlement totals naturally include that agreed extra. Existing debt, quantity, cash/principal limits and repayment-day rules retain their existing authority.
+
+## Follow-up — exact extra charge and visible savings (2026-10-01)
+
+Implemented the approved locked-extra preflight and the user's additional blind hard-limit requirement. This section supersedes the first pass's **approval floor** and **player-chosen fee** behavior. The sections above record the original pass as delivered at that time.
+
+### Repository and delivery
+
+- Starting commit: `e7aa831bb5237b2f6e8b0b439b4a8efd56d1bf7b` (`Marcus R-17 information exchange proof: Hint / Show / Trade`).
+- Branch: `codex/r17-information-exchange-v01`, continued in place. No other branch was modified.
+- Delivery is one local commit titled `Lock Marcus R-17 extra charge and show savings`. The final handoff supplies its exact ending SHA; recording a commit's own SHA inside its contents would change that SHA.
+- No push. The two pre-existing line-ending-only `data/generated/*.json` changes are excluded from the commit. They remain semantically identical to HEAD.
+- All nine pre-existing `Temp/` files were preserved; before/after file lengths and SHA-256 inventories match exactly.
+- Standalone: `dist/marcus-information-exchange-v01/Marcus_Encounter.html`, with `BUILD_INVENTORY.json` alongside it. These are existing ignored local deliverables, rebuilt from the same source.
+- New evidence lives in `docs/marcus-information-exchange-v01/validation/r17-locked-extra-pass/`; previous-pass logs and screenshots remain intact.
+
+### Authoritative normalization and standard scoring
+
+DEAL still carries `units, upfront, repayment, extra, days`. Identity, closed object shape and ordinary numeric inputs remain validated. A submitted extra must still be a valid whole-number field in the existing 0–10000 envelope; every such value is silently replaced with `r17ExtraFloor(principal, resolvedRate)` before financial validation, evaluation, stored proposal, event intent and approved offer. `$0`, `$20` and `$9999` cannot buy approval or change settlement. Caller inputs and the original state remain unchanged.
+
+`resolveR17Rate` and `r17ExtraFloor` remain the single rate and whole-dollar rounding authorities. The latter retains its compatible name but now supplies the **exact** charge. Counters recalculate it on their own principal; ACCEPT binds and settles the exact already-offered amount, including a contingent 8% trade.
+
+The policy values the extra component at `ceil(principal × 16 / 100)` for both proposal scoring and concession comparisons, retaining the existing scoring cap and thresholds. Actual exposure and obligations use the resolved charge. Repetition compares units, cash, principal and days: changing submitted extra or changing only the resolved rate cannot avoid repetition handling. The obsolete under-floor counter and unearned fee-only-discount guard are removed. Counter units, upfront share and deadline formulas are unchanged.
+
+The new tests compare approve, counter and reject outcomes and scores at 8%, 16% and 22% on matched policy contexts. Hard-limit differences remain legitimate because they use the actual debt exposure. Social history, delivery and the existing separate legacy information systems retain their previous authority.
+
+### Blind drafts, previews and hard limits
+
+`play.r17RateContext` contains only player-observed facts: shown, failed blind trade, current availability, whether interest is known and the observed interest value (null until observed). The browser imports the same pure helpers as the engine through the exact `/r17-rates.mjs` route. It never reads Debug's private interest. Debug's existing diagnostic visibility remains unchanged.
+
+`r17DraftCharges` derives known rates or both blind possibilities solely from that public context. At $50 principal, an attached unknown-interest R-17 displays `$4 · 8% if he values R-17 · $11 · 22% if he doesn't`. Its summary displays both $54/$61 totals. No single resolved outcome is shown. Removing R-17 returns to the persistent ordinary rate immediately; a previous contingent 8% offer cannot price an unattached new draft.
+
+Preview remains pure: no information resolution, policy evaluation, event creation or state mutation. Its canonical player sentence names new credit **at your extra charge**, with no dollar extra. It validates a publicly possible amount, not Marcus's private attitude. Matched states with opposite private interest produce identical complete preview responses, including in forced affordability cases. There is no interest-dependent validation-error branch before the reply.
+
+On send, the existing staged information resolver settles 8% or the failed-blind 22%. Blind debt-limit validation is deferred to the ordinary policy response. The policy caps allowable exposure at the lower of its authored limit and the engine's $100000 debt limit, so an unaffordable actual charge is countered or rejected, rather than thrown as a validation error. ACCEPT still checks the exact offer and hard limits before settlement. A rejected R-17 response also states that the information charge does not remove credit limits.
+
+Two explicit tests use existing test-only state/profile interventions; no new HTTP/client override was added:
+
+| Forced case | 8% exposure | 22% exposure | Result |
+| --- | ---: | ---: | --- |
+| Authored exposure limit lowered to $307; principal $50, old debt $250 | $304 | $311 | Identical previews; 8% approved, 22% rejected with Marcus's reply |
+| Existing debt set to $99943 and authored exposure widened above the $100000 hard cap | $99997 | $100004 | Identical previews; 8% approved, 22% rejected with Marcus's reply |
+
+Both retain R-17 and transfer no resources before confirmation. These are controlled semantic tests, not claims of cryptographic constant-time execution. The preview path has no private-interest resolution branch. Under the normal opening limits, defensible principal is at most $180: even 22% yields total exposure $470, below the $650 authored ceiling and $100000 hard ceiling. The interventions exercise the otherwise unreachable charge-dependent boundary explicitly.
+
+### Visible comparison and actual golden matrix
+
+The builder uses a read-only output and a hidden compatibility field, never an editable fee control. Known non-16% drafts and current offers display the standard 16% charge on the same principal. A blind draft displays both alternatives instead. DEAL speech omits the dollar fee; Marcus's reply, clarification and ACCEPT retain exact established amounts. TERMS dialogue no longer suggests paying extra can help approval. Minimum/floor wording is replaced by exact-charge wording.
+
+On completion, savings/cost equal `ceil(agreed principal × 16 / 100) - agreed extra`, with the requested saved/cost sentence, or no sentence when the rounded charges are equal. The existing receipt layout is retained.
+
+All 20 captured golden routes pass across GOOD/BAD × cares/doesn't care, using $50 principal. Every emitted proposal and offer is checked for exact rounded extra:
+
+| Route | Actual rate | Actual extra | Standard 16% | Difference |
+| --- | ---: | ---: | ---: | --- |
+| Hoard | 16% | $8 | $8 | $0 |
+| Show | 13% | $7 | $8 | $1 saved |
+| Hint → valued Trade | 8% | $4 | $8 | $4 saved |
+| Hint → unwanted Trade | 16% | $8 | $8 | $0 |
+| Blind Trade, cares | 8% | $4 | $8 | $4 saved |
+| Failed blind Trade | 22% | $11 | $8 | $3 cost |
+| Failed blind Trade → Show | 19% | $10 | $8 | $2 cost |
+
+Removing/readding an uncompleted valuable trade remains 8% → 16% → 8%; repeating a failed blind trade remains 22%; Show subsequently produces 19%. Those Section 35 rules and the actual ownership/knowledge ledger are unchanged.
+
+### Regression and browser observations
+
+Seed `88fdc2d7be9a` (BAD / cares), Boundaried / Balanced, six days: Hint → Trade 4/$60/$180 → Trade 3/$60/$120 → Trade 3/$65/$115 → confirm. The first counter remains 3 units/$72/$108/$9, demonstrating the separate counter formula was preserved. Standard-rate scoring allows the second proposal to be approved at $10 extra. The final proposal is approved at **$10 extra on $115**, even when the engine test supplies $20. Confirmation yields three units, $15 retained cash, $125 new repayment, $375 total debt and a genuine R-17 transfer. The final screen says **“R-17 saved you $9 on the extra charge.”**
+
+Real browser checks at http://127.0.0.1:4175/ verified the known 8% builder and 16% comparison, both blind outcomes before any reply, persistent 22% after failure and its standard comparison, and the completed savings sentence with Traded visible. Four screenshots and three DOM snapshots are saved under the new validation folder. These are source-UI screenshots. The actual standalone's embedded runtime was tested with networking forbidden; direct file-protocol browser testing remains subject to the previously recorded browser restriction.
+
+### Changed files and reasons
+
+Paths below are relative to `C:/Users/mcdon/Documents/ChatGPT/dpa-message-foundations-v01`.
+
+| Source / tooling file | Purpose |
+| --- | --- |
+| `src/encounter/constants.mjs` | Public possible-charge helper and shared standard-charge helper; existing resolver/rounding retained. |
+| `src/encounter/engine.mjs` | Silent normalization, pure blind previews, deferred blind debt response and safe public rate context. |
+| `src/encounter/marcus-policy.mjs` | Standard-16 scoring/concession comparison, exact charge, editable-term repetition and actual hard exposure checks. |
+| `src/encounter/information-policy.mjs` | Exact-charge feedback wording; resolution unchanged. |
+| `src/encounter/messages.mjs` | Legacy DEAL entry point uses the same fee-independent proposal wording. |
+| `src/conversation/language/frames.mjs` | Separate proposal description from exact acceptance/offer descriptions. |
+| `src/conversation/language/npc-lines.mjs` | Exact-charge and TERMS wording; honest rejection suffix for unaffordable R-17 proposals. |
+| `public/encounter/index.html` | Read-only fee output, hidden compatible field and comparison element. |
+| `public/encounter/app.js` | Live known/blind figures, conditional summaries, offer comparisons and receipt savings/cost. |
+| `scripts/encounter-server.mjs` | Specific shared-rate-module route; no general source-file access. |
+| `tools/build_standalone.py` | Fourth browser import contract and offline rate-module mapping. |
+| `scripts/capture-r17-goldens.mjs` | Exact proposal/offer assertions; capture standard amounts and differences. |
+| `scripts/capture-r17-migration.mjs` | Historical-to-current migration plus committed e7aa831-to-current migration, path values and snapshot hashes. |
+
+| Changed test file | Changed expectation / new coverage and why |
+| --- | --- |
+| `tests/encounter-r17-exchange.test.mjs` | All route fee assertions strengthened from >= to equality; former minimum-counter test now checks exact normalized approval. Six new tests cover all-rate normalization/settlement, matched decisions, the seed regression, both forced blind limits and fee-only repetition. |
+| `tests/conversation-r17-exchange.test.mjs` | Actual renderer harness receives the shared helper; 22%/19% copy assertions use exact-charge wording. |
+| `tests/conversation-acceptance.test.mjs` | All-60-coordinate conditional previews require “at your extra charge” and forbid dollar extra, retaining privacy/purity assertions. |
+| `tests/encounter-adversarial.test.mjs` | Stored intent/proposal preserve security with normalized extra; risk acknowledgment route now approves once score passes instead of fee-only countering. Its borderline fixture is $47 cash/$73 principal to retain threshold-crossing coverage under standard scoring. |
+| `tests/encounter-policy.test.mjs` | Legacy proposal speech expects Marcus-set charge wording; acceptance remains exact. |
+| `tests/encounter-history.test.mjs` | $60 principal settles with $10 normal extra, hence $320 debt instead of the player-chosen $322. |
+| `tests/encounter-information.test.mjs` | Matched ordinary/valuable proposals are approved with exact $8/$4 charges instead of countered solely for submitted $0; transfer/knowledge safeguards remain. |
+| `tests/refinement-policy.test.mjs` | A $1 security improvement is assessed independently of submitted extra; $0/$1000 produce identical policy results. |
+| `tests/refinement-acceptance.test.mjs` | Dropping submitted extra cannot manufacture deterioration; real cash improvement is progress with normalized extra. |
+| `tests/refinement-ui.test.mjs` | Shared helpers in the actual-renderer harness; normal receipt fixtures use exact fees. Three new tests cover read-only blind display, live known charges/comparisons, and saved/cost/equal receipts. |
+| `tests/polish-language.test.mjs` | TERMS must state Marcus sets extra and must not say extra “can help.” |
+| `tests/marcus-world-model-baseline.test.mjs` | One new test verifies all 127 follow-up records, their actual new values and reconstructed prior expectation hashes. |
+| `tests/standalone-parity.test.mjs` | One new dedicated test replays the exact-extra agreement and forced blind exposure branches in the real embedded engine with networking forbidden. |
+
+| Fixture / documentation artifact | Purpose |
+| --- | --- |
+| `tests/fixtures/marcus-r17-exchange-v01.json` | Regenerated 23 routes/127 expected snapshots. |
+| `docs/marcus-information-exchange-v01/GOLDEN_RUNS.json` | Regenerated 20 asserted routes with actual dollars. |
+| `docs/marcus-information-exchange-v01/SNAPSHOT_MIGRATION.md` and `.json` | Updated original historical-to-current expectation accounting. |
+| `docs/marcus-information-exchange-v01/EXTRA_CHARGE_MIGRATION.md` and `.json` | New e7aa831-to-current ledger: 127 snapshots and 1255 changed paths, before/after values and rules. |
+| `docs/marcus-information-exchange-v01/PLAYTEST.md` | Follow-up browser observations and evidence links. |
+| `docs/marcus-information-exchange-v01/IMPLEMENTATION_REPORT.md` | This complete follow-up report. |
+| `docs/marcus-information-exchange-v01/validation/r17-locked-extra-pass/` | Fresh baseline/final gate logs, capture logs, screenshots, DOM observations, Temp hash inventories and a validation inventory. |
+
+The historical fixture remains byte-identical, SHA-256 `add6744c07ec5bcbaac77457c65f1381723642072657d21e7ade4865444acc46`. The preceding committed R-17 fixture is identified by SHA-256 `6b2e7c1e7b68df054dd9f40517395f09f99f9859366928c50828f9cc31f2a186`. The new migration names every changed snapshot and rule; its JSON records every changed field. It preserves the original historical migration separately.
+
+### Fresh validation
+
+| Gate | Result |
+| --- | --- |
+| Fresh pre-change `npm test` | 425 passed / 0 failed / 0 skipped, 228053.0451 ms |
+| `npm ci --no-audit --no-fund` | Pass; 78 locked packages installed, lockfile unchanged |
+| Final full `npm test` | 435 passed / 0 failed / 0 skipped / 0 cancelled, 248579.6376 ms |
+| New portable coverage | 10 added tests: 6 engine, 3 UI, 1 migration |
+| Lint / typecheck / schema validation | All pass |
+| Build / generated freshness | Pass; 3 tracked generated artifacts match |
+| Golden capture | 20 asserted routes, all four combinations |
+| Fixture/migration capture | 23 routes / 127 snapshots; historical hash intact |
+| Actual standalone parity | 7 passed / 0 failed, 179569.0225 ms; source/assets/inventory, 23 routes / 127 snapshots, all 20 goldens and the added follow-up regression |
+| Standalone build | 44 modules, 28 embedded face assets, 721945 bytes |
+| Standalone SHA-256 | `1820180c4060172958d1de6f093c3bdaf125c44d90265cfe9f8ea0e4f94d60ac` |
+| Browser checks | All four requested observations verified; screenshot/DOM evidence saved |
+| Temp preservation | All 9 files match before/after hashes and lengths |
+| `git diff --check` | Pass; checked before staging the local commit |
+
+Development runs caught the explicitly superseded fee, counter, debt and dialogue assumptions documented in the changed-test table. They were corrected without weakening knowledge, settlement, transport or historical-fixture assertions.
+
+### Boundaries retained
+
+No changes to rate values, rate precedence/persistence or Section 35; no changes to Hint/Show/Trade availability, interest seeding, Your Edge lifecycle, face policy or world ledger implementation. Show continues to establish document support without proving wrongdoing, and completed Trade genuinely transfers R-17. No counter units/cash/deadline retuning, source/belief/staleness/backlash/bluff/multiple-card expansion, BASED/TPL changes, external corpus work or push.

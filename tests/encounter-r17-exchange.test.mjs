@@ -7,6 +7,7 @@ import { projectWorld } from "../src/world/projections.mjs";
 import { resolveR17Rate, r17ExtraFloor } from "../src/encounter/constants.mjs";
 import { evaluateTurn } from "../src/encounter/marcus-policy.mjs";
 import { marcusDecisionContext } from "../src/encounter/marcus-world-adapter.mjs";
+import { setOldDebt } from "./helpers/marcus-world-interventions.mjs";
 
 const mode = { languageMode: "AUTHORING_PREVIEW" };
 export const seeds = {};
@@ -31,7 +32,7 @@ function assertRate(state, rate) {
   const offer = state.counteroffer;
   if (offer) {
     assert.equal(offer.extraChargeRate, rate);
-    assert.ok(offer.terms.extra >= r17ExtraFloor(offer.terms.repayment, rate));
+    assert.equal(offer.terms.extra, r17ExtraFloor(offer.terms.repayment, rate));
   }
 }
 
@@ -202,22 +203,22 @@ for (const version of ["POSITIVE", "NEGATIVE"]) {
   });
 }
 
-test("R-17 minimum is enforced on otherwise strong approval, including the 22% penalty", () => {
+test("R-17 exact extra is normalized on otherwise strong approval, including the 22% penalty", () => {
   const failed = deal(start("POSITIVE", false), "OFFER_INFORMATION");
   const context = marcusDecisionContext(failed);
   context.metrics.confidence = 100; context.metrics.tension = 0;
   const low = { action: "DEAL", vibeId: "EA", intensity: "BALANCED", terms: { ...terms, extra: 10 } };
   const effect = { social: { confidence: 0, tension: 0 }, scoreBonus: 0, progressKey: null, exchange: null, r17Rate: 22 };
   const result = evaluateTurn(context, low, effect);
-  assert.equal(result.outcome, "COUNTER");
+  assert.equal(result.outcome, "ACCEPT");
   assert.equal(result.derived.extraFloor, 11);
-  assert.deepEqual(result.counterTerms, { ...low.terms, extra: 11 });
+  assert.equal(result.counterTerms, undefined);
   assert.equal(evaluateTurn(context, { ...low, terms: { ...terms, extra: 11 } }, effect).outcome, "ACCEPT");
   for (const rate of [16, 13, 8, 22, 19]) {
     const decision = evaluateTurn(context, { ...low, terms: { ...terms, upfront: 48, repayment: 72, extra: 0 } }, { ...effect, r17Rate: rate });
-    assert.equal(decision.outcome, "COUNTER");
-    assert.equal(decision.counterTerms.extra, r17ExtraFloor(72, rate));
-    assert.deepEqual(Object.fromEntries(Object.entries(decision.counterTerms).filter(([key]) => key !== "extra")), { units: 2, upfront: 48, repayment: 72, days: 7 });
+    assert.equal(decision.outcome, "ACCEPT");
+    assert.equal(decision.derived.extraFloor, r17ExtraFloor(72, rate));
+    assert.equal(decision.derived.exposure, 250 + 72 + r17ExtraFloor(72, rate));
   }
 });
 
@@ -234,4 +235,95 @@ test("R-17 valid Hint, Show and Trade resolve across every Vibe and intensity", 
     const valuable = deal(wanted, "OFFER_INFORMATION", terms, presentation);
     assert.equal(valuable.events.at(-1).derived.extraChargeRate, 8);
   }
+});
+
+test("R-17 submitted extra is silently normalized before proposal, event, approval and settlement", () => {
+  const states = [start("POSITIVE", true), ask(start("POSITIVE", true), "R17_SHOW"), ask(start("POSITIVE", true), "R17_HINT"), deal(start("POSITIVE", false), "OFFER_INFORMATION")];
+  states.push(ask(states[3], "R17_SHOW"));
+  for (const [index, initial] of states.entries()) {
+    initial.metrics.confidence = 100; initial.metrics.tension = 0;
+    const information = index === 2 ? "OFFER_INFORMATION" : "NONE";
+    const rate = [16, 13, 8, 22, 19][index];
+    for (const extra of [0, 20, 9999]) {
+      const original = JSON.stringify(initial), supplied = { ...terms, extra };
+      const request = input(initial, { action: "DEAL", information, terms: supplied });
+      const approved = step(initial, { action: "DEAL", information, terms: supplied });
+      const exact = { ...terms, extra: r17ExtraFloor(50, rate) };
+      assert.equal(JSON.stringify(initial), original);
+      assert.equal(request.terms.extra, extra);
+      assert.deepEqual(approved.proposal.terms, exact);
+      assert.deepEqual(approved.events.at(-1).intent.terms, exact);
+      assert.equal(approved.events.at(-1).outcome, "ACCEPT");
+      assert.deepEqual(approved.counteroffer.terms, exact);
+      const completed = accept(approved);
+      assert.deepEqual(completed.agreement.terms, exact);
+      assert.equal(completed.metrics.debt, 250 + 50 + exact.extra);
+    }
+  }
+});
+
+test("R-17 standard-16 scoring preserves approve, counter and reject decisions across actual rates", () => {
+  const context = marcusDecisionContext(start("POSITIVE", true));
+  const effect = { social: { confidence: 0, tension: 0 }, scoreBonus: 0, progressKey: null, exchange: null };
+  for (const proposal of [terms, { units: 4, upfront: 40, repayment: 200, extra: 9999, days: 7 }, { units: 8, upfront: 0, repayment: 480, extra: 9999, days: 30 }]) {
+    const outcomes = [8, 16, 22].map(r17Rate => evaluateTurn(context, { action: "DEAL", vibeId: "EA", intensity: "BALANCED", terms: proposal }, { ...effect, r17Rate }));
+    assert.equal(new Set(outcomes.map(result => result.outcome)).size, 1);
+    assert.equal(new Set(outcomes.map(result => result.derived.score)).size, 1);
+    for (const [index, result] of outcomes.entries()) {
+      assert.equal(result.derived.exposure, 250 + proposal.repayment + r17ExtraFloor(proposal.repayment, [8, 16, 22][index]));
+      if (result.counterTerms) assert.equal(result.counterTerms.extra, r17ExtraFloor(result.counterTerms.repayment, [8, 16, 22][index]));
+    }
+  }
+  assert.equal(evaluateTurn(context, { action: "DEAL", vibeId: "EA", intensity: "BALANCED", terms }, { ...effect, r17Rate: 8 }).outcome, "ACCEPT");
+});
+
+test("R-17 playtest 88fdc2d7be9a agrees at $10 on $115, never the submitted $20", () => {
+  let state = createConversation("marcus", "88fdc2d7be9a", "r17-playtest-regression");
+  state = ask(state, "R17_HINT");
+  assert.equal(player(state).r17.knownMarcusInterest, true);
+  for (const [units, upfront, repayment, extra] of [[4, 60, 180, 0], [3, 60, 120, 0], [3, 65, 115, 20]]) {
+    state = deal(state, "OFFER_INFORMATION", { units, upfront, repayment, extra, days: 6 });
+    assert.equal(state.proposal.terms.extra, r17ExtraFloor(repayment, 8));
+  }
+  assert.equal(state.counteroffer.source, "APPROVED_PROPOSAL");
+  assert.equal(state.counteroffer.terms.repayment, 115);
+  assert.equal(state.counteroffer.terms.extra, 10);
+  state = accept(state);
+  assert.equal(state.agreement.terms.extra, 10);
+  assert.equal(state.metrics.debt, 375);
+  assert.equal(projectWorld(state.world).possession.R17, "MARCUS");
+});
+
+for (const limit of ["policy exposure", "hard outstanding debt"]) test(`R-17 blind ${limit}: only the expensive outcome breaches, reply counter/reject without preview oracle`, () => {
+  const wanted = start("POSITIVE", true), unwanted = start("POSITIVE", false);
+  const policy = wanted.worldProfiles.find(profile => profile.entityId === "MARCUS");
+  policy.policy.maximumExposure = limit === "policy exposure" ? 307 : 100010;
+  unwanted.worldProfiles = structuredClone(wanted.worldProfiles);
+  for (const state of [wanted, unwanted]) {
+    state.seed = "matched-blind-preview";
+    state.metrics.confidence = 100; state.metrics.tension = 0;
+    if (limit === "hard outstanding debt") setOldDebt(state, 99943);
+  }
+  const fields = { action: "DEAL", information: "OFFER_INFORMATION", terms: { ...terms, extra: 20 } };
+  const before = [wanted, unwanted].map(state => JSON.stringify(state));
+  const previews = [wanted, unwanted].map(state => previewConversation(state, input(state, fields), mode));
+  assert.deepEqual(previews[0], previews[1]);
+  assert.doesNotMatch(JSON.stringify(previews), /marcusCaresAboutR17|knownMarcusInterest|\$\d+ extra/);
+  assert.deepEqual([wanted, unwanted].map(state => JSON.stringify(state)), before);
+  const low = step(wanted, fields), high = step(unwanted, fields);
+  assert.equal(low.events.at(-1).outcome, "ACCEPT");
+  assert.ok(["COUNTER", "REJECT"].includes(high.events.at(-1).outcome));
+  assert.equal(high.proposal.terms.extra, 11);
+  assert.equal(player(high).r17.knownMarcusInterest, false);
+  assert.equal(high.metrics.cash, unwanted.metrics.cash);
+  assert.equal(projectWorld(high.world).possession.R17, "PLAYER");
+});
+
+test("R-17 changing only submitted extra cannot evade repetition or gain a concession", () => {
+  const initial = deal(start("POSITIVE", true));
+  const low = deal(initial, "NONE", { ...terms, extra: 0 });
+  const high = deal(initial, "NONE", { ...terms, extra: 9999 });
+  assert.deepEqual(low, high);
+  assert.equal(low.events.at(-1).derived.repetition, 1);
+  assert.equal(low.events.at(-1).derived.meaningfulProgress, false);
 });

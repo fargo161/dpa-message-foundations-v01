@@ -26,3 +26,23 @@ The completed view's DOM snapshot is saved as `validation/r17-completed-trade-do
 ## Standalone verification limitation
 
 The offline artifact was built and its actual embedded runtime passed six dedicated parity checks, including all historical routes/snapshots and all 20 new R-17 golden routes with network calls forbidden. Direct `file://` launch through the in-app browser was blocked by its HTTP/HTTPS-only URL policy. No workaround was attempted. These screenshots are of the running source build; they are not claimed as screenshots of a file-launched standalone build.
+
+## Exact-charge follow-up — 2026-10-01
+
+The preceding observations describe the first pass. The follow-up replaces floor/player-chosen-fee behavior with Marcus's exact charge. Tested through the running source UI at http://127.0.0.1:4175/, Boundaried / Balanced.
+
+| Required check | Actually observed |
+| --- | --- |
+| Seed `88fdc2d7be9a`, Hint → Trade builder | Read-only $15 / 8% on $180 principal; standard $29 / 16%; no editable additional-repayment control. |
+| Same seed, specified 4/$60/$180 → 3/$60/$120 → 3/$65/$115 sequence | First counter retained 3/$72/$108/$9. Final offer approved 3/$65/$115/$10, six days. Proposal wording names “at your extra charge,” with no dollar fee. |
+| `r17-proof-2`, unsent blind Trade on $50 principal | $4 / 8% if he values it and $11 / 22% if he doesn't; conditional $54/$61 totals. Interest unasked and no single fee outcome. |
+| `r17-proof-2`, failed blind Trade and later ordinary draft | Card retained with persistent penalty; read-only $11 / 22% and standard $8 / 16% comparison. |
+| Completed `88fdc2d7be9a` agreement | 3 units, $15 cash retained, $125 new repayment, $375 total owed; R-17 Traded and “R-17 saved you $9 on the extra charge.” |
+
+The engine regression additionally submits $20 on the final $115 principal and proves silent normalization to $10. Existing test-only profile/world interventions prove both charge-dependent hard-limit branches; these were not injected through the browser or exposed as runtime settings.
+
+New screenshots: `validation/r17-locked-extra-pass/ui-known-8.jpg`, `ui-blind-two-outcomes.jpg`, `ui-failed-22.jpg`, `ui-completed-savings.jpg`. Three DOM snapshots accompany the blind, failed and completed observations. Full-page capture was unavailable on later screens; viewport captures were positioned and visually checked for the relevant fee/comparison/savings text.
+
+![Completed exact-charge agreement and savings](C:/Users/mcdon/Documents/ChatGPT/dpa-message-foundations-v01/docs/marcus-information-exchange-v01/validation/r17-locked-extra-pass/ui-completed-savings.jpg)
+
+The rebuilt standalone passes seven dedicated checks, including the added exact-extra regression and blind-limit parity with network calls forbidden. The source-UI/file-protocol distinction recorded above still applies.

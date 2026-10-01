@@ -76,7 +76,7 @@ test("information: every meaningful lore fact has a present/absent gameplay pair
 test("information: a positive exchange improves actual terms and only acceptance delivers detail", () => {
   const matched = { units: 2, upfront: 70, repayment: 50, extra: 0, days: 7 };
   const ready = ask(start("POSITIVE", "recognition", true), "R17_HINT"); const plain = deal(ready, matched); const exchange = deal(ready, matched, "OFFER_INFORMATION");
-  assert.equal(plain.events.at(-1).outcome, "COUNTER"); assert.equal(exchange.events.at(-1).outcome, "COUNTER");
+  assert.equal(plain.events.at(-1).outcome, "ACCEPT"); assert.equal(exchange.events.at(-1).outcome, "ACCEPT");
   assert.deepEqual(plain.counteroffer.terms, { ...matched, extra: 8 });
   assert.deepEqual(exchange.counteroffer.terms, { ...matched, extra: 4 }); assert.ok(exchange.counteroffer.informationExchange);
   assert.ok(!JSON.stringify(projectState(exchange, "csrf").play).includes("POSITIVE_ROUTE"));

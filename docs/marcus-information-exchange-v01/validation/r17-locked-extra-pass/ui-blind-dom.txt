@@ -1,0 +1,128 @@
+- main:
+  - heading "TRAPSTAR" [level=1]
+  - paragraph: Read the room. Choose your words.
+  - paragraph: Marcus — the Contra deal
+  - navigation "Conversation controls":
+    - button "More things to say ↗" [active]
+    - button "Conversation log"
+    - button "Play" [pressed]
+    - button "Debug"
+  - status: New conversation started.
+  - region "Play":
+    - region "Your purpose":
+      - paragraph: You owe Marcus $250 and missed yesterday’s check-in. You want more Contra; private information may help.
+      - paragraph: Aim for 2 Contra using some new credit. A smaller deal or walking away is also your choice.
+    - status
+    - checkbox "Hold hearing face until I continue"
+    - text: Hold hearing face until I continue
+    - button "Replay reactions" [disabled]
+    - group "Compose your conversation turn":
+      - generic: Compose your conversation turn
+      - region "Read and interact":
+        - 'img "Marcus ‘Broker’ Hill: Both brows rest evenly; the eyes face forward and the mouth stays closed."':
+        - generic: MARCUS ‘BROKER’ HILL
+        - generic "Facial turn sequence":
+          - generic: 01 · HEARS YOU
+          - generic: 02 · RESPONDS
+        - heading "Marcus ‘Broker’ Hill" [level=2]
+        - generic: Conversation open
+        - blockquote: Marcus ‘Broker’ Hill waits for your opening words.
+        - generic "Face description"
+        - heading "What do you want to do next? // Signed counterfoil R-17" [level=3]
+        - button "Hint"
+        - button "Show"
+        - button "Trade" [pressed]
+        - paragraph: Include the private detail in your proposal. It is delivered only when you confirm the agreement.
+        - heading "How do you say it?" [level=3]
+        - region "BASED delivery chart":
+          - group "Delivery shortcuts":
+            - 'button "Boundaried: Empathy then Aggression" [pressed]':
+              - generic: Boundaried
+            - 'button "Charismatic: Sociability then Aggression, starter approach"':
+              - generic: Charismatic
+              - generic: Starter
+            - 'button "Urgent: Aggression then Empathy, starter approach"':
+              - generic: Urgent
+              - generic: Starter
+          - paragraph: Boundaried · Balanced — Understanding leads; decisive force establishes a clear limit or next move. Make the selected manner clear without emphasizing it heavily.
+          - group "Intensity":
+            - generic: Intensity
+            - button "Subtle"
+            - button "Balanced" [pressed]
+            - button "Overt"
+        - paragraph:
+          - button "All 20 BASED vibes ↗"
+        - complementary:
+          - heading "Your edge" [level=2]
+          - strong: Counterfoil R-17
+          - paragraph: "Your edge: Held"
+          - paragraph: "Disclosure: Exact detail private; category not shared."
+          - paragraph: "Interest: Not asked yet"
+          - generic "Exact evidence and observations"
+          - paragraph: "Marcus's extra charge: 16% of new principal."
+          - generic: Cash
+          - strong: "80"
+          - generic: Total owed
+          - strong: "250"
+          - generic: Their Contra
+          - strong: "8"
+          - generic: Your Contra
+          - strong: "0"
+          - generic "Before you speak"
+      - region "BUILD THE OFFER":
+        - generic "Build an offer"
+        - paragraph: YOUR DRAFT · NOTHING TRANSFERS UNTIL YOU CONFIRM
+        - table:
+          - rowgroup:
+            - row "The exchange Your terms":
+              - columnheader "The exchange"
+              - columnheader "Your terms"
+          - rowgroup:
+            - row "Contra units 2":
+              - rowheader "Contra units":
+                - generic: Contra units
+              - cell "2":
+                - spinbutton "Contra units": "2"
+            - row "Cash now 40":
+              - rowheader "Cash now":
+                - generic: Cash now
+              - cell "40":
+                - spinbutton "Cash now": "70"
+            - row "New credit principal · calculated 80":
+              - rowheader "New credit principal · calculated":
+                - generic: New credit principal · calculated
+              - cell "80":
+                - spinbutton "New credit principal · calculated": "50"
+            - row "Additional repayment · Marcus sets":
+              - rowheader "Additional repayment · Marcus sets":
+                - generic: Additional repayment · Marcus sets
+              - cell "Additional repayment · Marcus sets":
+                - status "Additional repayment · Marcus sets": $4 · 8% if he values R-17 · $11 · 22% if he doesn't
+            - row "Repay within (days) 7":
+              - rowheader "Repay within (days)":
+                - generic: Repay within (days)
+              - cell "7":
+                - spinbutton "Repay within (days)": "7"
+        - paragraph: Keep $10 cash. Repay $54 if he values R-17, or $61 if he doesn't, in 7 days. Old debt stays owed.
+        - generic: Information included
+        - combobox "Information included":
+          - option "Keep information outside this proposal"
+          - option "Trade counterfoil R-17 with these terms" [selected]
+        - paragraph: Attach counterfoil R-17; it stays yours until you confirm the exchange. Hint first to learn whether Marcus cares.
+        - button "Use these terms in my message"
+        - heading "Your words Ready · review, then send" [level=3]
+        - blockquote: Okay… I propose 2 Contra units, $70 upfront, $50 in new credit at your extra charge, due in 7 days. This is in addition to my existing debt. I offer counterfoil R-17 and its exact detail with these terms, to be transferred only if we both agree. You are free to decline.
+        - paragraph
+        - button "Say it →"
+    - button "Compare both reactions" [disabled]
+    - button "Prepare to walk away"
+    - generic: Available.
+  - generic "Restart / choose test conversation"
+  - generic: Conversation
+  - combobox "Conversation":
+    - option "Marcus — the Contra deal" [selected]
+    - option "Avery — the broken promise (fixture)"
+  - generic: Run seed
+  - textbox "Run seed": r17-proof-2
+  - paragraph: Restart replaces this encounter. The same seed and choices reproduce its results.
+  - button "Restart encounter"

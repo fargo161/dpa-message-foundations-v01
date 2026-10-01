@@ -141,7 +141,8 @@ test("conversation: delivery previews preserve conditional information and exact
     const response = await api.post("/api/preview", api.body({ action: "DEAL", terms, information: "OFFER_INFORMATION", vibeId: vibe.vibeId, intensity }));
     assert.equal(response.status, 200, await response.clone().text());
     const preview = await response.json();
-    assert.ok(preview.playerText.includes("$41") && preview.playerText.includes("$79") && preview.playerText.includes("$0") && preview.playerText.includes("7 day"));
+    assert.ok(preview.playerText.includes("$41") && preview.playerText.includes("$79") && preview.playerText.includes("at your extra charge") && preview.playerText.includes("7 day"));
+    assert.doesNotMatch(preview.playerText, /\$\d+ extra/);
     assert.match(preview.playerText, /if we both agree/);
     assert.equal(preview.playerText.includes(detail), false, "Conditional proposal cannot disclose operative detail");
   }

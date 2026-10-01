@@ -13,6 +13,7 @@ export const QUESTIONS = Object.freeze({
 });
 
 export const describeTerms = terms => `${terms.units} Contra ${terms.units === 1 ? "unit" : "units"}, $${terms.upfront} upfront, $${terms.repayment} in new credit plus $${terms.extra} extra due in ${terms.days} ${terms.days === 1 ? "day" : "days"}`;
+export const describeProposal = terms => `${terms.units} Contra ${terms.units === 1 ? "unit" : "units"}, $${terms.upfront} upfront, $${terms.repayment} in new credit at your extra charge, due in ${terms.days} ${terms.days === 1 ? "day" : "days"}`;
 export const requireLanguage = (value, message) => { if (!value) throw new Error(`Language frame: ${message}`); };
 const exactKeys = (value, keys) => value && typeof value === "object" && !Array.isArray(value) && Object.keys(value).sort().join() === [...keys].sort().join();
 const whole = value => Number.isSafeInteger(value) && value >= 0;
@@ -80,7 +81,7 @@ export function buildPlayerFrame(state, intent) {
 
 function playerCore(facts) {
   if (facts.action === "ASK") return facts.informationText || QUESTIONS[facts.topic];
-  if (facts.action === "DEAL") return `I propose ${describeTerms(facts.terms)}. This is in addition to my existing debt.${facts.informationText ? ` ${facts.informationText}` : ""}`;
+  if (facts.action === "DEAL") return `I propose ${describeProposal(facts.terms)}. This is in addition to my existing debt.${facts.informationText ? ` ${facts.informationText}` : ""}`;
   if (facts.action === "ACCEPT") return `I accept the current offer: ${describeTerms(facts.terms)}. My existing debt remains separate.${facts.informationText ? ` ${facts.informationText}` : ""}`;
   return "I am walking away from this negotiation.";
 }

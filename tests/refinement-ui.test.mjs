@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import vm from 'node:vm';
+import { r17DraftCharges, r17StandardExtra, r17ExtraFloor } from '../src/encounter/constants.mjs';
 
 const source = await readFile(new URL('../public/encounter/turn-player.js', import.meta.url), 'utf8');
 const { createTurnPlayer } = await import(`data:text/javascript;base64,${Buffer.from(source).toString('base64')}`);
@@ -22,7 +23,7 @@ function renderHarness(snapshot) {
     setCustomValidity(value) { this.validityMessage = value; },
   });
   const $ = id => { if (!ids.has(id)) ids.set(id, element()); return ids.get(id); };
-  const context = vm.createContext({ snapshot, $, node: element,
+  const context = vm.createContext({ snapshot, $, node: element, r17DraftCharges, r17StandardExtra,
     termKeys: ['units', 'upfront', 'repayment', 'extra', 'days'],
     names: { units: 'Contra units', upfront: 'Cash now', repayment: 'New principal', extra: 'Additional repayment', days: 'Repay within (days)' },
     offer: () => snapshot.play.counteroffer,
@@ -49,7 +50,7 @@ test('UI element references resolve to unique markup or explicitly created IDs',
 });
 
 test('receipt uses settled cash and exact accepted terms, never internal metadata or stale draft', () => {
-  for (const [cash, upfront, principal, extra] of [[40, 40, 80, 10], [32, 48, 72, 11]]) {
+  for (const [cash, upfront, principal, extra] of [[40, 40, 80, 13], [32, 48, 72, 12]]) {
     const snapshot = { options: { price: 60 }, play: {
       status: 'AGREED', metrics: { cash, debt: 250 + principal + extra }, obligations: { existing: 250 },
       agreement: { id: 'DO_NOT_RENDER_ID', version: 7, source: 'DO_NOT_RENDER_SOURCE', terms: { units: 2, upfront, repayment: principal, extra, days: 7 } },
@@ -88,6 +89,51 @@ test('live offer retains exact terms, information condition, and replacement war
   assert.match(harness.$('accept-reason').textContent, /Clarification preserves.*Other discussion.*replaces/);
   assert.equal(harness.selectors.get('.offer-sheet').hidden, false);
   assert.equal(JSON.stringify(snapshot), before);
+});
+
+test('R-17 builder is read-only and displays both blind outcomes independently of debug interest', () => {
+  assert.match(html, /id="extra"[^>]*type="hidden"[^>]*readonly/);
+  for (const privateInterest of [true, false]) {
+    const snapshot = { options: { price: 60 }, play: { status: 'OPEN', metrics: { cash: 80 }, r17RateContext: { available: true, interestKnown: false, knownMarcusInterest: null } }, debug: { r17: { marcusCaresAboutR17: privateInterest } } };
+    const harness = renderHarness(snapshot);
+    for (const [key, value] of Object.entries({ units: 2, upfront: 70, days: 7, extra: 9999, information: 'OFFER_INFORMATION' })) harness.$(key).value = String(value);
+    harness.run('updateDraft');
+    assert.equal(harness.$('extra-display').textContent, "$4 · 8% if he values R-17 · $11 · 22% if he doesn't");
+    assert.match(harness.$('draft-summary').textContent, /Repay \$54 if he values R-17, or \$61 if he doesn't/);
+    assert.equal(harness.$('extra-comparison').hidden, true);
+    harness.$('information').value = 'NONE'; harness.run('updateDraft');
+    assert.equal(harness.$('extra-display').textContent, '$8 · 16% of new credit');
+  }
+});
+
+test('R-17 known builder charges and comparisons update live with cash and information selection', () => {
+  for (const [rate, facts, includes] of [[16, {}, false], [13, { shown: true }, false], [8, { available: true, interestKnown: true, knownMarcusInterest: true }, true], [22, { blindTradeFailed: true }, false], [19, { blindTradeFailed: true, shown: true }, false]]) {
+    const snapshot = { options: { price: 60 }, play: { status: 'OPEN', metrics: { cash: 80 }, r17RateContext: facts } };
+    const harness = renderHarness(snapshot);
+    for (const upfront of [70, 65]) {
+      for (const [key, value] of Object.entries({ units: 2, upfront, days: 7, information: includes ? 'OFFER_INFORMATION' : 'NONE' })) harness.$(key).value = String(value);
+      harness.run('updateDraft');
+      const principal = 120 - upfront;
+      assert.equal(harness.$('extra').value, String(r17ExtraFloor(principal, rate)));
+      assert.equal(harness.$('extra-display').textContent, `$${r17ExtraFloor(principal, rate)} · ${rate}% of new credit`);
+      assert.equal(harness.$('extra-comparison').hidden, rate === 16);
+      assert.equal(harness.$('extra-comparison').textContent, rate === 16 ? '' : `Standard charge without R-17: $${r17StandardExtra(principal)} · 16%`);
+    }
+  }
+});
+
+test('R-17 on-table comparison and agreed savings/cost use separately rounded charges on the same principal', () => {
+  for (const rate of [8, 13, 16, 22, 19]) {
+    const extra = r17ExtraFloor(115, rate), saved = r17StandardExtra(115) - extra;
+    const agreement = { terms: { units: 3, upfront: 65, repayment: 115, extra, days: 6 }, extraChargeRate: rate };
+    const snapshot = { play: { status: 'AGREED', metrics: { cash: 15, debt: 250 + 115 + extra }, agreement, counteroffer: agreement, events: [] } };
+    const harness = renderHarness(snapshot); harness.run('renderOffer'); harness.run('renderReceipt');
+    assert.equal(harness.$('current-offer').textContent.includes('Standard charge without R-17: $19 · 16%'), rate !== 16);
+    const text = harness.$('agreement').textContent;
+    if (saved > 0) assert.ok(text.includes(`R-17 saved you $${saved} on the extra charge.`));
+    else if (saved < 0) assert.ok(text.includes(`Your R-17 play cost you $${-saved} on the extra charge.`));
+    else assert.doesNotMatch(text, /R-17 saved|R-17 play cost/);
+  }
 });
 
 test('acceptance binds the current offer identity, not the editable draft', () => {

@@ -13,3 +13,17 @@ export function r17ExtraFloor(principal, rate) {
   if (!Number.isSafeInteger(principal) || principal < 0 || !Number.isSafeInteger(rate) || rate < 0) throw new Error("Invalid R-17 fee inputs.");
   return Math.ceil(principal * rate / 100);
 }
+
+/** Public draft possibilities only. Never accepts an NPC attitude or belief. */
+export function r17DraftCharges(principal, player = {}, includesInformation = false) {
+  const persistent = resolveR17Rate(player);
+  let rates = [persistent];
+  if (includesInformation && player.available && !player.blindTradeFailed) {
+    rates = player.interestKnown
+      ? [resolveR17Rate({ ...player, includesInformation: true, cares: player.knownMarcusInterest === true })]
+      : [R17_EXTRA_CHARGE.TRADE_SUCCESS, resolveR17Rate({ ...player, blindTradeFailed: true })];
+  }
+  return rates.map(rate => ({ rate, extra: r17ExtraFloor(principal, rate) }));
+}
+
+export function r17StandardExtra(principal) { return r17ExtraFloor(principal, R17_EXTRA_CHARGE.NORMAL); }

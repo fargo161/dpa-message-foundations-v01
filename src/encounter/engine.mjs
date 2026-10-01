@@ -7,7 +7,7 @@ import { hasLoreFact, informationEligibility, loreOptions, projectLore } from ".
 import { resolveInformation } from "./information-policy.mjs";
 import { advanceMarcusWorld, projectMarcusEconomy } from "./marcus-world.mjs";
 import { projectPlayerInformation, projectMarcusInformation, marcusDecisionContext } from "./marcus-world-adapter.mjs";
-import { resolveR17Rate } from "./constants.mjs";
+import { resolveR17Rate, r17ExtraFloor, r17DraftCharges } from "./constants.mjs";
 import { conversationView, reactionCause } from "./conversation.mjs";
 import { keywordBank } from "../conversation/keyword-bank.mjs";
 import { resolveContextAction } from "../conversation/context-actions.mjs";
@@ -45,7 +45,7 @@ function withWorldEconomy(state) {
   const economy = projectMarcusEconomy(state.world);
   return { ...state, metrics: { ...state.metrics, ...economy.metrics }, obligations: economy.obligations };
 }
-export function validateTerms(state, terms) {
+export function validateTerms(state, terms, { deferDebtLimit = false } = {}) {
   state = withWorldEconomy(state);
   exactObject(terms, ["units", "upfront", "repayment", "extra", "days"]);
   for (const key of ["units", "upfront", "repayment", "extra", "days"]) {
@@ -59,10 +59,12 @@ export function validateTerms(state, terms) {
   requireThat(terms.upfront <= state.metrics.cash, "You do not have that much cash. Future profits are not cash.");
   requireThat(terms.upfront <= terms.units * PRICE, "Upfront cash cannot exceed the Contra price.");
   requireThat(terms.repayment === terms.units * PRICE - terms.upfront, "Remaining repayment must equal Contra price minus upfront cash.");
-  requireThat(state.obligations.existing + state.obligations.principal + state.obligations.extra + terms.repayment + terms.extra <= 100000, "Outstanding debt limit would be exceeded.");
+  if (!deferDebtLimit) requireThat(state.obligations.existing + state.obligations.principal + state.obligations.extra + terms.repayment + terms.extra <= 100000, "Outstanding debt limit would be exceeded.");
   return structuredClone(terms);
 }
 function validateIntent(state, input) {
+  input = structuredClone(input);
+  let blind = false;
   const fields = { ASK: ["topic"], DEAL: ["terms"], ACCEPT: ["offerId", "offerVersion"], WALK: [] };
   requireThat(typeof input?.action === "string" && Object.hasOwn(fields, input.action), "Unknown encounter action.");
   const optional = input.action === "DEAL" && Object.hasOwn(input, "information") ? ["information"] : [];
@@ -77,7 +79,16 @@ function validateIntent(state, input) {
     requireThat([...TOPICS, ...loreOptions(state), { id: "CLARIFY_OFFER" }].some(t => t.id === input.topic), "Unknown ASK topic.");
     if (input.topic === "CLARIFY_OFFER") requireThat(!!state.counteroffer, "No current offer to clarify.", 409);
   }
-  if (input.action === "DEAL") validateTerms(state, input.terms);
+  if (input.action === "DEAL") {
+    exactObject(input.terms, ["units", "upfront", "repayment", "extra", "days"]);
+    requireThat(Number.isSafeInteger(input.terms.extra) && input.terms.extra >= 0 && input.terms.extra <= 10000, "extra must be a finite whole number between 0 and 10000.");
+    requireThat(Number.isSafeInteger(input.terms.repayment) && input.terms.repayment >= 0, "repayment must be a nonnegative whole number.");
+    const charges = r17DraftCharges(input.terms.repayment, projectPlayerInformation(state).r17, input.information === "OFFER_INFORMATION");
+    blind = charges.length > 1;
+    // A blind preview uses a publicly possible amount, never private interest.
+    input.terms.extra = charges[0].extra;
+    validateTerms(state, input.terms, { deferDebtLimit: blind });
+  }
   if (input.action === "ACCEPT") {
     const offer = state.counteroffer;
     requireThat(offer && input.offerId === offer.id && input.offerVersion === offer.version, "No matching current offer; stale or forged acceptance.", 409);
@@ -91,6 +102,7 @@ function validateIntent(state, input) {
     catch (error) { throw new EncounterError(error.message); }
     requireThat(Object.entries(expected).every(([key, value]) => (key === "information" ? input.information ?? "NONE" : input[key]) === value), "Selected subject/action does not match the submitted intent.");
   }
+  return { input, blind };
 }
 
 function authorizedPlayerLine(state, input, mode) {
@@ -104,7 +116,7 @@ function authorizedPlayerLine(state, input, mode) {
 /** Pure preview: no evaluation, information resolution, event, or nonce consumption. */
 export function previewIntent(state, input, { languageMode = "PRODUCTION" } = {}) {
   state = withWorldEconomy(state);
-  validateIntent(state, input);
+  ({ input } = validateIntent(state, input));
   const line = authorizedPlayerLine(state, input, languageMode);
   return { runId: state.runId, version: state.events.length, playerText: line.text,
     delivery: { vibeId: input.vibeId, intensity: input.intensity }, readiness: languageReadiness(languageMode),
@@ -114,14 +126,20 @@ export function previewIntent(state, input, { languageMode = "PRODUCTION" } = {}
 
 export function transition(state, input, { languageMode = "PRODUCTION" } = {}) {
   state = withWorldEconomy(state);
-  validateIntent(state, input);
+  const validated = validateIntent(state, input);
+  input = validated.input;
+  const informationEffect = resolveInformation(structuredClone(state), structuredClone(input));
+  if (input.action === "DEAL") {
+    input.terms.extra = r17ExtraFloor(input.terms.repayment, informationEffect.r17Rate);
+    // Blind affordability is resolved by policy with the reply, never an oracle error.
+    validateTerms(state, input.terms, { deferDebtLimit: validated.blind });
+  }
   const line = authorizedPlayerLine(state, input, languageMode);
   const next = structuredClone(state);
   const before = structuredClone(state.metrics);
   const intent = structuredClone(input);
   const offer = state.counteroffer;
   const clarification = intent.action === "ASK" && intent.topic === "CLARIFY_OFFER";
-  const informationEffect = resolveInformation(structuredClone(state), structuredClone(input));
   next.world = informationEffect.world;
   next.informationLocal = informationEffect.informationLocal;
   if (!clarification) next.counteroffer = null;
@@ -221,6 +239,7 @@ export function projectState(state, csrf, { languageMode = "PRODUCTION" } = {}) 
       character: { id: "marcus", name: "Marcus ‘Broker’ Hill" }, scenario: SCENARIO_OPTIONS[0],
       situation: { summary: `You owe Marcus $${state.obligations.existing} on the old account. You want more Contra.${hasLoreFact(state, "MISSED_CHECKIN") ? " You missed yesterday's check-in." : ""}${!!player.privateFactId ? " Information you hold may affect this conversation; track what has been shared in Your edge." : ""}`, objective: "Suggested challenge: acquire at least two Contra units using some new credit. Compare cash retained, new debt and repayment time; you can choose a smaller deal or walk away." },
       edge: edgeView(state),
+      r17RateContext: { shown: player.r17.shown, blindTradeFailed: player.r17.blindTradeFailed, available: player.r17.available, interestKnown: player.r17.interestKnown, knownMarcusInterest: player.r17.knownMarcusInterest },
       extraChargeRate,
       face: structuredClone(state.events.at(-1)?.faces?.responding ?? openingFace()),
       metrics: { cash, debt, marcusStock, playerStock }, obligations: state.obligations,

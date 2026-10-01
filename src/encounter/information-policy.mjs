@@ -64,7 +64,7 @@ export function resolveInformation(state, intent) {
       } else if (result.r17Rate === R17_EXTRA_CHARGE.TRADE_SUCCESS) {
         result.r17Reaction = "TRADE_VALUABLE";
         result.exchange = { factId: player.privateFactId, summary: "Counterfoil R-17 and its exact detail; transferred only on confirmation." };
-        result.feedback = "Marcus values R-17. The current information offer earns an 8% extra-charge floor. The document and its detail remain yours until confirmation; removing it from a later offer removes this value.";
+        result.feedback = "Marcus values R-17. The extra charge on the current information offer is 8%. The document and its detail remain yours until confirmation; removing it from a later offer removes this value.";
         cause("R17_VALUABLE_TRADE", [player.privateFactId], "Eight percent applies to this offer only. No score bonus or other term is granted.");
       } else {
         result.r17Reaction = "TRADE_NO_VALUE";

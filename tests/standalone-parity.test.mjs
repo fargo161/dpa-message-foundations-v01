@@ -189,3 +189,33 @@ test("actual embedded R-17 proof matches all 20 golden routes, including Show an
     }
   }
 });
+
+test("embedded exact-extra regression and blind exposure preview match source with networking forbidden", () => {
+  const embedded = sandbox();
+  const execute = runtime => {
+    let state = runtime.createConversation("marcus", "88fdc2d7be9a", "offline-extra-regression");
+    const step = fields => {
+      const input = { requestId: `offline_extra_${state.events.length}`, runId: state.runId, version: state.events.length, vibeId: "EA", intensity: "BALANCED", ...fields };
+      const before = JSON.stringify(state), preview = runtime.previewConversation(state, input, mode);
+      assert.equal(JSON.stringify(state), before);
+      state = runtime.resolveConversation(state, input, mode);
+      assert.equal(state.events.at(-1).playerText, preview.playerText);
+    };
+    step({ action: "ASK", topic: "R17_HINT" });
+    for (const [units, upfront, repayment] of [[4, 60, 180], [3, 60, 120], [3, 65, 115]]) step({ action: "DEAL", information: "OFFER_INFORMATION", terms: { units, upfront, repayment, extra: 20, days: 6 } });
+    assert.equal(state.counteroffer.terms.extra, 10);
+    step({ action: "ACCEPT", offerId: state.counteroffer.id, offerVersion: state.counteroffer.version });
+    assert.equal(state.metrics.debt, 375);
+    return json(state);
+  };
+  equal(execute(embedded.runtime), execute(sourceRuntime), "offline $10 extra agreement");
+  for (const seed of ["r17-proof-0", "r17-proof-1"]) {
+    const source = sourceRuntime.createConversation("marcus", seed, "offline-blind-limit");
+    source.worldProfiles.find(profile => profile.entityId === "MARCUS").policy.maximumExposure = 307;
+    source.metrics.confidence = 100; source.metrics.tension = 0;
+    const bundled = json(source);
+    const input = { requestId: "offline_blind_limit", runId: source.runId, version: 0, action: "DEAL", vibeId: "EA", intensity: "BALANCED", information: "OFFER_INFORMATION", terms: { units: 2, upfront: 70, repayment: 50, extra: 20, days: 7 } };
+    equal(json(embedded.runtime.previewConversation(bundled, input, mode)), json(sourceRuntime.previewConversation(source, input, mode)), "blind preview parity");
+    equal(json(embedded.runtime.resolveConversation(bundled, input, mode)), json(sourceRuntime.resolveConversation(source, input, mode)), "blind limit ordinary reply parity");
+  }
+});

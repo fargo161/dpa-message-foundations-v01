@@ -6,6 +6,7 @@ import { createConversation, resolveConversation, projectConversation, previewCo
 import { informationVariant, r17Interest } from "../src/encounter/marcus-world.mjs";
 import { resolveContextAction } from "../src/conversation/context-actions.mjs";
 import { projectPlayerInformation } from "../src/encounter/marcus-world-adapter.mjs";
+import { r17StandardExtra } from "../src/encounter/constants.mjs";
 const mode = { languageMode: "AUTHORING_PREVIEW" };
 const seeds = {};
 for (let index = 0; Object.keys(seeds).length < 4; index++) {
@@ -92,7 +93,7 @@ test("actual UI render functions show Held, Spent, Traded, retained-card penalty
     const node = (tag, text = "") => ({ tag, own: String(text), children: [], append(...items) { this.children.push(...items); }, replaceChildren(...items) { this.own = ""; this.children = items; },
       get textContent() { return this.own + this.children.map(item => item.textContent).join(" "); }, set textContent(text) { this.own = String(text); this.children = []; } });
     const $ = id => { if (!elements.has(id)) elements.set(id, node("div")); return elements.get(id); };
-    const context = vm.createContext({ snapshot, node, $, offer: () => snapshot.play.counteroffer, character: () => ({ name: "Marcus" }),
+    const context = vm.createContext({ snapshot, node, $, r17StandardExtra, offer: () => snapshot.play.counteroffer, character: () => ({ name: "Marcus" }),
       termKeys: ["units", "upfront", "repayment", "extra", "days"], names: {}, document: { querySelector: () => node("div") } });
     for (const name of ["termTable", "renderEdge", "renderOffer"]) {
       const remainder = source.slice(source.indexOf(`function ${name}(`)), end = name === "renderEdge" ? remainder.indexOf("\nconst turnPlayer") : remainder.search(/\n(?:async )?function /);
@@ -106,11 +107,11 @@ test("actual UI render functions show Held, Spent, Traded, retained-card penalty
   const failure = step(initial, { action: "DEAL", information: "OFFER_INFORMATION", terms });
   const failedText = renderer(view(failure));
   assert.match(failedText.edge, /physically held.*penalty remains/);
-  assert.match(failedText.offer, /minimum extra charge: 22%/);
+  assert.match(failedText.offer, /22% of new credit/);
   const shown = step(failure, { action: "ASK", topic: "R17_SHOW" });
   assert.match(renderer(view(shown)).edge, /Your edge: Spent/);
   const later = step(shown, { action: "DEAL", information: "NONE", terms });
-  assert.match(renderer(view(later)).offer, /minimum extra charge: 19%/);
+  assert.match(renderer(view(later)).offer, /19% of new credit/);
   const offered = step(start("NEGATIVE", true), { action: "DEAL", information: "OFFER_INFORMATION", terms });
   const traded = step(offered, { action: "ACCEPT", offerId: offered.counteroffer.id, offerVersion: offered.counteroffer.version });
   assert.match(renderer(view(traded)).edge, /Your edge: Traded/);

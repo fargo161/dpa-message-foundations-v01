@@ -5,6 +5,7 @@ import { createConversation, resolveConversation, projectConversation } from "..
 import { informationVariant, r17Interest } from "../src/encounter/marcus-world.mjs";
 import { projectPlayerInformation, projectMarcusInformation } from "../src/encounter/marcus-world-adapter.mjs";
 import { projectWorld } from "../src/world/projections.mjs";
+import { r17ExtraFloor, r17StandardExtra } from "../src/encounter/constants.mjs";
 
 const mode = { languageMode: "AUTHORING_PREVIEW" }, seeds = {};
 for (let index = 0; Object.keys(seeds).length < 4 && index < 1000; index++) {
@@ -36,7 +37,9 @@ for (const [key, seed] of Object.entries(seeds)) {
         documentHolder: projectWorld(state.world).possession.R17, disclosure: npc.disclosure, sourceChecked: npc.sourceChecked,
         content: npc.content, bodyClaimIds: npc.bodyClaims.map(claim => claim.claimId),
         tradeOptionAvailable: view.options.informationOptions.find(option => option.id === "OFFER_INFORMATION").available,
-        offer: state.counteroffer, status: state.status, metrics: view.play.metrics,
+        proposal: state.proposal, offer: state.counteroffer, status: state.status, metrics: view.play.metrics,
+        standardExtra: state.counteroffer ? r17StandardExtra(state.counteroffer.terms.repayment) : null,
+        saving: state.counteroffer ? r17StandardExtra(state.counteroffer.terms.repayment) - state.counteroffer.terms.extra : null,
         reaction: event?.reactionCause?.consequences?.r17Reaction ?? null, respondingFace: event?.faces?.responding?.presetId ?? null,
         marcusText: event?.marcusText ?? null, worldEventIds: event?.worldEventIds ?? [] };
     };
@@ -46,6 +49,8 @@ for (const [key, seed] of Object.entries(seeds)) {
       state = resolveConversation(state, { requestId: `golden_${index}`, runId: state.runId, version: state.events.length, vibeId: "EA", intensity: "BALANCED", ...fields }, mode);
       const observed = observe();
       assert.equal(observed.rate, expectedRates[index], `${key}:${scenario}:${index}`);
+      if (fields.action === "DEAL") assert.equal(state.proposal.terms.extra, r17ExtraFloor(state.proposal.terms.repayment, expectedRates[index]));
+      if (state.counteroffer) assert.equal(state.counteroffer.terms.extra, r17ExtraFloor(state.counteroffer.terms.repayment, expectedRates[index]));
       observations.push(observed);
     }
     if (["HINT_TRADE", "BLIND_TRADE"].includes(scenario) && cares) {

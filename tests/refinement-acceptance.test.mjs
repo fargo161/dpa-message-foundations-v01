@@ -105,12 +105,13 @@ test("refinement independent: late and repeated preparation cannot imply restore
   assert.ok(cards.flatMap(card => card.actions).filter(action => ["R17_HINT", "R17_SHOW"].includes(action.intent.topic)).every(action => !action.available));
 });
 
-test("refinement independent: mixed economic deterioration earns no concession progress", () => {
+test("refinement independent: submitted extra cannot turn a cash improvement into deterioration", () => {
   let state = act(fresh(), { action: "DEAL", terms: { units: 4, upfront: 60, repayment: 180, extra: 24, days: 14 } });
   state = act(state, { action: "DEAL", terms: { units: 4, upfront: 61, repayment: 179, extra: 0, days: 14 } });
   const event = state.events.at(-1);
-  assert.equal(event.derived.meaningfulProgress, false);
-  assert.doesNotMatch(event.progressKey ?? "", /^CONCESSION/);
+  assert.equal(event.derived.meaningfulProgress, true);
+  assert.match(event.progressKey ?? "", /^CONCESSION/);
+  assert.equal(event.intent.terms.extra, Math.ceil(179 * 16 / 100));
 });
 
 test("refinement independent: hostile counter cannot cut fee alone", () => {

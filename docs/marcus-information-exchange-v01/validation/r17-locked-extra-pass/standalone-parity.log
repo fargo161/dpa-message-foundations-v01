@@ -1,0 +1,52 @@
+TAP version 13
+# Subtest: standalone is classic-script parseable with all 28 exact source face assets and no network entrypoints
+ok 1 - standalone is classic-script parseable with all 28 exact source face assets and no network entrypoints
+  ---
+  duration_ms: 69.1141
+  type: 'test'
+  ...
+# Subtest: standalone module graph and non-import source bodies match the migrated source with only browser substitutions
+ok 2 - standalone module graph and non-import source bodies match the migrated source with only browser substitutions
+  ---
+  duration_ms: 33.5008
+  type: 'test'
+  ...
+# Subtest: standalone inventory independently matches output bytes, normalized source inputs and substitution contracts
+ok 3 - standalone inventory independently matches output bytes, normalized source inputs and substitution contracts
+  ---
+  duration_ms: 18.5044
+  type: 'test'
+  ...
+# Subtest: actual embedded runtime equals migrated source and frozen oracle over all 23 routes/127 snapshots
+ok 4 - actual embedded runtime equals migrated source and frozen oracle over all 23 routes/127 snapshots
+  ---
+  duration_ms: 130159.3527
+  type: 'test'
+  ...
+# Subtest: actual local API restarts deterministic seeds, previews without mutation, commits and resets both variants
+ok 5 - actual local API restarts deterministic seeds, previews without mutation, commits and resets both variants
+  ---
+  duration_ms: 4618.9263
+  type: 'test'
+  ...
+# Subtest: actual embedded R-17 proof matches all 20 golden routes, including Show and Hint
+ok 6 - actual embedded R-17 proof matches all 20 golden routes, including Show and Hint
+  ---
+  duration_ms: 40812.1913
+  type: 'test'
+  ...
+# Subtest: embedded exact-extra regression and blind exposure preview match source with networking forbidden
+ok 7 - embedded exact-extra regression and blind exposure preview match source with networking forbidden
+  ---
+  duration_ms: 2117.0431
+  type: 'test'
+  ...
+1..7
+# tests 7
+# suites 0
+# pass 7
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 179569.0225

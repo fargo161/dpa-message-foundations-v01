@@ -1,0 +1,157 @@
+- main:
+  - heading "TRAPSTAR" [level=1]
+  - paragraph: Read the room. Choose your words.
+  - paragraph: Marcus — the Contra deal
+  - navigation "Conversation controls":
+    - button "More things to say ↗"
+    - button "Conversation log"
+    - button "Play" [pressed]
+    - button "Debug"
+  - status: Response received. Review what changed, then choose your next move.
+  - region "Play":
+    - region "Your purpose":
+      - paragraph: You owe Marcus $250 and missed yesterday’s check-in. You want more Contra; private information may help.
+      - paragraph: Aim for 2 Contra using some new credit. A smaller deal or walking away is also your choice.
+    - status: "Marcus ‘Broker’ Hill: You want me to pay for something I don't need? My extra charge is 22% now. Keep R-17; you haven't shown me its detail. Review these terms: 2 Contra units, $70 upfront, $50 in new credit plus $11 extra due in 7 days. I can work with a clear approach like that. Both brows flatten above forward-looking eyes; one corner of the mouth turns down. You want me to pay for something I don't need? The extra charge is 22%. You keep R-17; its detail remains private. This penalty persists."
+    - checkbox "Hold hearing face until I continue"
+    - text: Hold hearing face until I continue
+    - button "Replay reactions"
+    - group "Compose your conversation turn":
+      - generic: Compose your conversation turn
+      - region "Read and interact":
+        - 'img "Marcus ‘Broker’ Hill: Both brows flatten above forward-looking eyes; one corner of the mouth turns down."':
+        - generic: MARCUS ‘BROKER’ HILL
+        - generic "Facial turn sequence":
+          - generic: 01 · HEARS YOU
+          - generic: 02 · RESPONDS
+        - heading "Marcus ‘Broker’ Hill" [level=2]
+        - generic: Conversation open
+        - paragraph: "You: Okay… I propose 2 Contra units, $70 upfront, $50 in new credit at your extra charge, due in 7 days. This is in addition to my existing debt. I offer counterfoil R-17 and its exact detail with these terms, to be transferred only if we both agree. You are free to decline."
+        - blockquote: "You want me to pay for something I don't need? My extra charge is 22% now. Keep R-17; you haven't shown me its detail. Review these terms: 2 Contra units, $70 upfront, $50 in new credit plus $11 extra due in 7 days. I can work with a clear approach like that."
+        - generic "Face description"
+        - heading "What do you want to do next? // The current offer" [level=3]
+        - button "Build an offer" [pressed]
+        - button "Walk away"
+        - paragraph: Build a voluntary offer in the deal table. Nothing transfers until you confirm a current agreement. Sending this move replaces or closes the current offer; browsing does not.
+        - heading "How do you say it?" [level=3]
+        - region "BASED delivery chart":
+          - group "Delivery shortcuts":
+            - 'button "Boundaried: Empathy then Aggression" [pressed]':
+              - generic: Boundaried
+            - 'button "Charismatic: Sociability then Aggression, starter approach"':
+              - generic: Charismatic
+              - generic: Starter
+            - 'button "Urgent: Aggression then Empathy, starter approach"':
+              - generic: Urgent
+              - generic: Starter
+          - paragraph: Boundaried · Balanced — Understanding leads; decisive force establishes a clear limit or next move. Make the selected manner clear without emphasizing it heavily.
+          - group "Intensity":
+            - generic: Intensity
+            - button "Subtle"
+            - button "Balanced" [pressed]
+            - button "Overt"
+        - paragraph:
+          - button "All 20 BASED vibes ↗"
+        - complementary:
+          - heading "Your edge" [level=2]
+          - strong: Counterfoil R-17
+          - paragraph: "Your edge: Held"
+          - paragraph: R-17 is still physically held. The blind-trade penalty remains active.
+          - paragraph: "Disclosure: Category shared; exact detail private."
+          - paragraph: "Interest: Marcus does not care."
+          - generic "Exact evidence and observations"
+          - paragraph: "Marcus's extra charge: 22% of new principal."
+          - generic: Cash
+          - strong: "80"
+          - generic: Total owed
+          - strong: "250"
+          - generic: Their Contra
+          - strong: "8"
+          - generic: Your Contra
+          - strong: "0"
+          - generic "Before you speak"
+      - region "BUILD THE OFFER":
+        - generic "Build an offer"
+        - paragraph: YOUR DRAFT · NOTHING TRANSFERS UNTIL YOU CONFIRM
+        - table:
+          - rowgroup:
+            - row "The exchange Your terms":
+              - columnheader "The exchange"
+              - columnheader "Your terms"
+          - rowgroup:
+            - row "Contra units 2":
+              - rowheader "Contra units":
+                - generic: Contra units
+              - cell "2":
+                - spinbutton "Contra units": "2"
+            - row "Cash now 40":
+              - rowheader "Cash now":
+                - generic: Cash now
+              - cell "40":
+                - spinbutton "Cash now": "70"
+            - row "New credit principal · calculated 80":
+              - rowheader "New credit principal · calculated":
+                - generic: New credit principal · calculated
+              - cell "80":
+                - spinbutton "New credit principal · calculated": "50"
+            - 'row "Additional repayment · Marcus sets Standard charge without R-17: $8 · 16%"':
+              - rowheader "Additional repayment · Marcus sets":
+                - generic: Additional repayment · Marcus sets
+              - 'cell "Additional repayment · Marcus sets Standard charge without R-17: $8 · 16%"':
+                - status "Additional repayment · Marcus sets": $11 · 22% of new credit
+                - paragraph: "Standard charge without R-17: $8 · 16%"
+            - row "Repay within (days) 7":
+              - rowheader "Repay within (days)":
+                - generic: Repay within (days)
+              - cell "7":
+                - spinbutton "Repay within (days)": "7"
+        - paragraph: Keep $10 cash. Repay $61 in 7 days ($50 credit + $11 extra). Old debt stays owed.
+        - generic: Information included
+        - combobox "Information included":
+          - option "Keep information outside this proposal" [selected]
+          - option "Trade counterfoil R-17 with these terms"
+        - paragraph: No information exchange is attached.
+        - button "Use these terms in my message"
+        - heading "ON THE TABLE" [level=3]
+        - paragraph: Marcus ‘Broker’ Hill approved this. Confirm below to accept.
+        - table:
+          - rowgroup:
+            - row "Contra units 2":
+              - rowheader "Contra units"
+              - cell "2"
+            - row "Cash now 70":
+              - rowheader "Cash now"
+              - cell "70"
+            - row "New principal 50":
+              - rowheader "New principal"
+              - cell "50"
+            - row "Additional repayment 11":
+              - rowheader "Additional repayment"
+              - cell "11"
+            - row "Repay within (days) 7":
+              - rowheader "Repay within (days)"
+              - cell "7"
+        - paragraph: Confirmation transfers 70 cash and 2 Contra, adding 50 principal and 11 additional repayment due within 7 days. Existing debt remains owed.
+        - paragraph: "After confirmation: 10 cash retained; 61 new repayment due."
+        - paragraph: "Extra: $11 · 22% of new credit."
+        - paragraph: "Standard charge without R-17: $8 · 16%"
+        - button "Choose these terms"
+        - button "Ask about these terms"
+        - paragraph: Clarification preserves this offer unless the conversation ends. Other discussion or a new proposal replaces it.
+        - heading "Your words Ready · review, then send" [level=3]
+        - blockquote: All right… I propose 2 Contra units, $70 upfront, $50 in new credit at your extra charge, due in 7 days. This is in addition to my existing debt.
+        - paragraph
+        - button "Say it →"
+    - paragraph: You want me to pay for something I don't need? The extra charge is 22%. You keep R-17; its detail remains private. This penalty persists.
+    - button "Compare both reactions"
+    - button "Prepare to walk away"
+    - generic: Available.
+  - generic "Restart / choose test conversation"
+  - generic: Conversation
+  - combobox "Conversation":
+    - option "Marcus — the Contra deal" [selected]
+    - option "Avery — the broken promise (fixture)"
+  - generic: Run seed
+  - textbox "Run seed": r17-proof-2
+  - paragraph: Restart replaces this encounter. The same seed and choices reproduce its results.
+  - button "Restart encounter"

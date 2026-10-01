@@ -44,6 +44,7 @@
         "content": "UNKNOWN",
         "bodyClaimIds": [],
         "tradeOptionAvailable": true,
+        "proposal": null,
         "offer": null,
         "status": "OPEN",
         "metrics": {
@@ -52,6 +53,8 @@
           "marcusStock": 8,
           "playerStock": 0
         },
+        "standardExtra": null,
+        "saving": null,
         "reaction": null,
         "respondingFace": null,
         "marcusText": null,
@@ -99,6 +102,19 @@
           "content": "UNKNOWN",
           "bodyClaimIds": [],
           "tradeOptionAvailable": true,
+          "proposal": {
+            "id": "golden:POSITIVE:true:HOARD:proposal:1",
+            "version": 1,
+            "terms": {
+              "units": 2,
+              "upfront": 70,
+              "repayment": 50,
+              "extra": 8,
+              "days": 7
+            },
+            "source": "PLAYER",
+            "informationExchange": null
+          },
           "offer": {
             "id": "golden:POSITIVE:true:HOARD:offer:1",
             "version": 1,
@@ -109,7 +125,7 @@
               "extra": 8,
               "days": 7
             },
-            "source": "MARCUS",
+            "source": "APPROVED_PROPOSAL",
             "informationExchange": null,
             "extraChargeRate": 16
           },
@@ -120,9 +136,11 @@
             "marcusStock": 8,
             "playerStock": 0
           },
+          "standardExtra": 8,
+          "saving": 0,
           "reaction": null,
-          "respondingFace": "WEIGHING_IT",
-          "marcusText": "Not on those terms. Here is what I will put my name to: 2 Contra units, $70 upfront, $50 in new credit plus $8 extra due in 7 days. Your existing debt is separate. Take a look before you decide. I can work with a clear approach like that.",
+          "respondingFace": "READY_TO_AGREE",
+          "marcusText": "I can do 2 Contra units, $70 upfront, $50 in new credit plus $8 extra due in 7 days. Check it over. Confirm if you want the deal; until then, the stock stays here. I can work with a clear approach like that.",
           "worldEventIds": [
             "world:r17-proof-0:13",
             "world:r17-proof-0:14"
@@ -160,6 +178,7 @@
         "content": "UNKNOWN",
         "bodyClaimIds": [],
         "tradeOptionAvailable": true,
+        "proposal": null,
         "offer": null,
         "status": "OPEN",
         "metrics": {
@@ -168,6 +187,8 @@
           "marcusStock": 8,
           "playerStock": 0
         },
+        "standardExtra": null,
+        "saving": null,
         "reaction": null,
         "respondingFace": null,
         "marcusText": null,
@@ -236,6 +257,7 @@
             "R17:body:2"
           ],
           "tradeOptionAvailable": false,
+          "proposal": null,
           "offer": null,
           "status": "OPEN",
           "metrics": {
@@ -244,6 +266,8 @@
             "marcusStock": 8,
             "playerStock": 0
           },
+          "standardExtra": null,
+          "saving": null,
           "reaction": "SHOW",
           "respondingFace": "WARM_ACKNOWLEDGMENT",
           "marcusText": "The header and signature check out. I accept the detail on the paper. I'll give you three points of goodwill: 13% extra now. That doesn't establish who's responsible for any discrepancy.",
@@ -282,6 +306,19 @@
             "R17:body:2"
           ],
           "tradeOptionAvailable": false,
+          "proposal": {
+            "id": "golden:POSITIVE:true:SHOW:proposal:2",
+            "version": 2,
+            "terms": {
+              "units": 2,
+              "upfront": 70,
+              "repayment": 50,
+              "extra": 7,
+              "days": 7
+            },
+            "source": "PLAYER",
+            "informationExchange": null
+          },
           "offer": {
             "id": "golden:POSITIVE:true:SHOW:offer:2",
             "version": 2,
@@ -292,7 +329,7 @@
               "extra": 7,
               "days": 7
             },
-            "source": "MARCUS",
+            "source": "APPROVED_PROPOSAL",
             "informationExchange": null,
             "extraChargeRate": 13
           },
@@ -303,9 +340,11 @@
             "marcusStock": 8,
             "playerStock": 0
           },
+          "standardExtra": 8,
+          "saving": 1,
           "reaction": null,
-          "respondingFace": "WEIGHING_IT",
-          "marcusText": "I will not agree to your proposal. My counteroffer is 2 Contra units, $70 upfront, $50 in new credit plus $7 extra due in 7 days. The existing debt is separate. Review that before deciding. I can work with a clear approach like that.",
+          "respondingFace": "READY_TO_AGREE",
+          "marcusText": "That works: 2 Contra units, $70 upfront, $50 in new credit plus $7 extra due in 7 days. Read it over and confirm if you're in. The stock stays here until you confirm. I can work with a clear approach like that.",
           "worldEventIds": [
             "world:r17-proof-0:16",
             "world:r17-proof-0:17"
@@ -340,6 +379,19 @@
             "R17:body:2"
           ],
           "tradeOptionAvailable": false,
+          "proposal": {
+            "id": "golden:POSITIVE:true:SHOW:proposal:3",
+            "version": 3,
+            "terms": {
+              "units": 2,
+              "upfront": 70,
+              "repayment": 50,
+              "extra": 7,
+              "days": 7
+            },
+            "source": "PLAYER",
+            "informationExchange": null
+          },
           "offer": {
             "id": "golden:POSITIVE:true:SHOW:offer:3",
             "version": 3,
@@ -350,7 +402,7 @@
               "extra": 7,
               "days": 7
             },
-            "source": "MARCUS",
+            "source": "APPROVED_PROPOSAL",
             "informationExchange": null,
             "extraChargeRate": 13
           },
@@ -361,9 +413,11 @@
             "marcusStock": 8,
             "playerStock": 0
           },
+          "standardExtra": 8,
+          "saving": 1,
           "reaction": null,
-          "respondingFace": "WEIGHING_IT",
-          "marcusText": "Not on those terms. Here is what I will put my name to: 2 Contra units, $70 upfront, $50 in new credit plus $7 extra due in 7 days. Your existing debt is separate. Take a look before you decide.",
+          "respondingFace": "READY_TO_AGREE",
+          "marcusText": "I can do 2 Contra units, $70 upfront, $50 in new credit plus $7 extra due in 7 days. Check it over. Confirm if you want the deal; until then, the stock stays here.",
           "worldEventIds": [
             "world:r17-proof-0:18",
             "world:r17-proof-0:19"
@@ -401,6 +455,7 @@
         "content": "UNKNOWN",
         "bodyClaimIds": [],
         "tradeOptionAvailable": true,
+        "proposal": null,
         "offer": null,
         "status": "OPEN",
         "metrics": {
@@ -409,6 +464,8 @@
           "marcusStock": 8,
           "playerStock": 0
         },
+        "standardExtra": null,
+        "saving": null,
         "reaction": null,
         "respondingFace": null,
         "marcusText": null,
@@ -461,6 +518,7 @@
           "content": "UNKNOWN",
           "bodyClaimIds": [],
           "tradeOptionAvailable": true,
+          "proposal": null,
           "offer": null,
           "status": "OPEN",
           "metrics": {
@@ -469,6 +527,8 @@
             "marcusStock": 8,
             "playerStock": 0
           },
+          "standardExtra": null,
+          "saving": null,
           "reaction": "HINT_CARES",
           "respondingFace": "LEANING_IN",
           "marcusText": "Yes. I care about that information. Keep R-17's exact detail covered if you want to price it into the deal.",
@@ -504,6 +564,22 @@
           "content": "UNKNOWN",
           "bodyClaimIds": [],
           "tradeOptionAvailable": true,
+          "proposal": {
+            "id": "golden:POSITIVE:true:HINT_TRADE:proposal:2",
+            "version": 2,
+            "terms": {
+              "units": 2,
+              "upfront": 70,
+              "repayment": 50,
+              "extra": 4,
+              "days": 7
+            },
+            "source": "PLAYER",
+            "informationExchange": {
+              "factId": "POSITIVE_ROUTE",
+              "summary": "Counterfoil R-17 and its exact detail; transferred only on confirmation."
+            }
+          },
           "offer": {
             "id": "golden:POSITIVE:true:HINT_TRADE:offer:2",
             "version": 2,
@@ -514,7 +590,7 @@
               "extra": 4,
               "days": 7
             },
-            "source": "MARCUS",
+            "source": "APPROVED_PROPOSAL",
             "informationExchange": {
               "factId": "POSITIVE_ROUTE",
               "summary": "Counterfoil R-17 and its exact detail; transferred only on confirmation."
@@ -528,6 +604,8 @@
             "marcusStock": 8,
             "playerStock": 0
           },
+          "standardExtra": 8,
+          "saving": 4,
           "reaction": "TRADE_VALUABLE",
           "respondingFace": "READY_TO_AGREE",
           "marcusText": "R-17 has value to me. I'll go to 8% extra for this information offer, with the exchange completed on confirmation. Review these terms: 2 Contra units, $70 upfront, $50 in new credit plus $4 extra due in 7 days. The terms include the information exchange. I receive the private detail only when you confirm. I can work with a clear approach like that.",
@@ -567,6 +645,22 @@
             "R17:body:2"
           ],
           "tradeOptionAvailable": false,
+          "proposal": {
+            "id": "golden:POSITIVE:true:HINT_TRADE:proposal:2",
+            "version": 2,
+            "terms": {
+              "units": 2,
+              "upfront": 70,
+              "repayment": 50,
+              "extra": 4,
+              "days": 7
+            },
+            "source": "PLAYER",
+            "informationExchange": {
+              "factId": "POSITIVE_ROUTE",
+              "summary": "Counterfoil R-17 and its exact detail; transferred only on confirmation."
+            }
+          },
           "offer": null,
           "status": "AGREED",
           "metrics": {
@@ -575,6 +669,8 @@
             "marcusStock": 6,
             "playerStock": 2
           },
+          "standardExtra": null,
+          "saving": null,
           "reaction": null,
           "respondingFace": "AGREEMENT_CLOSURE",
           "marcusText": "Agreed. The stock is yours on the terms you just confirmed. The old account stays on the books.",
@@ -619,6 +715,7 @@
         "content": "UNKNOWN",
         "bodyClaimIds": [],
         "tradeOptionAvailable": true,
+        "proposal": null,
         "offer": null,
         "status": "OPEN",
         "metrics": {
@@ -627,6 +724,8 @@
           "marcusStock": 8,
           "playerStock": 0
         },
+        "standardExtra": null,
+        "saving": null,
         "reaction": null,
         "respondingFace": null,
         "marcusText": null,
@@ -676,6 +775,22 @@
           "content": "UNKNOWN",
           "bodyClaimIds": [],
           "tradeOptionAvailable": true,
+          "proposal": {
+            "id": "golden:POSITIVE:true:BLIND_TRADE:proposal:1",
+            "version": 1,
+            "terms": {
+              "units": 2,
+              "upfront": 70,
+              "repayment": 50,
+              "extra": 4,
+              "days": 7
+            },
+            "source": "PLAYER",
+            "informationExchange": {
+              "factId": "POSITIVE_ROUTE",
+              "summary": "Counterfoil R-17 and its exact detail; transferred only on confirmation."
+            }
+          },
           "offer": {
             "id": "golden:POSITIVE:true:BLIND_TRADE:offer:1",
             "version": 1,
@@ -686,7 +801,7 @@
               "extra": 4,
               "days": 7
             },
-            "source": "MARCUS",
+            "source": "APPROVED_PROPOSAL",
             "informationExchange": {
               "factId": "POSITIVE_ROUTE",
               "summary": "Counterfoil R-17 and its exact detail; transferred only on confirmation."
@@ -700,9 +815,11 @@
             "marcusStock": 8,
             "playerStock": 0
           },
+          "standardExtra": 8,
+          "saving": 4,
           "reaction": "TRADE_VALUABLE",
           "respondingFace": "READY_TO_AGREE",
-          "marcusText": "That information matters to me. With R-17 included, my minimum extra is 8%. I receive the document and detail only when you confirm. Review these terms: 2 Contra units, $70 upfront, $50 in new credit plus $4 extra due in 7 days. The terms include the information exchange. I receive the private detail only when you confirm. I can work with a clear approach like that.",
+          "marcusText": "That information matters to me. With R-17 included, my extra charge is 8%. I receive the document and detail only when you confirm. Review these terms: 2 Contra units, $70 upfront, $50 in new credit plus $4 extra due in 7 days. The terms include the information exchange. I receive the private detail only when you confirm. I can work with a clear approach like that.",
           "worldEventIds": [
             "world:r17-proof-0:13",
             "world:r17-proof-0:14"
@@ -739,6 +856,22 @@
             "R17:body:2"
           ],
           "tradeOptionAvailable": false,
+          "proposal": {
+            "id": "golden:POSITIVE:true:BLIND_TRADE:proposal:1",
+            "version": 1,
+            "terms": {
+              "units": 2,
+              "upfront": 70,
+              "repayment": 50,
+              "extra": 4,
+              "days": 7
+            },
+            "source": "PLAYER",
+            "informationExchange": {
+              "factId": "POSITIVE_ROUTE",
+              "summary": "Counterfoil R-17 and its exact detail; transferred only on confirmation."
+            }
+          },
           "offer": null,
           "status": "AGREED",
           "metrics": {
@@ -747,6 +880,8 @@
             "marcusStock": 6,
             "playerStock": 2
           },
+          "standardExtra": null,
+          "saving": null,
           "reaction": null,
           "respondingFace": "AGREEMENT_CLOSURE",
           "marcusText": "That is agreed. The stock is yours under the terms you confirmed. The old account remains unpaid.",
@@ -791,6 +926,7 @@
         "content": "UNKNOWN",
         "bodyClaimIds": [],
         "tradeOptionAvailable": true,
+        "proposal": null,
         "offer": null,
         "status": "OPEN",
         "metrics": {
@@ -799,6 +935,8 @@
           "marcusStock": 8,
           "playerStock": 0
         },
+        "standardExtra": null,
+        "saving": null,
         "reaction": null,
         "respondingFace": null,
         "marcusText": null,
@@ -872,6 +1010,22 @@
           "content": "UNKNOWN",
           "bodyClaimIds": [],
           "tradeOptionAvailable": true,
+          "proposal": {
+            "id": "golden:POSITIVE:true:REMOVE_READD:proposal:1",
+            "version": 1,
+            "terms": {
+              "units": 2,
+              "upfront": 70,
+              "repayment": 50,
+              "extra": 4,
+              "days": 7
+            },
+            "source": "PLAYER",
+            "informationExchange": {
+              "factId": "POSITIVE_ROUTE",
+              "summary": "Counterfoil R-17 and its exact detail; transferred only on confirmation."
+            }
+          },
           "offer": {
             "id": "golden:POSITIVE:true:REMOVE_READD:offer:1",
             "version": 1,
@@ -882,7 +1036,7 @@
               "extra": 4,
               "days": 7
             },
-            "source": "MARCUS",
+            "source": "APPROVED_PROPOSAL",
             "informationExchange": {
               "factId": "POSITIVE_ROUTE",
               "summary": "Counterfoil R-17 and its exact detail; transferred only on confirmation."
@@ -896,9 +1050,11 @@
             "marcusStock": 8,
             "playerStock": 0
           },
+          "standardExtra": 8,
+          "saving": 4,
           "reaction": "TRADE_VALUABLE",
           "respondingFace": "READY_TO_AGREE",
-          "marcusText": "That information matters to me. With R-17 included, my minimum extra is 8%. I receive the document and detail only when you confirm. Review these terms: 2 Contra units, $70 upfront, $50 in new credit plus $4 extra due in 7 days. The terms include the information exchange. I receive the private detail only when you confirm. I can work with a clear approach like that.",
+          "marcusText": "That information matters to me. With R-17 included, my extra charge is 8%. I receive the document and detail only when you confirm. Review these terms: 2 Contra units, $70 upfront, $50 in new credit plus $4 extra due in 7 days. The terms include the information exchange. I receive the private detail only when you confirm. I can work with a clear approach like that.",
           "worldEventIds": [
             "world:r17-proof-0:13",
             "world:r17-proof-0:14"
@@ -931,6 +1087,19 @@
           "content": "UNKNOWN",
           "bodyClaimIds": [],
           "tradeOptionAvailable": true,
+          "proposal": {
+            "id": "golden:POSITIVE:true:REMOVE_READD:proposal:2",
+            "version": 2,
+            "terms": {
+              "units": 2,
+              "upfront": 70,
+              "repayment": 50,
+              "extra": 8,
+              "days": 7
+            },
+            "source": "PLAYER",
+            "informationExchange": null
+          },
           "offer": {
             "id": "golden:POSITIVE:true:REMOVE_READD:offer:2",
             "version": 2,
@@ -941,7 +1110,7 @@
               "extra": 8,
               "days": 7
             },
-            "source": "MARCUS",
+            "source": "APPROVED_PROPOSAL",
             "informationExchange": null,
             "extraChargeRate": 16
           },
@@ -952,9 +1121,11 @@
             "marcusStock": 8,
             "playerStock": 0
           },
+          "standardExtra": 8,
+          "saving": 0,
           "reaction": null,
-          "respondingFace": "WEIGHING_IT",
-          "marcusText": "I will not agree to your proposal. My counteroffer is 2 Contra units, $70 upfront, $50 in new credit plus $8 extra due in 7 days. The existing debt is separate. Review that before deciding.",
+          "respondingFace": "READY_TO_AGREE",
+          "marcusText": "That works: 2 Contra units, $70 upfront, $50 in new credit plus $8 extra due in 7 days. Read it over and confirm if you're in. The stock stays here until you confirm.",
           "worldEventIds": [
             "world:r17-proof-0:15",
             "world:r17-proof-0:16"
@@ -988,6 +1159,22 @@
           "content": "UNKNOWN",
           "bodyClaimIds": [],
           "tradeOptionAvailable": true,
+          "proposal": {
+            "id": "golden:POSITIVE:true:REMOVE_READD:proposal:3",
+            "version": 3,
+            "terms": {
+              "units": 2,
+              "upfront": 70,
+              "repayment": 50,
+              "extra": 4,
+              "days": 7
+            },
+            "source": "PLAYER",
+            "informationExchange": {
+              "factId": "POSITIVE_ROUTE",
+              "summary": "Counterfoil R-17 and its exact detail; transferred only on confirmation."
+            }
+          },
           "offer": {
             "id": "golden:POSITIVE:true:REMOVE_READD:offer:3",
             "version": 3,
@@ -998,7 +1185,7 @@
               "extra": 4,
               "days": 7
             },
-            "source": "MARCUS",
+            "source": "APPROVED_PROPOSAL",
             "informationExchange": {
               "factId": "POSITIVE_ROUTE",
               "summary": "Counterfoil R-17 and its exact detail; transferred only on confirmation."
@@ -1012,9 +1199,11 @@
             "marcusStock": 8,
             "playerStock": 0
           },
+          "standardExtra": 8,
+          "saving": 4,
           "reaction": "TRADE_VALUABLE",
           "respondingFace": "READY_TO_AGREE",
-          "marcusText": "That information matters to me. With R-17 included, my minimum extra is 8%. I receive the document and detail only when you confirm. Review these terms: 2 Contra units, $70 upfront, $50 in new credit plus $4 extra due in 7 days. The terms include the information exchange. I receive the private detail only when you confirm.",
+          "marcusText": "That information matters to me. With R-17 included, my extra charge is 8%. I receive the document and detail only when you confirm. Review these terms: 2 Contra units, $70 upfront, $50 in new credit plus $4 extra due in 7 days. The terms include the information exchange. I receive the private detail only when you confirm.",
           "worldEventIds": [
             "world:r17-proof-0:17",
             "world:r17-proof-0:18"
@@ -1052,6 +1241,7 @@
         "content": "UNKNOWN",
         "bodyClaimIds": [],
         "tradeOptionAvailable": true,
+        "proposal": null,
         "offer": null,
         "status": "OPEN",
         "metrics": {
@@ -1060,6 +1250,8 @@
           "marcusStock": 8,
           "playerStock": 0
         },
+        "standardExtra": null,
+        "saving": null,
         "reaction": null,
         "respondingFace": null,
         "marcusText": null,
@@ -1107,6 +1299,19 @@
           "content": "UNKNOWN",
           "bodyClaimIds": [],
           "tradeOptionAvailable": true,
+          "proposal": {
+            "id": "golden:POSITIVE:false:HOARD:proposal:1",
+            "version": 1,
+            "terms": {
+              "units": 2,
+              "upfront": 70,
+              "repayment": 50,
+              "extra": 8,
+              "days": 7
+            },
+            "source": "PLAYER",
+            "informationExchange": null
+          },
           "offer": {
             "id": "golden:POSITIVE:false:HOARD:offer:1",
             "version": 1,
@@ -1117,7 +1322,7 @@
               "extra": 8,
               "days": 7
             },
-            "source": "MARCUS",
+            "source": "APPROVED_PROPOSAL",
             "informationExchange": null,
             "extraChargeRate": 16
           },
@@ -1128,9 +1333,11 @@
             "marcusStock": 8,
             "playerStock": 0
           },
+          "standardExtra": 8,
+          "saving": 0,
           "reaction": null,
-          "respondingFace": "WEIGHING_IT",
-          "marcusText": "Not on those terms. Here is what I will put my name to: 2 Contra units, $70 upfront, $50 in new credit plus $8 extra due in 7 days. Your existing debt is separate. Take a look before you decide. I can work with a clear approach like that.",
+          "respondingFace": "READY_TO_AGREE",
+          "marcusText": "I can do 2 Contra units, $70 upfront, $50 in new credit plus $8 extra due in 7 days. Check it over. Confirm if you want the deal; until then, the stock stays here. I can work with a clear approach like that.",
           "worldEventIds": [
             "world:r17-proof-1:14",
             "world:r17-proof-1:15"
@@ -1168,6 +1375,7 @@
         "content": "UNKNOWN",
         "bodyClaimIds": [],
         "tradeOptionAvailable": true,
+        "proposal": null,
         "offer": null,
         "status": "OPEN",
         "metrics": {
@@ -1176,6 +1384,8 @@
           "marcusStock": 8,
           "playerStock": 0
         },
+        "standardExtra": null,
+        "saving": null,
         "reaction": null,
         "respondingFace": null,
         "marcusText": null,
@@ -1244,6 +1454,7 @@
             "R17:body:2"
           ],
           "tradeOptionAvailable": false,
+          "proposal": null,
           "offer": null,
           "status": "OPEN",
           "metrics": {
@@ -1252,6 +1463,8 @@
             "marcusStock": 8,
             "playerStock": 0
           },
+          "standardExtra": null,
+          "saving": null,
           "reaction": "SHOW",
           "respondingFace": "WARM_ACKNOWLEDGMENT",
           "marcusText": "The header and signature check out. I accept the detail on the paper. I'll give you three points of goodwill: 13% extra now. That doesn't establish who's responsible for any discrepancy.",
@@ -1290,6 +1503,19 @@
             "R17:body:2"
           ],
           "tradeOptionAvailable": false,
+          "proposal": {
+            "id": "golden:POSITIVE:false:SHOW:proposal:2",
+            "version": 2,
+            "terms": {
+              "units": 2,
+              "upfront": 70,
+              "repayment": 50,
+              "extra": 7,
+              "days": 7
+            },
+            "source": "PLAYER",
+            "informationExchange": null
+          },
           "offer": {
             "id": "golden:POSITIVE:false:SHOW:offer:2",
             "version": 2,
@@ -1300,7 +1526,7 @@
               "extra": 7,
               "days": 7
             },
-            "source": "MARCUS",
+            "source": "APPROVED_PROPOSAL",
             "informationExchange": null,
             "extraChargeRate": 13
           },
@@ -1311,9 +1537,11 @@
             "marcusStock": 8,
             "playerStock": 0
           },
+          "standardExtra": 8,
+          "saving": 1,
           "reaction": null,
-          "respondingFace": "WEIGHING_IT",
-          "marcusText": "I will not agree to your proposal. My counteroffer is 2 Contra units, $70 upfront, $50 in new credit plus $7 extra due in 7 days. The existing debt is separate. Review that before deciding. I can work with a clear approach like that.",
+          "respondingFace": "READY_TO_AGREE",
+          "marcusText": "That works: 2 Contra units, $70 upfront, $50 in new credit plus $7 extra due in 7 days. Read it over and confirm if you're in. The stock stays here until you confirm. I can work with a clear approach like that.",
           "worldEventIds": [
             "world:r17-proof-1:17",
             "world:r17-proof-1:18"
@@ -1348,6 +1576,19 @@
             "R17:body:2"
           ],
           "tradeOptionAvailable": false,
+          "proposal": {
+            "id": "golden:POSITIVE:false:SHOW:proposal:3",
+            "version": 3,
+            "terms": {
+              "units": 2,
+              "upfront": 70,
+              "repayment": 50,
+              "extra": 7,
+              "days": 7
+            },
+            "source": "PLAYER",
+            "informationExchange": null
+          },
           "offer": {
             "id": "golden:POSITIVE:false:SHOW:offer:3",
             "version": 3,
@@ -1358,7 +1599,7 @@
               "extra": 7,
               "days": 7
             },
-            "source": "MARCUS",
+            "source": "APPROVED_PROPOSAL",
             "informationExchange": null,
             "extraChargeRate": 13
           },
@@ -1369,9 +1610,11 @@
             "marcusStock": 8,
             "playerStock": 0
           },
+          "standardExtra": 8,
+          "saving": 1,
           "reaction": null,
-          "respondingFace": "WEIGHING_IT",
-          "marcusText": "Not on those terms. Here is what I will put my name to: 2 Contra units, $70 upfront, $50 in new credit plus $7 extra due in 7 days. Your existing debt is separate. Take a look before you decide.",
+          "respondingFace": "READY_TO_AGREE",
+          "marcusText": "I can do 2 Contra units, $70 upfront, $50 in new credit plus $7 extra due in 7 days. Check it over. Confirm if you want the deal; until then, the stock stays here.",
           "worldEventIds": [
             "world:r17-proof-1:19",
             "world:r17-proof-1:20"
@@ -1409,6 +1652,7 @@
         "content": "UNKNOWN",
         "bodyClaimIds": [],
         "tradeOptionAvailable": true,
+        "proposal": null,
         "offer": null,
         "status": "OPEN",
         "metrics": {
@@ -1417,6 +1661,8 @@
           "marcusStock": 8,
           "playerStock": 0
         },
+        "standardExtra": null,
+        "saving": null,
         "reaction": null,
         "respondingFace": null,
         "marcusText": null,
@@ -1469,6 +1715,7 @@
           "content": "UNKNOWN",
           "bodyClaimIds": [],
           "tradeOptionAvailable": true,
+          "proposal": null,
           "offer": null,
           "status": "OPEN",
           "metrics": {
@@ -1477,6 +1724,8 @@
             "marcusStock": 8,
             "playerStock": 0
           },
+          "standardExtra": null,
+          "saving": null,
           "reaction": "HINT_DOES_NOT_CARE",
           "respondingFace": "ATTENTIVE",
           "marcusText": "No. I don't need it. Depot already called me about the collection change.",
@@ -1512,6 +1761,19 @@
           "content": "UNKNOWN",
           "bodyClaimIds": [],
           "tradeOptionAvailable": true,
+          "proposal": {
+            "id": "golden:POSITIVE:false:HINT_TRADE:proposal:2",
+            "version": 2,
+            "terms": {
+              "units": 2,
+              "upfront": 70,
+              "repayment": 50,
+              "extra": 8,
+              "days": 7
+            },
+            "source": "PLAYER",
+            "informationExchange": null
+          },
           "offer": {
             "id": "golden:POSITIVE:false:HINT_TRADE:offer:2",
             "version": 2,
@@ -1522,7 +1784,7 @@
               "extra": 8,
               "days": 7
             },
-            "source": "MARCUS",
+            "source": "APPROVED_PROPOSAL",
             "informationExchange": null,
             "extraChargeRate": 16
           },
@@ -1533,9 +1795,11 @@
             "marcusStock": 8,
             "playerStock": 0
           },
+          "standardExtra": 8,
+          "saving": 0,
           "reaction": "TRADE_NO_VALUE",
           "respondingFace": "ATTENTIVE",
-          "marcusText": "No information value in this offer. The extra-charge floor stays 16%. R-17 stays yours. Review these terms: 2 Contra units, $70 upfront, $50 in new credit plus $8 extra due in 7 days. I can work with a clear approach like that.",
+          "marcusText": "No information value in this offer. The extra charge stays 16%. R-17 stays yours. Review these terms: 2 Contra units, $70 upfront, $50 in new credit plus $8 extra due in 7 days. I can work with a clear approach like that.",
           "worldEventIds": [
             "world:r17-proof-1:16",
             "world:r17-proof-1:17"
@@ -1573,6 +1837,7 @@
         "content": "UNKNOWN",
         "bodyClaimIds": [],
         "tradeOptionAvailable": true,
+        "proposal": null,
         "offer": null,
         "status": "OPEN",
         "metrics": {
@@ -1581,6 +1846,8 @@
           "marcusStock": 8,
           "playerStock": 0
         },
+        "standardExtra": null,
+        "saving": null,
         "reaction": null,
         "respondingFace": null,
         "marcusText": null,
@@ -1630,6 +1897,19 @@
           "content": "UNKNOWN",
           "bodyClaimIds": [],
           "tradeOptionAvailable": true,
+          "proposal": {
+            "id": "golden:POSITIVE:false:BLIND_TRADE:proposal:1",
+            "version": 1,
+            "terms": {
+              "units": 2,
+              "upfront": 70,
+              "repayment": 50,
+              "extra": 11,
+              "days": 7
+            },
+            "source": "PLAYER",
+            "informationExchange": null
+          },
           "offer": {
             "id": "golden:POSITIVE:false:BLIND_TRADE:offer:1",
             "version": 1,
@@ -1640,7 +1920,7 @@
               "extra": 11,
               "days": 7
             },
-            "source": "MARCUS",
+            "source": "APPROVED_PROPOSAL",
             "informationExchange": null,
             "extraChargeRate": 22
           },
@@ -1651,9 +1931,11 @@
             "marcusStock": 8,
             "playerStock": 0
           },
+          "standardExtra": 8,
+          "saving": -3,
           "reaction": "BLIND_TRADE_FAILURE",
           "respondingFace": "GUARDED",
-          "marcusText": "You want me to pay for something I don't need? My minimum extra is 22% now. Keep R-17; you haven't shown me its detail. Review these terms: 2 Contra units, $70 upfront, $50 in new credit plus $11 extra due in 7 days. I can work with a clear approach like that.",
+          "marcusText": "You want me to pay for something I don't need? My extra charge is 22% now. Keep R-17; you haven't shown me its detail. Review these terms: 2 Contra units, $70 upfront, $50 in new credit plus $11 extra due in 7 days. I can work with a clear approach like that.",
           "worldEventIds": [
             "world:r17-proof-1:14",
             "world:r17-proof-1:15"
@@ -1691,6 +1973,7 @@
         "content": "UNKNOWN",
         "bodyClaimIds": [],
         "tradeOptionAvailable": true,
+        "proposal": null,
         "offer": null,
         "status": "OPEN",
         "metrics": {
@@ -1699,6 +1982,8 @@
           "marcusStock": 8,
           "playerStock": 0
         },
+        "standardExtra": null,
+        "saving": null,
         "reaction": null,
         "respondingFace": null,
         "marcusText": null,
@@ -1782,6 +2067,19 @@
           "content": "UNKNOWN",
           "bodyClaimIds": [],
           "tradeOptionAvailable": true,
+          "proposal": {
+            "id": "golden:POSITIVE:false:FAILURE_REPEAT_HINT_SHOW:proposal:1",
+            "version": 1,
+            "terms": {
+              "units": 2,
+              "upfront": 70,
+              "repayment": 50,
+              "extra": 11,
+              "days": 7
+            },
+            "source": "PLAYER",
+            "informationExchange": null
+          },
           "offer": {
             "id": "golden:POSITIVE:false:FAILURE_REPEAT_HINT_SHOW:offer:1",
             "version": 1,
@@ -1792,7 +2090,7 @@
               "extra": 11,
               "days": 7
             },
-            "source": "MARCUS",
+            "source": "APPROVED_PROPOSAL",
             "informationExchange": null,
             "extraChargeRate": 22
           },
@@ -1803,9 +2101,11 @@
             "marcusStock": 8,
             "playerStock": 0
           },
+          "standardExtra": 8,
+          "saving": -3,
           "reaction": "BLIND_TRADE_FAILURE",
           "respondingFace": "GUARDED",
-          "marcusText": "You want me to pay for something I don't need? My minimum extra is 22% now. Keep R-17; you haven't shown me its detail. Review these terms: 2 Contra units, $70 upfront, $50 in new credit plus $11 extra due in 7 days. I can work with a clear approach like that.",
+          "marcusText": "You want me to pay for something I don't need? My extra charge is 22% now. Keep R-17; you haven't shown me its detail. Review these terms: 2 Contra units, $70 upfront, $50 in new credit plus $11 extra due in 7 days. I can work with a clear approach like that.",
           "worldEventIds": [
             "world:r17-proof-1:14",
             "world:r17-proof-1:15"
@@ -1839,6 +2139,19 @@
           "content": "UNKNOWN",
           "bodyClaimIds": [],
           "tradeOptionAvailable": true,
+          "proposal": {
+            "id": "golden:POSITIVE:false:FAILURE_REPEAT_HINT_SHOW:proposal:2",
+            "version": 2,
+            "terms": {
+              "units": 2,
+              "upfront": 70,
+              "repayment": 50,
+              "extra": 11,
+              "days": 7
+            },
+            "source": "PLAYER",
+            "informationExchange": null
+          },
           "offer": {
             "id": "golden:POSITIVE:false:FAILURE_REPEAT_HINT_SHOW:offer:2",
             "version": 2,
@@ -1849,7 +2162,7 @@
               "extra": 11,
               "days": 7
             },
-            "source": "MARCUS",
+            "source": "APPROVED_PROPOSAL",
             "informationExchange": null,
             "extraChargeRate": 22
           },
@@ -1860,9 +2173,11 @@
             "marcusStock": 8,
             "playerStock": 0
           },
+          "standardExtra": 8,
+          "saving": -3,
           "reaction": "TRADE_NO_VALUE",
           "respondingFace": "ATTENTIVE",
-          "marcusText": "No information value in this offer. The extra-charge floor stays 22%. R-17 stays yours. Review these terms: 2 Contra units, $70 upfront, $50 in new credit plus $11 extra due in 7 days.",
+          "marcusText": "No information value in this offer. The extra charge stays 22%. R-17 stays yours. Review these terms: 2 Contra units, $70 upfront, $50 in new credit plus $11 extra due in 7 days.",
           "worldEventIds": [
             "world:r17-proof-1:16",
             "world:r17-proof-1:17"
@@ -1896,6 +2211,19 @@
           "content": "UNKNOWN",
           "bodyClaimIds": [],
           "tradeOptionAvailable": true,
+          "proposal": {
+            "id": "golden:POSITIVE:false:FAILURE_REPEAT_HINT_SHOW:proposal:2",
+            "version": 2,
+            "terms": {
+              "units": 2,
+              "upfront": 70,
+              "repayment": 50,
+              "extra": 11,
+              "days": 7
+            },
+            "source": "PLAYER",
+            "informationExchange": null
+          },
           "offer": null,
           "status": "OPEN",
           "metrics": {
@@ -1904,6 +2232,8 @@
             "marcusStock": 8,
             "playerStock": 0
           },
+          "standardExtra": null,
+          "saving": null,
           "reaction": "HINT_DOES_NOT_CARE",
           "respondingFace": "ATTENTIVE",
           "marcusText": "No. I don't need it. Depot already called me about the collection change.",
@@ -1944,6 +2274,19 @@
             "R17:body:2"
           ],
           "tradeOptionAvailable": false,
+          "proposal": {
+            "id": "golden:POSITIVE:false:FAILURE_REPEAT_HINT_SHOW:proposal:2",
+            "version": 2,
+            "terms": {
+              "units": 2,
+              "upfront": 70,
+              "repayment": 50,
+              "extra": 11,
+              "days": 7
+            },
+            "source": "PLAYER",
+            "informationExchange": null
+          },
           "offer": null,
           "status": "OPEN",
           "metrics": {
@@ -1952,6 +2295,8 @@
             "marcusStock": 8,
             "playerStock": 0
           },
+          "standardExtra": null,
+          "saving": null,
           "reaction": "SHOW",
           "respondingFace": "WARM_ACKNOWLEDGMENT",
           "marcusText": "The source checks out, and I've read the detail. Three points off the extra charge: 19%. The paper doesn't establish wrongdoing.",
@@ -1993,6 +2338,19 @@
             "R17:body:2"
           ],
           "tradeOptionAvailable": false,
+          "proposal": {
+            "id": "golden:POSITIVE:false:FAILURE_REPEAT_HINT_SHOW:proposal:5",
+            "version": 5,
+            "terms": {
+              "units": 2,
+              "upfront": 70,
+              "repayment": 50,
+              "extra": 10,
+              "days": 7
+            },
+            "source": "PLAYER",
+            "informationExchange": null
+          },
           "offer": {
             "id": "golden:POSITIVE:false:FAILURE_REPEAT_HINT_SHOW:offer:5",
             "version": 5,
@@ -2003,7 +2361,7 @@
               "extra": 10,
               "days": 7
             },
-            "source": "MARCUS",
+            "source": "APPROVED_PROPOSAL",
             "informationExchange": null,
             "extraChargeRate": 19
           },
@@ -2014,9 +2372,11 @@
             "marcusStock": 8,
             "playerStock": 0
           },
+          "standardExtra": 8,
+          "saving": -2,
           "reaction": null,
-          "respondingFace": "WEIGHING_IT",
-          "marcusText": "Not on those terms. Here is what I will put my name to: 2 Contra units, $70 upfront, $50 in new credit plus $10 extra due in 7 days. Your existing debt is separate. Take a look before you decide.",
+          "respondingFace": "READY_TO_AGREE",
+          "marcusText": "I can do 2 Contra units, $70 upfront, $50 in new credit plus $10 extra due in 7 days. Check it over. Confirm if you want the deal; until then, the stock stays here.",
           "worldEventIds": [
             "world:r17-proof-1:23",
             "world:r17-proof-1:24"
@@ -2054,6 +2414,7 @@
         "content": "UNKNOWN",
         "bodyClaimIds": [],
         "tradeOptionAvailable": true,
+        "proposal": null,
         "offer": null,
         "status": "OPEN",
         "metrics": {
@@ -2062,6 +2423,8 @@
           "marcusStock": 8,
           "playerStock": 0
         },
+        "standardExtra": null,
+        "saving": null,
         "reaction": null,
         "respondingFace": null,
         "marcusText": null,
@@ -2109,6 +2472,19 @@
           "content": "UNKNOWN",
           "bodyClaimIds": [],
           "tradeOptionAvailable": true,
+          "proposal": {
+            "id": "golden:NEGATIVE:false:HOARD:proposal:1",
+            "version": 1,
+            "terms": {
+              "units": 2,
+              "upfront": 70,
+              "repayment": 50,
+              "extra": 8,
+              "days": 7
+            },
+            "source": "PLAYER",
+            "informationExchange": null
+          },
           "offer": {
             "id": "golden:NEGATIVE:false:HOARD:offer:1",
             "version": 1,
@@ -2119,7 +2495,7 @@
               "extra": 8,
               "days": 7
             },
-            "source": "MARCUS",
+            "source": "APPROVED_PROPOSAL",
             "informationExchange": null,
             "extraChargeRate": 16
           },
@@ -2130,9 +2506,11 @@
             "marcusStock": 8,
             "playerStock": 0
           },
+          "standardExtra": 8,
+          "saving": 0,
           "reaction": null,
-          "respondingFace": "WEIGHING_IT",
-          "marcusText": "Not on those terms. Here is what I will put my name to: 2 Contra units, $70 upfront, $50 in new credit plus $8 extra due in 7 days. Your existing debt is separate. Take a look before you decide. I can work with a clear approach like that.",
+          "respondingFace": "READY_TO_AGREE",
+          "marcusText": "I can do 2 Contra units, $70 upfront, $50 in new credit plus $8 extra due in 7 days. Check it over. Confirm if you want the deal; until then, the stock stays here. I can work with a clear approach like that.",
           "worldEventIds": [
             "world:r17-proof-2:17",
             "world:r17-proof-2:18"
@@ -2170,6 +2548,7 @@
         "content": "UNKNOWN",
         "bodyClaimIds": [],
         "tradeOptionAvailable": true,
+        "proposal": null,
         "offer": null,
         "status": "OPEN",
         "metrics": {
@@ -2178,6 +2557,8 @@
           "marcusStock": 8,
           "playerStock": 0
         },
+        "standardExtra": null,
+        "saving": null,
         "reaction": null,
         "respondingFace": null,
         "marcusText": null,
@@ -2244,6 +2625,7 @@
             "R17:body:0"
           ],
           "tradeOptionAvailable": false,
+          "proposal": null,
           "offer": null,
           "status": "OPEN",
           "metrics": {
@@ -2252,6 +2634,8 @@
             "marcusStock": 8,
             "playerStock": 0
           },
+          "standardExtra": null,
+          "saving": null,
           "reaction": "SHOW",
           "respondingFace": "WARM_ACKNOWLEDGMENT",
           "marcusText": "The header and signature check out. I accept the detail on the paper. I'll give you three points of goodwill: 13% extra now. That doesn't establish who's responsible for any discrepancy.",
@@ -2288,6 +2672,19 @@
             "R17:body:0"
           ],
           "tradeOptionAvailable": false,
+          "proposal": {
+            "id": "golden:NEGATIVE:false:SHOW:proposal:2",
+            "version": 2,
+            "terms": {
+              "units": 2,
+              "upfront": 70,
+              "repayment": 50,
+              "extra": 7,
+              "days": 7
+            },
+            "source": "PLAYER",
+            "informationExchange": null
+          },
           "offer": {
             "id": "golden:NEGATIVE:false:SHOW:offer:2",
             "version": 2,
@@ -2298,7 +2695,7 @@
               "extra": 7,
               "days": 7
             },
-            "source": "MARCUS",
+            "source": "APPROVED_PROPOSAL",
             "informationExchange": null,
             "extraChargeRate": 13
           },
@@ -2309,9 +2706,11 @@
             "marcusStock": 8,
             "playerStock": 0
           },
+          "standardExtra": 8,
+          "saving": 1,
           "reaction": null,
-          "respondingFace": "WEIGHING_IT",
-          "marcusText": "I will not agree to your proposal. My counteroffer is 2 Contra units, $70 upfront, $50 in new credit plus $7 extra due in 7 days. The existing debt is separate. Review that before deciding. I can work with a clear approach like that.",
+          "respondingFace": "READY_TO_AGREE",
+          "marcusText": "That works: 2 Contra units, $70 upfront, $50 in new credit plus $7 extra due in 7 days. Read it over and confirm if you're in. The stock stays here until you confirm. I can work with a clear approach like that.",
           "worldEventIds": [
             "world:r17-proof-2:20",
             "world:r17-proof-2:21"
@@ -2344,6 +2743,19 @@
             "R17:body:0"
           ],
           "tradeOptionAvailable": false,
+          "proposal": {
+            "id": "golden:NEGATIVE:false:SHOW:proposal:3",
+            "version": 3,
+            "terms": {
+              "units": 2,
+              "upfront": 70,
+              "repayment": 50,
+              "extra": 7,
+              "days": 7
+            },
+            "source": "PLAYER",
+            "informationExchange": null
+          },
           "offer": {
             "id": "golden:NEGATIVE:false:SHOW:offer:3",
             "version": 3,
@@ -2354,7 +2766,7 @@
               "extra": 7,
               "days": 7
             },
-            "source": "MARCUS",
+            "source": "APPROVED_PROPOSAL",
             "informationExchange": null,
             "extraChargeRate": 13
           },
@@ -2365,9 +2777,11 @@
             "marcusStock": 8,
             "playerStock": 0
           },
+          "standardExtra": 8,
+          "saving": 1,
           "reaction": null,
-          "respondingFace": "WEIGHING_IT",
-          "marcusText": "Not on those terms. Here is what I will put my name to: 2 Contra units, $70 upfront, $50 in new credit plus $7 extra due in 7 days. Your existing debt is separate. Take a look before you decide.",
+          "respondingFace": "READY_TO_AGREE",
+          "marcusText": "I can do 2 Contra units, $70 upfront, $50 in new credit plus $7 extra due in 7 days. Check it over. Confirm if you want the deal; until then, the stock stays here.",
           "worldEventIds": [
             "world:r17-proof-2:22",
             "world:r17-proof-2:23"
@@ -2405,6 +2819,7 @@
         "content": "UNKNOWN",
         "bodyClaimIds": [],
         "tradeOptionAvailable": true,
+        "proposal": null,
         "offer": null,
         "status": "OPEN",
         "metrics": {
@@ -2413,6 +2828,8 @@
           "marcusStock": 8,
           "playerStock": 0
         },
+        "standardExtra": null,
+        "saving": null,
         "reaction": null,
         "respondingFace": null,
         "marcusText": null,
@@ -2465,6 +2882,7 @@
           "content": "UNKNOWN",
           "bodyClaimIds": [],
           "tradeOptionAvailable": true,
+          "proposal": null,
           "offer": null,
           "status": "OPEN",
           "metrics": {
@@ -2473,6 +2891,8 @@
             "marcusStock": 8,
             "playerStock": 0
           },
+          "standardExtra": null,
+          "saving": null,
           "reaction": "HINT_DOES_NOT_CARE",
           "respondingFace": "ATTENTIVE",
           "marcusText": "No. I don't need it. My clerk's count has never been wrong. I'm not worried.",
@@ -2508,6 +2928,19 @@
           "content": "UNKNOWN",
           "bodyClaimIds": [],
           "tradeOptionAvailable": true,
+          "proposal": {
+            "id": "golden:NEGATIVE:false:HINT_TRADE:proposal:2",
+            "version": 2,
+            "terms": {
+              "units": 2,
+              "upfront": 70,
+              "repayment": 50,
+              "extra": 8,
+              "days": 7
+            },
+            "source": "PLAYER",
+            "informationExchange": null
+          },
           "offer": {
             "id": "golden:NEGATIVE:false:HINT_TRADE:offer:2",
             "version": 2,
@@ -2518,7 +2951,7 @@
               "extra": 8,
               "days": 7
             },
-            "source": "MARCUS",
+            "source": "APPROVED_PROPOSAL",
             "informationExchange": null,
             "extraChargeRate": 16
           },
@@ -2529,9 +2962,11 @@
             "marcusStock": 8,
             "playerStock": 0
           },
+          "standardExtra": 8,
+          "saving": 0,
           "reaction": "TRADE_NO_VALUE",
           "respondingFace": "ATTENTIVE",
-          "marcusText": "No information value in this offer. The extra-charge floor stays 16%. R-17 stays yours. Review these terms: 2 Contra units, $70 upfront, $50 in new credit plus $8 extra due in 7 days. I can work with a clear approach like that.",
+          "marcusText": "No information value in this offer. The extra charge stays 16%. R-17 stays yours. Review these terms: 2 Contra units, $70 upfront, $50 in new credit plus $8 extra due in 7 days. I can work with a clear approach like that.",
           "worldEventIds": [
             "world:r17-proof-2:19",
             "world:r17-proof-2:20"
@@ -2569,6 +3004,7 @@
         "content": "UNKNOWN",
         "bodyClaimIds": [],
         "tradeOptionAvailable": true,
+        "proposal": null,
         "offer": null,
         "status": "OPEN",
         "metrics": {
@@ -2577,6 +3013,8 @@
           "marcusStock": 8,
           "playerStock": 0
         },
+        "standardExtra": null,
+        "saving": null,
         "reaction": null,
         "respondingFace": null,
         "marcusText": null,
@@ -2626,6 +3064,19 @@
           "content": "UNKNOWN",
           "bodyClaimIds": [],
           "tradeOptionAvailable": true,
+          "proposal": {
+            "id": "golden:NEGATIVE:false:BLIND_TRADE:proposal:1",
+            "version": 1,
+            "terms": {
+              "units": 2,
+              "upfront": 70,
+              "repayment": 50,
+              "extra": 11,
+              "days": 7
+            },
+            "source": "PLAYER",
+            "informationExchange": null
+          },
           "offer": {
             "id": "golden:NEGATIVE:false:BLIND_TRADE:offer:1",
             "version": 1,
@@ -2636,7 +3087,7 @@
               "extra": 11,
               "days": 7
             },
-            "source": "MARCUS",
+            "source": "APPROVED_PROPOSAL",
             "informationExchange": null,
             "extraChargeRate": 22
           },
@@ -2647,9 +3098,11 @@
             "marcusStock": 8,
             "playerStock": 0
           },
+          "standardExtra": 8,
+          "saving": -3,
           "reaction": "BLIND_TRADE_FAILURE",
           "respondingFace": "GUARDED",
-          "marcusText": "You want me to pay for something I don't need? My minimum extra is 22% now. Keep R-17; you haven't shown me its detail. Review these terms: 2 Contra units, $70 upfront, $50 in new credit plus $11 extra due in 7 days. I can work with a clear approach like that.",
+          "marcusText": "You want me to pay for something I don't need? My extra charge is 22% now. Keep R-17; you haven't shown me its detail. Review these terms: 2 Contra units, $70 upfront, $50 in new credit plus $11 extra due in 7 days. I can work with a clear approach like that.",
           "worldEventIds": [
             "world:r17-proof-2:17",
             "world:r17-proof-2:18"
@@ -2687,6 +3140,7 @@
         "content": "UNKNOWN",
         "bodyClaimIds": [],
         "tradeOptionAvailable": true,
+        "proposal": null,
         "offer": null,
         "status": "OPEN",
         "metrics": {
@@ -2695,6 +3149,8 @@
           "marcusStock": 8,
           "playerStock": 0
         },
+        "standardExtra": null,
+        "saving": null,
         "reaction": null,
         "respondingFace": null,
         "marcusText": null,
@@ -2778,6 +3234,19 @@
           "content": "UNKNOWN",
           "bodyClaimIds": [],
           "tradeOptionAvailable": true,
+          "proposal": {
+            "id": "golden:NEGATIVE:false:FAILURE_REPEAT_HINT_SHOW:proposal:1",
+            "version": 1,
+            "terms": {
+              "units": 2,
+              "upfront": 70,
+              "repayment": 50,
+              "extra": 11,
+              "days": 7
+            },
+            "source": "PLAYER",
+            "informationExchange": null
+          },
           "offer": {
             "id": "golden:NEGATIVE:false:FAILURE_REPEAT_HINT_SHOW:offer:1",
             "version": 1,
@@ -2788,7 +3257,7 @@
               "extra": 11,
               "days": 7
             },
-            "source": "MARCUS",
+            "source": "APPROVED_PROPOSAL",
             "informationExchange": null,
             "extraChargeRate": 22
           },
@@ -2799,9 +3268,11 @@
             "marcusStock": 8,
             "playerStock": 0
           },
+          "standardExtra": 8,
+          "saving": -3,
           "reaction": "BLIND_TRADE_FAILURE",
           "respondingFace": "GUARDED",
-          "marcusText": "You want me to pay for something I don't need? My minimum extra is 22% now. Keep R-17; you haven't shown me its detail. Review these terms: 2 Contra units, $70 upfront, $50 in new credit plus $11 extra due in 7 days. I can work with a clear approach like that.",
+          "marcusText": "You want me to pay for something I don't need? My extra charge is 22% now. Keep R-17; you haven't shown me its detail. Review these terms: 2 Contra units, $70 upfront, $50 in new credit plus $11 extra due in 7 days. I can work with a clear approach like that.",
           "worldEventIds": [
             "world:r17-proof-2:17",
             "world:r17-proof-2:18"
@@ -2835,6 +3306,19 @@
           "content": "UNKNOWN",
           "bodyClaimIds": [],
           "tradeOptionAvailable": true,
+          "proposal": {
+            "id": "golden:NEGATIVE:false:FAILURE_REPEAT_HINT_SHOW:proposal:2",
+            "version": 2,
+            "terms": {
+              "units": 2,
+              "upfront": 70,
+              "repayment": 50,
+              "extra": 11,
+              "days": 7
+            },
+            "source": "PLAYER",
+            "informationExchange": null
+          },
           "offer": {
             "id": "golden:NEGATIVE:false:FAILURE_REPEAT_HINT_SHOW:offer:2",
             "version": 2,
@@ -2845,7 +3329,7 @@
               "extra": 11,
               "days": 7
             },
-            "source": "MARCUS",
+            "source": "APPROVED_PROPOSAL",
             "informationExchange": null,
             "extraChargeRate": 22
           },
@@ -2856,9 +3340,11 @@
             "marcusStock": 8,
             "playerStock": 0
           },
+          "standardExtra": 8,
+          "saving": -3,
           "reaction": "TRADE_NO_VALUE",
           "respondingFace": "ATTENTIVE",
-          "marcusText": "No information value in this offer. The extra-charge floor stays 22%. R-17 stays yours. Review these terms: 2 Contra units, $70 upfront, $50 in new credit plus $11 extra due in 7 days.",
+          "marcusText": "No information value in this offer. The extra charge stays 22%. R-17 stays yours. Review these terms: 2 Contra units, $70 upfront, $50 in new credit plus $11 extra due in 7 days.",
           "worldEventIds": [
             "world:r17-proof-2:19",
             "world:r17-proof-2:20"
@@ -2892,6 +3378,19 @@
           "content": "UNKNOWN",
           "bodyClaimIds": [],
           "tradeOptionAvailable": true,
+          "proposal": {
+            "id": "golden:NEGATIVE:false:FAILURE_REPEAT_HINT_SHOW:proposal:2",
+            "version": 2,
+            "terms": {
+              "units": 2,
+              "upfront": 70,
+              "repayment": 50,
+              "extra": 11,
+              "days": 7
+            },
+            "source": "PLAYER",
+            "informationExchange": null
+          },
           "offer": null,
           "status": "OPEN",
           "metrics": {
@@ -2900,6 +3399,8 @@
             "marcusStock": 8,
             "playerStock": 0
           },
+          "standardExtra": null,
+          "saving": null,
           "reaction": "HINT_DOES_NOT_CARE",
           "respondingFace": "ATTENTIVE",
           "marcusText": "No. I don't need it. My clerk's count has never been wrong. I'm not worried.",
@@ -2938,6 +3439,19 @@
             "R17:body:0"
           ],
           "tradeOptionAvailable": false,
+          "proposal": {
+            "id": "golden:NEGATIVE:false:FAILURE_REPEAT_HINT_SHOW:proposal:2",
+            "version": 2,
+            "terms": {
+              "units": 2,
+              "upfront": 70,
+              "repayment": 50,
+              "extra": 11,
+              "days": 7
+            },
+            "source": "PLAYER",
+            "informationExchange": null
+          },
           "offer": null,
           "status": "OPEN",
           "metrics": {
@@ -2946,6 +3460,8 @@
             "marcusStock": 8,
             "playerStock": 0
           },
+          "standardExtra": null,
+          "saving": null,
           "reaction": "SHOW",
           "respondingFace": "WARM_ACKNOWLEDGMENT",
           "marcusText": "The source checks out, and I've read the detail. Three points off the extra charge: 19%. The paper doesn't establish wrongdoing.",
@@ -2985,6 +3501,19 @@
             "R17:body:0"
           ],
           "tradeOptionAvailable": false,
+          "proposal": {
+            "id": "golden:NEGATIVE:false:FAILURE_REPEAT_HINT_SHOW:proposal:5",
+            "version": 5,
+            "terms": {
+              "units": 2,
+              "upfront": 70,
+              "repayment": 50,
+              "extra": 10,
+              "days": 7
+            },
+            "source": "PLAYER",
+            "informationExchange": null
+          },
           "offer": {
             "id": "golden:NEGATIVE:false:FAILURE_REPEAT_HINT_SHOW:offer:5",
             "version": 5,
@@ -2995,7 +3524,7 @@
               "extra": 10,
               "days": 7
             },
-            "source": "MARCUS",
+            "source": "APPROVED_PROPOSAL",
             "informationExchange": null,
             "extraChargeRate": 19
           },
@@ -3006,9 +3535,11 @@
             "marcusStock": 8,
             "playerStock": 0
           },
+          "standardExtra": 8,
+          "saving": -2,
           "reaction": null,
-          "respondingFace": "WEIGHING_IT",
-          "marcusText": "Not on those terms. Here is what I will put my name to: 2 Contra units, $70 upfront, $50 in new credit plus $10 extra due in 7 days. Your existing debt is separate. Take a look before you decide.",
+          "respondingFace": "READY_TO_AGREE",
+          "marcusText": "I can do 2 Contra units, $70 upfront, $50 in new credit plus $10 extra due in 7 days. Check it over. Confirm if you want the deal; until then, the stock stays here.",
           "worldEventIds": [
             "world:r17-proof-2:26",
             "world:r17-proof-2:27"
@@ -3046,6 +3577,7 @@
         "content": "UNKNOWN",
         "bodyClaimIds": [],
         "tradeOptionAvailable": true,
+        "proposal": null,
         "offer": null,
         "status": "OPEN",
         "metrics": {
@@ -3054,6 +3586,8 @@
           "marcusStock": 8,
           "playerStock": 0
         },
+        "standardExtra": null,
+        "saving": null,
         "reaction": null,
         "respondingFace": null,
         "marcusText": null,
@@ -3101,6 +3635,19 @@
           "content": "UNKNOWN",
           "bodyClaimIds": [],
           "tradeOptionAvailable": true,
+          "proposal": {
+            "id": "golden:NEGATIVE:true:HOARD:proposal:1",
+            "version": 1,
+            "terms": {
+              "units": 2,
+              "upfront": 70,
+              "repayment": 50,
+              "extra": 8,
+              "days": 7
+            },
+            "source": "PLAYER",
+            "informationExchange": null
+          },
           "offer": {
             "id": "golden:NEGATIVE:true:HOARD:offer:1",
             "version": 1,
@@ -3111,7 +3658,7 @@
               "extra": 8,
               "days": 7
             },
-            "source": "MARCUS",
+            "source": "APPROVED_PROPOSAL",
             "informationExchange": null,
             "extraChargeRate": 16
           },
@@ -3122,9 +3669,11 @@
             "marcusStock": 8,
             "playerStock": 0
           },
+          "standardExtra": 8,
+          "saving": 0,
           "reaction": null,
-          "respondingFace": "WEIGHING_IT",
-          "marcusText": "Not on those terms. Here is what I will put my name to: 2 Contra units, $70 upfront, $50 in new credit plus $8 extra due in 7 days. Your existing debt is separate. Take a look before you decide. I can work with a clear approach like that.",
+          "respondingFace": "READY_TO_AGREE",
+          "marcusText": "I can do 2 Contra units, $70 upfront, $50 in new credit plus $8 extra due in 7 days. Check it over. Confirm if you want the deal; until then, the stock stays here. I can work with a clear approach like that.",
           "worldEventIds": [
             "world:r17-proof-19:16",
             "world:r17-proof-19:17"
@@ -3162,6 +3711,7 @@
         "content": "UNKNOWN",
         "bodyClaimIds": [],
         "tradeOptionAvailable": true,
+        "proposal": null,
         "offer": null,
         "status": "OPEN",
         "metrics": {
@@ -3170,6 +3720,8 @@
           "marcusStock": 8,
           "playerStock": 0
         },
+        "standardExtra": null,
+        "saving": null,
         "reaction": null,
         "respondingFace": null,
         "marcusText": null,
@@ -3236,6 +3788,7 @@
             "R17:body:0"
           ],
           "tradeOptionAvailable": false,
+          "proposal": null,
           "offer": null,
           "status": "OPEN",
           "metrics": {
@@ -3244,6 +3797,8 @@
             "marcusStock": 8,
             "playerStock": 0
           },
+          "standardExtra": null,
+          "saving": null,
           "reaction": "SHOW",
           "respondingFace": "WARM_ACKNOWLEDGMENT",
           "marcusText": "The header and signature check out. I accept the detail on the paper. I'll give you three points of goodwill: 13% extra now. That doesn't establish who's responsible for any discrepancy.",
@@ -3280,6 +3835,19 @@
             "R17:body:0"
           ],
           "tradeOptionAvailable": false,
+          "proposal": {
+            "id": "golden:NEGATIVE:true:SHOW:proposal:2",
+            "version": 2,
+            "terms": {
+              "units": 2,
+              "upfront": 70,
+              "repayment": 50,
+              "extra": 7,
+              "days": 7
+            },
+            "source": "PLAYER",
+            "informationExchange": null
+          },
           "offer": {
             "id": "golden:NEGATIVE:true:SHOW:offer:2",
             "version": 2,
@@ -3290,7 +3858,7 @@
               "extra": 7,
               "days": 7
             },
-            "source": "MARCUS",
+            "source": "APPROVED_PROPOSAL",
             "informationExchange": null,
             "extraChargeRate": 13
           },
@@ -3301,9 +3869,11 @@
             "marcusStock": 8,
             "playerStock": 0
           },
+          "standardExtra": 8,
+          "saving": 1,
           "reaction": null,
-          "respondingFace": "WEIGHING_IT",
-          "marcusText": "I will not agree to your proposal. My counteroffer is 2 Contra units, $70 upfront, $50 in new credit plus $7 extra due in 7 days. The existing debt is separate. Review that before deciding. I can work with a clear approach like that.",
+          "respondingFace": "READY_TO_AGREE",
+          "marcusText": "That works: 2 Contra units, $70 upfront, $50 in new credit plus $7 extra due in 7 days. Read it over and confirm if you're in. The stock stays here until you confirm. I can work with a clear approach like that.",
           "worldEventIds": [
             "world:r17-proof-19:19",
             "world:r17-proof-19:20"
@@ -3336,6 +3906,19 @@
             "R17:body:0"
           ],
           "tradeOptionAvailable": false,
+          "proposal": {
+            "id": "golden:NEGATIVE:true:SHOW:proposal:3",
+            "version": 3,
+            "terms": {
+              "units": 2,
+              "upfront": 70,
+              "repayment": 50,
+              "extra": 7,
+              "days": 7
+            },
+            "source": "PLAYER",
+            "informationExchange": null
+          },
           "offer": {
             "id": "golden:NEGATIVE:true:SHOW:offer:3",
             "version": 3,
@@ -3346,7 +3929,7 @@
               "extra": 7,
               "days": 7
             },
-            "source": "MARCUS",
+            "source": "APPROVED_PROPOSAL",
             "informationExchange": null,
             "extraChargeRate": 13
           },
@@ -3357,9 +3940,11 @@
             "marcusStock": 8,
             "playerStock": 0
           },
+          "standardExtra": 8,
+          "saving": 1,
           "reaction": null,
-          "respondingFace": "WEIGHING_IT",
-          "marcusText": "Not on those terms. Here is what I will put my name to: 2 Contra units, $70 upfront, $50 in new credit plus $7 extra due in 7 days. Your existing debt is separate. Take a look before you decide.",
+          "respondingFace": "READY_TO_AGREE",
+          "marcusText": "I can do 2 Contra units, $70 upfront, $50 in new credit plus $7 extra due in 7 days. Check it over. Confirm if you want the deal; until then, the stock stays here.",
           "worldEventIds": [
             "world:r17-proof-19:21",
             "world:r17-proof-19:22"
@@ -3397,6 +3982,7 @@
         "content": "UNKNOWN",
         "bodyClaimIds": [],
         "tradeOptionAvailable": true,
+        "proposal": null,
         "offer": null,
         "status": "OPEN",
         "metrics": {
@@ -3405,6 +3991,8 @@
           "marcusStock": 8,
           "playerStock": 0
         },
+        "standardExtra": null,
+        "saving": null,
         "reaction": null,
         "respondingFace": null,
         "marcusText": null,
@@ -3457,6 +4045,7 @@
           "content": "UNKNOWN",
           "bodyClaimIds": [],
           "tradeOptionAvailable": true,
+          "proposal": null,
           "offer": null,
           "status": "OPEN",
           "metrics": {
@@ -3465,6 +4054,8 @@
             "marcusStock": 8,
             "playerStock": 0
           },
+          "standardExtra": null,
+          "saving": null,
           "reaction": "HINT_CARES",
           "respondingFace": "LEANING_IN",
           "marcusText": "Yes. I care about that information. Keep R-17's exact detail covered if you want to price it into the deal.",
@@ -3500,6 +4091,22 @@
           "content": "UNKNOWN",
           "bodyClaimIds": [],
           "tradeOptionAvailable": true,
+          "proposal": {
+            "id": "golden:NEGATIVE:true:HINT_TRADE:proposal:2",
+            "version": 2,
+            "terms": {
+              "units": 2,
+              "upfront": 70,
+              "repayment": 50,
+              "extra": 4,
+              "days": 7
+            },
+            "source": "PLAYER",
+            "informationExchange": {
+              "factId": "NEGATIVE_DISCREPANCY",
+              "summary": "Counterfoil R-17 and its exact detail; transferred only on confirmation."
+            }
+          },
           "offer": {
             "id": "golden:NEGATIVE:true:HINT_TRADE:offer:2",
             "version": 2,
@@ -3510,7 +4117,7 @@
               "extra": 4,
               "days": 7
             },
-            "source": "MARCUS",
+            "source": "APPROVED_PROPOSAL",
             "informationExchange": {
               "factId": "NEGATIVE_DISCREPANCY",
               "summary": "Counterfoil R-17 and its exact detail; transferred only on confirmation."
@@ -3524,6 +4131,8 @@
             "marcusStock": 8,
             "playerStock": 0
           },
+          "standardExtra": 8,
+          "saving": 4,
           "reaction": "TRADE_VALUABLE",
           "respondingFace": "READY_TO_AGREE",
           "marcusText": "R-17 has value to me. I'll go to 8% extra for this information offer, with the exchange completed on confirmation. Review these terms: 2 Contra units, $70 upfront, $50 in new credit plus $4 extra due in 7 days. The terms include the information exchange. I receive the private detail only when you confirm. I can work with a clear approach like that.",
@@ -3561,6 +4170,22 @@
             "R17:body:0"
           ],
           "tradeOptionAvailable": false,
+          "proposal": {
+            "id": "golden:NEGATIVE:true:HINT_TRADE:proposal:2",
+            "version": 2,
+            "terms": {
+              "units": 2,
+              "upfront": 70,
+              "repayment": 50,
+              "extra": 4,
+              "days": 7
+            },
+            "source": "PLAYER",
+            "informationExchange": {
+              "factId": "NEGATIVE_DISCREPANCY",
+              "summary": "Counterfoil R-17 and its exact detail; transferred only on confirmation."
+            }
+          },
           "offer": null,
           "status": "AGREED",
           "metrics": {
@@ -3569,6 +4194,8 @@
             "marcusStock": 6,
             "playerStock": 2
           },
+          "standardExtra": null,
+          "saving": null,
           "reaction": null,
           "respondingFace": "AGREEMENT_CLOSURE",
           "marcusText": "Agreed. The stock is yours on the terms you just confirmed. The old account stays on the books.",
@@ -3613,6 +4240,7 @@
         "content": "UNKNOWN",
         "bodyClaimIds": [],
         "tradeOptionAvailable": true,
+        "proposal": null,
         "offer": null,
         "status": "OPEN",
         "metrics": {
@@ -3621,6 +4249,8 @@
           "marcusStock": 8,
           "playerStock": 0
         },
+        "standardExtra": null,
+        "saving": null,
         "reaction": null,
         "respondingFace": null,
         "marcusText": null,
@@ -3670,6 +4300,22 @@
           "content": "UNKNOWN",
           "bodyClaimIds": [],
           "tradeOptionAvailable": true,
+          "proposal": {
+            "id": "golden:NEGATIVE:true:BLIND_TRADE:proposal:1",
+            "version": 1,
+            "terms": {
+              "units": 2,
+              "upfront": 70,
+              "repayment": 50,
+              "extra": 4,
+              "days": 7
+            },
+            "source": "PLAYER",
+            "informationExchange": {
+              "factId": "NEGATIVE_DISCREPANCY",
+              "summary": "Counterfoil R-17 and its exact detail; transferred only on confirmation."
+            }
+          },
           "offer": {
             "id": "golden:NEGATIVE:true:BLIND_TRADE:offer:1",
             "version": 1,
@@ -3680,7 +4326,7 @@
               "extra": 4,
               "days": 7
             },
-            "source": "MARCUS",
+            "source": "APPROVED_PROPOSAL",
             "informationExchange": {
               "factId": "NEGATIVE_DISCREPANCY",
               "summary": "Counterfoil R-17 and its exact detail; transferred only on confirmation."
@@ -3694,9 +4340,11 @@
             "marcusStock": 8,
             "playerStock": 0
           },
+          "standardExtra": 8,
+          "saving": 4,
           "reaction": "TRADE_VALUABLE",
           "respondingFace": "READY_TO_AGREE",
-          "marcusText": "That information matters to me. With R-17 included, my minimum extra is 8%. I receive the document and detail only when you confirm. Review these terms: 2 Contra units, $70 upfront, $50 in new credit plus $4 extra due in 7 days. The terms include the information exchange. I receive the private detail only when you confirm. I can work with a clear approach like that.",
+          "marcusText": "That information matters to me. With R-17 included, my extra charge is 8%. I receive the document and detail only when you confirm. Review these terms: 2 Contra units, $70 upfront, $50 in new credit plus $4 extra due in 7 days. The terms include the information exchange. I receive the private detail only when you confirm. I can work with a clear approach like that.",
           "worldEventIds": [
             "world:r17-proof-19:16",
             "world:r17-proof-19:17"
@@ -3731,6 +4379,22 @@
             "R17:body:0"
           ],
           "tradeOptionAvailable": false,
+          "proposal": {
+            "id": "golden:NEGATIVE:true:BLIND_TRADE:proposal:1",
+            "version": 1,
+            "terms": {
+              "units": 2,
+              "upfront": 70,
+              "repayment": 50,
+              "extra": 4,
+              "days": 7
+            },
+            "source": "PLAYER",
+            "informationExchange": {
+              "factId": "NEGATIVE_DISCREPANCY",
+              "summary": "Counterfoil R-17 and its exact detail; transferred only on confirmation."
+            }
+          },
           "offer": null,
           "status": "AGREED",
           "metrics": {
@@ -3739,6 +4403,8 @@
             "marcusStock": 6,
             "playerStock": 2
           },
+          "standardExtra": null,
+          "saving": null,
           "reaction": null,
           "respondingFace": "AGREEMENT_CLOSURE",
           "marcusText": "That is agreed. The stock is yours under the terms you confirmed. The old account remains unpaid.",
@@ -3783,6 +4449,7 @@
         "content": "UNKNOWN",
         "bodyClaimIds": [],
         "tradeOptionAvailable": true,
+        "proposal": null,
         "offer": null,
         "status": "OPEN",
         "metrics": {
@@ -3791,6 +4458,8 @@
           "marcusStock": 8,
           "playerStock": 0
         },
+        "standardExtra": null,
+        "saving": null,
         "reaction": null,
         "respondingFace": null,
         "marcusText": null,
@@ -3864,6 +4533,22 @@
           "content": "UNKNOWN",
           "bodyClaimIds": [],
           "tradeOptionAvailable": true,
+          "proposal": {
+            "id": "golden:NEGATIVE:true:REMOVE_READD:proposal:1",
+            "version": 1,
+            "terms": {
+              "units": 2,
+              "upfront": 70,
+              "repayment": 50,
+              "extra": 4,
+              "days": 7
+            },
+            "source": "PLAYER",
+            "informationExchange": {
+              "factId": "NEGATIVE_DISCREPANCY",
+              "summary": "Counterfoil R-17 and its exact detail; transferred only on confirmation."
+            }
+          },
           "offer": {
             "id": "golden:NEGATIVE:true:REMOVE_READD:offer:1",
             "version": 1,
@@ -3874,7 +4559,7 @@
               "extra": 4,
               "days": 7
             },
-            "source": "MARCUS",
+            "source": "APPROVED_PROPOSAL",
             "informationExchange": {
               "factId": "NEGATIVE_DISCREPANCY",
               "summary": "Counterfoil R-17 and its exact detail; transferred only on confirmation."
@@ -3888,9 +4573,11 @@
             "marcusStock": 8,
             "playerStock": 0
           },
+          "standardExtra": 8,
+          "saving": 4,
           "reaction": "TRADE_VALUABLE",
           "respondingFace": "READY_TO_AGREE",
-          "marcusText": "That information matters to me. With R-17 included, my minimum extra is 8%. I receive the document and detail only when you confirm. Review these terms: 2 Contra units, $70 upfront, $50 in new credit plus $4 extra due in 7 days. The terms include the information exchange. I receive the private detail only when you confirm. I can work with a clear approach like that.",
+          "marcusText": "That information matters to me. With R-17 included, my extra charge is 8%. I receive the document and detail only when you confirm. Review these terms: 2 Contra units, $70 upfront, $50 in new credit plus $4 extra due in 7 days. The terms include the information exchange. I receive the private detail only when you confirm. I can work with a clear approach like that.",
           "worldEventIds": [
             "world:r17-proof-19:16",
             "world:r17-proof-19:17"
@@ -3923,6 +4610,19 @@
           "content": "UNKNOWN",
           "bodyClaimIds": [],
           "tradeOptionAvailable": true,
+          "proposal": {
+            "id": "golden:NEGATIVE:true:REMOVE_READD:proposal:2",
+            "version": 2,
+            "terms": {
+              "units": 2,
+              "upfront": 70,
+              "repayment": 50,
+              "extra": 8,
+              "days": 7
+            },
+            "source": "PLAYER",
+            "informationExchange": null
+          },
           "offer": {
             "id": "golden:NEGATIVE:true:REMOVE_READD:offer:2",
             "version": 2,
@@ -3933,7 +4633,7 @@
               "extra": 8,
               "days": 7
             },
-            "source": "MARCUS",
+            "source": "APPROVED_PROPOSAL",
             "informationExchange": null,
             "extraChargeRate": 16
           },
@@ -3944,9 +4644,11 @@
             "marcusStock": 8,
             "playerStock": 0
           },
+          "standardExtra": 8,
+          "saving": 0,
           "reaction": null,
-          "respondingFace": "WEIGHING_IT",
-          "marcusText": "I will not agree to your proposal. My counteroffer is 2 Contra units, $70 upfront, $50 in new credit plus $8 extra due in 7 days. The existing debt is separate. Review that before deciding.",
+          "respondingFace": "READY_TO_AGREE",
+          "marcusText": "That works: 2 Contra units, $70 upfront, $50 in new credit plus $8 extra due in 7 days. Read it over and confirm if you're in. The stock stays here until you confirm.",
           "worldEventIds": [
             "world:r17-proof-19:18",
             "world:r17-proof-19:19"
@@ -3980,6 +4682,22 @@
           "content": "UNKNOWN",
           "bodyClaimIds": [],
           "tradeOptionAvailable": true,
+          "proposal": {
+            "id": "golden:NEGATIVE:true:REMOVE_READD:proposal:3",
+            "version": 3,
+            "terms": {
+              "units": 2,
+              "upfront": 70,
+              "repayment": 50,
+              "extra": 4,
+              "days": 7
+            },
+            "source": "PLAYER",
+            "informationExchange": {
+              "factId": "NEGATIVE_DISCREPANCY",
+              "summary": "Counterfoil R-17 and its exact detail; transferred only on confirmation."
+            }
+          },
           "offer": {
             "id": "golden:NEGATIVE:true:REMOVE_READD:offer:3",
             "version": 3,
@@ -3990,7 +4708,7 @@
               "extra": 4,
               "days": 7
             },
-            "source": "MARCUS",
+            "source": "APPROVED_PROPOSAL",
             "informationExchange": {
               "factId": "NEGATIVE_DISCREPANCY",
               "summary": "Counterfoil R-17 and its exact detail; transferred only on confirmation."
@@ -4004,9 +4722,11 @@
             "marcusStock": 8,
             "playerStock": 0
           },
+          "standardExtra": 8,
+          "saving": 4,
           "reaction": "TRADE_VALUABLE",
           "respondingFace": "READY_TO_AGREE",
-          "marcusText": "That information matters to me. With R-17 included, my minimum extra is 8%. I receive the document and detail only when you confirm. Review these terms: 2 Contra units, $70 upfront, $50 in new credit plus $4 extra due in 7 days. The terms include the information exchange. I receive the private detail only when you confirm.",
+          "marcusText": "That information matters to me. With R-17 included, my extra charge is 8%. I receive the document and detail only when you confirm. Review these terms: 2 Contra units, $70 upfront, $50 in new credit plus $4 extra due in 7 days. The terms include the information exchange. I receive the private detail only when you confirm.",
           "worldEventIds": [
             "world:r17-proof-19:20",
             "world:r17-proof-19:21"

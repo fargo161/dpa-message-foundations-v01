@@ -104,14 +104,15 @@ test("adversarial: repeated probes have finite benefit and always consume a fini
   }
 });
 
-test("adversarial: seeded replay reproduces transitions and delivery leaves submitted terms intact", () => {
+test("adversarial: seeded replay reproduces transitions and delivery preserves security with normalized extra", () => {
   const replay = () => { let state = initial("same-seed");
     for (const input of [intent(state, { requestId: "replay_ask", topic: "RISK" })]) state = transition(state, input);
     state = transition(state, deal(state, terms, { requestId: "replay_deal" })); return state; };
   assert.deepEqual(replay(), replay());
   for (const vibeId of ["EA", "BA", "DE", "SE"]) for (const intensity of ["SUBTLE", "BALANCED", "OVERT"]) {
     const state = transition(initial(), deal(initial(), terms, { vibeId, intensity }));
-    assert.deepEqual(state.events[0].intent.terms, terms); assert.deepEqual(state.proposal.terms, terms);
+    const normalized = { ...terms, extra: Math.ceil(terms.repayment * 16 / 100) };
+    assert.deepEqual(state.events[0].intent.terms, normalized); assert.deepEqual(state.proposal.terms, normalized);
     assert.equal(state.metrics.cash, 80); assert.equal(state.metrics.playerStock, 0);
   }
 });
@@ -162,16 +163,16 @@ test("adversarial HTTP: only prototype assets/routes are served", async () => wi
   assert.equal((await fetch(`${base}/api/state`, { method: "POST" })).status, 405);
 }));
 
-test("adversarial: context and risk acknowledgment improve assessment while the fee floor still holds", () => {
+test("adversarial: context and risk acknowledgment improve assessment with exact normalized charges", () => {
   const state = createState("recognition-review", "context-run", "recognition");
-  const borderline = { units: 2, upfront: 60, repayment: 60, extra: 0, days: 7 };
+  const borderline = { units: 2, upfront: 47, repayment: 73, extra: 0, days: 7 };
   const direct = transition(state, deal(state, borderline));
   const acknowledged = transition(state, intent(state, { topic: "RISK", vibeId: "SE" }));
   const later = transition(acknowledged, deal(acknowledged, borderline));
-  assert.equal(direct.events.at(-1).outcome, "COUNTER"); assert.equal(later.events.at(-1).outcome, "COUNTER");
+  assert.equal(direct.events.at(-1).outcome, "COUNTER"); assert.equal(later.events.at(-1).outcome, "ACCEPT");
   assert.ok(direct.events.at(-1).derived.score < direct.events.at(-1).derived.acceptThreshold);
   assert.ok(later.events.at(-1).derived.score >= later.events.at(-1).derived.acceptThreshold);
-  assert.deepEqual(later.counteroffer.terms, { ...borderline, extra: 10 }); assert.ok(acknowledged.clues.length > 0);
+  assert.deepEqual(later.counteroffer.terms, { ...borderline, extra: 12 }); assert.ok(acknowledged.clues.length > 0);
   const businessEA = transition(state, deal(state, terms));
   const businessSE = transition(state, deal(state, terms, { vibeId: "SE" }));
   const riskEA = transition(state, intent(state, { topic: "RISK" }));

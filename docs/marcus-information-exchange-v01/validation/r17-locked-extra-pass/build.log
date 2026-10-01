@@ -1,0 +1,5 @@
+
+> dpa-message-foundations@0.1.0 build
+> node scripts/build.mjs
+
+build-ok: 180 matrix cells, 60 anchors, 9 source manifests

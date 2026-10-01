@@ -41,7 +41,10 @@ test("polish: concise information replies retain uncertainty and no automatic ag
     assert.match(line, /isn't a deal|settle our terms/);
   }
   for (const line of NPC_REPLY_FAMILIES.OPPORTUNITY_OPENED()) assert.match(line, /not saying yes|don't have a deal/);
-  for (const line of NPC_REPLY_FAMILIES.TERMS()) assert.match(line, /can help/);
+  for (const line of NPC_REPLY_FAMILIES.TERMS()) {
+    assert.match(line, /I set the extra charge|extra charge is mine to set/);
+    assert.doesNotMatch(line, /can help/);
+  }
 });
 
 test("review: repeated clarification signals actual dwindling patience without changing the offer or ledger", () => {

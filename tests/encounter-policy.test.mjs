@@ -111,7 +111,7 @@ test("priorities provide imperfect evidence while specific welcome probes remain
 test("authored messages retain exact terms, guarantee semantics, and explicit confirmation", () => {
   const intent = deal({ units: 2, upfront: 60, repayment: 60, extra: 12, days: 7 });
   const result = evaluateTurn(state(), intent);
-  assert.match(playerMessage(intent), /2 Contra units, \$60 upfront, \$60 in new credit plus \$12 extra due in 7 days/);
+  assert.match(playerMessage(intent), /2 Contra units, \$60 upfront, \$60 in new credit at your extra charge, due in 7 days/);
   assert.match(marcusMessage(state(), intent, result), /Check it over\. Confirm if you want the deal/);
   assert.match(playerMessage(ask("GUARANTEE")), /My future profits are guaranteed/);
   const acceptance = playerMessage({ action: "ACCEPT", vibeId: "EA", intensity: "BALANCED", offerId: "private-diagnostic-id" }, { offer: { terms: intent.terms } });

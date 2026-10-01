@@ -3,14 +3,16 @@ import { resolveR17Rate, r17ExtraFloor, R17_EXTRA_CHARGE } from "./constants.mjs
 
 const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
 const sameTerms = (a, b) => ["units", "upfront", "repayment", "extra", "days"].every((key) => a?.[key] === b?.[key]);
+const sameSecurity = (a, b) => ["units", "upfront", "repayment", "days"].every((key) => a?.[key] === b?.[key]);
 // The financial part of the existing proposal score, with social interpretation
 // and information deliberately excluded. Use the same valuation for concessions.
-const financialValue = ({ units, upfront, repayment, extra, days }, price) =>
+const financialValue = ({ units, upfront, repayment, days }, price) =>
   upfront / (units * price) * 35 - repayment * 0.045
-  + Math.min(extra, repayment * 0.2, 24) * 0.5 - (repayment > 0 ? days * 0.5 : 0);
+  + Math.min(r17ExtraFloor(repayment, R17_EXTRA_CHARGE.NORMAL), repayment * 0.2, 24) * 0.5 - (repayment > 0 ? days * 0.5 : 0);
 
 // Pure interpretation of validated intent. The engine owns hard validation and transfers.
 export function evaluateTurn(state, intent, information = { scoreBonus: 0, social: { confidence: 0, tension: 0 }, progressKey: null, exchange: null, r17Rate: resolveR17Rate() }) {
+  if (intent.action === "DEAL") intent = { ...intent, terms: { ...intent.terms, extra: r17ExtraFloor(intent.terms.repayment, information.r17Rate ?? resolveR17Rate()) } };
   const config = state.profile.policy;
   const quirk = config.quirk;
   const context = intent.action === "DEAL" || intent.topic === "TERMS" ? "business"
@@ -19,7 +21,7 @@ export function evaluateTurn(state, intent, information = { scoreBonus: 0, socia
   const canonical = BASED_VIBES.find(({ vibeId }) => vibeId === intent.vibeId);
   if (!reaction || !canonical || !quirk || !Object.hasOwn(config.intensitySalience, intent.intensity)) throw new Error("Invalid policy metadata");
   const history = state.events.map((event) => event.intent).filter(Boolean);
-  const repetition = history.filter((old) => old.action === intent.action && (intent.action === "ASK" ? old.topic === intent.topic : sameTerms(old.terms, intent.terms))).length;
+  const repetition = history.filter((old) => old.action === intent.action && (intent.action === "ASK" ? old.topic === intent.topic : sameSecurity(old.terms, intent.terms))).length;
   const priorSocialTurns = history.filter((old) => ["ASK", "DEAL"].includes(old.action)).length;
   const salience = config.intensitySalience[intent.intensity];
   const signal = { confidence: Math.round(reaction[context][0] * salience), tension: Math.round(reaction[context][1] * salience) };
@@ -98,17 +100,12 @@ export function evaluateTurn(state, intent, information = { scoreBonus: 0, socia
   const price = units * config.price;
   const cashShare = upfront / price;
   const exposure = state.metrics.debt + repayment + extra;
+  const maximumExposure = Math.min(config.maximumExposure, 100000);
   const score = Math.round((financialValue(intent.terms, config.price) + confidence * 0.2 - tension * 0.22 + 4 + information.scoreBonus) * 100) / 100;
-  const creditDefensible = repayment === 0 || (cashShare >= config.minimumUpfrontShare && repayment <= config.maximumNewPrincipal && exposure <= config.maximumExposure && days <= config.maximumCreditDays);
+  const creditDefensible = exposure <= 100000 && (repayment === 0 || (cashShare >= config.minimumUpfrontShare && repayment <= config.maximumNewPrincipal && exposure <= maximumExposure && days <= config.maximumCreditDays));
   Object.assign(derived, { score, informationBonus: information.scoreBonus, cashShare, exposure, creditDefensible, extraChargeRate, extraFloor, maximumNewPrincipal: config.maximumNewPrincipal, maximumExposure: config.maximumExposure, maximumCreditDays: config.maximumCreditDays, projectedConfidence: confidence, projectedTension: tension });
-  reasons.push(`Derived proposal score ${score}; approval needs ${config.acceptThreshold} and defensible credit.`, "Extra repayment receives limited credit: a large promise cannot replace cash or erase the old debt.");
-  if (creditDefensible && score >= config.acceptThreshold && (extra >= extraFloor || repayment === 0 || state.metrics.debt + repayment + extraFloor <= config.maximumExposure)) {
-    if (extra < extraFloor) {
-      result.outcome = "COUNTER";
-      result.counterTerms = { ...intent.terms, extra: extraFloor };
-      reasons.push(`The proposal meets approval conditions but its extra is below the ${extraChargeRate}% minimum ($${extraFloor}). Only extra is raised to the floor.`);
-      return result;
-    }
+  reasons.push(`Derived proposal score ${score}; approval needs ${config.acceptThreshold} and defensible credit.`, "Scoring uses the standard 16% charge; the resolved charge sets actual exposure and cannot buy approval.");
+  if (creditDefensible && score >= config.acceptThreshold) {
     result.outcome = "ACCEPT";
     reasons.push("Marcus approves these terms; no transfer occurs until the player confirms the current offer.");
     return result;
@@ -120,10 +117,8 @@ export function evaluateTurn(state, intent, information = { scoreBonus: 0, socia
   const counterDays = Math.min(days, 10);
   const counterExtra = r17ExtraFloor(counterRepayment, extraChargeRate);
   const counterTerms = { units: counterUnits, upfront: counterUpfront, repayment: counterRepayment, extra: counterExtra, days: counterDays };
-  const unchangedSecurity = counterUnits === units && counterUpfront === upfront && counterRepayment === repayment && counterDays === days;
-  const unearnedFeeOnlyDiscount = unchangedSecurity && counterExtra < extra && extraChargeRate === R17_EXTRA_CHARGE.NORMAL && !information.exchange;
-  const counterPossible = counterUnits > 0 && counterUpfront / counterPrice >= config.minimumUpfrontShare && counterRepayment <= config.maximumNewPrincipal && state.metrics.debt + counterRepayment + counterExtra <= config.maximumExposure;
-  if (counterPossible && !unearnedFeeOnlyDiscount && tension < 65 && score >= config.counterThreshold && !sameTerms(counterTerms, intent.terms)) {
+  const counterPossible = counterUnits > 0 && counterUpfront / counterPrice >= config.minimumUpfrontShare && counterRepayment <= config.maximumNewPrincipal && state.metrics.debt + counterRepayment + counterExtra <= maximumExposure;
+  if (counterPossible && tension < 65 && score >= config.counterThreshold && !sameTerms(counterTerms, intent.terms)) {
     result.outcome = "COUNTER";
     result.counterTerms = counterTerms;
     reasons.push("He offers revised terms within his credit limits; compare the quantity, cash, principal, extra and deadline before confirming.");

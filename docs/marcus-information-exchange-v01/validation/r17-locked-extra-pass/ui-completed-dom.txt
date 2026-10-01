@@ -1,0 +1,70 @@
+- main:
+  - heading "TRAPSTAR" [level=1]
+  - paragraph: Read the room. Choose your words.
+  - paragraph: Marcus — the Contra deal
+  - navigation "Conversation controls":
+    - button "More things to say ↗" [disabled]
+    - button "Conversation log"
+    - button "Play" [pressed]
+    - button "Debug"
+  - status: Conversation complete. Your result is shown below.
+  - region "Play":
+    - status: "Marcus ‘Broker’ Hill: Agreed. The stock is yours on the terms you just confirmed. The old account stays on the books. The brows stay low above forward-looking eyes; the mouth opens into a broad toothy smile. Counterfoil R-17 and its agreed detail have now been delivered to Marcus with the completed transaction."
+    - checkbox "Hold hearing face until I continue"
+    - text: Hold hearing face until I continue
+    - button "Replay reactions"
+    - group "Compose your conversation turn":
+      - generic: Compose your conversation turn
+      - region "Read and interact":
+        - 'img "Marcus ‘Broker’ Hill: The brows stay low above forward-looking eyes; the mouth opens into a broad toothy smile."':
+        - generic: MARCUS ‘BROKER’ HILL
+        - generic "Facial turn sequence":
+          - generic: 01 · HEARS YOU
+          - generic: 02 · RESPONDS
+        - heading "Marcus ‘Broker’ Hill" [level=2]
+        - generic: Agreement reached
+        - paragraph: "You: Okay… I accept the current offer: 3 Contra units, $65 upfront, $115 in new credit plus $10 extra due in 6 days. My existing debt remains separate. I deliver the agreed information: Counterfoil R-17 records six crates returned against stock ledger entry L-42's eight: a two-crate mismatch. It does not establish theft or who caused the error."
+        - blockquote: Agreed. The stock is yours on the terms you just confirmed. The old account stays on the books.
+        - generic "Face description"
+        - heading "Your agreed deal" [level=2]
+        - generic: Contra acquired
+        - strong: "3"
+        - generic: Cash remaining
+        - strong: $15
+        - generic: New repayment
+        - strong: $125 in 6 days
+        - generic: Total owed
+        - strong: $375
+        - paragraph: "Old debt: $250. New credit: $115 + $10 extra. The old debt is still owed."
+        - paragraph: R-17 saved you $9 on the extra charge.
+        - generic "Accepted terms"
+        - paragraph: Marcus's confidence in your commitment rose relative to the opening.
+        - paragraph: Tension in the conversation fell relative to the opening.
+        - complementary:
+          - heading "Your edge" [level=2]
+          - strong: Counterfoil R-17
+          - paragraph: "Your edge: Traded"
+          - paragraph: "Disclosure: Exact detail shared."
+          - paragraph: "Interest: Marcus cares."
+          - generic "Exact evidence and observations"
+          - paragraph: "Marcus's extra charge: 8% of new principal."
+          - generic: Cash
+          - strong: "15"
+          - generic: Total owed
+          - strong: "375"
+          - generic: Their Contra
+          - strong: "5"
+          - generic: Your Contra
+          - strong: "3"
+          - generic "Before you speak"
+    - paragraph: Counterfoil R-17 and its agreed detail have now been delivered to Marcus with the completed transaction.
+    - button "Compare both reactions"
+  - generic "Restart / choose test conversation"
+  - generic: Conversation
+  - combobox "Conversation":
+    - option "Marcus — the Contra deal" [selected]
+    - option "Avery — the broken promise (fixture)"
+  - generic: Run seed
+  - textbox "Run seed": 88fdc2d7be9a
+  - paragraph: Restart replaces this encounter. The same seed and choices reproduce its results.
+  - button "Restart encounter"

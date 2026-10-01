@@ -1,0 +1,47 @@
+[
+  {
+    "Path": "C:\\Users\\mcdon\\Documents\\ChatGPT\\dpa-message-foundations-v01\\Temp\\UnityLockfile",
+    "Length": 0,
+    "SHA256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+  },
+  {
+    "Path": "C:\\Users\\mcdon\\Documents\\ChatGPT\\dpa-message-foundations-v01\\Temp\\post-merge-gate\\build.log",
+    "Length": 124,
+    "SHA256": "FA22908C2AA835CA61A6981B0BBDAEB8FFB4FDED0065336D849D7C29514EA977"
+  },
+  {
+    "Path": "C:\\Users\\mcdon\\Documents\\ChatGPT\\dpa-message-foundations-v01\\Temp\\post-merge-gate\\ci.log",
+    "Length": 141,
+    "SHA256": "6717AE85C763F727F006E34ABC9810CA1D15BA1E26B800F072351609CBECC013"
+  },
+  {
+    "Path": "C:\\Users\\mcdon\\Documents\\ChatGPT\\dpa-message-foundations-v01\\Temp\\post-merge-gate\\conformance.log",
+    "Length": 2780,
+    "SHA256": "43E850FAB3B9EA7A5122F2A6AB4D5C3437F472C7C244DF8C55A4315CB0610F50"
+  },
+  {
+    "Path": "C:\\Users\\mcdon\\Documents\\ChatGPT\\dpa-message-foundations-v01\\Temp\\post-merge-gate\\generated.log",
+    "Length": 64,
+    "SHA256": "68E096EF3ACFE6CA439B1DEB30A658D0E7F0741F3ACBE09A26A782DDFAA6CB67"
+  },
+  {
+    "Path": "C:\\Users\\mcdon\\Documents\\ChatGPT\\dpa-message-foundations-v01\\Temp\\post-merge-gate\\lint.log",
+    "Length": 153,
+    "SHA256": "646CBE0FFD6BEAA58D97FF710D70EA1270F1584B611BC9FF138B850D1921B22F"
+  },
+  {
+    "Path": "C:\\Users\\mcdon\\Documents\\ChatGPT\\dpa-message-foundations-v01\\Temp\\post-merge-gate\\schema.log",
+    "Length": 264,
+    "SHA256": "B2897F34B8296FDF008CD69D422F0E2EEB5C5FC69D788C9F4C51F0504CE319A0"
+  },
+  {
+    "Path": "C:\\Users\\mcdon\\Documents\\ChatGPT\\dpa-message-foundations-v01\\Temp\\post-merge-gate\\test.log",
+    "Length": 42144,
+    "SHA256": "E79B8590E92759DC67F03423762B693DB0BD289A9C3200B359893FC945034427"
+  },
+  {
+    "Path": "C:\\Users\\mcdon\\Documents\\ChatGPT\\dpa-message-foundations-v01\\Temp\\post-merge-gate\\typecheck.log",
+    "Length": 135,
+    "SHA256": "DDA304BDB27C78C036259AB1E7907D5F752DECAC6A127D56FBF4BBBCF2A2449B"
+  }
+]
