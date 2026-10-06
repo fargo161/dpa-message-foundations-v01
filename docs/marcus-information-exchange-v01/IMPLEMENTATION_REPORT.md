@@ -1,5 +1,15 @@
 # Marcus R-17 information exchange — implementation and validation
 
+## Current execution architecture — 2026-10-06
+
+The game now calls `public/encounter/local-engine.mjs` directly in both source and standalone modes. Preview remains separate from sending a turn. `scripts/encounter-server.mjs` serves a fixed list of static files only, with browser connections forbidden by `connect-src 'none'`; it has no game routes, cookies, sessions or log ingestion. The offline builder bundles the same engine without a fake server or transport substitution.
+
+Dev logs now use browser storage and the existing JSON/Markdown download buttons. No automatic `playtest-logs/` files are written. A saved previous log is evidence only; reloading starts fresh gameplay. The disk-log store has been removed. Record formats, private spoiler boundaries, gameplay and frozen evidence are unchanged.
+
+The current branch is `codex/no-api-local-engine-v01`, based on `a4e366c8dc7fb5a34b901def1ea75c49dcdd259b`. See [NO_API_REFACTOR_REPORT.md](NO_API_REFACTOR_REPORT.md) for the changes, test ledger and commands. The official build's exact final commit, clean-tree metadata, byte size, SHA-256 fingerprint and reproducibility result are recorded after the documentation commit in `dist/no-api-validation/FINAL_BUILD_RECEIPT.json`; `dist/` is ignored. A tracked document cannot contain its own commit's ID without changing that ID.
+
+All earlier sections below are historical implementation receipts. Their old branch names, server behavior, transport/disk tests and standalone hashes describe those earlier passes, not the current build. The old 758589-byte / `3043b90c…5767` bundle is superseded by the final receipt above.
+
 Implemented the locked brief, Section 35 and user requirements A–G. All required gates pass. The public information loop is Hint → decide between Show and Trade, with independent content/interest and persistent consequences.
 
 ## Repository state
@@ -111,7 +121,7 @@ The running local encounter at http://127.0.0.1:4175/ was exercised through ordi
 
 The completed GOOD exchange showed two Contra, cash $10, new repayment $54 in seven days and total owed $304; old debt remained $250. The percentage stayed visible with the builder collapsed. See [PLAYTEST.md](PLAYTEST.md) and saved screenshots.
 
-The standalone HTML is 717,949 bytes, SHA-256 `48f5047ca12248726bb01832fdc33e3234064fbcf702ec020cb1b85dc6d53cd6`. It embeds the same 44 source modules and 28 exact supplied face assets, has no network entrypoints and passed execution with network forbidden. Its inventory validates source bytes and the existing browser substitutions.
+The historical standalone HTML was 717,949 bytes, SHA-256 `48f5047ca12248726bb01832fdc33e3234064fbcf702ec020cb1b85dc6d53cd6`. It embeds the same 44 source modules and 28 exact supplied face assets, has no network entrypoints and passed execution with network forbidden. Its inventory validates source bytes and the existing browser substitutions.
 
 The in-app browser refused the standalone `file://` URL because only HTTP/HTTPS are allowed. Direct file-browser launch is therefore unverified in this session; no bypass was attempted. Runtime/source/asset parity, all 20 new R-17 routes in the network-forbidden embedded runtime, and the actual running UI were verified separately. Open [Marcus_Encounter.html](../../dist/marcus-information-exchange-v01/Marcus_Encounter.html) in a normal browser for direct file play.
 
@@ -261,7 +271,7 @@ Paths below are relative to `dpa-message-foundations-v01`.
 | `src/conversation/language/npc-lines.mjs` | Exact-charge and TERMS wording; honest rejection suffix for unaffordable R-17 proposals. |
 | `public/encounter/index.html` | Read-only fee output, hidden compatible field and comparison element. |
 | `public/encounter/app.js` | Live known/blind figures, conditional summaries, offer comparisons and receipt savings/cost. |
-| `scripts/encounter-server.mjs` | Specific shared-rate-module route; no general source-file access. |
+| `scripts/encounter-server.mjs` | Historical shared-rate-module route; now replaced by a fixed static module allowlist with no game routes. |
 | `tools/build_standalone.py` | Fourth browser import contract and offline rate-module mapping. |
 | `scripts/capture-r17-goldens.mjs` | Exact proposal/offer assertions; capture standard amounts and differences. |
 | `scripts/capture-r17-migration.mjs` | Historical-to-current migration plus committed e7aa831-to-current migration, path values and snapshot hashes. |
@@ -325,13 +335,13 @@ Implemented the approved observational logger on `codex/r17-information-exchange
 
 ### Delivered behavior and files
 
-The dev CLI automatically starts one append-only JSONL stream plus assembled JSON and Markdown per run in ignored `playtest-logs/`. Shared `src/playtest/recorder.mjs` records committed engine events and assembles headers, turns, correlated browser observations and endings. Shared `src/playtest/markdown.mjs` renders local/UTC metadata, a private SPOILERS block, ordered timeline, full turns and receipt. Node-only `scripts/playtest-log-store.mjs` serializes bounded writes, syncs appends, atomically replaces assembled files, validates containment and recovers complete lines from partial streams.
+At this historical checkpoint, the dev CLI automatically started one append-only JSONL stream plus assembled JSON and Markdown per run in ignored `playtest-logs/`. The current local engine instead stores browser evidence and exports downloads; this automatic disk behavior has been removed. Shared `src/playtest/recorder.mjs` records committed engine events and assembles headers, turns, correlated browser observations and endings. Shared `src/playtest/markdown.mjs` renders local/UTC metadata, a private SPOILERS block, ordered timeline, full turns and receipt. Node-only `scripts/playtest-log-store.mjs` serializes bounded writes, syncs appends, atomically replaces assembled files, validates containment and recovers complete lines from partial streams.
 
-`scripts/encounter-server.mjs` enables logging for the real CLI and keeps test servers opt-in. It provides session/origin/CSRF-protected UI ingestion and authenticated current-run attachment exports. State assignment still precedes observation; disk writes run in a caught queue. Log retries never consume gameplay request IDs. New `public/encounter/playtest-log.js` observes delegated controls, panels, committed draft edits, allowlisted visible screens, explicit preview/send/error/face callbacks and format downloads. Queue loss has export diagnostics; closed dialog controls are excluded from visible choices.
+At that historical checkpoint, `scripts/encounter-server.mjs` enabled logging for the real CLI and kept test servers opt-in. The current server only serves static files; the session/origin/CSRF and disk-write behavior described next is retired. It provides session/origin/CSRF-protected UI ingestion and authenticated current-run attachment exports. State assignment still precedes observation; disk writes run in a caught queue. Log retries never consume gameplay request IDs. New `public/encounter/playtest-log.js` observes delegated controls, panels, committed draft edits, allowlisted visible screens, explicit preview/send/error/face callbacks and format downloads. Queue loss has export diagnostics; closed dialog controls are excluded from visible choices.
 
 Small hooks in `public/encounter/app.js`, `delivery-chart.js` and `index.html` connect that observer. Debug now renders an allowlist of player-observed diagnostics rather than raw private state. Private version/interest/quirk enter files directly, never the added DOM. JSON/Markdown choices are available during play and after a result. The live check found the end control inherited the terminal fieldset's disabled state; the final implementation moves that control outside the fieldset and verifies it is enabled.
 
-`tools/build_standalone.py` embeds the same recorder/renderer, a local logging API, safe build metadata and guarded localStorage. Previous saved partial logs remain explicitly exportable without restoring gameplay. Its classic-script/no-network audit remains intact. `.gitignore` excludes real logs. No package or dependency was added; the lockfile is unchanged.
+The historical `tools/build_standalone.py` embedded the same recorder/renderer, a local logging API, safe build metadata and guarded localStorage. The current builder bundles the real page-local engine and has no fake local API. Previous saved partial logs remain explicitly exportable without restoring gameplay. Its classic-script/no-network audit remains intact. `.gitignore` excludes real logs. No package or dependency was added; the lockfile is unchanged.
 
 New portable tests are `tests/playtest-recorder.test.mjs` (9), `playtest-log-server.test.mjs` (8) and `playtest-log-ui.test.mjs` (6), registered in `scripts/test-portable.mjs`. Existing standalone build/parity tests retain their behavioral assertions and add metadata contracts and actual embedded export/storage checks. The portable total rises by 23, from 435 to 458. Two additional dedicated standalone parity checks bring that suite to 9; six packaging checks run beside it.
 
@@ -351,7 +361,7 @@ The first attempted baseline was 434/435: the existing private-path test correct
 | Dedicated packaging + actual embedded parity | 15 passed, 0 failed, 0 skipped (6 packaging + 9 parity); 167053.0273 ms |
 | Logging on/off equivalence | All 23 frozen routes / 127 snapshots and all 20 golden runs unchanged |
 | Offline bundle | 47 modules, 28 exact face assets, 758589 bytes; no network entrypoints |
-| Offline SHA-256 | `3043b90cf58b8a8bcdcaf893d28f72ab95f7b4cf67d681dbf7c2a165218d5767` |
+| Historical offline SHA-256 (superseded) | `3043b90cf58b8a8bcdcaf893d28f72ab95f7b4cf67d681dbf7c2a165218d5767`; use the current final receipt above |
 | Seven protected artifacts | Byte-identical; fixtures, goldens and both migration pairs untouched |
 | `Temp/` | All 9 files preserved, same lengths and SHA-256 |
 | Candidate private-path check / diff whitespace check | Pass |

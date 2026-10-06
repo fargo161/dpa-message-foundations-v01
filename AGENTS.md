@@ -6,6 +6,8 @@ This isolated repository implements the Phase 1 semantic keyword, mechanics, BAS
 
 ## Canonical boundaries
 
+- The game makes no network or API calls. All encounter logic runs in the page through `public/encounter/local-engine.mjs`; the dev server only serves static files.
+
 - Lore and authored state establish facts; deterministic mechanics resolve actions and state transitions.
 - `DEAL`, `PRESSURE`, and `ASK` are macro speech acts. Concrete actions remain separate from the macros.
 - BASED has exactly five cues, 20 ordered two-cue Vibes, and no numeric cue mixture authority.

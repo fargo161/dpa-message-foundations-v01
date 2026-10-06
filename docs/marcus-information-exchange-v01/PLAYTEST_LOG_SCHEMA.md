@@ -4,7 +4,7 @@ Version: `marcus-playtest-log@0.1`. This observational format is implemented by 
 
 ## Files and timestamps
 
-The dev CLI maintains `playtest-logs/<local-time><offset>_<seed>_<runId>.events.jsonl`, `.json`, and `.md`. Example basename: `2026-10-01_18-05-12-0400_example_run`. The folder is ignored. Reviewed sample copies live in `docs/marcus-information-exchange-v01/validation/playtest-log-pass/`.
+Both dev and standalone modes keep the current assembled log in browser storage (`marcus-playtest-current@0.1`, existing 2 MB character limit) and provide JSON/Markdown downloads. Dev no longer automatically writes `playtest-logs/` or an events JSONL file. References below to disk queues, JSONL recovery or server protection describe the retired adapter, not current execution. Example basename: `2026-10-01_18-05-12-0400_example_run`. The folder is ignored. Reviewed sample copies live in `docs/marcus-information-exchange-v01/validation/playtest-log-pass/`.
 
 Local timestamps include the UTC offset; UTC ISO timestamps are retained separately. Offset is calculated at each timestamp, allowing an ending across a daylight-saving transition. Basenames use the start offset. Seeds and run IDs are sanitized and capped to 80 characters each for filenames. Build metadata contains package/version, mode, Git SHA and dirty state, never a checkout path.
 
