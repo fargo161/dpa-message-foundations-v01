@@ -1,5 +1,5 @@
 export default [{
-  files: ["src/**/*.mjs", "scripts/**/*.mjs", "public/encounter/**/*.js"],
+  files: ["src/**/*.mjs", "scripts/**/*.mjs", "public/encounter/**/*.js", "public/encounter/**/*.mjs"],
   ignores: ["data/**", ".cache/**"],
   languageOptions: {
     ecmaVersion: "latest",

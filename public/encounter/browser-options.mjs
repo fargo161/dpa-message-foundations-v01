@@ -1,4 +1,4 @@
-/** Browser capabilities supplied to the environment-independent local engine. */
+/** Browser capabilities supplied to the environment-independent local engine. @param {any} win */
 export function createBrowserOptions(win = globalThis) {
   let storage = null, serial = 0;
   try { storage = win.localStorage; } catch { console.warn("Playtest storage unavailable."); }

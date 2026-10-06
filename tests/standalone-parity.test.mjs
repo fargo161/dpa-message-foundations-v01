@@ -114,7 +114,7 @@ test("standalone inventory independently matches output bytes, normalized source
   }
   assert.equal(inventory.assets.length, 28);
   const counts = Object.fromEntries(inventory.substitutions.map(item => [item.label, item.actual]));
-  assert.deepEqual(counts, { "embedded face image guard": 1, "unused Node authored-anchor URL": 1, "inline CSS": 1, "remove module script transport": 1, "inline script": 1 });
+  assert.deepEqual(counts, { "embedded face image guard": 1, "unused Node authored-anchor URL": 1, "remove browser import map": 1, "remove dev metadata script": 1, "inline CSS": 1, "remove module script transport": 1, "inline script": 1 });
   assert.ok(inventory.substitutions.every(item => item.actual === item.expected));
   assert.ok(!JSON.stringify(inventory).includes(root), "inventory must not depend on host paths");
 });

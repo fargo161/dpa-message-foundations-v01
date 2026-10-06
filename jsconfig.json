@@ -11,6 +11,6 @@
     "strict": false,
     "skipLibCheck": true
   },
-  "include": ["src/**/*.mjs", "scripts/**/*.mjs"],
+  "include": ["src/**/*.mjs", "scripts/**/*.mjs", "public/encounter/*.mjs"],
   "exclude": ["node_modules"]
 }

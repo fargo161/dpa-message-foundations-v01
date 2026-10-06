@@ -4,6 +4,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { once } from "node:events";
 import { createEncounterServer } from "../scripts/encounter-server.mjs";
+import { localClient, invokeEngine } from "./helpers/local-engine-client.mjs";
 import { createState, METRIC_DEFINITIONS } from "../src/encounter/state.mjs";
 import { transition, projectState } from "../src/encounter/engine.mjs";
 import { selectQuirk } from "../src/encounter/marcus-profile.mjs";
@@ -34,16 +35,10 @@ async function withServer(run) {
   try { await run(`http://127.0.0.1:${server.address().port}`); }
   finally { server.closeAllConnections(); await new Promise(resolve => server.close(resolve)); }
 }
-async function session(base) {
-  const response = await fetch(`${base}/api/state`); assert.equal(response.status, 200);
-  const cookie = response.headers.get("set-cookie"); assert.match(cookie, /HttpOnly/); assert.match(cookie, /SameSite=Strict/);
-  return { cookie: cookie.split(";")[0], data: await response.json() };
-}
-async function post(base, client, body, path = "/api/turn", headers = {}) {
-  return fetch(`${base}${path}`, { method: "POST", headers: { "Content-Type": "application/json", Cookie: client.cookie,
-    "X-CSRF-Token": client.data.csrf, ...headers }, body: JSON.stringify(body) });
-}
-async function read(base, client) { return (await fetch(`${base}/api/state`, { headers: { Cookie: client.cookie } })).json(); }
+async function withEngines(run) { await run(null); }
+async function session() { const client = localClient(); return { engine: client.engine, data: client.view }; }
+async function post(base, client, body, method = "sendTurn") { return invokeEngine(client.engine, method, body); }
+async function read(base, client) { return client.engine.getState(); }
 
 test("adversarial: economics reject fabricated credit even at maximal confidence", () => {
   const state = initial(); state.metrics.confidence = 100; state.metrics.tension = 0;
@@ -132,35 +127,33 @@ test("adversarial: projection has four Play metrics and every displayed fact agr
   }
 });
 
-test("adversarial HTTP: sessions, CSRF, stale/replay, simultaneous turns and restart isolate authority", async () => withServer(async base => {
+test("adversarial local engine: stale/replay, simultaneous turns and restart isolate authority", async () => withEngines(async base => {
   const a = await session(base); const b = await session(base); const originalB = structuredClone(b.data);
   const input = intent(a.data.debug.state);
-  for (const [client, body, headers] of [[b, input, {}], [a, input, { "X-CSRF-Token": "forged" }],
-    [a, input, { Origin: "https://hostile.example" }], [a, input, { "Sec-Fetch-Site": "cross-site" }],
-    [a, { ...input, metrics: { cash: 99999 } }, {}]]) {
-    const response = await post(base, client, body, "/api/turn", headers); assert.ok(response.status >= 400);
-    assert.equal(typeof (await response.json()).error, "string"); assert.deepEqual(await read(base, a), a.data);
+  for (const [client, body, headers] of [[b, input, {}], [a, { ...input, metrics: { cash: 99999 } }, {}]]) {
+    const response = await post(base, client, body, "sendTurn", headers); assert.ok(response.code >= 400);
+    assert.equal(typeof (await response.value).error, "string"); assert.deepEqual(await read(base, a), a.data);
   }
   const simultaneous = await Promise.all([post(base, a, input), post(base, a, { ...input, requestId: "parallel_other" })]);
-  assert.deepEqual(simultaneous.map(r => r.status).sort(), [200, 409]); a.data = await read(base, a);
+  assert.deepEqual(simultaneous.map(r => r.code).sort(), [0, 409]); a.data = await read(base, a);
   assert.equal(a.data.play.version, 1); const frozen = structuredClone(a.data);
-  assert.equal((await post(base, a, input)).status, 409); assert.deepEqual(await read(base, a), frozen);
+  assert.equal((await post(base, a, input)).code, 409); assert.deepEqual(await read(base, a), frozen);
   const restart = { requestId: "restart_review", runId: a.data.play.runId, version: a.data.play.version, seed: "reproduced" };
-  const restarted = await post(base, a, restart, "/api/restart"); assert.equal(restarted.status, 200); a.data = await restarted.json();
+  const restarted = await post(base, a, restart, "restart"); assert.equal(restarted.code, 0); a.data = await restarted.value;
   assert.notEqual(a.data.play.runId, restart.runId); assert.equal(a.data.play.version, 0);
-  assert.equal((await post(base, a, restart, "/api/restart")).status, 409);
-  assert.equal((await post(base, a, { ...input, requestId: "old_run_review", version: 0 })).status, 409);
+  assert.equal((await post(base, a, restart, "restart")).code, 409);
+  assert.equal((await post(base, a, { ...input, requestId: "old_run_review", version: 0 })).code, 409);
   assert.deepEqual(await read(base, b), originalB);
 }));
 
 test("adversarial HTTP: only prototype assets/routes are served", async () => withServer(async base => {
-  for (const path of ["/package.json", "/AGENTS.md", "/src/based.mjs", "/.git/config", "/docs/architecture/MARCUS_ENCOUNTER_V01.md",
-    "/%2e%2e/package.json", "/api/admin", "/api/turn?state=1"]) {
+  for (const path of ["/package.json", "/AGENTS.md", "/.git/config", "/docs/architecture/MARCUS_ENCOUNTER_V01.md",
+    "/%2e%2e/package.json", "/api/admin", "/api/turn?state=1", "/src/mechanics.mjs", "/?file=package.json"]) {
     const response = await fetch(`${base}${path}`); assert.equal(response.status, 404, path);
     assert.equal(response.headers.get("access-control-allow-origin"), null);
   }
-  assert.equal((await fetch(`${base}/api/turn`)).status, 405);
-  assert.equal((await fetch(`${base}/api/state`, { method: "POST" })).status, 405);
+  assert.equal((await fetch(`${base}/api/turn`)).status, 404);
+  assert.equal((await fetch(`${base}/api/state`, { method: "POST" })).status, 404);
 }));
 
 test("adversarial: context and risk acknowledgment improve assessment with exact normalized charges", () => {
@@ -199,26 +192,26 @@ test("adversarial: generic and repeated topics cannot farm benefits after specif
   }
 });
 
-test("adversarial HTTP: cross-session offers fail and complete replayed agreements match", async () => withServer(async base => {
+test("adversarial local engine: foreign offers fail and complete replayed agreements match", async () => withEngines(async base => {
   const clients = await Promise.all([session(base), session(base)]);
   for (const client of clients) {
-    const restart = await post(base, client, { requestId: "shared_seed_restart", runId: client.data.play.runId, version: 0, seed: "review" }, "/api/restart");
-    assert.equal(restart.status, 200); client.data = await restart.json();
+    const restart = await post(base, client, { requestId: "shared_seed_restart", runId: client.data.play.runId, version: 0, seed: "review" }, "restart");
+    assert.equal(restart.code, 0); client.data = await restart.value;
     for (const mutation of [{ upfront: 81, repayment: 39 }, { repayment: 0 }, { units: 9, repayment: 480 }, { extra: -1 }]) {
       const response = await post(base, client, deal(client.data.debug.state, { ...terms, ...mutation }));
-      assert.equal(response.status, 400); assert.deepEqual(await read(base, client), client.data);
+      assert.equal(response.code, 400); assert.deepEqual(await read(base, client), client.data);
     }
-    const response = await post(base, client, deal(client.data.debug.state)); assert.equal(response.status, 200); client.data = await response.json();
+    const response = await post(base, client, deal(client.data.debug.state)); assert.equal(response.code, 0); client.data = await response.value;
     assert.ok(client.data.play.counteroffer); assert.equal(client.data.play.metrics.playerStock, 0);
   }
   const [a, b] = clients;
   const forged = accept(b.data.debug.state, a.data.play.counteroffer);
-  assert.equal((await post(base, b, forged)).status, 409); assert.deepEqual(await read(base, b), b.data);
+  assert.equal((await post(base, b, forged)).code, 409); assert.deepEqual(await read(base, b), b.data);
   assert.deepEqual(a.data.play.metrics, b.data.play.metrics); assert.deepEqual(a.data.play.counteroffer.terms, b.data.play.counteroffer.terms);
   for (const client of clients) {
     const input = accept(client.data.debug.state); const response = await post(base, client, input);
-    assert.equal(response.status, 200); client.data = await response.json(); assert.equal(client.data.play.status, "AGREED");
-    assert.equal((await post(base, client, input)).status, 409); assert.deepEqual(await read(base, client), client.data);
+    assert.equal(response.code, 0); client.data = await response.value; assert.equal(client.data.play.status, "AGREED");
+    assert.equal((await post(base, client, input)).code, 409); assert.deepEqual(await read(base, client), client.data);
   }
   assert.deepEqual(a.data.play.metrics, b.data.play.metrics); assert.deepEqual(a.data.play.obligations, b.data.play.obligations);
 }));

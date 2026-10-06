@@ -3,7 +3,9 @@ import { spawnSync } from "node:child_process";
 
 const portableTests = [
   "tests/playtest-recorder.test.mjs",
-  "tests/playtest-log-server.test.mjs",
+  "tests/playtest-log-engine.test.mjs",
+  "tests/local-engine.test.mjs",
+  "tests/encounter-no-network.test.mjs",
   "tests/playtest-log-ui.test.mjs",
   "tests/encounter-r17-exchange.test.mjs",
   "tests/conversation-r17-exchange.test.mjs",

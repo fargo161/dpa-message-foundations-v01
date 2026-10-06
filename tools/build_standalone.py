@@ -254,6 +254,8 @@ def build(source, output):
         raise ValueError("Browser app import contract expected seven imports")
     app = bundle.transform("public/encounter/app.js", app, export_module=False)
     index = bundle.read("public/encounter/index.html")
+    index = checked_replace(index, '<script type="importmap">{"imports":{"node:fs":"/browser-node-fs.mjs","node:url":"/browser-node-url.mjs"}}</script>', '', 1, 'remove browser import map', bundle.receipts)
+    index = checked_replace(index, '<script src="/build-info.js"></script>', '', 1, 'remove dev metadata script', bundle.receipts)
     css = bundle.read("public/encounter/style.css") + "\n" + bundle.read("public/encounter/delivery-chart.css")
     if re.search(r"</style", css, re.I):
         raise ValueError("Unexpected style closing token in CSS")
