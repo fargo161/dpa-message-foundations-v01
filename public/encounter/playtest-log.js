@@ -1,4 +1,4 @@
-// Presentation observer only. Transport is injected so the offline build has no network calls.
+// Presentation observer only. The page engine accepts observations directly.
 export function filteredDebug(snapshot) {
   const p = snapshot.play;
   return { definitions: snapshot.options.metricDefinitions, observed: { status: p.status, metrics: p.metrics, edge: p.edge,
@@ -6,7 +6,7 @@ export function filteredDebug(snapshot) {
     latestVisibleTurn: p.events.at(-1) ?? null } };
 }
 
-export function createPlaytestObserver({ getContext, transport, doc = document, win = globalThis, clock = () => Date.now(), onError = () => console.warn("Playtest logging unavailable.") }) {
+export function createPlaytestObserver({ getContext, engine, doc = document, win = globalThis, clock = () => Date.now(), onError = () => console.warn("Playtest logging unavailable.") }) {
   const runs = new Map(), origin = `${clock().toString(36)}-${globalThis.crypto?.randomUUID?.() ?? "page"}`;
   const sizes = value => new globalThis.TextEncoder().encode(JSON.stringify(value)).length;
   let current = null, sequence = 0, busy = null, destroyed = false;
@@ -55,7 +55,7 @@ export function createPlaytestObserver({ getContext, transport, doc = document, 
         ...(element.tagName === "INPUT" || element.tagName === "SELECT" ? { value: element.type === "checkbox" ? element.checked : element.value } : {}), selected: element.getAttribute("aria-pressed") === "true" }));
       for (let index = 0; index < choices.length; index += 12) chunks.push({ choices: choices.slice(index, index + 12) });
       chunks.push({ panels: panelStates(), activeView: visible(doc.getElementById("debug-view")) ? "debug" : "play", selection: context.selection ?? null });
-      // Keep every text segment/choice, while fitting the existing keepalive envelope.
+      // Keep every text segment/choice within the bounded observation batch.
       let packet = {}, packets = [];
       for (const chunk of chunks) {
         const next = { ...packet, ...chunk, ...(chunk.text ? { text: { ...packet.text, ...chunk.text } } : {}) };
@@ -89,9 +89,7 @@ export function createPlaytestObserver({ getContext, transport, doc = document, 
           if (!records.length) break;
           const body = { runId: run.runId, batchId: `${origin}-${records[0].clientSeq}`, records };
           try {
-            const response = await transport("/api/playtest-log", { method: "POST", credentials: "same-origin", keepalive: true, headers: { "Content-Type": "application/json", "X-CSRF-Token": run.csrf }, body: JSON.stringify(body) });
-            if (!response.ok) { onError(); return; }
-            const result = await response.json(); if (result.persisted === false) onError();
+            const result = await engine.ingestLog(body); if (result.persisted === false) onError();
             run.records.splice(0, records.length); run.bytes -= bytes;
           } catch { onError(); return; }
         }
@@ -129,9 +127,7 @@ export function createPlaytestObserver({ getContext, transport, doc = document, 
     try {
       record("UI_ACTION", { kind: "Download", target: "run-log", label: previous ? "Previous saved run log" : "Download run log", value: format });
       await flush();
-      const response = await transport(`/api/playtest-log${previous ? ".previous" : ""}.${format}`, { method: "GET", credentials: "same-origin" });
-      if (!response.ok) { onError(); return; }
-      const content = await response.text(), name = response.headers.get("X-Playtest-Basename") || "marcus-run";
+      const { content, basename: name } = await engine.exportLog(format, { previous });
       const blob = new win.Blob([content], { type: format === "json" ? "application/json" : "text/markdown" });
       const url = win.URL.createObjectURL(blob), anchor = doc.createElement("a");
       anchor.href = url; anchor.download = `${name}.${format}`; anchor.hidden = true; doc.body.append(anchor); anchor.click(); anchor.remove();
@@ -143,9 +139,9 @@ export function createPlaytestObserver({ getContext, transport, doc = document, 
     bind(snapshot) {
       attempt(() => {
         const runId = snapshot.play.runId;
-        if (current?.runId === runId) { current.csrf = snapshot.csrf; return; }
+        if (current?.runId === runId) return;
         void flush(); panels.clear(); edits.clear();
-        current = runs.get(runId) ?? { runId, csrf: snapshot.csrf, started: clock(), records: [], bytes: 0, lost: 0 };
+        current = runs.get(runId) ?? { runId, started: clock(), records: [], bytes: 0, lost: 0 };
         runs.set(runId, current);
         if (runs.size > 64) runs.delete(runs.keys().next().value);
         record("RUN_METADATA", { userAgent: win.navigator?.userAgent || "unavailable", viewport: { width: win.innerWidth || 0, height: win.innerHeight || 0 }, clientStartedAtUTC: new Date(current.started).toISOString() });
@@ -158,7 +154,7 @@ export function createPlaytestObserver({ getContext, transport, doc = document, 
         for (const id of ["download-run-log", "download-run-log-end"]) doc.getElementById(id).addEventListener("click", () => dialog.showModal());
         doc.getElementById("close-run-log").addEventListener("click", () => dialog.close());
         for (const format of ["json", "md"]) doc.getElementById(`download-log-${format}`).addEventListener("click", () => { void download(format); });
-        const previous = Boolean(win.__MARCUS_PLAYTEST_PREVIOUS);
+        const previous = engine.hasPreviousLog();
         doc.getElementById("previous-run-download").hidden = !previous;
         for (const format of ["json", "md"]) doc.getElementById(`download-previous-${format}`).addEventListener("click", () => { void download(format, true); });
       });

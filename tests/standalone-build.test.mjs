@@ -65,7 +65,7 @@ test("standalone packaging is byte-reproducible and parses with the same world e
   new vm.Script(script); // Parse the complete UI too; DOM execution is a separate browser check.
   const context = vm.createContext({ structuredClone, URL });
   vm.runInContext(script.split("// BEGIN_MARCUS_EXISTING_UI")[0], context);
-  const bundled = vm.runInContext('JSON.stringify(createConversation("marcus","lore-3","packaging-smoke"))', context);
+  const bundled = vm.runInContext('JSON.stringify(__req("src/conversation/runtime.mjs").createConversation("marcus","lore-3","packaging-smoke"))', context);
   assert.deepEqual(JSON.parse(bundled), JSON.parse(JSON.stringify(createConversation("marcus", "lore-3", "packaging-smoke"))));
 });
 
@@ -85,10 +85,10 @@ test("a missing required asset fails without replacing a previous deliverable", 
   rejects(source, "asset", /Missing required face asset/);
 });
 
-test("an unexpected transport substitution count fails loudly", () => {
+test("a network-capable UI call fails loudly", () => {
   const source = mirror("changed-ui");
-  change(source, "public/encounter/app.js", text => text.replace("await fetch(path,", "await fetch( path,"));
-  rejects(source, "substitution", /Substitution contract failed: POST local adapter/);
+  change(source, "public/encounter/app.js", text => text + "\nfetch(\"/forbidden\");\n");
+  rejects(source, "substitution", /Residual network-capable call/);
 });
 
 test("unresolved reexports and unknown named bindings are rejected", () => {

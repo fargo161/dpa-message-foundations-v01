@@ -3,6 +3,8 @@ import { createFaceRenderer } from "/face-renderer.js";
 import { createTurnPlayer } from "/turn-player.js";
 import { r17DraftCharges, r17StandardExtra } from "/r17-rates.mjs";
 import { createPlaytestObserver, filteredDebug } from "/playtest-log.js";
+import { createLocalEngine } from "/local-engine.mjs";
+import { createBrowserOptions } from "/browser-options.mjs";
 
 const $ = id => document.getElementById(id);
 const node = (tag, text) => { const element = document.createElement(tag); if (text !== undefined) element.textContent = String(text); return element; };
@@ -11,7 +13,8 @@ const names = { cash: "Cash", debt: "Total owed", marcusStock: "Their Contra", p
 let snapshot = null, busy = false, synchronized = false, view = "play", delivery = null;
 let keywordId = null, actionId = null, preview = null, previewSequence = 0, previewTimer = null;
 let pendingSnapshot = null;
-const observer = createPlaytestObserver({ getContext: () => ({ snapshot, selection: delivery?.getSelection() ?? null }), transport: (path, options) => globalThis.fetch(path, options) });
+const engine = createLocalEngine(createBrowserOptions());
+const observer = createPlaytestObserver({ getContext: () => ({ snapshot, selection: delivery?.getSelection() ?? null }), engine });
 // Presentation only: keep the exact offer and send controls outside the collapsible draft.
 const builder = node("details"), builderSummary = node("summary", "Build an offer");
 builder.id = "offer-builder"; builder.append(builderSummary, document.querySelector(".proposal"));
@@ -240,16 +243,12 @@ function schedulePreview() {
   const sequence = previewSequence;
   previewTimer = globalThis.setTimeout(() => { void requestPreview(sequence); }, 180);
 }
-async function post(path, body) {
-  const response = await fetch(path, { method: "POST", credentials: "same-origin", headers: { "Content-Type": "application/json", "X-CSRF-Token": snapshot.csrf }, body: JSON.stringify(body) });
-  const data = await response.json(); if (!response.ok) throw new Error(data.error || `Request failed (${response.status}).`); return data;
-}
 async function requestPreview(sequence) {
   const fields = intentFields(); if (!fields || busy || sequence !== previewSequence) return;
-  const key = draftKey(); const body = { requestId: crypto.randomUUID(), runId: snapshot.play.runId, version: snapshot.play.version, ...fields };
+  const key = draftKey(); const body = { requestId: engine.createRequestId(), runId: snapshot.play.runId, version: snapshot.play.version, ...fields };
   observer.record("PREVIEW_REQUESTED", { requestId: body.requestId, intent: fields });
   try {
-    const data = await post("/api/preview", body);
+    const data = await engine.preview(body);
     if (sequence !== previewSequence || busy || key !== draftKey() || data.runId !== snapshot.play.runId || data.version !== snapshot.play.version) return;
     preview = { key, body, text: data.playerText };
     $("player-preview").textContent = data.playerText; $("preview-state").textContent = selectedAction()?.completion?.done ? "Repeat prepared · already discussed" : "Ready · review, then send";
@@ -362,8 +361,7 @@ function focusResponse() {
   target.focus({ preventScroll: true });
 }
 async function getState() {
-  const response = await fetch("/api/state", { credentials: "same-origin", cache: "no-store" });
-  const data = await response.json(); if (!response.ok) throw new Error(data.error || "Could not load encounter."); applySnapshot(data);
+  applySnapshot(engine.getState());
 }
 async function load() {
   if (busy) return; busy = true; invalidatePreview(); turnPlayer.cancel(); pendingSnapshot = null; refreshControls();
@@ -371,20 +369,20 @@ async function load() {
   catch (error) { synchronized = false; $("reload").hidden = false; notice(error.message, true); }
   finally { busy = false; refreshControls(); schedulePreview(); }
 }
-async function submit(path, body) {
+async function submit(method, body) {
   if (busy || !synchronized || !snapshot) return;
-  observer.record("TURN_SENT", { turn: snapshot.play.version + 1, action: path === "/api/restart" ? "RESTART" : body.action, requestId: body.requestId, intent: body }); void observer.flush();
-  busy = true; invalidatePreview(); closeMenu(); refreshControls(); notice(path === "/api/restart" ? "Starting a fresh conversation…" : "Sending your words…");
+  observer.record("TURN_SENT", { turn: snapshot.play.version + 1, action: method === "restart" ? "RESTART" : body.action, requestId: body.requestId, intent: body }); void observer.flush();
+  busy = true; invalidatePreview(); closeMenu(); refreshControls(); notice(method === "restart" ? "Starting a fresh conversation…" : "Sending your words…");
   try {
-    const data = await post(path, body);
-    if (path === "/api/turn") {
+    const data = await engine[method](body);
+    if (method === "sendTurn") {
       const event = data.play.events.at(-1);
       if (event && data.play.events.length > snapshot.play.events.length) {
         delivery.recordTurn({ runId: data.play.runId, index: event.turnRef?.index ?? data.play.events.length, action: event.action || body.action, vibeId: event.vibeId || body.vibeId });
         pendingSnapshot = data; await turnPlayer.play(event, { manual: $("manual-reactions").checked });
       } else applySnapshot(data);
     } else { turnPlayer.cancel(); pendingSnapshot = null; resetDraft(); applySnapshot(data); }
-    $("reload").hidden = true; notice(snapshot.play.status !== "OPEN" ? "Conversation complete. Your result is shown below." : path === "/api/restart" ? "New conversation started." : "Response received. Review what changed, then choose your next move.");
+    $("reload").hidden = true; notice(snapshot.play.status !== "OPEN" ? "Conversation complete. Your result is shown below." : method === "restart" ? "New conversation started." : "Response received. Review what changed, then choose your next move.");
   } catch (error) {
     synchronized = false; turnPlayer.cancel(); pendingSnapshot = null; $("skip").hidden = true;
     try { await getState(); $("reload").hidden = true; notice(`${error.message} Current state reloaded. Review it before sending again.`, true); }
@@ -399,14 +397,14 @@ $("conversation-menu").addEventListener("close", () => { $("more").setAttribute(
 ["keywords", "based"].forEach(page => $(`${page}-tab`).addEventListener("click", () => { ["keywords", "based"].forEach(other => { $(`${other}-page`).hidden = other !== page; $(`${other}-tab`).setAttribute("aria-pressed", String(other === page)); }); }));
 $("history-toggle").addEventListener("click", () => { $("history-panel").hidden = !$("history-panel").hidden; $("history-toggle").setAttribute("aria-expanded", String(!$("history-panel").hidden)); });
 ["play", "debug"].forEach(target => $(`${target}-tab`).addEventListener("click", () => { if (busy) return; view = target; $("play-view").hidden = target !== "play"; $("debug-view").hidden = target !== "debug"; ["play", "debug"].forEach(other => $(`${other}-tab`).setAttribute("aria-pressed", String(other === target))); renderDebug(); }));
-$("turn-form").addEventListener("submit", event => { event.preventDefault(); if (busy || !preview || preview.key !== draftKey()) return; updateDraft(); if (selectedAction()?.intent.action === "DEAL" && !$("turn-form").reportValidity()) return; void submit("/api/turn", preview.body); });
+$("turn-form").addEventListener("submit", event => { event.preventDefault(); if (busy || !preview || preview.key !== draftKey()) return; updateDraft(); if (selectedAction()?.intent.action === "DEAL" && !$("turn-form").reportValidity()) return; void submit("sendTurn", preview.body); });
 $("accept").addEventListener("click", () => chooseFound(findAction(intent => intent.action === "ACCEPT")));
 $("clarify").addEventListener("click", () => chooseFound(findAction(intent => intent.action === "ASK" && intent.topic === "CLARIFY_OFFER")));
 $("walk").addEventListener("click", () => chooseFound(findAction(intent => intent.action === "WALK")));
 $("propose").addEventListener("click", () => chooseFound(findAction(intent => intent.action === "DEAL" && (intent.information || "NONE") === ($("information").value || "NONE"))));
 $("information").addEventListener("change", () => { if (selectedAction()?.intent.action === "DEAL") chooseFound(findAction(intent => intent.action === "DEAL" && (intent.information || "NONE") === $("information").value)); updateDraft(); schedulePreview(); });
 termKeys.forEach(key => $(key).addEventListener("input", () => { updateDraft(); schedulePreview(); }));
-$("restart-form").addEventListener("submit", event => { event.preventDefault(); if (busy || !snapshot) return; void submit("/api/restart", { requestId: crypto.randomUUID(), runId: snapshot.play.runId, version: snapshot.play.version, seed: $("seed").value, scenarioId: $("scenario").value }); });
+$("restart-form").addEventListener("submit", event => { event.preventDefault(); if (busy || !snapshot) return; void submit("restart", { requestId: engine.createRequestId(), runId: snapshot.play.runId, version: snapshot.play.version, seed: $("seed").value, scenarioId: $("scenario").value }); });
 $("reload").addEventListener("click", () => { void load(); }); $("skip").addEventListener("click", () => turnPlayer.skip());
 $("replay").addEventListener("click", async () => {
   const event = snapshot?.play.events.at(-1); if (busy || !event?.faces) return;

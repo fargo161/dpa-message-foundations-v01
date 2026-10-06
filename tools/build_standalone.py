@@ -18,6 +18,8 @@ ENTRIES = ["src/conversation/runtime.mjs", "public/encounter/delivery-chart.js",
 PUBLIC_IMPORTS = {"/delivery-options.mjs": "src/conversation/delivery-options.mjs",
                   "/r17-rates.mjs": "src/encounter/constants.mjs",
                   "/playtest-log.js": "public/encounter/playtest-log.js",
+                  "/local-engine.mjs": "public/encounter/local-engine.mjs",
+                  "/browser-options.mjs": "public/encounter/browser-options.mjs",
                   **{f"/{name}.js": f"public/encounter/{name}.js"
                      for name in ["delivery-chart", "face-renderer", "turn-player"]}}
 BUILTINS = {"node:fs": {"readFileSync"}, "node:url": {"fileURLToPath"}}
@@ -191,70 +193,6 @@ function __req(id){
   const module={exports:{}}; __cache[id]=module; fn(__req,module,module.exports); return module.exports;
 }
 '''
-LOCAL_API = r'''
-// BEGIN_MARCUS_LOCAL_API
-const { createConversation, resolveConversation, previewConversation, projectConversation } = __req("src/conversation/runtime.mjs");
-const { createRunRecorder } = __req("src/playtest/recorder.mjs");
-const { renderLogMarkdown } = __req("src/playtest/markdown.mjs");
-let __localState = null;
-let __localLog = null;
-const __localLogs = new Map();
-const __logStorageKey = "marcus-playtest-current@0.1";
-let __previousLog = null;
-try { const value = globalThis.localStorage?.getItem(__logStorageKey); if(value) { const saved=JSON.parse(value); if(saved?.schemaVersion==="marcus-playtest-log@0.1") __previousLog=saved; } } catch { console.warn("Playtest storage unavailable."); }
-globalThis.__MARCUS_PLAYTEST_PREVIOUS=Boolean(__previousLog);
-function __saveLog(){ try { if(__localLog){ const text=JSON.stringify(__localLog.assemble()); if(text.length<=2097152) globalThis.localStorage?.setItem(__logStorageKey,text); else console.warn("Playtest storage limit reached."); } } catch { console.warn("Playtest storage unavailable."); } }
-function __observe(fn){ try { fn(); } catch { console.warn("Playtest observation unavailable."); } }
-function __startLog(){ __observe(()=>{ __localLog=createRunRecorder(__localState,{build:__MARCUS_BUILD_INFO,view:projectConversation(__localState,"LOG-ONLY",{languageMode:"AUTHORING_PREVIEW"})}); __localLogs.set(__localState.runId,__localLog); if(__localLogs.size>64) __localLogs.delete(__localLogs.keys().next().value); __localLog.setSink(()=>__saveLog()); __saveLog(); }); }
-let __localSeedCounter = 0;
-function __uuid(){ return globalThis.crypto?.randomUUID?.() || (Date.now().toString(36)+Math.random().toString(36).slice(2)); }
-function __seed(){ __localSeedCounter++; return "local-"+Date.now().toString(36)+"-"+__localSeedCounter; }
-function __hydrateAssets(snapshot){
-  const cat=snapshot?.options?.faceCatalog;
-  if(cat){
-    const c=structuredClone(cat);
-    if(c.base?.src){ if(!__MARCUS_ASSET_DATA[c.base.src]) throw new Error("Missing embedded base asset"); c.base.src=__MARCUS_ASSET_DATA[c.base.src]; }
-    for(const a of c.assets||[]){ if(!__MARCUS_ASSET_DATA[a.src]) throw new Error("Missing embedded face asset"); a.src=__MARCUS_ASSET_DATA[a.src]; }
-    snapshot.options.faceCatalog=c;
-  }
-  return snapshot;
-}
-function __project(){ return __hydrateAssets(projectConversation(__localState,"LOCAL-OFFLINE",{languageMode:"AUTHORING_PREVIEW"})); }
-function __ensureState(){ if(!__localState){ __localState=createConversation("marcus",__seed(),__uuid()); __startLog(); } }
-async function __localApi(path, body){
-  try{
-    __ensureState();
-    if(path==="/api/state") return {status:200,data:__project()};
-    if(path==="/api/playtest-log"){ const log=__localLogs.get(body.runId); if(!log) return {status:404,data:{error:"Unknown log run."}}; const accepted=log.ingest(body); __saveLog(); return {status:200,data:{accepted,persisted:true}}; }
-    if(["/api/playtest-log.json","/api/playtest-log.md","/api/playtest-log.previous.json","/api/playtest-log.previous.md"].includes(path)){
-      const log=path.includes(".previous")?__previousLog:__localLog?.assemble();
-      if(!log) return {status:404,data:{error:"Run log unavailable."}};
-      const md=path.endsWith(".md"); return {status:200,data:log,text:md?renderLogMarkdown(log):JSON.stringify(log,null,2)+"\n",basename:log.header.fileBase};
-    }
-    if(path==="/api/preview") return {status:200,data:previewConversation(__localState,body,{languageMode:"AUTHORING_PREVIEW"})};
-    if(path==="/api/restart"){
-      const scenarioId=body.scenarioId||"marcus", seed=String(body.seed||__seed());
-      __observe(()=>__localLog?.end("REPLACED")); __saveLog();
-      __localState=createConversation(scenarioId,seed,__uuid());
-      __startLog();
-      return {status:200,data:__project()};
-    }
-    if(path==="/api/turn"){
-      const before=__localState;
-      __localState=resolveConversation(__localState,body,{languageMode:"AUTHORING_PREVIEW"});
-      __observe(()=>__localLog?.turn(before,__localState,body,projectConversation(__localState,"LOG-ONLY",{languageMode:"AUTHORING_PREVIEW"}))); __saveLog();
-      return {status:200,data:__project()};
-    }
-    return {status:404,data:{error:"Not found."}};
-  }catch(error){ return {status:error?.status||400,data:{error:error?.message||String(error)}}; }
-}
-async function localFetch(path, options={}){
-  let body={}; if(options.body){ try{body=JSON.parse(options.body)}catch{} }
-  const r=await __localApi(path,body);
-  return { ok:r.status>=200&&r.status<300, status:r.status, headers:{get(name){return name.toLowerCase()==="x-playtest-basename"?r.basename:null;}}, async json(){return r.data;}, async text(){return r.text??JSON.stringify(r.data);} };
-}
-// END_MARCUS_LOCAL_API
-'''
 
 
 def audit_no_network(script, html, css):
@@ -312,14 +250,9 @@ def build(source, output):
         assets[url] = "data:image/webp;base64," + base64.b64encode(data).decode("ascii")
         asset_receipts.append({"path": "public/encounter" + url, "bytes": len(data), "sha256": digest(data)})
     app = bundle.sources["public/encounter/app.js"]
-    if len(list(IMPORT.finditer(app))) != 5:
-        raise ValueError("Browser app import contract expected five imports")
+    if len(list(IMPORT.finditer(app))) != 7:
+        raise ValueError("Browser app import contract expected seven imports")
     app = bundle.transform("public/encounter/app.js", app, export_module=False)
-    for old, new, count, label in [('await fetch(path,', 'await localFetch(path,', 1, 'POST local adapter'),
-                                  ('await fetch("/api/state",', 'await localFetch("/api/state",', 1, 'GET local adapter'),
-                                  ('crypto.randomUUID()', '__uuid()', 2, 'file-context UUID')]:
-        app = checked_replace(app, old, new, count, label, bundle.receipts)
-    app = checked_replace(app, 'globalThis.fetch(path, options)', 'localFetch(path, options)', 1, 'playtest offline transport', bundle.receipts)
     index = bundle.read("public/encounter/index.html")
     css = bundle.read("public/encounter/style.css") + "\n" + bundle.read("public/encounter/delivery-chart.css")
     if re.search(r"</style", css, re.I):
@@ -327,7 +260,7 @@ def build(source, output):
     index = checked_replace(index, '<link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="/delivery-chart.css">', '<style>' + css + '</style>', 1, 'inline CSS', bundle.receipts)
     index = checked_replace(index, '<script type="module" src="/app.js"></script>', '', 1, 'remove module script transport', bundle.receipts)
     runtime = REGISTRY + "\n".join(definitions) + "\n// END_MARCUS_MODULE_REGISTRY\n"
-    runtime += "globalThis.__MARCUS_ASSET_DATA = " + js(assets) + ";\nconst __MARCUS_BUILD_INFO = " + js(build_info) + ";\n" + LOCAL_API
+    runtime += "globalThis.__MARCUS_ASSET_DATA = " + js(assets) + ";\nconst __MARCUS_BUILD_INFO = " + js(build_info) + ";\n" + "globalThis.__MARCUS_BUILD_INFO = __MARCUS_BUILD_INFO;\n"
     script = runtime + "\n// BEGIN_MARCUS_EXISTING_UI\n" + app + "\n// END_MARCUS_EXISTING_UI\n"
     audit_no_network(script, index, css)
     script = re.sub(r"</script", r"<\/script", script, flags=re.I)
@@ -340,7 +273,7 @@ def build(source, output):
                  "sourceInputs": [bundle.inputs[name] for name in sorted(bundle.inputs)], "assets": asset_receipts,
                  "nodeStubAllowlist": {name: sorted(exports) for name, exports in BUILTINS.items()},
                  "substitutions": bundle.receipts, "networkAudit": "PASS: no transport calls or external resources",
-                 "transport": {"api": "in-page", "state": "page-local volatile", "csrf": "LOCAL-OFFLINE", "languageMode": "AUTHORING_PREVIEW"}}
+                 "execution": {"engine": "public/encounter/local-engine.mjs", "state": "page-local volatile", "languageMode": "AUTHORING_PREVIEW"}}
     inventory_bytes = (json.dumps(inventory, ensure_ascii=False, indent=2, sort_keys=True) + "\n").encode("utf-8")
     # All validations complete before either deliverable is touched. No recursive deletion.
     output.mkdir(parents=True, exist_ok=True)

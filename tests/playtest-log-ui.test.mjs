@@ -17,11 +17,12 @@ function harness() {
   const win = { navigator: { userAgent: "test-browser" }, innerWidth: 1000, innerHeight: 700, queueMicrotask: callback => tasks.push(callback), setInterval: () => 1, clearInterval() {}, addEventListener: (type, callback) => handlers.set(type, callback), removeEventListener() {}, setTimeout: callback => callback(), Blob,
     URL: { createObjectURL(blob) { blobs.push(blob); return "blob:run-log"; }, revokeObjectURL() {} } };
   const content = JSON.stringify({ private: { marcusInterest: "cares" }, header: { fileBase: "run" } });
-  const transport = async (path, options) => {
-    if (options.method === "POST") { assert.equal(options.keepalive, true); assert.equal(options.headers["X-CSRF-Token"], "csrf"); actions.push(...JSON.parse(options.body).records); return { ok: true, json: async () => ({ persisted: true }) }; }
-    return { ok: true, text: async () => path.endsWith("md") ? "# SPOILERS\n" : content, headers: { get: () => "2026-10-01_18-05-12-0400_test_run" } };
+  const engine = {
+    ingestLog(body) { assert.equal(body.runId, snapshot.play.runId); actions.push(...body.records); return { persisted: true }; },
+    exportLog(format) { return { content: format === "md" ? "# SPOILERS\n" : content, basename: "2026-10-01_18-05-12-0400_test_run" }; },
+    hasPreviousLog: () => false,
   };
-  const observer = createPlaytestObserver({ getContext: () => ({ snapshot, selection: { vibeId: "EA", intensity: "BALANCED" } }), transport, doc, win, clock: () => Date.parse("2026-10-01T22:05:12Z") });
+  const observer = createPlaytestObserver({ getContext: () => ({ snapshot, selection: { vibeId: "EA", intensity: "BALANCED" } }), engine, doc, win, clock: () => Date.parse("2026-10-01T22:05:12Z") });
   observer.bind(snapshot);
   const drain = () => { while (tasks.length) tasks.shift()(); };
   return { observer, snapshot, doc, win, ids, actions, handlers, drain, downloads, blobs };
@@ -65,9 +66,9 @@ test("download creates JSON/Markdown files without putting their private content
   assert.ok([...h.ids.values()].every(element => !element.textContent.includes("marcusInterest"))); h.observer.destroy();
 });
 
-test("transport failures are console-only and queued observations can retry", async () => {
+test("engine observation failures are console-only and queued observations can retry", async () => {
   let fail = true, warnings = 0, accepted = [];
-  const h = harness(), observer = createPlaytestObserver({ getContext: () => ({ snapshot: h.snapshot }), doc: h.doc, win: h.win, onError: () => warnings++, transport: async (path, options) => { if (fail) throw new Error("offline"); accepted.push(...JSON.parse(options.body).records); return { ok: true, json: async () => ({}) }; } });
+  const h = harness(), observer = createPlaytestObserver({ getContext: () => ({ snapshot: h.snapshot }), doc: h.doc, win: h.win, onError: () => warnings++, engine: { ingestLog(body) { if (fail) throw new Error("offline"); accepted.push(...body.records); return {}; } } });
   observer.bind(h.snapshot); await observer.flush(); assert.ok(warnings > 0); fail = false; await observer.flush(); assert.ok(accepted.length > 0);
   assert.equal(h.ids.get("extra-display").textContent, "$4 · 8% if he values R-17 · $11 · 22% if he doesn't"); observer.destroy(); h.observer.destroy();
 });
